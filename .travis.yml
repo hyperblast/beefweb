@@ -8,7 +8,7 @@ script:
 compiler:
 - gcc
 env:
-- PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH"
+- PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH" CC=gcc-6 CXX=g++-6
 addons:
   apt:
     sources:
