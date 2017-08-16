@@ -9,8 +9,9 @@ compiler:
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
+    - kalakris-cmake
     packages:
-      - g++-6
-      - g++-6-multilib
-      - cmake
+    - g++-6
+    - g++-6-multilib
+    - cmake
