@@ -8,8 +8,8 @@ script:
 compiler:
 - gcc
 env:
-- CFLAGS=
-- CFLAGS=-m32
+- CFLAGS= CXXFLAGS=
+- CFLAGS=-m32 CXXFLAGS=-m32
 addons:
   apt:
     sources:
