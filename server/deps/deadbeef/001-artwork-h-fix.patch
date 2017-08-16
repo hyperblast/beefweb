@@ -1,0 +1,37 @@
+From d08efb4688ce231edf74e507a051379cc307722e Mon Sep 17 00:00:00 2001
+From: Alexey Yakovenko <wakeroid@gmail.com>
+Date: Mon, 30 May 2016 22:16:29 +0200
+Subject: [PATCH] artwork: don't include deadbeef.h from API header by relative
+ path (fixes #1568)
+
+---
+ plugins/artwork/artwork.h | 2 --
+ plugins/gtkui/coverart.c  | 1 +
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/plugins/artwork/artwork.h b/plugins/artwork/artwork.h
+index 70e5c10f9..3679611d6 100644
+--- a/plugins/artwork/artwork.h
++++ b/plugins/artwork/artwork.h
+@@ -24,8 +24,6 @@
+ #ifndef __ARTWORK_H
+ #define __ARTWORK_H
+ 
+-#include "../../deadbeef.h"
+-
+ #define DDB_ARTWORK_VERSION 3
+ 
+ typedef void (*artwork_callback) (const char *fname, const char *artist, const char *album, void *user_data);
+diff --git a/plugins/gtkui/coverart.c b/plugins/gtkui/coverart.c
+index 3f0b17932..590dfc71f 100644
+--- a/plugins/gtkui/coverart.c
++++ b/plugins/gtkui/coverart.c
+@@ -30,6 +30,7 @@
+ #ifdef __linux__
+ #include <sys/prctl.h>
+ #endif
++#include "../../deadbeef.h"
+ #include "../artwork/artwork.h"
+ #include "gtkui.h"
+ 
+

@@ -1,0 +1,12 @@
+build/*
+
+server/build/*
+server/deps/_cache/*
+
+webui/build/*
+webui/node_modules/*
+
+*.user
+*.orig
+*.rej
+*.so

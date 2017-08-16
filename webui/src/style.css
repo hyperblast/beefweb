@@ -1,0 +1,311 @@
+/*
+    #212121 - text, icons
+    #BDBDBD - medium indication (progress gauge, ui border)
+    #E0E0E0 - soft indication (table row hover, button hover, progress background)
+    #EEEEEE - spacer background
+    #FFFFFF - ui background
+*/
+
+/* Base setup */
+
+html {
+  box-sizing: border-box;
+  background: #EEEEEE;
+  color: #212121;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+html.setting-fontsize-small {
+    font-size: 14px;
+}
+
+html.setting-fontsize-normal {
+    font-size: 16px;
+}
+
+html.setting-fontsize-large {
+    font-size: 18px;
+}
+
+/* Elements */
+
+.button-bar {
+    display: inline-block;
+}
+
+.button-bar > a {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin: 0 0.125rem;
+    border-radius: 0.125rem;
+}
+
+.button-bar > a:hover,
+.button-bar > a.active {
+    background: #E0E0E0;
+}
+
+.icon {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0.25rem;
+}
+
+.icon > use {
+    fill: #212121;
+}
+
+.tabs {
+    border-bottom: 0.0625rem solid #BDBDBD;
+    white-space: nowrap;
+    display: flex;
+}
+
+.tabs > a,
+.tabs > span,
+.tabs > div {
+    display: inline-block;
+    height: 2.5rem;
+    margin-bottom: -0.25rem;
+    border: 0.0625rem solid #BDBDBD;
+    border-bottom: none;
+    border-radius: 0.125rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.tabs > a,
+.tabs > span {
+    padding: 0.5rem;
+    padding-bottom: 0.75rem;
+    min-width: 6em;
+    max-width: 12em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.tabs > a {
+    text-decoration: none;
+    color: #212121;
+}
+
+.tabs > div {
+    padding: 0.0625rem;
+}
+
+.tabs > .active {
+    background: #FFFFFF;
+}
+
+.tabs > .button-bar {
+    float: right;
+    background: #FFFFFF;
+    padding: 0.25rem;
+    padding-bottom: 0.5rem;
+    margin-left: auto;
+}
+
+.progress-bar {
+    height: 100%;
+    position: relative;
+    background: #E0E0E0;
+    border: 0.0625rem solid #BDBDBD;
+    border-radius: 0.125rem;
+}
+
+.progress-bar-gauge {
+    height: 100%;
+    background: #BDBDBD;
+}
+
+.progress-bar-text {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+.table-content {
+    position: relative;
+    padding: 1.75rem 0.5rem 0.5rem 0.5rem;
+    white-space: nowrap;
+}
+
+.table-content-inner {
+    overflow: auto;
+    height: 100%;
+}
+
+.table-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-content td {
+    padding-right: 1rem;
+}
+
+.table-content tbody tr:hover {
+    background: #E0E0E0;
+}
+
+.table-content a {
+    text-decoration: none;
+    color: #212121;
+    display: block;
+}
+
+.table-content a:visited {
+    color: #212121;
+}
+
+.table-header-cell {
+    position: absolute;
+    top: 0.5rem;
+}
+
+.panel {
+    background: #FFFFFF;
+    border: 0.0625rem solid #BDBDBD;
+    border-radius: 0.125rem;
+    margin: 0.5rem;
+}
+
+.panel-header {
+    margin: 0 0.5rem;
+}
+
+.panel-header + .panel {
+    margin-top: 0;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.main-panel {
+    flex: 1;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
+}
+
+/* Components */
+
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0 auto;
+}
+
+.setting-no-fullwidth .app {
+    max-width: 1000px;
+}
+
+.control-bar {
+    display: flex;
+    padding: 0.5rem;
+    height: 2.75rem;
+}
+
+.control-bar > * {
+    margin-right: 2rem;
+    height: 1.75rem;
+}
+
+.control-bar > *:last-child {
+    margin-right: 0;
+}
+
+.status-bar {
+    padding: 0.5rem;
+    margin: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-browser-header > .file-browser-path {
+    max-width: none;
+}
+
+.playback-control .icon-media-play > use {
+    fill: #006600;
+}
+
+.playback-control .icon-media-stop > use {
+    fill: #B30000;
+}
+
+.position-control {
+    flex: 1;
+    padding: 0.25rem;
+}
+
+.volume-control {
+    display: inline-block;
+}
+
+.volume-control > input[type='range'] {
+    width: 6rem;
+    margin-left: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.settings > form {
+    padding: 0.5rem;
+}
+
+.settings label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.settings label > span {
+    margin: 0 0.5rem;
+}
+
+.settings label > span:first-child {
+    margin-left: 0;
+}
+
+/* Responsiveness */
+
+@media screen and (max-width: 700px) {
+    .control-bar {
+        height: auto;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .control-bar > * {
+        margin-right: 0;
+    }
+
+    .position-control {
+        order: 10;
+        min-width: 100%;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .volume-control > input[type='range'] {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 325px) {
+    .volume-control {
+        display: none;
+    }
+}
+

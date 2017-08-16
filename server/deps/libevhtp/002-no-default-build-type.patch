@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a64ca73..793814f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -9,8 +9,6 @@ set(PROJECT_VERSION      ${PROJECT_MAJOR_VERSION}.${PROJECT_MINOR_VERSION}.${PRO
+ set(CMAKE_C_FLAGS         "${CMAKE_C_FLAGS} -DPROJECT_VERSION=\"${PROJECT_VERSION}\" -Wall")
+ set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG} -O0 -ggdb3")
+ 
+-SET(CMAKE_BUILD_TYPE Release CACHE STRING "default to Release")
+-
+ # will use later for htexpress API
+ # add_executable(lambda-pp lambda-pp.c)
+ 

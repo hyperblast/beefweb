@@ -1,0 +1,27 @@
+diff --git a/evhtp.c b/evhtp.c
+index 6ff6b90..2552cd7 100644
+--- a/evhtp.c
++++ b/evhtp.c
+@@ -3185,6 +3185,7 @@ evhtp_bind_sockaddr(evhtp_t * htp, struct sockaddr * sa, size_t sin_len, int bac
+ #endif
+     evutil_socket_t fd;
+     int             on = 1;
++    int             old_errno;
+ 
+     fd = socket(sa->sa_family, SOCK_STREAM, 0);
+     evhtp_errno_assert(fd != -1);
+@@ -3220,7 +3221,13 @@ evhtp_bind_sockaddr(evhtp_t * htp, struct sockaddr * sa, size_t sin_len, int bac
+     }
+ #endif
+ 
+-    evhtp_errno_assert(bind(fd, sa, sin_len) != -1);
++    if (bind(fd, sa, sin_len) == -1)
++    {
++        old_errno = errno;
++        evutil_closesocket(fd);
++        errno = old_errno;
++        return -1;
++    }
+ 
+     htp->server = evconnlistener_new(htp->evbase, _evhtp_accept_cb, htp,
+                                      LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE,

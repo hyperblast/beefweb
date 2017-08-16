@@ -1,0 +1,1 @@
+set(CATCH_INCLUDE_DIRS ${DEPS_INSTALL_DIR}/include)

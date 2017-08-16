@@ -1,0 +1,29 @@
+include(ExternalProject)
+
+ExternalProject_Add(
+    deadbeef
+    PREFIX
+        ${DEPS_INSTALL_DIR}
+    URL
+        http://sourceforge.net/projects/deadbeef/files/deadbeef-0.7.2.tar.bz2
+    URL_HASH
+        SHA256=8a63abdf00c2f37c33e018ae0b39d391873e037434074b84bb47381bf283c884
+    DOWNLOAD_DIR
+        ${DEPS_CACHE_DIR}/deadbeef
+    PATCH_COMMAND
+        ${DEPS_PATCHER} deadbeef
+    CONFIGURE_COMMAND
+        ${CMAKE_COMMAND} -E echo "No configure required"
+    BUILD_COMMAND
+        ${CMAKE_COMMAND} -E echo "No build required"
+    INSTALL_COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different
+            <SOURCE_DIR>/deadbeef.h
+            <INSTALL_DIR>/include/deadbeef/deadbeef.h
+    COMMAND
+        ${CMAKE_COMMAND} -E copy_if_different
+            <SOURCE_DIR>/plugins/artwork/artwork.h
+            <INSTALL_DIR>/include/deadbeef/artwork.h        
+    LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 0 LOG_BUILD 0 LOG_INSTALL 1
+)
+

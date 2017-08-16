@@ -1,0 +1,20 @@
+diff -ru a/boost/config/suffix.hpp b/boost/config/suffix.hpp
+--- a/boost/config/suffix.hpp	2017-04-17 05:22:19.000000000 +0300
++++ b/boost/config/suffix.hpp	2017-05-14 12:25:52.710284063 +0300
+@@ -1033,4 +1033,8 @@
+ #  error "You are using a compiler which lacks features which are now a minimum requirement in order to use Boost, define BOOST_CONFIG_ALLOW_DEPRECATED if you want to continue at your own risk!!!"
+ #endif
+ 
++// Ensure no symbols are exported by default
++#undef BOOST_SYMBOL_VISIBLE
++#define BOOST_SYMBOL_VISIBLE
++
+ #endif
+diff -ru a/boost/config/user.hpp b/boost/config/user.hpp
+--- a/boost/config/user.hpp	2017-04-17 05:22:19.000000000 +0300
++++ b/boost/config/user.hpp	2017-05-13 19:56:22.206450389 +0300
+@@ -131,3 +131,4 @@
+ // to ensure the correct libraries are selected at link time.
+ // #define BOOST_LIB_BUILDID amd64
+ 
++#define BOOST_THREAD_PROVIDES_FUTURE_CONTINUATION 1
