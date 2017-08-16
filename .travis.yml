@@ -7,6 +7,9 @@ script:
 - server/build/release/src/run_tests
 compiler:
 - gcc
+env:
+- CFLAGS=
+- CFLAGS=-m32
 addons:
   apt:
     sources:
