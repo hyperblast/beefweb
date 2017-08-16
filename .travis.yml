@@ -3,12 +3,10 @@ sudo: false
 language: cpp
 script:
 - scripts/get-cmake.sh
-- scripts/build.sh --server --release --tests
+- PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH" CC=gcc-6 CXX=g++-6 scripts/build.sh --server --release --tests
 - server/build/release/run_tests
 compiler:
 - gcc
-env:
-- PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH" CC=gcc-6 CXX=g++-6
 addons:
   apt:
     sources:
