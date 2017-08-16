@@ -4,7 +4,7 @@ language: cpp
 script:
 - scripts/get-cmake.sh
 - PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH" CC=gcc-6 CXX=g++-6 scripts/build.sh --server --release --tests
-- server/build/release/run_tests
+- server/build/release/src/run_tests
 compiler:
 - gcc
 addons:
