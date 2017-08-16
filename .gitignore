@@ -1,4 +1,5 @@
 build/*
+tools/*
 
 server/build/*
 server/deps/_cache/*

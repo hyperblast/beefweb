@@ -2,16 +2,19 @@ dist: trusty
 sudo: false
 language: cpp
 script:
+- scripts/get-cmake.sh
 - scripts/build.sh --server --release --tests
 - server/build/release/run_tests
 compiler:
 - gcc
+env:
+- PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH"
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    - kalakris-cmake
     packages:
+    - gcc-6
+    - gcc-6-multilib
     - g++-6
     - g++-6-multilib
-    - cmake
