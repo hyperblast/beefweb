@@ -3,9 +3,11 @@ sudo: false
 language: cpp
 script:
 - scripts/get-cmake.sh
+- scripts/build.sh --webui --release --verbose
 - PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH" CC=gcc-6 CXX=g++-6
   scripts/build.sh --server --release --tests --verbose
 - server/build/release/src/run_tests
+- scripts/build.sh --pkg --release --verbose
 compiler:
 - gcc
 addons:
