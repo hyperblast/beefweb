@@ -185,12 +185,12 @@ function build_pkg()
     rm -rf $pkg_tmp_dir
 }
 
-if [ -n "$enable_server" ]; then
-    build_server
-fi
-
 if [ -n "$enable_webui" ]; then
     build_webui
+fi
+
+if [ -n "$enable_server" ]; then
+    build_server
 fi
 
 if [ -n "$enable_pkg" ]; then
