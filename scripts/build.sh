@@ -13,11 +13,13 @@ Options:
   --pkg       build binary package
   --all       build server, webui and binary package
   --tests     also build corresponding tests
+  --verbose   generate more debug messages
 
 Build mode option (--debug or --release) is required.
 At least one build target (--server, --ui, --pkg or --all) is required.
 "
 
+verbose=
 has_targets=
 config=
 enable_server=
@@ -58,6 +60,10 @@ for arg in "$@"; do
 
         --tests)
             enable_tests=1
+            ;;
+
+        --verbose)
+            verbose=1
             ;;
 
         --help)
@@ -102,6 +108,15 @@ function detect_server_arch()
     fi
 }
 
+function show_server_build_logs()
+{
+    for log_file in deps/root/src/*-stamp/*.log; do
+        echo "$log_file:"
+        cat $log_file
+        echo
+    done
+}
+
 function build_server()
 {
     if [ "$config" == "release" ]; then
@@ -125,7 +140,13 @@ function build_server()
         -DENABLE_TESTS=$server_enable_tests \
         $server_src_dir
 
-    cmake --build .
+    if ! cmake --build . -- -j ; then
+        if [ -n "$verbose" ]; then
+            show_server_build_logs
+        fi
+
+        exit 1
+    fi
 }
 
 function build_webui()
