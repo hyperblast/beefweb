@@ -140,7 +140,7 @@ function build_server()
         -DENABLE_TESTS=$server_enable_tests \
         $server_src_dir
 
-    if ! cmake --build . -- -j ; then
+    if ! cmake --build . ; then
         if [ -n "$verbose" ]; then
             show_server_build_logs
         fi
