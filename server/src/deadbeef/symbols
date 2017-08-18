@@ -1,0 +1,4 @@
+{
+    global: beefweb_load;
+    local: *;
+};

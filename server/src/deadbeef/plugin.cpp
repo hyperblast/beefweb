@@ -137,7 +137,7 @@ static void pluginInitDef()
     pluginDef.plugin.configdialog = pluginConfigDialog;
 }
 
-extern "C" MSRV_EXPORT DB_plugin_t* MSRV_PREFIXED(load)(DB_functions_t* api)
+extern "C" DB_plugin_t* MSRV_PREFIXED(load)(DB_functions_t* api)
 {
     static StderrLogger logger(MSRV_PROJECT_ID);
     Logger::setCurrent(&logger);

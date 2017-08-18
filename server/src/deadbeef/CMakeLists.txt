@@ -17,6 +17,11 @@ set(
     util.cpp util.hpp
 )
 
+set(
+    CMAKE_MODULE_LINKER_FLAGS
+    "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-version-script,${CMAKE_CURRENT_SOURCE_DIR}/symbols"
+)
+
 add_library(
     deadbeef_plugin MODULE ${DEADBEEF_PLUGIN_SOURCES} $<TARGET_OBJECTS:main>
 )

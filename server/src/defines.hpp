@@ -1,11 +1,5 @@
 #pragma once
 
-#if __GNUC__ >= 4
-#define MSRV_EXPORT __attribute__((visibility("default")))
-#else
-#define MSRV_EXPORT
-#endif
-
 #define MSRV_FORMAT_FUNC(fmt, args) \
     __attribute__((format(printf, fmt, args)))
 
