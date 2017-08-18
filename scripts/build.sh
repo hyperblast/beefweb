@@ -119,6 +119,10 @@ function show_server_build_logs()
 
 function build_server()
 {
+    echo
+    echo 'Building server...'
+    echo
+
     if [ "$config" == "release" ]; then
         server_build_type=Release
     else
@@ -151,6 +155,10 @@ function build_server()
 
 function build_webui()
 {
+    echo
+    echo 'Building webui...'
+    echo
+
     webui_flags=""
 
     if [ "$config" == "release" ]; then
@@ -169,6 +177,10 @@ function build_webui()
 
 function build_pkg()
 {
+    echo
+    echo 'Building package...'
+    echo
+
     detect_server_arch
 
     git_rev=$(git rev-parse --short HEAD)
