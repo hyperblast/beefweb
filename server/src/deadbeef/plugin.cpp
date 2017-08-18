@@ -128,6 +128,7 @@ static void pluginInitDef()
     pluginDef.plugin.name = MSRV_PROJECT_NAME;
     pluginDef.plugin.descr = MSRV_PROJECT_DESC;
     pluginDef.plugin.copyright = MSRV_LICENSE_TEXT;
+    pluginDef.plugin.website = MSRV_PROJECT_URL;
     pluginDef.plugin.start = pluginStart;
     pluginDef.plugin.stop = pluginStop;
     pluginDef.plugin.connect = pluginConnect;

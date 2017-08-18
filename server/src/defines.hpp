@@ -18,6 +18,7 @@
 #define MSRV_PREFIXED(name)     beefweb_ ## name
 #define MSRV_WEB_ROOT           "beefweb.root"
 #define MSRV_PROJECT_DESC       "Provides web UI and HTTP API for controlling player remotely"
+#define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
 
 #define MSRV_LICENSE_TEXT \
     "Copyright 2015-2017 Hyperblast\n" \
