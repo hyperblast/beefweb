@@ -20,7 +20,7 @@ Web user interface and HTTP API plugin for DeaDBeeF player
 
 ### How to build
 Beefweb has two distinctive parts: server plugin and web user interface.
-To build server you'll need a descent C++ compiler such as GCC (clang is not tested yet) and a recent version of `cmake`.
+To build server you'll need a descent C++ compiler such as `gcc` or `clang` and a recent version of `cmake`.
 To build web UI you'll need `nodejs` and `yarn` package manager.
 
 The following command will build server, ui and `.tar.gz` package:
