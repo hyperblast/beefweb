@@ -65,7 +65,7 @@ public:
             map.emplace(std::move(key), std::move(value));
         });
 
-        return std::move(map);
+        return map;
     }
 
     template<typename Func>

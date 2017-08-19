@@ -108,7 +108,7 @@ std::vector<char> Evbuffer::readToEnd()
     std::vector<char> buffer(length());
     auto ret = ::evbuffer_remove(ptr(), buffer.data(), buffer.size());
     throwIfFailed("evbuffer_remove", ret >= 0);
-    return std::move(buffer);
+    return buffer;
 }
 
 void Evbuffer::writeFile(FileHandle file, int64_t offset, int64_t size)

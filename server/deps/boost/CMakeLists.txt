@@ -4,6 +4,14 @@ set(BOOST_LINK      "static")
 set(BOOST_THREADING "multi")
 set(BOOST_VARIANT   "$<$<CONFIG:Debug>:debug>$<$<NOT:$<CONFIG:Debug>>:release>")
 
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
+    set(BOOST_TOOLSET "gcc")
+elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+    set(BOOST_TOOLSET "clang")
+else()
+    message(SEND_ERROR "Unknown compiler, unable to provide boost toolset" )
+endif()
+
 ExternalProject_Add(
     boost
     PREFIX
@@ -19,6 +27,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND
         <SOURCE_DIR>/bootstrap.sh
         --prefix=<INSTALL_DIR>
+        --with-toolset=${BOOST_TOOLSET}
         --with-libraries=system,filesystem,thread
     BUILD_COMMAND
         <SOURCE_DIR>/b2
@@ -36,4 +45,3 @@ ExternalProject_Add(
         install
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
 )
-

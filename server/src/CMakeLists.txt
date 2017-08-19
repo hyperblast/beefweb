@@ -22,6 +22,10 @@ if(ENABLE_WERROR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 endif()
 
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-potentially-evaluated-expression -Wno-extern-c-compat")
+endif()
+
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Libevent REQUIRED)
 find_package(Libevhtp REQUIRED)

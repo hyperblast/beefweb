@@ -94,7 +94,7 @@ EvhtpHostPtr ServerImpl::createHost(const SettingsData& settings)
     const char* address = settings.allowRemote ? "0.0.0.0" : "127.0.0.1";
     host->bind(address, settings.port, 64);
 
-    return std::move(host);
+    return host;
 }
 
 EventPtr ServerImpl::createEvent(EventCallback cb, int prio, int events)
@@ -102,7 +102,7 @@ EventPtr ServerImpl::createEvent(EventCallback cb, int prio, int events)
     EventPtr event(new Event(eventBase_.get(), SocketHandle(), events));
     event->onEvent(std::move(cb));
     event->setPriority(prio);
-    return std::move(event);
+    return event;
 }
 
 void ServerImpl::doStart(const SettingsData& settings)

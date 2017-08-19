@@ -10,8 +10,7 @@ namespace msrv {
 class WorkQueue;
 class Server;
 class Router;
-
-struct SettingsData;
+class SettingsData;
 
 using ServerPtr = std::unique_ptr<Server>;
 using ServerRestartCallback = std::function<void(const SettingsData&)>;
