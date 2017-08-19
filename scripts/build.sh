@@ -14,17 +14,20 @@ Options:
   --all       build server, webui and binary package
   --tests     also build corresponding tests
   --verbose   generate more debug messages
+  --werror    treat warnings as errors
 
 Build mode option (--debug or --release) is required.
 At least one build target (--server, --ui, --pkg or --all) is required.
 "
 
 verbose=
-has_targets=
 config=
+has_targets=
+
 enable_server=
 enable_webui=
 enable_pkg=
+enable_werror=
 
 for arg in "$@"; do
     case "$arg" in
@@ -64,6 +67,10 @@ for arg in "$@"; do
 
         --verbose)
             verbose=1
+            ;;
+
+        --werror)
+            enable_werror=1
             ;;
 
         --help)
@@ -135,6 +142,12 @@ function build_server()
         server_enable_tests=OFF
     fi
 
+    if [ -n "$enable_werror" ]; then
+        server_enable_werror=ON
+    else
+        server_enable_werror=OFF
+    fi
+
     rm -rf $server_build_dir
     mkdir -p $server_build_dir
     cd $server_build_dir
@@ -142,6 +155,7 @@ function build_server()
     cmake \
         -DCMAKE_BUILD_TYPE=$server_build_type \
         -DENABLE_TESTS=$server_enable_tests \
+        -DENABLE_WERROR=$server_enable_werror \
         $server_src_dir
 
     if ! cmake --build . ; then

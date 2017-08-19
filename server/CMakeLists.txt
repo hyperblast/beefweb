@@ -4,8 +4,9 @@ project(server)
 
 set(PROJECT_ID beefweb)
 
-option(ENABLE_TESTS    "Build tests" OFF)
-option(USE_SYSTEM_LIBS "Build with system libraries" OFF)
+option(ENABLE_TESTS     "Build tests" OFF)
+option(ENABLE_WERROR    "Treat warnings as errors" OFF)
+option(USE_SYSTEM_LIBS  "Build with system libraries" OFF)
 
 set(COMMON_C_FLAGS    "-fPIC -pthread")
 set(COMMON_CXX_FLAGS  "${COMMON_C_FLAGS}")
