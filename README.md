@@ -12,6 +12,12 @@ Web user interface and HTTP API plugin for DeaDBeeF player
 - Responsive layouts with support for screen sizes down to 320px
 - Use the the same HTTP/JSON API for controlling player from your application
 
+### Screenshots
+
+![Main web interface](https://user-images.githubusercontent.com/19171756/29487823-3ff34534-8508-11e7-807c-d1a5c3aa1702.png)
+
+![Configuration screen](https://user-images.githubusercontent.com/19171756/29487824-4670cb16-8508-11e7-984f-14707cbbd52d.png)
+
 ### How to build
 Beefweb has two distinctive parts: server plugin and web user interface.
 To build server you need a descent C++ compiler such as GCC.
