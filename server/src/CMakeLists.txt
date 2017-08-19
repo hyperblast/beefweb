@@ -83,10 +83,7 @@ set(
 )
 
 add_library(main OBJECT ${MAIN_SOURCES})
-
-if(DEPS_TARGETS)
-    add_dependencies(main ${DEPS_TARGETS})
-endif()
+add_dependencies(main deps)
 
 add_subdirectory(deadbeef)
 

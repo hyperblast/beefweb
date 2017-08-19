@@ -26,3 +26,5 @@ ExternalProject_Add(
         -DEVHTP_DISABLE_REGEX=ON
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
 )
+
+add_dependencies(deps libevhtp)
