@@ -5,12 +5,12 @@ Web user interface and HTTP API plugin for DeaDBeeF player
 
 ### Features
 - Lightweight web user interface
-- Control playback
-- Manage playlists
-- Browse music directories
+- Playback control
+- Playlist management
+- Music directory browser
 - Realtime UI updates
 - Responsive layouts with support for screen sizes down to 320px
-- Use the the same HTTP/JSON API for controlling player from your application
+- The same HTTP/JSON API is available for controlling player from your application
 
 ### Screenshots
 
@@ -20,19 +20,27 @@ Web user interface and HTTP API plugin for DeaDBeeF player
 
 ### How to build
 Beefweb has two distinctive parts: server plugin and web user interface.
-To build server you need a descent C++ compiler such as GCC.
-To build web UI you need `nodejs` and `yarn` package manager.
-Build process is automated, in most cases `scripts/build.sh --all --release` will build everything
-and create package in `build/release` directory.
+To build server you'll need a descent C++ compiler such as GCC (clang is not tested yet) and a recent version of `cmake`.
+To build web UI you'll need `nodejs` and `yarn` package manager.
+
+The following command will build server, ui and `.tar.gz` package:
+
+    $ scripts/build.sh --all --release
+
+Get `beefweb-*.tar.gz` from `build/release` directory.
+
+You could also build debug version by switching `--release` to `--debug`.
 
 ### How to install
 Unpack `beefweb-*.tar.gz` to `$HOME/.local/lib/deadbeef`.
 
 ### How to use
 Point your browser to `http://localhost:8880` and enjoy your web interface.
+
 If you've enabled remote connections on plugin configuration screen you'll be able to connect from remote machines as well.
+
 To allow browsing and adding files via web interface
-specify browsable directories in plugin configuration screen (separate multiple entries with `;`).
+specify music directories in plugin configuration screen (multiple entries are separated with `;`).
 
 ### License
 [MIT](LICENSE)
