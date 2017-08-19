@@ -1,15 +1,10 @@
 dist: trusty
 sudo: false
 language: cpp
-script:
-- scripts/get-cmake.sh
-- PATH="$TRAVIS_BUILD_DIR/tools/cmake/bin:$PATH"
-  CC=gcc-6
-  CXX=g++-6
-  scripts/build.sh --all --release --tests --verbose --werror
-- server/build/release/src/run_tests
+script: scripts/travis-build.sh
 compiler:
 - gcc
+- clang
 addons:
   apt:
     sources:
