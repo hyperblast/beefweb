@@ -85,15 +85,12 @@ void ServerImpl::restart(const SettingsData& settings)
     commandEvent_->schedule();
 }
 
-EvhtpHostPtr ServerImpl::createHost(const SettingsData& settings)
+EvhtpHostPtr ServerImpl::createHost(const char* address, int port)
 {
     EvhtpHostPtr host(new EvhtpHost(eventBase_.get()));
-
     host->onNewRequest([this] (EvhtpRequest* req) { processRequest(req); });
-
-    const char* address = settings.allowRemote ? "0.0.0.0" : "127.0.0.1";
-    host->bind(address, settings.port, 64);
-
+    host->bind(address, port, 64);
+    logInfo("listening on [%s]:%d", address, port);
     return host;
 }
 
@@ -107,9 +104,17 @@ EventPtr ServerImpl::createEvent(EventCallback cb, int prio, int events)
 
 void ServerImpl::doStart(const SettingsData& settings)
 {
-    tryCatchLog([&]{ host_ = createHost(settings); });
+    tryCatchLog([&]
+    {
+        hostV4_ = createHost(settings.allowRemote ? "ipv4:0.0.0.0" : "ipv4:127.0.0.1", settings.port);
+    });
 
-    if (host_ && restartCallback_)
+    tryCatchLog([&]
+    {
+        hostV6_ = createHost(settings.allowRemote ? "ipv6:::0" : "ipv6:::1", settings.port);
+    });
+
+    if ((hostV4_ || hostV6_) && restartCallback_)
         tryCatchLog([&]{ restartCallback_(settings); });
 }
 
@@ -127,7 +132,8 @@ void ServerImpl::doStop()
     assert(requestMap_.empty());
     assert(eventStreamResponses_.empty());
 
-    host_.reset();
+    hostV4_.reset();
+    hostV6_.reset();
 }
 
 void ServerImpl::shutdown()

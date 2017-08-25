@@ -33,7 +33,7 @@ void EvhtpHost::bind(const char* address, int port, int backlog)
     if (ret < 0)
     {
         throw std::runtime_error(formatString(
-            "failed to bind to address %s:%d: %s",
+            "failed to bind to address [%s]:%d: %s",
             address,
             port,
             formatError(errno).c_str()));

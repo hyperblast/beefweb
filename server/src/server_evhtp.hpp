@@ -40,7 +40,7 @@ public:
 
 private:
     EventPtr createEvent(EventCallback cb, int prio = 1, int events = 0);
-    EvhtpHostPtr createHost(const SettingsData& settings);
+    EvhtpHostPtr createHost(const char* address, int port);
     RequestSharedPtr createRequest(EvhtpRequest* evreq);
 
     void runThread();
@@ -69,7 +69,8 @@ private:
     ServerRestartCallback restartCallback_;
     EventBasePtr eventBase_;
     std::unique_ptr<EventBaseWorkQueue> ioQueue_;
-    EvhtpHostPtr host_;
+    EvhtpHostPtr hostV4_;
+    EvhtpHostPtr hostV6_;
     std::mutex commandMutex_;
     EventPtr commandEvent_;
     ServerCommand pendingCommand_;
