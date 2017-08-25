@@ -5,6 +5,9 @@ script: scripts/travis-build.sh
 compiler:
 - gcc
 - clang
+env:
+- CFLAGS= CXXFLAGS=
+- CFLAGS=-m32 CXXFLAGS=-m32
 addons:
   apt:
     sources:
