@@ -3,7 +3,6 @@ Web user interface and HTTP API plugin for DeaDBeeF player
 
 [![License](https://img.shields.io/github/license/hyperblast/beefweb.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/hyperblast/beefweb.svg?branch=master)](https://travis-ci.org/hyperblast/beefweb)
-[![Development builds](https://img.shields.io/badge/development-builds-orange.svg)](https://hyperblast.org/beefweb/builds)
 
 ### Features
 - Lightweight web user interface
@@ -43,3 +42,11 @@ If you've enabled remote connections on plugin configuration screen you'll be ab
 
 To allow browsing and adding files via web interface
 specify music directories in plugin configuration screen (multiple entries are separated with `;`).
+
+### Development builds
+
+Development builds are [available](https://hyperblast.org/beefweb/builds).
+
+### HTTP API
+
+Swagger API definition is in progress. [Check it out](https://hyperblast.org/beefweb/api).
