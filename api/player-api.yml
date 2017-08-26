@@ -1,0 +1,207 @@
+swagger: '2.0'
+
+info:
+  title: Player API
+  version: '0.1'
+
+host: localhost:8880
+basePath: /api
+
+produces:
+- application/json
+
+tags:
+- name: player
+  description: Player APIs
+- name: playlist
+  description: Playlist APIs
+
+paths:
+
+  /player:
+    get:
+      operationId: getPlayerState
+      summary: Get player state
+      tags: [ player ]
+      parameters:
+      - name: columns
+        in: query
+        description: Active item columns to return
+        type: array
+        items:
+          type: string
+        collectionFormat: csv
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              player:
+                $ref: '#/definitions/PlayerState'
+    post:
+      operationId: setPlayerState
+      summary: Set player state
+      tags: [ player ]
+      parameters:
+      - name: volumeDb
+        description: New volume dB value
+        in: query
+        type: number
+      - name: volumeAmp
+        description: New volume amp value
+        in: query
+        type: number
+      - name: isMuted
+        description: New mute state
+        in: query
+        type: boolean
+      - name: position
+        description: New absolute playback position (milliseconds)
+        in: query
+        type: number
+      - name: relativePosition
+        description: New relative playback position (milliseconds)
+        in: query
+        type: number
+      - name: loop
+        description: New loop mode
+        in: query
+        type: string
+      - name: order
+        description: New playback order
+        in: query
+        type: string
+      responses:
+        200:
+          description: Success
+
+  /playlists:
+    get:
+      operationId: getPlaylists
+      summary: Get playlists
+      tags: [ playlist ]
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              playlists:
+                type: array
+                items:
+                  $ref: '#/definitions/PlaylistInfo'
+
+  /playlists/{playlistId}/items/{range}:
+    get:
+      operationId: getPlaylistItems
+      summary: Get playlist items
+      tags: [ playlist ]
+      parameters:
+      - name: playlistId
+        description: playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: range
+        description: playlist item range in form offset:count
+        in: path
+        required: true
+        type: string
+      - name: columns
+        description: Item columns to return
+        in: query
+        required: true
+        type: array
+        items:
+          type: string
+        collectionFormat: csv
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              playlists:
+                type: array
+                items:
+                  $ref: '#/definitions/PlaylistItemInfo'
+
+definitions:
+
+  PlaybackState:
+    type: string
+    enum: [ stopped, playing, paused ]
+
+  LoopMode:
+    type: string
+    enum: [ none, single, all ]
+
+  PlaybackOrder:
+    type: string
+    enum: [ linear, random, shuffleAlbums, shuffleTracks ]
+
+  PlayerState:
+    type: object
+    properties:
+      activeItem:
+        type: object
+        properties:
+          playlistId:
+            type: string
+          playlistIndex:
+            type: number
+          index:
+            type: number
+          position:
+            type: number
+          duration:
+            type: number
+          columns:
+            type: array
+            items:
+              type: string
+      playbackState:
+        $ref: '#/definitions/PlaybackState'
+      volume:
+        type: object
+        properties:
+          amp:
+            type: number
+          db:
+            type: number
+          dbMin:
+            type: number
+          isMuted:
+            type: boolean
+      options:
+        type: object
+        properties:
+          loop:
+            $ref: '#/definitions/LoopMode'
+          order:
+            $ref: '#/definitions/PlaybackOrder'
+
+  PlaylistInfo:
+    type: object
+    properties:
+      id:
+        type: string
+      index:
+        type: number
+      title:
+        type: string
+      isCurrent:
+        type: boolean
+      itemCount:
+        type: number
+      totalTime:
+        type: number
+
+  PlaylistItemInfo:
+    type: object
+    properties:
+      columns:
+        type: array
+        items:
+          type: string
