@@ -175,6 +175,63 @@ paths:
                 items:
                   $ref: '#/definitions/PlaylistInfo'
 
+  /playlists/add:
+    post:
+      operationId: addPlaylist
+      summary: Add playlist
+      tags: [ playlists ]
+      parameters:
+      - name: index
+        description: Position to add playlist at.
+          By default playlist is added to the last position
+        in: query
+        required: false
+        type: number
+      - name: title
+        description: New playlist title
+        in: query
+        required: false
+        type: string
+      responses:
+        204:
+          description: Success
+
+  /playlists/remove/{playlistId}:
+    post:
+      operationId: removePlaylist
+      summary: Remove playlist
+      tags: [ playlists ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      responses:
+        204:
+          description: Success
+
+  /playlists/move/{playlistId}/{index}:
+    post:
+      operationId: movePlaylist
+      summary: Move playlist to new position
+      tags: [ playlists ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: index
+        description: Target position.
+          Use negative value to move to the last position
+        in: path
+        required: true
+        type: string
+      responses:
+        204:
+          description: Success
+
   /playlists/{playlistId}/items/{range}:
     get:
       operationId: getPlaylistItems
@@ -210,6 +267,193 @@ paths:
                 items:
                   $ref: '#/definitions/PlaylistItemInfo'
 
+  /playlists/{playlistId}/clear:
+    post:
+      operationId: clearPlaylist
+      summary: Clear playlist
+      tags: [ playlists ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      responses:
+        204:
+          description: Success
+
+  /playlists/{playlistId}/items/add:
+    post:
+      operationId: addPlaylistItems
+      summary: Add playlist items
+      tags: [ playlists ]
+      consumes: [ application/json ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: index
+        description: Position to add items at
+        in: query
+        type: number
+      - name: async
+        description: Process request asynchronously
+        in: query
+        type: boolean
+      - name: content
+        in: body
+        description: Items to add
+        required: true
+        schema:
+          $ref: '#/definitions/AddItemsRequest'
+      responses:
+        202:
+          description: Asynchronous request accepted for processing
+        204:
+          description: Success
+
+  /playlists/{playlistId}/items/copy:
+    post:
+      operationId: copyPlaylistItems
+      summary: Copy playlist items
+      tags: [ playlists ]
+      consumes: [ application/json ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: targetIndex
+        description: Position to copy items to.
+          Items are copied to the end of the playlist by default
+        in: query
+        type: number
+      - name: content
+        in: body
+        description: Indexes of items to copy
+        required: true
+        schema:
+          $ref: '#/definitions/ItemIndexesRequest'
+      responses:
+        204:
+          description: Success
+
+  /playlists/{sourceId}/{targetId}/items/copy:
+    post:
+      operationId: copyPlaylistItemsEx
+      summary: Copy playlist items between playlists
+      tags: [ playlists ]
+      consumes: [ application/json ]
+      parameters:
+      - name: sourceId
+        description: Source playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: targetId
+        description: Target playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: targetIndex
+        description: Playlist position to copy items to.
+          Items are copied to the end of the playlist by default
+        in: query
+        type: number
+      - name: content
+        in: body
+        description: Indexes of items to copy
+        required: true
+        schema:
+          $ref: '#/definitions/ItemIndexesRequest'
+      responses:
+        204:
+          description: Success
+
+  /playlists/{playlistId}/items/move:
+    post:
+      operationId: movePlaylistItems
+      summary: Move playlist items
+      tags: [ playlists ]
+      consumes: [ application/json ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: targetIndex
+        description: Position to move items to.
+          Items are moved to the end of the playlist by default
+        in: query
+        type: number
+      - name: content
+        in: body
+        description: Indexes of items to move
+        required: true
+        schema:
+          $ref: '#/definitions/ItemIndexesRequest'
+      responses:
+        204:
+          description: Success
+
+  /playlists/{sourceId}/{targetId}/items/move:
+    post:
+      operationId: movePlaylistItemsEx
+      summary: Move playlist items between playlists
+      tags: [ playlists ]
+      consumes: [ application/json ]
+      parameters:
+      - name: sourceId
+        description: Source playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: targetId
+        description: Target playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: targetIndex
+        description: Position to move items to.
+          Items are moved to the end of the playlist by default
+        in: query
+        type: number
+      - name: content
+        in: body
+        description: Indexes of items to move
+        required: true
+        schema:
+          $ref: '#/definitions/ItemIndexesRequest'
+      responses:
+        204:
+          description: Success
+
+  /playlists/{playlistId}/items/remove:
+    post:
+      operationId: removePlaylistItems
+      summary: Remove playlist items
+      tags: [ playlists ]
+      consumes: [ application/json ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: content
+        in: body
+        description: Indexes of items to remove
+        required: true
+        schema:
+          $ref: '#/definitions/ItemIndexesRequest'
+      responses:
+        204:
+          description: Success
+
   /playlists/{playlistId}/items/sort:
     post:
       operationId: sortPlaylistItems
@@ -224,17 +468,14 @@ paths:
       - name: by
         description: Expression to sort by (e.g. %title%)
         in: query
-        required: false
         type: string
       - name: desc
         description: Sort in descending order
         in: query
-        required: false
         type: boolean
       - name: random
         description: Sort randomly
         in: query
-        required: false
         type: boolean
       responses:
         204:
@@ -318,3 +559,19 @@ definitions:
         type: array
         items:
           type: string
+
+  AddItemsRequest:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          type: string
+
+  ItemIndexesRequest:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          type: number
