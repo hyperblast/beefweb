@@ -13,11 +13,6 @@ set(
     "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--no-undefined -Wl,--as-needed"
 )
 
-add_definitions(
-    -D_GNU_SOURCE=1
-    -D_FILE_OFFSET_BITS=64
-)
-
 if(ENABLE_WERROR)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 endif()

@@ -8,7 +8,7 @@ option(ENABLE_TESTS     "Build tests" OFF)
 option(ENABLE_WERROR    "Treat warnings as errors" OFF)
 option(USE_SYSTEM_LIBS  "Build with system libraries" OFF)
 
-set(COMMON_C_FLAGS    "-fPIC -pthread")
+set(COMMON_C_FLAGS    "-fPIC -pthread -D_GNU_SOURCE=1 -D_FILE_OFFSET_BITS=64")
 set(COMMON_CXX_FLAGS  "${COMMON_C_FLAGS}")
 
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
