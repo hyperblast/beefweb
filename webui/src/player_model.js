@@ -65,7 +65,7 @@ export default class PlayerModel extends EventEmitter
 
     setPosition(value)
     {
-        this.client.setPlaybackPosition(Math.round(value * 1000));
+        this.client.setPlaybackPosition(value);
     }
 
     update(playerInfo)

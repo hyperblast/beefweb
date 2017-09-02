@@ -171,7 +171,7 @@ bool PlayerImpl::setMuted(Switch value)
     return true;
 }
 
-bool PlayerImpl::seekAbsolute(int32_t offsetMs)
+bool PlayerImpl::seekAbsolute(double offsetSeconds)
 {
     PlaylistLockGuard lock(playlistMutex_);
 
@@ -179,11 +179,11 @@ bool PlayerImpl::seekAbsolute(int32_t offsetMs)
     if (!item)
         return false;
 
-    ddbApi->sendmessage(DB_EV_SEEK, 0, static_cast<uint32_t>(offsetMs), 0);
+    ddbApi->sendmessage(DB_EV_SEEK, 0, static_cast<uint32_t>(offsetSeconds * 1000), 0);
     return true;
 }
 
-bool PlayerImpl::seekRelative(int32_t offsetMs)
+bool PlayerImpl::seekRelative(double offsetSeconds)
 {
     PlaylistLockGuard lock(playlistMutex_);
 
@@ -192,7 +192,7 @@ bool PlayerImpl::seekRelative(int32_t offsetMs)
         return false;
 
     float currentPos = ddbApi->streamer_get_playpos();
-    uint32_t newPos = static_cast<uint32_t>(currentPos * 1000 + offsetMs);
+    uint32_t newPos = static_cast<uint32_t>((currentPos + offsetSeconds) * 1000);
     ddbApi->sendmessage(DB_EV_SEEK, 0, newPos, 0);
     return true;
 }

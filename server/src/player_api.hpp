@@ -208,8 +208,8 @@ public:
     virtual void togglePause() = 0;
 
     virtual bool setMuted(Switch val) = 0;
-    virtual bool seekAbsolute(int32_t offsetMs) = 0;
-    virtual bool seekRelative(int32_t offsetMs) = 0;
+    virtual bool seekAbsolute(double offsetSeconds) = 0;
+    virtual bool seekRelative(double offsetSeconds) = 0;
     virtual void setVolumeDb(double val) = 0;
     virtual void setVolumeAmp(double val) = 0;
 

@@ -33,10 +33,10 @@ void PlayerController::setState()
     if (auto isMuted = optionalParam<Switch>("isMuted"))
         player_->setMuted(*isMuted);
 
-    if (auto position = optionalParam<int32_t>("position"))
+    if (auto position = optionalParam<double>("position"))
         player_->seekAbsolute(*position);
 
-    if (auto relativePosition = optionalParam<int32_t>("relativePosition"))
+    if (auto relativePosition = optionalParam<double>("relativePosition"))
         player_->seekRelative(*relativePosition);
 
     for (auto option : player_->options())

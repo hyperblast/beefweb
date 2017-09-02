@@ -28,8 +28,8 @@ public:
     virtual void togglePause() override;
 
     virtual bool setMuted(Switch val) override;
-    virtual bool seekAbsolute(int32_t offsetMs) override;
-    virtual bool seekRelative(int32_t offsetMs) override;
+    virtual bool seekAbsolute(double offsetSeconds) override;
+    virtual bool seekRelative(double offsetSeconds) override;
     virtual void setVolumeDb(double val) override;
     virtual void setVolumeAmp(double val) override;
 

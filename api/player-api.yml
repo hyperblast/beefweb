@@ -57,11 +57,11 @@ paths:
         in: query
         type: boolean
       - name: position
-        description: New absolute playback position (milliseconds)
+        description: New absolute playback position (seconds)
         in: query
         type: number
       - name: relativePosition
-        description: New relative playback position (milliseconds)
+        description: New relative playback position (seconds)
         in: query
         type: number
       - name: loop
