@@ -76,6 +76,89 @@ paths:
         200:
           description: Success
 
+  /player/play:
+    post:
+      operationId: playCurrent
+      summary: Play current item
+      tags: [ player ]
+      responses:
+        204:
+          description: Success
+
+  /player/play/{playlistId}/{index}:
+    post:
+      operationId: playItem
+      summary: Play specific playlist item
+      tags: [ player ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: index
+        description: Item index
+        in: path
+        required: true
+        type: string
+      responses:
+        204:
+          description: Success
+
+  /player/play/random:
+    post:
+      operationId: playRandom
+      summary: Play random item in currently played playlist
+      tags: [ player ]
+      responses:
+        204:
+          description: Success
+
+  /player/next:
+    post:
+      operationId: playNext
+      summary: Play next item in currently played playlist
+      tags: [ player ]
+      responses:
+        204:
+          description: Success
+
+  /player/previous:
+    post:
+      operationId: playPrevious
+      summary: Play previous item in currently played playlist
+      tags: [ player ]
+      responses:
+        204:
+          description: Success
+
+  /player/stop:
+    post:
+      operationId: stop
+      summary: Stop player
+      tags: [ player ]
+      responses:
+        204:
+          description: Success
+
+  /player/pause:
+    post:
+      operationId: pause
+      summary: Pause player
+      tags: [ player ]
+      responses:
+        204:
+          description: Success
+
+  /player/pause/toggle:
+    post:
+      operationId: togglePause
+      summary: Toggle pause state
+      tags: [ player ]
+      responses:
+        204:
+          description: Success
+
   /playlists:
     get:
       operationId: getPlaylists
@@ -154,7 +237,7 @@ paths:
         required: false
         type: boolean
       responses:
-        200:
+        204:
           description: Success
 
 definitions:
