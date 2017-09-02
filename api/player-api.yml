@@ -15,6 +15,8 @@ tags:
   description: Player APIs
 - name: playlists
   description: Playlist APIs
+- name: browser
+  description: File browser APIs
 
 paths:
 
@@ -481,6 +483,43 @@ paths:
         204:
           description: Success
 
+  /browser/roots:
+    get:
+      operationId: getFsRoots
+      summary: Get file system roots
+      tags: [ browser ]
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              roots:
+                type: array
+                items:
+                  $ref: '#/definitions/FileSystemEntry'
+
+  /browser/entries:
+    get:
+      operationId: getFsEntries
+      summary: Get file system entries
+      tags: [ browser ]
+      parameters:
+      - name: path
+        description: Directory path
+        in: query
+        type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              entries:
+                type: array
+                items:
+                  $ref: '#/definitions/FileSystemEntry'
+
 definitions:
 
   PlaybackState:
@@ -575,3 +614,23 @@ definitions:
         type: array
         items:
           type: number
+
+  FileSystemEntry:
+    type: object
+    properties:
+      name:
+        type: string
+        description: File name
+      path:
+        type: string
+        description: Full file path
+      type:
+        type: string
+        description: File type
+        enum: [ D, F ]
+      size:
+        type: number
+        description: File size in bytes
+      timestamp:
+        type: number
+        description: File timestamp (seconds since Unix epoch)
