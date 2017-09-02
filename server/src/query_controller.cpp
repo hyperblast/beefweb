@@ -95,7 +95,7 @@ void QueryController::listenForEvents(const EventSet& events)
 
 Json QueryController::eventsToJson(const EventSet& changeSet)
 {
-    Json obj;
+    Json obj = Json::object();
 
     if (changeSet.test(PlayerEvent::PLAYER_CHANGED))
         obj[PLAYER_KEY] = true;
@@ -111,7 +111,7 @@ Json QueryController::eventsToJson(const EventSet& changeSet)
 
 Json QueryController::stateToJson(const EventSet& changeSet)
 {
-    Json obj;
+    Json obj = Json::object();
 
     if (changeSet.test(PlayerEvent::PLAYER_CHANGED))
         obj[PLAYER_KEY] = *player_->queryPlayerState(trackQuery_.get());
