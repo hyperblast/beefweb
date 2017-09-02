@@ -35,6 +35,8 @@ public:
 
     void removeItems();
 
+    void sortItems();
+
     static void defineRoutes(Router* router, Player* player, SettingsStore* store);
 
 private:

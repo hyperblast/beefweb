@@ -65,6 +65,13 @@ public:
         const PlaylistRef& playlist,
         const std::vector<int32_t>& itemIndexes) override;
 
+    virtual void sortPlaylist(
+        const PlaylistRef& plref,
+        const std::string& expression,
+        bool descending) override;
+
+    virtual void sortPlaylistRandom(const PlaylistRef& plref) override;
+
     virtual TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) override;
 

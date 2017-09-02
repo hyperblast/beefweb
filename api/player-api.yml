@@ -13,7 +13,7 @@ produces:
 tags:
 - name: player
   description: Player APIs
-- name: playlist
+- name: playlists
   description: Playlist APIs
 
 paths:
@@ -80,7 +80,7 @@ paths:
     get:
       operationId: getPlaylists
       summary: Get playlists
-      tags: [ playlist ]
+      tags: [ playlists ]
       responses:
         200:
           description: Success
@@ -96,15 +96,15 @@ paths:
     get:
       operationId: getPlaylistItems
       summary: Get playlist items
-      tags: [ playlist ]
+      tags: [ playlists ]
       parameters:
       - name: playlistId
-        description: playlist id or index
+        description: Playlist id or index
         in: path
         required: true
         type: string
       - name: range
-        description: playlist item range in form offset:count
+        description: Playlist item range in form offset:count
         in: path
         required: true
         type: string
@@ -126,6 +126,36 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/PlaylistItemInfo'
+
+  /playlists/{playlistId}/items/sort:
+    post:
+      operationId: sortPlaylistItems
+      summary: Sort playlist items
+      tags: [ playlists ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: by
+        description: Expression to sort by (e.g. %title%)
+        in: query
+        required: false
+        type: string
+      - name: desc
+        description: Sort in descending order
+        in: query
+        required: false
+        type: boolean
+      - name: random
+        description: Sort randomly
+        in: query
+        required: false
+        type: boolean
+      responses:
+        200:
+          description: Success
 
 definitions:
 

@@ -244,6 +244,13 @@ public:
         const PlaylistRef& playlist,
         const std::vector<int32_t>& itemIndexes) = 0;
 
+    virtual void sortPlaylist(
+        const PlaylistRef& plref,
+        const std::string& expression,
+        bool descending) = 0;
+
+    virtual void sortPlaylistRandom(const PlaylistRef& plref) = 0;
+
     virtual TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) = 0;
 

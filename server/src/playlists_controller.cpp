@@ -172,6 +172,22 @@ void PlaylistsController::removeItems()
         param<std::vector<int32_t>>("items"));
 }
 
+void PlaylistsController::sortItems()
+{
+    auto playlist = param<PlaylistRef>("plref");
+
+    if (optionalParam<bool>("random", false))
+    {
+        player_->sortPlaylistRandom(playlist);
+        return;
+    }
+
+    player_->sortPlaylist(
+        playlist,
+        param<std::string>("by"),
+        optionalParam<bool>("desc", false));
+}
+
 void PlaylistsController::defineRoutes(Router* router, Player* player, SettingsStore* store)
 {
     auto routes = router->defineRoutes<PlaylistsController>();
@@ -199,6 +215,7 @@ void PlaylistsController::defineRoutes(Router* router, Player* player, SettingsS
     routes.post(":plref/items/move", &PlaylistsController::moveItemsInPlaylist);
     routes.post(":plref/items/copy", &PlaylistsController::copyItemsInPlaylist);
     routes.post(":plref/items/remove", &PlaylistsController::removeItems);
+    routes.post(":plref/items/sort", &PlaylistsController::sortItems);
 
     routes.post(":from/:to/items/move", &PlaylistsController::moveItemsBetweenPlaylists);
     routes.post(":from/:to/items/copy", &PlaylistsController::copyItemsBetweenPlaylists);

@@ -259,6 +259,23 @@ void PlayerImpl::removePlaylistItems(
     }
 }
 
+void PlayerImpl::sortPlaylist(const PlaylistRef& plref, const std::string& expression, bool descending)
+{
+    PlaylistLockGuard lock(playlistMutex_);
+    PlaylistPtr playlist = playlists_.resolve(plref);
+    int order = descending ? DDB_SORT_DESCENDING : DDB_SORT_ASCENDING;
+    ddbApi->plt_sort_v2(playlist.get(), PL_MAIN, -1, expression.c_str(), order);
+    endModifyPlaylist(playlist.get());
+}
+
+void PlayerImpl::sortPlaylistRandom(const PlaylistRef& plref)
+{
+    PlaylistLockGuard lock(playlistMutex_);
+    PlaylistPtr playlist = playlists_.resolve(plref);
+    ddbApi->plt_sort_v2(playlist.get(), PL_MAIN, -1, nullptr, DDB_SORT_RANDOM);
+    endModifyPlaylist(playlist.get());
+}
+
 PlaylistQueryImpl::PlaylistQueryImpl(
     const PlaylistRef& plrefVal,
     const Range& rangeVal,
