@@ -52,6 +52,7 @@ set(
     controller.hpp
     defines.hpp
     file_system.cpp file_system.hpp
+    fnv_hash.hpp
     host.cpp host.hpp
     http.cpp http.hpp
     json.hpp
@@ -88,6 +89,7 @@ if(ENABLE_TESTS)
     set(
         TEST_SOURCES
         run_tests.cpp
+        fnv_hash_tests.cpp
         router_tests.cpp
         server_tests.cpp
     )
