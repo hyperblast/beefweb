@@ -5,12 +5,19 @@
 namespace msrv {
 
 Request::Request()
-    : id(0), method(HttpMethod::GET), isProcessed_(false)
+    : id(0),
+      method(HttpMethod::GET),
+      isProcessed_(false),
+      isHandlerExecuted_(false)
 {
 }
 
 Request::Request(HttpMethod methodVal, std::string pathVal)
-    : id(0), method(methodVal), path(std::move(pathVal)), isProcessed_(false)
+    : id(0),
+      method(methodVal),
+      path(std::move(pathVal)),
+      isProcessed_(false),
+      isHandlerExecuted_(false)
 {
 }
 
@@ -23,32 +30,12 @@ void Request::setErrorResponse(std::string message, std::string param)
     response = Response::error(HttpStatus::S_400_BAD_REQUEST, std::move(message), std::move(param));
 }
 
-void Request::process()
+void Request::executeHandler()
 {
-    assert(!isProcessed());
     assert(handler);
-
-    try
-    {
-        response = handler->execute();
-    }
-    catch (InvalidRequestException& ex)
-    {
-        if (!response || isSuccessStatus(response->status))
-            response = Response::error(HttpStatus::S_400_BAD_REQUEST, ex.what());
-    }
-    catch (std::exception& ex)
-    {
-        logError("%s", ex.what());
-        response = Response::error(HttpStatus::S_500_SERVER_ERROR, ex.what());
-    }
-    catch (...)
-    {
-        logError("unknown error");
-        response = Response::error(HttpStatus::S_500_SERVER_ERROR, "unknown error");
-    }
-
-    setProcessed();
+    assert(!isHandlerExecuted_);
+    isHandlerExecuted_ = true;
+    response = handler->execute();
 }
 
 RequestHandler::RequestHandler()

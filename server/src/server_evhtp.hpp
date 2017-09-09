@@ -30,6 +30,7 @@ class ServerImpl : public Server
 public:
     ServerImpl(
         const Router* router,
+        const RequestFilterChain* filters,
         WorkQueue* defaultWorkQueue,
         ServerRestartCallback restartCallback);
 
@@ -63,6 +64,7 @@ private:
     }
 
     const Router* router_;
+    const RequestFilterChain* filters_;
     WorkQueue* defaultWorkQueue_;
     int64_t lastRequestId_;
 

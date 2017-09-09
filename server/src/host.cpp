@@ -11,6 +11,8 @@ namespace msrv {
 Host::Host(Player* player)
     : player_(player)
 {
+    filters_.addFilter(RequestFilterPtr(new ExecuteHandlerFilter()));
+
     ctmap_.addDefaults();
 
     ArtworkController::defineRoutes(&router_, player_, this, &ctmap_);
@@ -20,8 +22,9 @@ Host::Host(Player* player)
     PlaylistsController::defineRoutes(&router_, player_, this);
     QueryController::defineRoutes(&router_, player_, &dispatcher_);
 
-    server_ = Server::createDefault(
+    server_ = Server::create(
         &router_,
+        &filters_,
         &workQueue_,
         [this] (const SettingsData& settings) { handleServerRestart(settings); });
 

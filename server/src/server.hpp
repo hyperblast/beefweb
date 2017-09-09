@@ -11,6 +11,7 @@ class WorkQueue;
 class Server;
 class Router;
 class SettingsData;
+class RequestFilterChain;
 
 using ServerPtr = std::unique_ptr<Server>;
 using ServerRestartCallback = std::function<void(const SettingsData&)>;
@@ -18,11 +19,12 @@ using ServerRestartCallback = std::function<void(const SettingsData&)>;
 class Server
 {
 public:
-    Server() = default;
-    virtual ~Server() = default;
+    Server();
+    virtual ~Server();
 
-    static ServerPtr createDefault(
+    static ServerPtr create(
         const Router* router,
+        const RequestFilterChain* filters,
         WorkQueue* defaultWorkQueue,
         ServerRestartCallback restartCallback);
 

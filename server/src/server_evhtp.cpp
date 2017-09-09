@@ -1,6 +1,7 @@
 #include "server_evhtp.hpp"
 #include "http.hpp"
 #include "router.hpp"
+#include "request_filter.hpp"
 #include "log.hpp"
 #include "settings.hpp"
 #include "system.hpp"
@@ -23,9 +24,11 @@ namespace server_evhtp {
 
 ServerImpl::ServerImpl(
     const Router* router,
+    const RequestFilterChain* filters,
     WorkQueue* defaultWorkQueue,
     ServerRestartCallback restartCallback)
     : router_(router),
+      filters_(filters),
       defaultWorkQueue_(defaultWorkQueue),
       lastRequestId_(0),
       restartCallback_(std::move(restartCallback)),
@@ -172,7 +175,7 @@ void ServerImpl::processRequest(EvhtpRequest* evreq)
         if (!request1)
             return;
 
-        request1->process();
+        filters_->execute(request1.get());
 
         ioQueue_->enqueue([this, requestWeak]
         {

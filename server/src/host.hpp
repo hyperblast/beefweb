@@ -8,6 +8,7 @@
 #include "router.hpp"
 #include "settings.hpp"
 #include "work_queue.hpp"
+#include "request_filter.hpp"
 
 namespace msrv {
 
@@ -28,6 +29,7 @@ private:
     Player* player_;
     EventDispatcher dispatcher_;
     Router router_;
+    RequestFilterChain filters_;
     ImmediateWorkQueue workQueue_;
     ServerPtr server_;
     SettingsData settings_;

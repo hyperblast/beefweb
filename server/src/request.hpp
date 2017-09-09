@@ -49,7 +49,7 @@ public:
     bool isProcessed() const { return isProcessed_; }
     void setProcessed() { isProcessed_ = true; }
 
-    void process();
+    void executeHandler();
 
 private:
     template<typename T>
@@ -64,6 +64,7 @@ private:
     void setErrorResponse(std::string message, std::string param);
 
     bool isProcessed_;
+    bool isHandlerExecuted_;
 
     MSRV_NO_COPY_AND_ASSIGN(Request);
 };

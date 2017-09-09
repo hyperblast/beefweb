@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "router.hpp"
+#include "request_filter.hpp"
 #include "work_queue.hpp"
 #include "settings.hpp"
 
@@ -16,9 +17,11 @@ TEST_CASE("server works")
 
     Router router;
     ImmediateWorkQueue workQueue;
+    RequestFilterChain filters;
+    filters.addFilter(RequestFilterPtr(new ExecuteHandlerFilter()));
 
-    ServerPtr server = Server::createDefault(
-        &router, &workQueue, [&startedPromise] (const SettingsData& s) {
+    ServerPtr server = Server::create(
+        &router, &filters, &workQueue, [&startedPromise] (const SettingsData& s) {
             startedPromise.set_value(s.musicDirs.front());
         });
 

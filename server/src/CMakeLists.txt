@@ -65,6 +65,7 @@ set(
     playlists_controller.cpp playlists_controller.hpp
     query_controller.cpp query_controller.hpp
     request.cpp request.hpp
+    request_filter.cpp request_filter.hpp
     response.cpp response.hpp
     router.cpp router.hpp
     server.cpp server.hpp
