@@ -333,6 +333,7 @@ RequestSharedPtr ServerImpl::createRequest(EvhtpRequest* evreq)
     }
 
     req->path = evreq->path();
+    req->headers = evreq->inputHeaders()->toMap<HttpKeyValueMap>();
     req->queryParams = evreq->queryParams()->toMap<HttpKeyValueMap>();
 
     if (evreq->inputBuffer()->length() > 0)

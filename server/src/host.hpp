@@ -16,7 +16,7 @@ class Host : SettingsStore
 {
 public:
     Host(Player* player);
-    ~Host();
+    virtual ~Host();
 
     void reconfigure(const SettingsData& settings);
 

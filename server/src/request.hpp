@@ -34,6 +34,7 @@ public:
     int64_t id;
     HttpMethod method;
     std::string path;
+    HttpKeyValueMap headers;
     HttpKeyValueMap routeParams;
     HttpKeyValueMap queryParams;
     Json postData;

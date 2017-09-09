@@ -11,6 +11,7 @@ namespace msrv {
 Host::Host(Player* player)
     : player_(player)
 {
+    filters_.addFilter(RequestFilterPtr(new CacheSupportFilter));
     filters_.addFilter(RequestFilterPtr(new ExecuteHandlerFilter()));
 
     ctmap_.addDefaults();
