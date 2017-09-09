@@ -106,7 +106,7 @@ export default class PlaylistModel extends EventEmitter
 
     handleItemsUpdate(result)
     {
-        if (result)
+        if (result && result.playlistItems)
             this.setPlaylistItems(result.playlistItems);
     }
 
