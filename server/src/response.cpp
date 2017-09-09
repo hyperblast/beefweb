@@ -21,9 +21,20 @@ std::unique_ptr<SimpleResponse> Response::custom(HttpStatus status)
     return std::unique_ptr<SimpleResponse>(new SimpleResponse(status));
 }
 
-std::unique_ptr<FileResponse> Response::file(FileHandle file, std::string contentType)
+std::unique_ptr<Response> Response::file(Path path, std::string contentType)
 {
-    return std::unique_ptr<FileResponse>(new FileResponse(std::move(file), std::move(contentType)));
+    auto handle = openFile(path);
+    if (!handle)
+        return error(HttpStatus::S_404_NOT_FOUND, "requested file is not found");
+
+    return file(std::move(path), std::move(handle), std::move(contentType));
+}
+
+std::unique_ptr<FileResponse> Response::file(Path path, FileHandle handle, std::string contentType)
+{
+    auto info = queryFileInfo(handle);
+    return std::unique_ptr<FileResponse>(new FileResponse(
+        std::move(path), std::move(handle), std::move(contentType), std::move(info)));
 }
 
 std::unique_ptr<JsonResponse> Response::json(Json value)
@@ -79,10 +90,16 @@ void DataResponse::process(ResponseHandler* handler)
     handler->handleResponse(this);
 }
 
-FileResponse::FileResponse(FileHandle handleVal, std::string contentTypeVal)
+FileResponse::FileResponse(
+    Path pathVal,
+    FileHandle handleVal,
+    std::string contentTypeVal,
+    FileInfo infoVal)
     : Response(HttpStatus::S_200_OK),
+      path(std::move(pathVal)),
       handle(std::move(handleVal)),
-      contentType(std::move(contentTypeVal))
+      contentType(std::move(contentTypeVal)),
+      info(std::move(infoVal))
 {
 }
 

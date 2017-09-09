@@ -431,18 +431,18 @@ void ResponseFormatter::handleResponse(DataResponse* response)
 {
     evreq_->outputHeaders()->set("Content-Type", response->contentType);
     evreq_->outputHeaders()->set("Content-Length", toString(response->data.size()));
-    evreq_->outputBuffer()->write(response->data.data(), response->data.size());
+
+    if (response->data.size() > 0)
+        evreq_->outputBuffer()->write(response->data.data(), response->data.size());
 }
 
 void ResponseFormatter::handleResponse(FileResponse* response)
 {
-    auto fileInfo = queryFileInfo(response->handle);
-
     evreq_->outputHeaders()->set("Content-Type", response->contentType);
-    evreq_->outputHeaders()->set("Content-Length", toString(fileInfo.size));
+    evreq_->outputHeaders()->set("Content-Length", toString(response->info.size));
 
-    if (fileInfo.size > 0)
-        evreq_->outputBuffer()->writeFile(std::move(response->handle), 0, fileInfo.size);
+    if (response->info.size > 0)
+        evreq_->outputBuffer()->writeFile(std::move(response->handle), 0, response->info.size);
 }
 
 void ResponseFormatter::handleResponse(JsonResponse* response)

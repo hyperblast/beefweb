@@ -46,11 +46,7 @@ ResponsePtr ArtworkController::getArtwork()
                 return ResponsePtr(Response::error(HttpStatus::S_404_NOT_FOUND, "no artwork found"));
 
             auto path = pathFromUtf8(result.path);
-            FileHandle file = openFile(path);
-            if (!file)
-                return ResponsePtr(Response::error(HttpStatus::S_404_NOT_FOUND, "no artwork found"));
-
-            return ResponsePtr(Response::file(std::move(file), ctmap_->get(path)));
+            return Response::file(std::move(path), ctmap_->get(path));
         });
 
     return Response::async(std::move(responseFuture));

@@ -3,6 +3,7 @@
 #include "http.hpp"
 #include "json.hpp"
 #include "system.hpp"
+#include "file_system.hpp"
 
 #include <boost/thread/future.hpp>
 
@@ -33,7 +34,8 @@ public:
 
     static std::unique_ptr<SimpleResponse> ok();
     static std::unique_ptr<SimpleResponse> custom(HttpStatus status);
-    static std::unique_ptr<FileResponse> file(FileHandle file, std::string contentType);
+    static std::unique_ptr<Response> file(Path path, std::string contentType);
+    static std::unique_ptr<FileResponse> file(Path path, FileHandle handle, std::string contentType);
     static std::unique_ptr<JsonResponse> json(Json value);
     static std::unique_ptr<EventStreamResponse> eventStream(EventStreamSource source);
     static std::unique_ptr<AsyncResponse> async(ResponseFuture response);
@@ -86,13 +88,20 @@ public:
 class FileResponse : public Response
 {
 public:
-    FileResponse(FileHandle handleVal, std::string contentTypeVal);
+    FileResponse(
+        Path pathVal,
+        FileHandle handleVal,
+        std::string contentTypeVal,
+        FileInfo info);
+
     virtual ~FileResponse();
 
     virtual void process(ResponseHandler* handler) override;
 
+    const Path path;
     FileHandle handle;
-    std::string contentType;
+    const std::string contentType;
+    const FileInfo info;
 };
 
 class EventStreamResponse : public Response

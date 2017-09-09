@@ -28,11 +28,7 @@ ResponsePtr StaticController::getFile()
         path += "index.html";
 
     auto filePath = pathFromUtf8(staticDir) / pathFromUtf8(path);
-    auto file = openFile(filePath);
-    if (!file)
-        return Response::error(HttpStatus::S_404_NOT_FOUND);
-
-    return Response::file(std::move(file), ctmap_->get(filePath));
+    return Response::file(filePath, ctmap_->get(filePath));
 }
 
 void StaticController::defineRoutes(Router* router, SettingsStore* store, const ContentTypeMap* ctmap)
