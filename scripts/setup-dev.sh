@@ -26,5 +26,10 @@ if [ ! -e "$plugin_dir" ]; then
     mkdir -p "$plugin_dir"
 fi
 
-relink "$plugin_dir/$plugin_file" "$(pwd)/server/build/debug/src/deadbeef/$plugin_file"
-relink "$plugin_dir/$webui_root" "$(pwd)/webui/build/debug"
+relink \
+    "$plugin_dir/$plugin_file" \
+    "$(pwd)/server/build/debug/src/plugin_deadbeef/$plugin_file"
+    
+relink \
+    "$plugin_dir/$webui_root" \
+    "$(pwd)/webui/build/debug"

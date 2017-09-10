@@ -2,7 +2,7 @@
 #include "add_items_scope.hpp"
 
 namespace msrv {
-namespace deadbeef_plugin {
+namespace plugin_deadbeef {
 
 class PlaylistQueryImpl : public PlaylistQuery
 {

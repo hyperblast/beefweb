@@ -6,7 +6,7 @@
 #define CONF_MUSIC_DIRS     MSRV_PROJECT_ID ".music_dirs"
 
 namespace msrv {
-namespace deadbeef_plugin {
+namespace plugin_deadbeef {
 
 namespace {
 

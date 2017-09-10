@@ -1,14 +1,15 @@
 #include "server_evhtp.hpp"
-#include "http.hpp"
-#include "router.hpp"
-#include "request_filter.hpp"
-#include "log.hpp"
-#include "settings.hpp"
-#include "system.hpp"
-#include "file_system.hpp"
-#include "util.hpp"
 #include "libevent.hpp"
 #include "libevhtp.hpp"
+
+#include "../http.hpp"
+#include "../router.hpp"
+#include "../request_filter.hpp"
+#include "../log.hpp"
+#include "../settings.hpp"
+#include "../system.hpp"
+#include "../file_system.hpp"
+#include "../util.hpp"
 
 #include <assert.h>
 #include <stdio.h>
@@ -20,6 +21,17 @@
 #include <unordered_map>
 
 namespace msrv {
+
+ServerPtr Server::create(
+    const Router *router,
+    const RequestFilterChain* filters,
+    WorkQueue* defaultWorkQueue,
+    ServerRestartCallback restartCallback)
+{
+    return ServerPtr(new server_evhtp::ServerImpl(
+        router, filters, defaultWorkQueue, std::move(restartCallback)));
+}
+
 namespace server_evhtp {
 
 ServerImpl::ServerImpl(

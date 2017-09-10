@@ -1,9 +1,9 @@
 #pragma once
 
-#include "server.hpp"
-#include "http.hpp"
-#include "request.hpp"
-#include "response.hpp"
+#include "../server.hpp"
+#include "../http.hpp"
+#include "../request.hpp"
+#include "../response.hpp"
 #include "libevent.hpp"
 #include "libevhtp.hpp"
 
@@ -13,9 +13,6 @@
 
 namespace msrv {
 namespace server_evhtp {
-
-using namespace libevent;
-using namespace libevhtp;
 
 enum class ServerCommand
 {
@@ -77,7 +74,7 @@ private:
     EventPtr commandEvent_;
     ServerCommand pendingCommand_;
     std::unique_ptr<SettingsData> pendingSettings_;
-    std::unique_ptr<libevent::Event> pollEventSourcesEvent_;
+    std::unique_ptr<Event> pollEventSourcesEvent_;
     std::atomic_bool pollEventSourcesRequested_;
     EventPtr keepEventLoopEvent_;
     std::unordered_map<int64_t, EvhtpRequest*> evreqMap_;

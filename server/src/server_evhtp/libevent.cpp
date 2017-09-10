@@ -1,11 +1,11 @@
 #include "libevent.hpp"
-#include "log.hpp"
+#include "../log.hpp"
 
 #include <algorithm>
 #include <mutex>
 
 namespace msrv {
-namespace libevent {
+namespace server_evhtp {
 
 namespace { std::once_flag initThreadsOnce; }
 

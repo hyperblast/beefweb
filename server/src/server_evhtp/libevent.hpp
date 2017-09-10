@@ -1,9 +1,9 @@
 #pragma once
 
-#include "defines.hpp"
-#include "system.hpp"
-#include "util.hpp"
-#include "work_queue.hpp"
+#include "../defines.hpp"
+#include "../system.hpp"
+#include "../util.hpp"
+#include "../work_queue.hpp"
 
 #include <functional>
 #include <memory>
@@ -13,7 +13,7 @@
 #include <event2/thread.h>
 
 namespace msrv {
-namespace libevent {
+namespace server_evhtp {
 
 class Event;
 class EventBase;

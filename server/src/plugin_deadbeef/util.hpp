@@ -18,7 +18,7 @@
 #include <vector>
 
 namespace msrv {
-namespace deadbeef_plugin {
+namespace plugin_deadbeef {
 
 extern DB_functions_t* ddbApi;
 

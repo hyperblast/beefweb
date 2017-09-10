@@ -1,14 +1,14 @@
-#include "libevent.hpp"
 #include "libevhtp.hpp"
-#include "log.hpp"
+
+#include "../log.hpp"
 
 #include <stdint.h>
 #include <stddef.h>
 
 namespace msrv {
-namespace libevhtp {
+namespace server_evhtp {
 
-EvhtpHost::EvhtpHost(libevent::EventBase* base)
+EvhtpHost::EvhtpHost(EventBase* base)
     : base_(base), ptr_(nullptr), isBound_(false)
 {
     ptr_ = ::evhtp_new(base->ptr(), nullptr);

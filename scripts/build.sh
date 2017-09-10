@@ -96,7 +96,7 @@ pkg_tmp_dir=$pkg_build_dir/tmp
 
 server_src_dir=$(pwd)/server
 server_build_dir=$(pwd)/server/build/$config
-server_plugin_file=$server_build_dir/src/deadbeef/$plugin_file
+server_plugin_file=$server_build_dir/src/plugin_deadbeef/$plugin_file
 
 webui_src_dir=$(pwd)/webui
 webui_build_dir=$(pwd)/webui/build/$config

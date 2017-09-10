@@ -1,7 +1,7 @@
 #include "player.hpp"
 
 namespace msrv {
-namespace deadbeef_plugin {
+namespace plugin_deadbeef {
 
 class TrackQueryImpl : public TrackQuery
 {

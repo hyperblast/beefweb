@@ -1,7 +1,8 @@
 #pragma once
 
-#include "log.hpp"
-#include "util.hpp"
+#include "../log.hpp"
+#include "../util.hpp"
+
 #include "libevent.hpp"
 
 #include <stdint.h>
@@ -15,8 +16,7 @@ struct evhtp_s;
 struct evhtp_request_s;
 
 namespace msrv {
-
-namespace libevhtp {
+namespace server_evhtp {
 
 class EvhtpHost;
 class EvhtpRequest;
@@ -27,10 +27,10 @@ using EvhtpRequestCallback = std::function<void(EvhtpRequest*)>;
 class EvhtpHost
 {
 public:
-    explicit EvhtpHost(libevent::EventBase* base);
+    explicit EvhtpHost(EventBase* base);
     ~EvhtpHost();
 
-    libevent::EventBase* base() { return base_; }
+    EventBase* base() { return base_; }
     ::evhtp_s* ptr() { return ptr_; }
 
     void onNewRequest(EvhtpRequestCallback callback) { newRequestCallback_ = std::move(callback); }
@@ -40,7 +40,7 @@ public:
 private:
     static void handleNewRequest(evhtp_request_s*, void*);
 
-    libevent::EventBase* base_;
+    EventBase* base_;
     ::evhtp_s* ptr_;
     EvhtpRequestCallback newRequestCallback_;
     bool isBound_;
@@ -115,15 +115,15 @@ public:
     EvhtpKeyValueMap* inputHeaders() { return &inputHeaders_; }
     EvhtpKeyValueMap* outputHeaders() { return &outputHeaders_; }
 
-    libevent::Evbuffer* inputBuffer() { return &inputBuffer_; }
-    libevent::Evbuffer* outputBuffer() { return &outputBuffer_; }
+    Evbuffer* inputBuffer() { return &inputBuffer_; }
+    Evbuffer* outputBuffer() { return &outputBuffer_; }
 
     void onDestroy(EvhtpRequestCallback callback) { destroyCallback_ = std::move(callback); }
     void abort();
 
     void sendResponse(int status) { ::evhtp_send_reply(ptr(), status); }
     void sendResponseBegin(int status) { ::evhtp_send_reply_start(ptr(), status); }
-    void sendResponseBody(libevent::Evbuffer* buffer) { ::evhtp_send_reply_body(ptr(), buffer->ptr()); }
+    void sendResponseBody(Evbuffer* buffer) { ::evhtp_send_reply_body(ptr(), buffer->ptr()); }
     void sendResponseEnd() { ::evhtp_send_reply_end(ptr()); }
 
     int64_t id;
@@ -140,8 +140,8 @@ private:
     EvhtpKeyValueMap inputHeaders_;
     EvhtpKeyValueMap outputHeaders_;
 
-    libevent::Evbuffer inputBuffer_;
-    libevent::Evbuffer outputBuffer_;
+    Evbuffer inputBuffer_;
+    Evbuffer outputBuffer_;
 
     EvhtpRequestCallback destroyCallback_;
 };

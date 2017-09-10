@@ -25,27 +25,15 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
 endif()
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
-find_package(Libevent REQUIRED)
-find_package(Libevhtp REQUIRED)
 find_package(Nljson REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
-    ${LIBEVENT_INCLUDE_DIRS}
-    ${LIBEVHTP_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
 )
 
 set(
-    MAIN_LIBRARIES
-    dl rt m
-    ${Boost_LIBRARIES}
-    ${LIBEVHTP_LIBRARIES}
-    ${LIBEVENT_LIBRARIES}
-)
-
-set(
-    MAIN_SOURCES
+    CORE_SOURCES
     artwork_controller.cpp artwork_controller.hpp
     browser_controller.cpp browser_controller.hpp
     content_type_map.cpp content_type_map.hpp
@@ -56,8 +44,6 @@ set(
     host.cpp host.hpp
     http.cpp http.hpp
     json.hpp
-    libevent.cpp libevent.hpp
-    libevhtp.cpp libevhtp.hpp
     log.cpp log.hpp
     player_api.cpp player_api.hpp
     player_api_json.cpp player_api_json.hpp
@@ -70,7 +56,6 @@ set(
     response.cpp response.hpp
     router.cpp router.hpp
     server.cpp server.hpp
-    server_evhtp.cpp server_evhtp.hpp
     settings.cpp settings.hpp
     static_controller.cpp static_controller.hpp
     system.cpp system.hpp
@@ -79,13 +64,23 @@ set(
     work_queue.cpp work_queue.hpp
 )
 
-add_library(main OBJECT ${MAIN_SOURCES})
-add_dependencies(main deps)
+add_library(core OBJECT ${CORE_SOURCES})
 
-add_subdirectory(deadbeef)
+set_target_properties(
+    core PROPERTIES
+    INTERFACE_LINK_LIBRARIES "dl;rt;m;${Boost_LIBRARIES}"
+)
+
+add_dependencies(core deps)
+
+add_subdirectory(server_evhtp)
+add_subdirectory(plugin_deadbeef)
 
 if(ENABLE_TESTS)
 
+    find_package(Catch REQUIRED)
+    include_directories(${CATCH_INCLUDE_DIR})
+    
     set(
         TEST_SOURCES
         run_tests.cpp
@@ -94,10 +89,17 @@ if(ENABLE_TESTS)
         server_tests.cpp
     )
 
-    find_package(Catch REQUIRED)
-    include_directories(${CATCH_INCLUDE_DIR})
+    add_executable(
+        run_tests
+        ${TEST_SOURCES}
+        $<TARGET_OBJECTS:core>
+        $<TARGET_OBJECTS:server>
+    )
 
-    add_executable(run_tests ${TEST_SOURCES} $<TARGET_OBJECTS:main>)
-    target_link_libraries(run_tests ${MAIN_LIBRARIES})
+    target_link_libraries(
+        run_tests
+        $<TARGET_PROPERTY:core,INTERFACE_LINK_LIBRARIES>
+        $<TARGET_PROPERTY:server,INTERFACE_LINK_LIBRARIES>
+    )
 
 endif()
