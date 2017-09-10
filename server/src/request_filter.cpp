@@ -8,14 +8,6 @@ namespace msrv {
 
 namespace {
 
-namespace headers {
-
-const char IfNoneMatch[] = "If-None-Match";
-const char ETag[] = "ETag";
-const char CacheControl[] = "Cache-Control";
-
-}
-
 inline bool hasErrorResponse(Request* request)
 {
     return request->response && !isSuccessStatus(request->response->status);
@@ -84,7 +76,7 @@ RequestFilter::~RequestFilter() = default;
 
 void RequestFilter::execute(Request* request)
 {
-    guardedCall(request, [=]{ beginRequest(request); });
+    guardedCall(request, [=] { beginRequest(request); });
 
     if (request->isProcessed())
         return;
@@ -96,7 +88,7 @@ void RequestFilter::execute(Request* request)
 void RequestFilter::callNext(Request* request)
 {
     assert(next_);
-    guardedCall(request, [&]{ next_->execute(request); });
+    guardedCall(request, [&] { next_->execute(request); });
 }
 
 void RequestFilter::beginRequest(Request*) { }
@@ -121,7 +113,7 @@ void CacheSupportFilter::endRequest(Request* request)
         return;
 
     auto etagValue = getETag(fileResponse);
-    auto ifNoneMatchHeader = request->headers.find(headers::IfNoneMatch);
+    auto ifNoneMatchHeader = request->headers.find(HttpHeader::IF_NONE_MATCH);
 
     if (ifNoneMatchHeader != request->headers.end() &&
         ifNoneMatchHeader->second == etagValue)
@@ -130,8 +122,8 @@ void CacheSupportFilter::endRequest(Request* request)
         return;
     }
 
-    fileResponse->headers[headers::CacheControl] = "max-age=0, must-revalidate";
-    fileResponse->headers[headers::ETag] = etagValue;
+    fileResponse->headers[HttpHeader::CACHE_CONTROL] = "max-age=0, must-revalidate";
+    fileResponse->headers[HttpHeader::ETAG] = etagValue;
 }
 
 RequestFilterChain::RequestFilterChain() = default;
@@ -153,7 +145,7 @@ void RequestFilterChain::addFilter(RequestFilterPtr filter)
 void RequestFilterChain::execute(Request* request) const
 {
     assert(!filters_.empty());
-    guardedCall(request, [&]{ filters_.front()->execute(request); });
+    guardedCall(request, [&] { filters_.front()->execute(request); });
     request->setProcessed();
 }
 

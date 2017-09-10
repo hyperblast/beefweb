@@ -28,6 +28,13 @@ enum class HttpStatus
     S_501_NOT_IMPLEMENTED = 501,
 };
 
+struct HttpHeader
+{
+    static const char IF_NONE_MATCH[];
+    static const char ETAG[];
+    static const char CACHE_CONTROL[];
+};
+
 using HttpKeyValueMap = std::unordered_map<std::string, std::string>;
 
 std::string toString(HttpStatus status);

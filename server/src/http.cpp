@@ -3,6 +3,10 @@
 
 namespace msrv {
 
+const char HttpHeader::IF_NONE_MATCH[] = "If-None-Match";
+const char HttpHeader::ETAG[] = "ETag";
+const char HttpHeader::CACHE_CONTROL[] = "Cache-Control";
+
 std::string toString(HttpStatus status)
 {
     switch (status)
