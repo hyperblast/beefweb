@@ -1,5 +1,5 @@
 # beefweb
-Web interface and HTTP API plugin for [DeaDBeeF player](http://deadbeef.sourceforge.net/)
+Web interface and HTTP API plugin for [DeaDBeeF player](http://deadbeef.sourceforge.net/).
 
 [![License](https://img.shields.io/github/license/hyperblast/beefweb.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/hyperblast/beefweb.svg?branch=master)](https://travis-ci.org/hyperblast/beefweb)
