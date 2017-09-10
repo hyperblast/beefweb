@@ -27,12 +27,7 @@ public:
 protected:
     virtual void beginRequest(Request* request);
     virtual void endRequest(Request* request);
-
-    void callNext(Request* request)
-    {
-        assert(next_);
-        next_->execute(request);
-    }
+    void callNext(Request* request);
 
 private:
     RequestFilter* next_;

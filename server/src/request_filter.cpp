@@ -16,6 +16,50 @@ const char CacheControl[] = "Cache-Control";
 
 }
 
+inline bool hasErrorResponse(Request* request)
+{
+    return request->response && !isSuccessStatus(request->response->status);
+}
+
+inline bool hasInternalErrorResponse(Request* request)
+{
+    return request->response && request->response->status == HttpStatus::S_500_SERVER_ERROR;
+}
+
+template<typename Func>
+void guardedCall(Request* request, Func func)
+{
+    try
+    {
+        func();
+    }
+    catch (InvalidRequestException& ex)
+    {
+        if (!hasErrorResponse(request))
+            request->response = Response::error(HttpStatus::S_400_BAD_REQUEST, ex.what());
+
+        request->setProcessed();
+    }
+    catch (std::exception& ex)
+    {
+        logError("%s", ex.what());
+
+        if (!hasInternalErrorResponse(request))
+            request->response = Response::error(HttpStatus::S_500_SERVER_ERROR, ex.what());
+
+        request->setProcessed();
+    }
+    catch (...)
+    {
+        logError("unknown error");
+
+        if (!hasInternalErrorResponse(request))
+            request->response = Response::error(HttpStatus::S_500_SERVER_ERROR, "unknown error");
+
+        request->setProcessed();
+    }
+}
+
 std::string getETag(FileResponse* response)
 {
     const auto& pathString = response->path.string();
@@ -40,9 +84,19 @@ RequestFilter::~RequestFilter() = default;
 
 void RequestFilter::execute(Request* request)
 {
-    beginRequest(request);
+    guardedCall(request, [=]{ beginRequest(request); });
+
+    if (request->isProcessed())
+        return;
+
     callNext(request);
-    endRequest(request);
+    guardedCall(request, [=] { endRequest(request); });
+}
+
+void RequestFilter::callNext(Request* request)
+{
+    assert(next_);
+    guardedCall(request, [&]{ next_->execute(request); });
 }
 
 void RequestFilter::beginRequest(Request*) { }
@@ -99,27 +153,7 @@ void RequestFilterChain::addFilter(RequestFilterPtr filter)
 void RequestFilterChain::execute(Request* request) const
 {
     assert(!filters_.empty());
-
-    try
-    {
-        filters_.front()->execute(request);
-    }
-    catch (InvalidRequestException& ex)
-    {
-        if (!request->response || isSuccessStatus(request->response->status))
-            request->response = Response::error(HttpStatus::S_400_BAD_REQUEST, ex.what());
-    }
-    catch (std::exception& ex)
-    {
-        logError("%s", ex.what());
-        request->response = Response::error(HttpStatus::S_500_SERVER_ERROR, ex.what());
-    }
-    catch (...)
-    {
-        logError("unknown error");
-        request->response = Response::error(HttpStatus::S_500_SERVER_ERROR, "unknown error");
-    }
-
+    guardedCall(request, [&]{ filters_.front()->execute(request); });
     request->setProcessed();
 }
 
