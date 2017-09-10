@@ -38,3 +38,5 @@ target_link_libraries(
 set_target_properties(
     plugin_deadbeef PROPERTIES PREFIX "" OUTPUT_NAME "${PROJECT_ID}"
 )
+
+add_dependencies(plugin_deadbeef deps)
