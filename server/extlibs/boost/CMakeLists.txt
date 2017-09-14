@@ -13,17 +13,17 @@ else()
 endif()
 
 ExternalProject_Add(
-    boost
+    ext_boost
     PREFIX
-        ${DEPS_INSTALL_DIR}
+        ${EXTLIB_INSTALL_DIR}
     URL
         https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2
     URL_HASH
         SHA256=7bcc5caace97baa948931d712ea5f37038dbb1c5d89b43ad4def4ed7cb683332
     DOWNLOAD_DIR
-        ${DEPS_CACHE_DIR}/boost
+        ${EXTLIB_CACHE_DIR}/boost
     PATCH_COMMAND
-        ${DEPS_PATCHER} boost
+        ${EXTLIB_PATCHER} boost
     CONFIGURE_COMMAND
         <SOURCE_DIR>/bootstrap.sh
         --prefix=<INSTALL_DIR>
@@ -46,4 +46,4 @@ ExternalProject_Add(
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
 )
 
-add_dependencies(deps boost)
+add_dependencies(extlibs ext_boost)

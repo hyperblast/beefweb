@@ -71,7 +71,7 @@ set_target_properties(
     INTERFACE_LINK_LIBRARIES "dl;rt;m;${Boost_LIBRARIES}"
 )
 
-add_dependencies(core deps)
+add_dependencies(core extlibs)
 
 add_subdirectory(server_evhtp)
 add_subdirectory(plugin_deadbeef)

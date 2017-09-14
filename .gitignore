@@ -2,7 +2,7 @@ build/*
 tools/*
 
 server/build/*
-server/deps/_cache/*
+server/extlibs/.cache/*
 
 webui/build/*
 webui/node_modules/*

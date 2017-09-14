@@ -20,4 +20,4 @@ set_target_properties(
     INTERFACE_LINK_LIBRARIES "${LIBEVHTP_LIBRARIES};${LIBEVENT_LIBRARIES}"
 )
 
-add_dependencies(server deps)
+add_dependencies(server extlibs)

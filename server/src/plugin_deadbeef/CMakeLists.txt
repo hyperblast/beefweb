@@ -39,4 +39,4 @@ set_target_properties(
     plugin_deadbeef PROPERTIES PREFIX "" OUTPUT_NAME "${PROJECT_ID}"
 )
 
-add_dependencies(plugin_deadbeef deps)
+add_dependencies(plugin_deadbeef extlibs)

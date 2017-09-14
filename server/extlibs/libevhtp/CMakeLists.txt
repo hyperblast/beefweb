@@ -1,11 +1,11 @@
 include(ExternalProject)
 
 ExternalProject_Add(
-    libevhtp
+    ext_libevhtp
     PREFIX
-        ${DEPS_INSTALL_DIR}
+        ${EXTLIB_INSTALL_DIR}
     DEPENDS
-        libevent
+        ext_libevent
     URL
         https://github.com/criticalstack/libevhtp/archive/1.2.11n.tar.gz
     URL_HASH
@@ -13,9 +13,9 @@ ExternalProject_Add(
     DOWNLOAD_NAME
         libevhtp-1.2.11n.tar.gz
     DOWNLOAD_DIR
-        ${DEPS_CACHE_DIR}/libevhtp
+        ${EXTLIB_CACHE_DIR}/libevhtp
     PATCH_COMMAND
-        ${DEPS_PATCHER} libevhtp
+        ${EXTLIB_PATCHER} libevhtp
     CMAKE_ARGS
         -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
         -DCMAKE_BUILD_TYPE=$<CONFIG>
@@ -27,4 +27,4 @@ ExternalProject_Add(
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
 )
 
-add_dependencies(deps libevhtp)
+add_dependencies(extlibs ext_libevhtp)
