@@ -8,9 +8,9 @@ include_directories(
 
 set(
     SERVER_SOURCES
-    libevent.cpp libevent.hpp
-    libevhtp.cpp libevhtp.hpp
-    server_evhtp.cpp server_evhtp.hpp
+    libevent_glue.cpp libevent_glue.hpp
+    libevhtp_glue.cpp libevhtp_glue.hpp
+    server_impl.cpp server_impl.hpp
 )
 
 add_library(server OBJECT ${SERVER_SOURCES})

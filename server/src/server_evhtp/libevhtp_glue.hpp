@@ -1,9 +1,9 @@
 #pragma once
 
+#include "libevent_glue.hpp"
+
 #include "../log.hpp"
 #include "../util.hpp"
-
-#include "libevent.hpp"
 
 #include <stdint.h>
 
@@ -11,9 +11,6 @@
 #include <memory>
 
 #include <evhtp.h>
-
-struct evhtp_s;
-struct evhtp_request_s;
 
 namespace msrv {
 namespace server_evhtp {

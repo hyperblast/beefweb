@@ -1,11 +1,12 @@
 #pragma once
 
+#include "libevent_glue.hpp"
+#include "libevhtp_glue.hpp"
+
 #include "../server.hpp"
 #include "../http.hpp"
 #include "../request.hpp"
 #include "../response.hpp"
-#include "libevent.hpp"
-#include "libevhtp.hpp"
 
 #include <atomic>
 #include <unordered_map>

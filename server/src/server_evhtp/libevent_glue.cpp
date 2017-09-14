@@ -1,4 +1,5 @@
-#include "libevent.hpp"
+#include "libevent_glue.hpp"
+
 #include "../log.hpp"
 
 #include <algorithm>
