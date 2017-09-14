@@ -38,6 +38,9 @@ public:
     virtual void pollEventSources() override;
 
 private:
+    static constexpr int PING_PERIOD_SECONDS = 15;
+    static constexpr int EVENT_DELAY_MICROSECONDS = 20000;
+
     EventPtr createEvent(EventCallback cb, int prio = 1, int events = 0);
     EvhtpHostPtr createHost(const char* address, int port);
     RequestSharedPtr createRequest(EvhtpRequest* evreq);

@@ -54,8 +54,11 @@ ServerImpl::ServerImpl(
 
     ioQueue_.reset(new EventBaseWorkQueue(eventBase_.get(), 1));
 
-    commandEvent_ = createEvent([this] (Event*,int) { processCommand(); }, 0);
+    commandEvent_ = createEvent([this] (Event*, int) { processCommand(); }, 0);
     pollEventSourcesEvent_ = createEvent([this] (Event*, int) { doPollEventSources(); });
+    pollEventSourcesEvent_->schedule(0, 0);
+    pollEventSourcesRequested_.store(true);
+
     keepEventLoopEvent_ = createEvent(EventCallback(), 1, EV_PERSIST);
     keepEventLoopEvent_->schedule(60);
 
@@ -79,7 +82,7 @@ void ServerImpl::pollEventSources()
     bool expected = false;
 
     if (pollEventSourcesRequested_.compare_exchange_strong(expected, true))
-        pollEventSourcesEvent_->schedule(0, 20000);
+        pollEventSourcesEvent_->schedule(0, EVENT_DELAY_MICROSECONDS);
 }
 
 void ServerImpl::restart(const SettingsData& settings)
@@ -263,6 +266,7 @@ void ServerImpl::processEventStreamResponse(EvhtpRequest* evreq, EventStreamResp
 
 void ServerImpl::doPollEventSources()
 {
+    pollEventSourcesEvent_->schedule(PING_PERIOD_SECONDS, 0);
     pollEventSourcesRequested_.store(false);
 
     for (auto id : eventStreamResponses_)
