@@ -1,8 +1,8 @@
-#include "server.hpp"
-#include "router.hpp"
-#include "request_filter.hpp"
-#include "work_queue.hpp"
-#include "settings.hpp"
+#include "../server.hpp"
+#include "../router.hpp"
+#include "../request_filter.hpp"
+#include "../work_queue.hpp"
+#include "../settings.hpp"
 
 #include <catch.hpp>
 #include <boost/thread/future.hpp>

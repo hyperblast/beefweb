@@ -17,7 +17,7 @@ fi
 
 scripts/build.sh --all --release --tests --verbose --werror
 
-server/build/release/src/run_tests
+server/build/release/src/tests/run_tests
 
 if [ -n "$upload_artifacts" ]; then
     scripts/upload.sh

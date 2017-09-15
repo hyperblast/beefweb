@@ -1,4 +1,4 @@
-#include "log.hpp"
+#include "../log.hpp"
 
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
