@@ -74,7 +74,10 @@ set_target_properties(
 add_dependencies(core extlibs)
 
 add_subdirectory(server_evhtp)
-add_subdirectory(plugin_deadbeef)
+
+if(ENABLE_PLUGIN_DEADBEEF)
+    add_subdirectory(plugin_deadbeef)
+endif()
 
 if(ENABLE_TESTS)
 

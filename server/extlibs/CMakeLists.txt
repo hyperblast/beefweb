@@ -10,10 +10,13 @@ foreach(BUILD_TYPE DEBUG RELEASE MINSIZEREL RELWITHDEBINFO)
 endforeach()
 
 add_subdirectory(boost)
-add_subdirectory(deadbeef)
 add_subdirectory(libevent)
 add_subdirectory(libevhtp)
 add_subdirectory(nljson)
+
+if(ENABLE_PLUGIN_DEADBEEF)
+    add_subdirectory(deadbeef)
+endif()
 
 if(ENABLE_TESTS)
     add_subdirectory(catch)

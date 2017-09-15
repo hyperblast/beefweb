@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.6)
 
-project(server)
+project(beefweb)
 
 set(PROJECT_ID beefweb)
 
-option(ENABLE_TESTS     "Build tests" OFF)
-option(ENABLE_WERROR    "Treat warnings as errors" OFF)
-option(USE_SYSTEM_LIBS  "Build with system libraries" OFF)
+option(ENABLE_PLUGIN_DEADBEEF   "Build DeaDBeeF plugin" ON)
+option(ENABLE_TESTS             "Build tests" OFF)
+option(ENABLE_WERROR            "Treat warnings as errors" OFF)
+option(USE_SYSTEM_LIBS          "Build with system libraries" OFF)
 
 set(COMMON_C_FLAGS    "-fPIC -pthread -D_GNU_SOURCE=1 -D_FILE_OFFSET_BITS=64")
 set(COMMON_CXX_FLAGS  "${COMMON_C_FLAGS}")
