@@ -1,28 +1,20 @@
-set(
-    CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra"
-)
+include(Utils)
 
-set(
-    CMAKE_EXE_LINKER_FLAGS
-    "${CMAKE_EXE_LINKER_FLAGS} -Wl,--no-undefined -Wl,--as-needed"
-)
-
-set(
-    CMAKE_MODULE_LINKER_FLAGS
-    "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--no-undefined -Wl,--as-needed"
-)
+add_cxx_compiler_flag(-std=c++11)
+add_cxx_compiler_flag(-Wall)
+add_cxx_compiler_flag(-Wextra)
 
 if(ENABLE_WERROR)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+    add_cxx_compiler_flag(-Werror)
 endif()
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
-    set(
-        CMAKE_CXX_FLAGS
-        "${CMAKE_CXX_FLAGS} -Wno-unknown-warning-option -Wno-potentially-evaluated-expression -Wno-extern-c-compat"
-    )
+    add_cxx_compiler_flag(-Wno-potentially-evaluated-expression)
+    add_cxx_compiler_flag(-Wno-extern-c-compat)
 endif()
+
+add_linker_flag(-Wl,--no-undefined)
+add_linker_flag(-Wl,--as-needed)
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Nljson REQUIRED)

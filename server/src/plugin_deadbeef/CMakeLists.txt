@@ -5,11 +5,6 @@ include_directories(
 )
 
 set(
-    CMAKE_MODULE_LINKER_FLAGS
-    "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-version-script,${CMAKE_CURRENT_SOURCE_DIR}/symbols"
-)
-
-set(
     PLUGIN_DEADBEEF_SOURCES
     add_items_scope.cpp add_items_scope.hpp
     player.hpp
@@ -36,7 +31,10 @@ target_link_libraries(
 )
 
 set_target_properties(
-    plugin_deadbeef PROPERTIES PREFIX "" OUTPUT_NAME "${PROJECT_ID}"
+    plugin_deadbeef PROPERTIES
+    PREFIX ""
+    OUTPUT_NAME "${PROJECT_ID}"
+    LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_SOURCE_DIR}/symbols"
 )
 
 add_dependencies(plugin_deadbeef extlibs)
