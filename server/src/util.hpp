@@ -52,8 +52,6 @@ public:
     StringSegment(const std::string& str)
         : data_(str.c_str()), length_(str.length()) { }
 
-    ~StringSegment() { }
-
     const char* data() const { return data_; }
 
     size_t length() const { return length_; }
@@ -114,6 +112,8 @@ public:
 
     InvalidRequestException(const std::string& str)
         : std::runtime_error(str) { }
+
+    ~InvalidRequestException();
 };
 
 template<typename T>

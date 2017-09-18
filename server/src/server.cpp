@@ -2,7 +2,6 @@
 
 namespace msrv {
 
-Server::Server() = default;
 Server::~Server() = default;
 
 }

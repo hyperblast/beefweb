@@ -125,8 +125,8 @@ private:
 class TrackQuery
 {
 public:
-    TrackQuery() { }
-    virtual ~TrackQuery() { }
+    TrackQuery() = default;
+    virtual ~TrackQuery();
 
     MSRV_NO_COPY_AND_ASSIGN(TrackQuery);
 };
@@ -134,8 +134,8 @@ public:
 class PlaylistQuery
 {
 public:
-    PlaylistQuery() { }
-    virtual ~PlaylistQuery() { }
+    PlaylistQuery() = default;
+    virtual ~PlaylistQuery();
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistQuery);
 };

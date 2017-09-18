@@ -66,6 +66,8 @@ StringSegment StringSegment::nextToken(char sep)
     return head;
 }
 
+InvalidRequestException::~InvalidRequestException() = default;
+
 bool ValueParser<bool>::tryParse(StringSegment segment, bool* outVal)
 {
     switch (segment.length())

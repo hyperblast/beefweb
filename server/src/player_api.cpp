@@ -2,6 +2,9 @@
 
 namespace msrv {
 
+TrackQuery::~TrackQuery() = default;
+PlaylistQuery::~PlaylistQuery() = default;
+
 bool ValueParser<PlaylistRef>::tryParse(StringSegment segment, PlaylistRef* outVal)
 {
     if (!segment)
@@ -64,7 +67,10 @@ void PlayerOption::set(const std::string& value)
     for (size_t i = 0; i < strValues_.size(); i++)
     {
         if (strValues_[i] == value)
+        {
             doSet(intValues_[i]);
+            return;
+        }
     }
 
     throw InvalidRequestException("Unknown option value: " + value);

@@ -19,7 +19,7 @@ using ServerRestartCallback = std::function<void(const SettingsData&)>;
 class Server
 {
 public:
-    Server();
+    Server() = default;
     virtual ~Server();
 
     static ServerPtr create(
