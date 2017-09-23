@@ -13,9 +13,9 @@
 #include <sstream>
 #include <memory>
 
-namespace msrv {
+#include <boost/lexical_cast/try_lexical_convert.hpp>
 
-template<typename T> struct ValueParser;
+namespace msrv {
 
 class StringSegment;
 
@@ -126,6 +126,18 @@ template<typename T>
 using MallocPtr = std::unique_ptr<T, MallocDeleter<T>>;
 
 template<typename T>
+struct ValueParser
+{
+    static bool tryParse(StringSegment segment, T* outVal)
+    {
+        assert(segment.data());
+        assert(outVal);
+
+        return boost::conversion::try_lexical_convert(segment.data(), segment.length(), *outVal);
+    }
+};
+
+template<typename T>
 bool tryParseValue(StringSegment segment, T* outVal)
 {
     assert(segment.data());
@@ -185,18 +197,6 @@ template<>
 struct ValueParser<bool>
 {
     static bool tryParse(StringSegment segment, bool* outVal);
-};
-
-template<>
-struct ValueParser<int32_t>
-{
-    static bool tryParse(StringSegment segment, int32_t* outVal);
-};
-
-template<>
-struct ValueParser<double>
-{
-    static bool tryParse(StringSegment segment, double* outVal);
 };
 
 template<>

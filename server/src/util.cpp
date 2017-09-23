@@ -95,48 +95,6 @@ bool ValueParser<bool>::tryParse(StringSegment segment, bool* outVal)
     }
 }
 
-bool ValueParser<int32_t>::tryParse(StringSegment segment, int32_t* outVal)
-{
-    if (!segment)
-        return false;
-
-    auto str = segment.data();
-    auto len = segment.length();
-
-    int sign = 1;
-
-    if (*str == '-')
-    {
-        str++;
-        len--;
-        sign = -1;
-
-        if (len == 0)
-            return false;
-    }
-
-    if (len > 10)
-        return false;
-
-    int64_t result = 0;
-
-    for (; len > 0; (str++, len--))
-    {
-        if (*str > '9' || *str < '0')
-            return false;
-
-        result = 10 * result + (*str - '0');
-    }
-
-    result *= sign;
-
-    if (result > INT32_MAX || result < INT32_MIN)
-        return false;
-
-    *outVal = static_cast<int32_t>(result);
-    return true;
-}
-
 bool ValueParser<Range>::tryParse(StringSegment segment, Range* outVal)
 {
     int32_t offset;
@@ -203,28 +161,6 @@ bool ValueParser<Switch>::tryParse(StringSegment segment, Switch* outVal)
     default:
         return false;
     }
-}
-
-bool ValueParser<double>::tryParse(StringSegment segment, double* outVal)
-{
-    char buffer[32];
-
-    size_t len = segment.length();
-
-    if (len >= sizeof(buffer))
-        return false;
-
-    ::memcpy(buffer, segment.data(), len);
-    buffer[len] = '\0';
-
-    char* end;
-    double value = ::strtod(buffer, &end);
-
-    if (end != &buffer[len])
-        return false;
-
-    *outVal = value;
-    return true;
 }
 
 static int parseHexDigit(int ch)
