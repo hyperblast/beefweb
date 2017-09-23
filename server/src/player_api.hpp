@@ -1,7 +1,6 @@
 #pragma once
 
 #include "util.hpp"
-#include "json.hpp"
 
 #include <vector>
 #include <string>
@@ -162,12 +161,6 @@ private:
     std::string name_;
     std::vector<std::string> strValues_;
     std::vector<int32_t> intValues_;
-};
-
-template<>
-struct ValueParser<PlaylistRef>
-{
-    static bool tryParse(StringSegment segment, PlaylistRef* outVal);
 };
 
 struct ArtworkQuery

@@ -1,7 +1,9 @@
 #include "util_json.hpp"
+#include "util_parsers.hpp"
 #include "player_controller.hpp"
 #include "player_api.hpp"
 #include "player_api_json.hpp"
+#include "player_api_parsers.hpp"
 #include "http.hpp"
 #include "router.hpp"
 

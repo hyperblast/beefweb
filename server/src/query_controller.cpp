@@ -1,7 +1,9 @@
 #include "query_controller.hpp"
 #include "router.hpp"
 #include "util_json.hpp"
+#include "util_parsers.hpp"
 #include "player_api_json.hpp"
+#include "player_api_parsers.hpp"
 
 namespace msrv {
 

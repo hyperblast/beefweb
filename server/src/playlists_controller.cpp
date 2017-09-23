@@ -4,8 +4,10 @@
 #include "log.hpp"
 #include "router.hpp"
 #include "util_json.hpp"
+#include "util_parsers.hpp"
 #include "player_api.hpp"
 #include "player_api_json.hpp"
+#include "player_api_parsers.hpp"
 
 #include <boost/algorithm/string.hpp>
 

@@ -37,8 +37,10 @@ set(
     http.cpp http.hpp
     json.hpp
     log.cpp log.hpp
+    parsing.cpp parsing.hpp
     player_api.cpp player_api.hpp
     player_api_json.cpp player_api_json.hpp
+    player_api_parsers.cpp player_api_parsers.hpp
     player_controller.cpp player_controller.hpp
     player_events.cpp player_events.hpp
     playlists_controller.cpp playlists_controller.hpp
@@ -53,6 +55,7 @@ set(
     system.cpp system.hpp
     util.cpp util.hpp
     util_json.cpp util_json.hpp
+    util_parsers.cpp util_parsers.hpp
     work_queue.cpp work_queue.hpp
 )
 

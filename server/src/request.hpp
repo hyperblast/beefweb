@@ -3,6 +3,7 @@
 #include "http.hpp"
 #include "json.hpp"
 #include "util.hpp"
+#include "parsing.hpp"
 
 #include <memory>
 
