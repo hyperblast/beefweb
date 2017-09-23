@@ -1,4 +1,5 @@
 import EventEmitter from 'wolfy87-eventemitter'
+import DataSource from './data_source'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
@@ -19,21 +20,22 @@ export default class AppModel extends EventEmitter
 
         this.client = client;
         this.currentView = ViewId.playlist;
-        this.eventSource = null;
 
-        this.playerModel = new PlayerModel(client);
-        this.playlistModel = new PlaylistModel(client);
+        this.dataSource = new DataSource(client);
+        this.playerModel = new PlayerModel(client, this.dataSource);
+        this.playlistModel = new PlaylistModel(client, this.dataSource);
         this.fileBrowserModel = new FileBrowserModel(client);
         this.settingsModel = new SettingsModel();
 
         this.defineEvent('currentViewChange');
-        this.handleEvent = this.handleEvent.bind(this);
     }
 
     start()
     {
         this.settingsModel.load();
-        this.watchEvents();
+        this.playerModel.start();
+        this.playlistModel.start();
+        this.dataSource.start();
         this.fileBrowserModel.reload();
     }
 
@@ -44,34 +46,5 @@ export default class AppModel extends EventEmitter
 
         this.currentView = view;
         this.emit('currentViewChange');
-    }
-
-    handleEvent(result, error)
-    {
-        if (error)
-            return;
-
-        if (result.player)
-            this.playerModel.update(result.player);
-
-        if (result.playlists)
-            this.playlistModel.setPlaylists(result.playlists);
-    }
-
-    watchEvents()
-    {
-        if (this.eventSource)
-        {
-            this.eventSource.close();
-            this.eventSource = null;
-        }
-
-        var request = {
-            player: true,
-            playlists: true,
-            trcolumns: ['%artist% - %title%']
-        };
-
-        this.eventSource = this.client.subscribe(request, this.handleEvent);
     }
 }

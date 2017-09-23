@@ -18,14 +18,25 @@ const initialPlayerInfo = Object.freeze({
 
 export default class PlayerModel extends EventEmitter
 {
-    constructor(client)
+    constructor(client, dataSource)
     {
         super();
 
         this.client = client;
+        this.dataSource = dataSource;
+
         Object.assign(this, initialPlayerInfo);
+
         this.updatePosition = this.updatePosition.bind(this);
         this.defineEvent('change');
+    }
+
+    start()
+    {
+        this.dataSource.on('player', this.update.bind(this));
+        this.dataSource.watch('player', {
+            trcolumns: ['%artist% - %title%']
+        });
     }
 
     play()

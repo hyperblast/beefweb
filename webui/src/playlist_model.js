@@ -30,21 +30,26 @@ const compactPreset = Object.freeze({
 
 export default class PlaylistModel extends EventEmitter
 {
-    constructor(client)
+    constructor(client, dataSource)
     {
         super();
 
         this.client = client;
+        this.dataSource = dataSource;
         this.playlists = [];
         this.playlistItems = [];
         this.currentPlaylistId = null;
-        this.itemsWatch = null;
         this.columns = standardPreset;
 
         this.defineEvent('playlistsChange');
         this.defineEvent('itemsChange');
+    }
 
-        this.handleItemsUpdate = this.handleItemsUpdate.bind(this);
+    start()
+    {
+        this.dataSource.on('playlists', this.setPlaylists.bind(this));
+        this.dataSource.on('playlistItems', this.setPlaylistItems.bind(this));
+        this.dataSource.watch('playlists');
     }
 
     setPlaylists(playlists)
@@ -85,12 +90,6 @@ export default class PlaylistModel extends EventEmitter
 
     watchPlaylistItems()
     {
-        if (this.itemsWatch)
-        {
-            this.itemsWatch.close();
-            this.itemsWatch = null;
-        }
-
         if (!this.currentPlaylistId)
             return;
 
@@ -101,13 +100,7 @@ export default class PlaylistModel extends EventEmitter
             plcolumns: this.columns.expressions,
         };
 
-        this.itemsWatch = this.client.subscribe(request, this.handleItemsUpdate);
-    }
-
-    handleItemsUpdate(result)
-    {
-        if (result && result.playlistItems)
-            this.setPlaylistItems(result.playlistItems);
+        this.dataSource.watch('playlistItems', request);
     }
 
     setCompactMode(enabled)
