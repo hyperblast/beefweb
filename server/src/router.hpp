@@ -10,8 +10,6 @@
 
 namespace msrv {
 
-class StringSegment;
-
 namespace router_internal { class Node; }
 
 template<typename T> class RouteBuilder;
@@ -46,11 +44,10 @@ public:
 private:
     std::unique_ptr<router_internal::Node> rootNode_;
 
-    router_internal::Node* allocateNode(
-        router_internal::Node* parent, StringSegment& urlPath);
+    router_internal::Node* allocateNode(router_internal::Node* parent, Tokenizer* urlTokenizer);
 
     const router_internal::Node* matchNode(
-        const router_internal::Node* parent, const StringSegment& urlPath, HttpKeyValueMap& params) const;
+        const router_internal::Node* parent, Tokenizer* urlTokenizer, HttpKeyValueMap& params) const;
 
     MSRV_NO_COPY_AND_ASSIGN(Router);
 };

@@ -9,35 +9,35 @@ namespace msrv {
 template<typename T> struct ValueParser;
 
 template<typename T>
-bool tryParseValue(StringSegment segment, T* outVal);
+bool tryParseValue(StringView str, T* outVal);
 
 template<typename T>
-T parseValue(StringSegment segment);
+T parseValue(StringView str);
 
 template<typename T>
-bool tryParseValueList(StringSegment segment, char sep, std::vector<T>* outVal);
+bool tryParseValueList(StringView str, char sep, std::vector<T>* outVal);
 
 template<typename T>
-std::vector<T> parseValueList(StringSegment segment, char sep);
+std::vector<T> parseValueList(StringView str, char sep);
 
 template<typename T>
 struct ValueParser
 {
-    static bool tryParse(StringSegment segment, T* outVal)
+    static bool tryParse(StringView str, T* outVal)
     {
-        assert(segment.data());
+        assert(str.data());
         assert(outVal);
 
-        return boost::conversion::try_lexical_convert(segment.data(), segment.length(), *outVal);
+        return boost::conversion::try_lexical_convert(str.data(), str.length(), *outVal);
     }
 };
 
 template<>
 struct ValueParser<std::string>
 {
-    static bool tryParse(StringSegment segment, std::string* outVal)
+    static bool tryParse(StringView str, std::string* outVal)
     {
-        *outVal = segment.toString();
+        *outVal = str.to_string();
         return true;
     }
 };
@@ -45,50 +45,53 @@ struct ValueParser<std::string>
 template<>
 struct ValueParser<bool>
 {
-    static bool tryParse(StringSegment segment, bool* outVal);
+    static bool tryParse(StringView str, bool* outVal);
 };
 
 template<typename T>
 struct ValueParser<std::vector<T>>
 {
-    static bool tryParse(StringSegment segment, std::vector<T>* outVal)
+    static bool tryParse(StringView str, std::vector<T>* outVal)
     {
-        return tryParseValueList(segment, ',', outVal);
+        return tryParseValueList(str, ',', outVal);
     }
 };
 
 template<typename T>
-bool tryParseValue(StringSegment segment, T* outVal)
+bool tryParseValue(StringView str, T* outVal)
 {
-    assert(segment.data());
+    assert(str.data());
     assert(outVal);
 
-    return ValueParser<T>::tryParse(segment, outVal);
+    return ValueParser<T>::tryParse(str, outVal);
 }
 
 template<typename T>
-T parseValue(StringSegment segment)
+T parseValue(StringView str)
 {
     T result;
 
-    if (!tryParseValue(segment, &result))
+    if (!tryParseValue(str, &result))
         throw std::invalid_argument("invalid value format");
 
     return result;
 }
 
 template<typename T>
-bool tryParseValueList(StringSegment segment, char sep, std::vector<T>* outVal)
+bool tryParseValueList(StringView str, char sep, std::vector<T>* outVal)
 {
-    assert(segment.data());
+    assert(str.data());
     assert(outVal);
 
     std::vector<T> items;
 
-    while (auto token = segment.nextToken(sep))
+    Tokenizer tokenizer(str, sep);
+
+    while (tokenizer.nextToken())
     {
-        token.trimWhitespace();
-        if (!token)
+        auto token = trimWhitespace(tokenizer.token());
+
+        if (token.empty())
             continue;
 
         T value;
@@ -103,11 +106,11 @@ bool tryParseValueList(StringSegment segment, char sep, std::vector<T>* outVal)
 }
 
 template<typename T>
-std::vector<T> parseValueList(StringSegment segment, char sep)
+std::vector<T> parseValueList(StringView str, char sep)
 {
     std::vector<T> result;
 
-    if (!tryParseValueList(segment, sep, &result))
+    if (!tryParseValueList(str, sep, &result))
         throw std::invalid_argument("invalid value format");
 
     return result;

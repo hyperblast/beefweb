@@ -4,66 +4,63 @@
 
 namespace msrv {
 
-void StringSegment::trim(char ch)
+StringView trim(StringView str, char ch)
 {
-    while (length_ > 0 && data_[0] == ch)
+    auto data = str.data();
+    auto length = str.length();
+
+    while (length > 0 && data[0] == ch)
     {
-        data_++;
-        length_--;
+        data++;
+        length--;
     }
 
-    while (length_ > 0 && data_[length_ - 1] == ch)
+    while (length > 0 && data[length - 1] == ch)
     {
-        length_--;
+        length--;
     }
+
+    return StringView(data, length);
 }
 
-void StringSegment::trimWhitespace()
+StringView trimWhitespace(StringView str)
 {
-    while (length_ > 0 && data_[0] <= ' ')
+    auto data = str.data();
+    auto length = str.length();
+
+    while (length > 0 && data[0] <= ' ')
     {
-        data_++;
-        length_--;
+        data++;
+        length--;
     }
 
-    while (length_ > 0 && data_[length_ - 1] <= ' ')
+    while (length > 0 && data[length - 1] <= ' ')
     {
-        length_--;
+        length--;
     }
+
+    return StringView(data, length);
 }
 
-const char* StringSegment::find(char ch) const
+bool Tokenizer::nextToken()
 {
-    for (size_t i = 0; i < length_; i++)
+    if (input_.empty())
+        return false;
+
+    auto pos = input_.find(sep_);
+
+    if (pos != StringView::npos)
     {
-        if (data_[i] == ch)
-            return &data_[i];
-    }
-
-    return nullptr;
-}
-
-StringSegment StringSegment::nextToken(char sep)
-{
-    if (!(*this))
-        return StringSegment();
-
-    StringSegment head;
-
-    auto pos = find(sep);
-
-    if (pos)
-    {
-        head = StringSegment(data_, pos - data_);
-        *this = StringSegment(pos + 1, length_ - head.length_ - 1);
+        token_ = input_.substr(0, pos);
+        input_ = input_.substr(pos + 1);
     }
     else
     {
-        head = *this;
-        *this = StringSegment();
+        token_ = input_;
+        input_ = StringView();
     }
 
-    return head;
+    return true;
 }
 
 InvalidRequestException::~InvalidRequestException() = default;
@@ -79,7 +76,7 @@ static int parseHexDigit(int ch)
     return -1;
 }
 
-bool tryUnescapeUrl(const StringSegment& segment, std::string& outVal)
+bool tryUnescapeUrl(StringView str, std::string& outVal)
 {
     int state = 0;
     int first = 0;
@@ -87,26 +84,26 @@ bool tryUnescapeUrl(const StringSegment& segment, std::string& outVal)
 
     std::string result;
 
-    for (size_t i = 0; i < segment.length(); i++)
+    for (size_t i = 0; i < str.length(); i++)
     {
         switch (state)
         {
         case 0:
-            if (segment[i] == '%')
+            if (str[i] == '%')
                 state = 1;
             else
-                result.push_back(segment[i]);
+                result.push_back(str[i]);
             continue;
 
         case 1:
-            first = parseHexDigit(segment[i]);
+            first = parseHexDigit(str[i]);
             if (first < 0)
                 return false;
             state = 2;
             continue;
 
         case 2:
-            second = parseHexDigit(segment[i]);
+            second = parseHexDigit(str[i]);
             if (second < 0)
                 return false;
             result.push_back((char)((first << 4) | second));

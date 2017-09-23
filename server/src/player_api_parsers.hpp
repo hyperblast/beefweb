@@ -8,7 +8,7 @@ namespace msrv {
 template<>
 struct ValueParser<PlaylistRef>
 {
-    static bool tryParse(StringSegment segment, PlaylistRef* outVal);
+    static bool tryParse(StringView str, PlaylistRef* outVal);
 };
 
 }

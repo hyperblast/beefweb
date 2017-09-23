@@ -2,44 +2,38 @@
 
 namespace msrv {
 
-bool ValueParser<Range>::tryParse(StringSegment segment, Range* outVal)
+bool ValueParser<Range>::tryParse(StringView str, Range* outVal)
 {
     int32_t offset;
     int32_t count;
 
-    auto str = segment.data();
-    auto len = segment.length();
+    auto pos = str.find(':');
 
-    auto delim = segment.find(':');
-
-    if (!delim)
+    if (pos == StringView::npos)
     {
-        if (!tryParseValue(segment, &offset))
+        if (!tryParseValue(str, &offset))
             return false;
 
         *outVal = Range(offset, 1);
         return true;
     }
 
-    auto offsetLen = delim - str;
-    auto countLen = len - offsetLen - 1;
-
-    if (!tryParseValue(StringSegment(str, offsetLen), &offset))
+    if (!tryParseValue(str.substr(0, pos), &offset))
         return false;
 
-    if (!tryParseValue(StringSegment(delim + 1, countLen), &count))
+    if (!tryParseValue(str.substr(pos + 1), &count))
         return false;
 
     *outVal = Range(offset, count);
     return true;
 }
 
-bool ValueParser<Switch>::tryParse(StringSegment segment, Switch* outVal)
+bool ValueParser<Switch>::tryParse(StringView str, Switch* outVal)
 {
-    switch (segment.length())
+    switch (str.length())
     {
     case 4:
-        if (::memcmp(segment.data(), "true", 4) == 0)
+        if (::memcmp(str.data(), "true", 4) == 0)
         {
             *outVal = Switch::TRUE;
             return true;
@@ -48,7 +42,7 @@ bool ValueParser<Switch>::tryParse(StringSegment segment, Switch* outVal)
         return false;
 
     case 5:
-        if (::memcmp(segment.data(), "false", 5) == 0)
+        if (::memcmp(str.data(), "false", 5) == 0)
         {
             *outVal = Switch::FALSE;
             return true;
@@ -57,7 +51,7 @@ bool ValueParser<Switch>::tryParse(StringSegment segment, Switch* outVal)
         return false;
 
     case 6:
-        if (::memcmp(segment.data(), "toggle", 6) == 0)
+        if (::memcmp(str.data(), "toggle", 6) == 0)
         {
             *outVal = Switch::TOGGLE;
             return true;

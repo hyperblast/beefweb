@@ -8,13 +8,13 @@ namespace msrv {
 template<>
 struct ValueParser<Range>
 {
-    static bool tryParse(StringSegment segment, Range* outVal);
+    static bool tryParse(StringView str, Range* outVal);
 };
 
 template<>
 struct ValueParser<Switch>
 {
-    static bool tryParse(StringSegment segment, Switch* outVal);
+    static bool tryParse(StringView str, Switch* outVal);
 };
 
 }

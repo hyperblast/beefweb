@@ -2,8 +2,6 @@
 
 #include "defines.hpp"
 
-#include <assert.h>
-
 #include <stdint.h>
 #include <string.h>
 
@@ -13,9 +11,11 @@
 #include <sstream>
 #include <memory>
 
+#include <boost/utility/string_view.hpp>
+
 namespace msrv {
 
-class StringSegment;
+using StringView = boost::string_view;
 
 enum class Switch
 {
@@ -33,73 +33,6 @@ struct Range
 
     int32_t offset;
     int32_t count;
-};
-
-class StringSegment
-{
-public:
-    StringSegment()
-        : data_(""), length_(0) { }
-
-    explicit StringSegment(const char* data)
-        : data_(data), length_(strlen(data)) { }
-
-    StringSegment(const char* data, size_t size)
-        : data_(data), length_(size) { }
-
-    StringSegment(const std::string& str)
-        : data_(str.c_str()), length_(str.length()) { }
-
-    const char* data() const { return data_; }
-
-    size_t length() const { return length_; }
-
-    explicit operator bool() const { return length_ != 0; }
-
-    const char& operator[](size_t index) const
-    {
-        return data_[index];
-    }
-
-    bool operator==(const StringSegment& other) const
-    {
-        return length_ == other.length_
-            && ::memcmp(data_, other.data_, length_) == 0;
-    }
-
-    bool operator!=(const StringSegment& other) const
-    {
-        return !(*this == other);
-    }
-
-    std::string toString() const
-    {
-        return std::string(data_, length_);
-    }
-
-    std::string toString(size_t offset) const
-    {
-        assert(offset <= length_);
-        return std::string(data_ + offset, length_ - offset);
-    }
-
-    std::string toString(size_t offset, size_t count) const
-    {
-        assert(offset + count <= length_);
-        return std::string(data_ + offset, count);
-    }
-
-    void trim(char ch);
-
-    void trimWhitespace();
-
-    const char* find(char ch) const;
-
-    StringSegment nextToken(char sep);
-
-private:
-    const char* data_;
-    size_t length_;
 };
 
 class InvalidRequestException : public std::runtime_error
@@ -123,6 +56,23 @@ struct MallocDeleter
 template<typename T>
 using MallocPtr = std::unique_ptr<T, MallocDeleter<T>>;
 
+class Tokenizer
+{
+public:
+    Tokenizer(StringView str, char sep)
+        : input_(str), sep_(sep) { }
+
+    const StringView& token() const { return token_; }
+    const StringView& input() const { return input_; }
+
+    bool nextToken();
+
+private:
+    StringView token_;
+    StringView input_;
+    char sep_;
+};
+
 template<typename T>
 std::string toString(const T& value)
 {
@@ -133,6 +83,9 @@ std::string toString(const T& value)
 
 std::string formatString(const char* fmt, ...) MSRV_FORMAT_FUNC(1, 2);
 
-bool tryUnescapeUrl(const StringSegment& segment, std::string& outVal);
+StringView trim(StringView str, char ch);
+StringView trimWhitespace(StringView str);
+
+bool tryUnescapeUrl(StringView str, std::string& outVal);
 
 }

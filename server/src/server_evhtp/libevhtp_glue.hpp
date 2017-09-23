@@ -84,8 +84,8 @@ private:
             std::string key;
             std::string value;
 
-            if (tryUnescapeUrl(StringSegment(kv->key, kv->klen), key) &&
-                tryUnescapeUrl(StringSegment(kv->val, kv->vlen), value))
+            if (tryUnescapeUrl(StringView(kv->key, kv->klen), key) &&
+                tryUnescapeUrl(StringView(kv->val, kv->vlen), value))
             {
                 (*func)(std::move(key), std::move(value));
             }

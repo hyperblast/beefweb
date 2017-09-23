@@ -2,14 +2,14 @@
 
 namespace msrv {
 
-bool ValueParser<PlaylistRef>::tryParse(StringSegment segment, PlaylistRef* outVal)
+bool ValueParser<PlaylistRef>::tryParse(StringView str, PlaylistRef* outVal)
 {
-    if (!segment)
+    if (str.empty())
         return false;
 
     int32_t index;
 
-    if (tryParseValue(segment, &index))
+    if (tryParseValue(str, &index))
     {
         if (index >= 0)
         {
@@ -23,7 +23,7 @@ bool ValueParser<PlaylistRef>::tryParse(StringSegment segment, PlaylistRef* outV
     }
     else
     {
-        *outVal = PlaylistRef(segment.toString());
+        *outVal = PlaylistRef(str.to_string());
         return true;
     }
 }

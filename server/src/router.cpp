@@ -13,18 +13,16 @@ enum class NodeType
     LONG_PARAMETER
 };
 
-StringSegment prepareUrl(const std::string& path)
+StringView prepareUrl(const std::string& path)
 {
-    StringSegment urlPath(path);
-    urlPath.trim(Router::URL_SEP);
-    return urlPath;
+    return trim(StringView(path), Router::URL_SEP);
 }
 
-NodeType getNodeType(const StringSegment& item)
+NodeType getNodeType(const StringView& item)
 {
     if (item.length() >= 2 && item[0] == ':')
     {
-        return item[item.length() - 1] == '*'
+        return item.back() == '*'
             ? NodeType::LONG_PARAMETER
             : NodeType::PARAMETER;
     }
@@ -32,18 +30,18 @@ NodeType getNodeType(const StringSegment& item)
     return NodeType::STRING;
 }
 
-std::string getNodeValue(NodeType type, const StringSegment& item)
+std::string getNodeValue(NodeType type, const StringView& item)
 {
     switch (type)
     {
     case NodeType::STRING:
-        return item.toString();
+        return item.to_string();
 
     case NodeType::PARAMETER:
-        return item.toString(1);
+        return item.substr(1).to_string();
 
     case NodeType::LONG_PARAMETER:
-        return item.toString(1, item.length() - 2);
+        return item.substr(1, item.length() - 2).to_string();
 
     default:
         throw std::invalid_argument("invalid node type");
@@ -124,33 +122,33 @@ Router::~Router()
 {
 }
 
-Node* Router::allocateNode(Node* parent, StringSegment& urlPath)
+Node* Router::allocateNode(Node* parent, Tokenizer* urlTokenizer)
 {
-    StringSegment item = urlPath.nextToken(URL_SEP);
-
-    if (!item)
+    if (!urlTokenizer->nextToken())
         return parent;
 
+    auto item = urlTokenizer->token();
     auto type = getNodeType(item);
     auto value = getNodeValue(type, item);
 
     for (auto& node : parent->children())
     {
         if (node->matches(type, value))
-            return allocateNode(node.get(), urlPath);
+            return allocateNode(node.get(), urlTokenizer);
     }
 
     parent->children().emplace_back(new Node(type, std::move(value)));
-    return allocateNode(parent->children().back().get(), urlPath);
+    return allocateNode(parent->children().back().get(), urlTokenizer);
 }
 
-const Node* Router::matchNode(const Node* parent, const StringSegment& urlPath, HttpKeyValueMap& params) const
+const Node* Router::matchNode(const Node* parent, Tokenizer* urlTokenizer, HttpKeyValueMap& params) const
 {
-    StringSegment path(urlPath);
-    StringSegment item = path.nextToken(URL_SEP);
+    StringView remainingUrlPart = urlTokenizer->input();
 
-    if (!item)
+    if (!urlTokenizer->nextToken())
         return parent;
+
+    auto item = urlTokenizer->token();
 
     for (auto& node : parent->children())
     {
@@ -159,7 +157,7 @@ const Node* Router::matchNode(const Node* parent, const StringSegment& urlPath, 
             case NodeType::STRING:
             {
                 if (item == node->value())
-                    if (auto result = matchNode(node.get(), path, params))
+                    if (auto result = matchNode(node.get(), urlTokenizer, params))
                         return result;
 
                 break;
@@ -167,9 +165,9 @@ const Node* Router::matchNode(const Node* parent, const StringSegment& urlPath, 
 
             case NodeType::PARAMETER:
             {
-                params[node->value()] = item.toString();
+                params[node->value()] = item.to_string();
 
-                if (auto result = matchNode(node.get(), path, params))
+                if (auto result = matchNode(node.get(), urlTokenizer, params))
                     return result;
 
                 auto it = params.find(node->value());
@@ -181,7 +179,7 @@ const Node* Router::matchNode(const Node* parent, const StringSegment& urlPath, 
 
             case NodeType::LONG_PARAMETER:
             {
-                params[node->value()] = urlPath.toString();
+                params[node->value()] = remainingUrlPart.to_string();
                 return node.get();
             }
         }
@@ -192,8 +190,8 @@ const Node* Router::matchNode(const Node* parent, const StringSegment& urlPath, 
 
 void Router::defineRoute(HttpMethod method, const std::string& path, RequestHandlerFactoryPtr factory)
 {
-    auto urlPath = prepareUrl(path);
-    auto node = allocateNode(rootNode_.get(), urlPath);
+    Tokenizer urlTokenizer(prepareUrl(path), URL_SEP);
+    auto node = allocateNode(rootNode_.get(), &urlTokenizer);
     node->defineRoute(method, std::move(factory));
 }
 
@@ -201,7 +199,9 @@ std::unique_ptr<RouteResult> Router::dispatch(const Request* request) const
 {
     HttpKeyValueMap params;
 
-    auto node = matchNode(rootNode_.get(), prepareUrl(request->path), params);
+    Tokenizer urlTokenizer(prepareUrl(request->path), URL_SEP);
+
+    auto node = matchNode(rootNode_.get(), &urlTokenizer, params);
     if (!node)
     {
         return std::unique_ptr<RouteResult>(
