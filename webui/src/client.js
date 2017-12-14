@@ -181,6 +181,13 @@ export default class Client
         });
     }
 
+    movePlaylist(plref, newIndex)
+    {
+        return this.handler.post({
+            path: `playlists/move/${plref}/${newIndex}`
+        });
+    }
+
     removePlaylist(plref)
     {
         return this.handler.post({

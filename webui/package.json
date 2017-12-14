@@ -19,6 +19,7 @@
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
+    "react-sortable-hoc": "^0.6.8",
     "wolfy87-eventemitter": "^5.2.2"
   },
   "devDependencies": {

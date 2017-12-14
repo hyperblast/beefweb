@@ -1,4 +1,5 @@
 import EventEmitter from 'wolfy87-eventemitter'
+import { arrayMove } from 'react-sortable-hoc'
 
 const standardPreset = Object.freeze({
     names: [
@@ -138,6 +139,29 @@ export default class PlaylistModel extends EventEmitter
             if (!this.playlists.find(p => p.title == title))
                 return title;
         }
+    }
+
+    movePlaylist(oldIndex, newIndex)
+    {
+        const oldPlaylists = this.playlists;
+
+        if (oldIndex === newIndex
+            || oldIndex > oldPlaylists.length
+            || newIndex > oldPlaylists.length)
+            return;
+
+        const playlistId = oldPlaylists[oldIndex].id;
+
+        const newPlaylists = oldPlaylists.map(p => {
+            if (p.index === oldIndex)
+                return Object.assign({}, p, { index: newIndex });
+            else if (p.index === newIndex)
+                return Object.assign({}, p, { index: oldIndex });
+            return p;
+        });
+
+        this.setPlaylists(arrayMove(newPlaylists, oldIndex, newIndex));
+        this.client.movePlaylist(playlistId, newIndex);
     }
 
     addPlaylist()

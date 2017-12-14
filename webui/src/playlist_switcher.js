@@ -1,8 +1,38 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import PlaylistModel from './playlist_model'
 import { IconLink } from './elements'
 import urls from './urls'
+
+const PlaylistTab = SortableElement(state => {
+    let p = state.playlist;
+    let currentId = state.currentId;
+
+    return (
+        <li className={p.id == currentId ? 'tab active' : 'tab'}>
+            <a href={urls.viewPlaylist(p.id)} title={p.title}>
+                {p.title}
+            </a>
+        </li>
+    );
+});
+
+const PlaylistTabList = SortableContainer(({ playlists, currentId }) => {
+    return (
+        <ul className='tabs'>
+        {
+            playlists.map(p => (
+                <PlaylistTab
+                    key={p.id}
+                    index={p.index}
+                    playlist={p}
+                    currentId={currentId} />
+            ))
+        }
+        </ul>
+    );
+});
 
 export default class PlaylistSwitcher extends React.PureComponent
 {
@@ -12,6 +42,7 @@ export default class PlaylistSwitcher extends React.PureComponent
 
         this.state = this.getStateFromModel();
         this.handleUpdate = () => this.setState(this.getStateFromModel());
+        this.handleSortEnd = this.handleSortEnd.bind(this);
         this.handleAddClick = this.handleAddClick.bind(this);
         this.handleRemoveClick = this.handleRemoveClick.bind(this);
         this.handleRenameClick = this.handleRenameClick.bind(this);
@@ -37,6 +68,11 @@ export default class PlaylistSwitcher extends React.PureComponent
     componentWillUnmount()
     {
         this.props.playlistModel.off('playlistsChange', this.handleUpdate);
+    }
+
+    handleSortEnd(e)
+    {
+        this.props.playlistModel.movePlaylist(e.oldIndex, e.newIndex);
     }
 
     handleAddClick(e)
@@ -97,19 +133,17 @@ export default class PlaylistSwitcher extends React.PureComponent
     {
         var playlists = this.state.playlists;
         var currentId = this.state.currentPlaylistId;
-        
+
         var playlistTabs = (
-            <ul key='playlists' className='tabs'>
-            {
-                playlists.map(p => (
-                    <li key={p.id} className={p.id == currentId ? 'tab active' : 'tab'}>
-                        <a href={urls.viewPlaylist(p.id)} title={p.title}>
-                            {p.title}
-                        </a>
-                    </li>
-                ))
-            }
-            </ul>
+            <PlaylistTabList
+                key='playlists'
+                playlists={playlists}
+                currentId={currentId}
+                onSortEnd={this.handleSortEnd}
+                axis='x'
+                lockAxis='x'
+                helperClass='active'
+                distance={30} />
         );
 
         var buttonBar = (
