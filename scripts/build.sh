@@ -186,7 +186,7 @@ function build_webui()
     cd $webui_src_dir
 
     yarn install
-    yarn run build -- $webui_flags
+    yarn run build $webui_flags
 }
 
 function build_pkg()
