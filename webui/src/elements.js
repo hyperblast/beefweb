@@ -29,8 +29,10 @@ IconLink.propTypes = {
 export function SwitcherHeader(props)
 {
     return (
-        <div className='panel-header tabs'>
-            <span className='active'>{props.title}</span>
+        <div className='panel-header tabs-wrapper'>
+            <div className='tabs'>
+                <span className='tab active'>{props.title}</span>
+            </div>
         </div>
     );
 }

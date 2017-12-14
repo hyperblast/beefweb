@@ -97,30 +97,34 @@ export default class PlaylistSwitcher extends React.PureComponent
     {
         var playlists = this.state.playlists;
         var currentId = this.state.currentPlaylistId;
-
-        var tabs = playlists.map(p => (
-            <a
-                href={urls.viewPlaylist(p.id)}
-                key={p.id}
-                title={p.title}
-                className={p.id == currentId ? 'active' : null}>
-                {p.title}
-            </a>
-        ));
+        
+        var playlistTabs = (
+            <ul key='playlists' className='tabs'>
+            {
+                playlists.map(p => (
+                    <li key={p.id} className={p.id == currentId ? 'tab active' : 'tab'}>
+                        <a href={urls.viewPlaylist(p.id)} title={p.title}>
+                            {p.title}
+                        </a>
+                    </li>
+                ))
+            }
+            </ul>
+        );
 
         var buttonBar = (
-            <div key='buttons' className='button-bar'>
-                <IconLink name='plus' href='#' title='Add playlist' onClick={this.handleAddClick} />
-                <IconLink name='minus' href='#' title='Remove playlist' onClick={this.handleRemoveClick} />
-                <IconLink name='comment-square' href='#' title='Rename playlist' onClick={this.handleRenameClick} />
-                <IconLink name='browser' href='#' title='Clear playlist' onClick={this.handleClearClick} />
-                <IconLink name='external-link' href='#' title='Add URL' onClick={this.handleAddUrlClick} />
+            <div key='buttons' className='tabs extra'>
+                <div className='tab button-bar'>
+                    <IconLink name='plus' href='#' title='Add playlist' onClick={this.handleAddClick} />
+                    <IconLink name='minus' href='#' title='Remove playlist' onClick={this.handleRemoveClick} />
+                    <IconLink name='comment-square' href='#' title='Rename playlist' onClick={this.handleRenameClick} />
+                    <IconLink name='browser' href='#' title='Clear playlist' onClick={this.handleClearClick} />
+                    <IconLink name='external-link' href='#' title='Add URL' onClick={this.handleAddUrlClick} />
+                </div>
             </div>
         );
 
-        tabs.push(buttonBar);
-
-        return <div className='panel-header tabs'>{ tabs }</div>;
+        return <div className='panel-header tabs-wrapper'>{ [playlistTabs, buttonBar] }</div>;
     }
 }
 

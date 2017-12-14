@@ -60,15 +60,23 @@ html.setting-fontsize-large {
     fill: #212121;
 }
 
-.tabs {
-    border-bottom: 0.0625rem solid #BDBDBD;
-    white-space: nowrap;
+.tabs-wrapper {
     display: flex;
+    border-bottom: 0.0625rem solid #BDBDBD;
 }
 
-.tabs > a,
-.tabs > span,
-.tabs > div {
+.tabs {
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+
+.tabs.extra {
+    float: right;
+    margin-left: auto;
+}
+
+.tab {
     display: inline-block;
     height: 2.5rem;
     margin-bottom: -0.25rem;
@@ -79,8 +87,9 @@ html.setting-fontsize-large {
     border-bottom-right-radius: 0;
 }
 
-.tabs > a,
-.tabs > span {
+a.tab,
+li.tab,
+span.tab {
     padding: 0.5rem;
     padding-bottom: 0.75rem;
     min-width: 6em;
@@ -92,25 +101,23 @@ html.setting-fontsize-large {
     white-space: nowrap;
 }
 
-.tabs > a {
+.tab > a {
     text-decoration: none;
     color: #212121;
 }
 
-.tabs > div {
+div.tab {
     padding: 0.0625rem;
 }
 
-.tabs > .active {
+.tab.active {
     background: #FFFFFF;
 }
 
-.tabs > .button-bar {
-    float: right;
+.tab.button-bar {
     background: #FFFFFF;
     padding: 0.25rem;
     padding-bottom: 0.5rem;
-    margin-left: auto;
 }
 
 .progress-bar {
