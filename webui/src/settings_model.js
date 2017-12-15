@@ -1,4 +1,5 @@
 import EventEmitter from 'wolfy87-eventemitter'
+import SettingsStore from './settings_store.js'
 
 const storageKey = 'player_settings';
 
@@ -34,14 +35,16 @@ function defineSettingProperties(obj)
 
 export default class SettingsModel extends EventEmitter
 {
-    constructor()
+    constructor(store)
     {
         super();
 
+        this.store = store;
         this.values = {};
+
         defineSettingProperties(this);
         this.defineEvent('change');
-        window.addEventListener('storage', this.load.bind(this));
+        this.store.on('refresh', this.load.bind(this));
     }
 
     set(key, value)
@@ -58,13 +61,13 @@ export default class SettingsModel extends EventEmitter
 
     load()
     {
-        var data = localStorage.getItem(storageKey);
+        var data = this.store.getItem(storageKey);
         this.values = data ? JSON.parse(data) : Object.assign({}, defaultSettings);
         this.emit('change');
     }
 
     save()
     {
-        localStorage.setItem(storageKey, JSON.stringify(this.values));
+        this.store.setItem(storageKey, JSON.stringify(this.values));
     }
 }

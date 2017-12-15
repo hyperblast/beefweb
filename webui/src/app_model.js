@@ -14,7 +14,7 @@ export const ViewId = Object.freeze({
 
 export default class AppModel extends EventEmitter
 {
-    constructor(client)
+    constructor(client, settingsStore)
     {
         super();
 
@@ -25,7 +25,7 @@ export default class AppModel extends EventEmitter
         this.playerModel = new PlayerModel(client, this.dataSource);
         this.playlistModel = new PlaylistModel(client, this.dataSource);
         this.fileBrowserModel = new FileBrowserModel(client);
-        this.settingsModel = new SettingsModel();
+        this.settingsModel = new SettingsModel(settingsStore);
 
         this.defineEvent('currentViewChange');
     }

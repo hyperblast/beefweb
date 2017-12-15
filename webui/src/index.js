@@ -3,6 +3,7 @@ import ReactDom from 'react-dom'
 import Navigo from 'navigo'
 import App from './app'
 import Client from './client'
+import SettingsStore from './settings_store'
 import AppModel, { ViewId } from './app_model'
 import MediaSizeController from './media_size_controller'
 import WindowController from './window_controller'
@@ -10,19 +11,16 @@ import CssSettingsController from './css_settings_controller'
 import TouchSupport from './touch_support'
 import urls, { getPathFromUrl } from './urls'
 
-var client = new Client();
+const client = new Client();
+const settingsStore = new SettingsStore();
+const appModel = new AppModel(client, settingsStore);
 
-var appModel = new AppModel(client);
+const { playerModel, playlistModel, fileBrowserModel, settingsModel } = appModel;
 
-var playerModel = appModel.playerModel;
-var playlistModel = appModel.playlistModel;
-var fileBrowserModel = appModel.fileBrowserModel;
-var settingsModel = appModel.settingsModel;
-
-var mediaSizeController = new MediaSizeController(playlistModel);
-var windowController = new WindowController(playerModel);
-var cssSettingsController = new CssSettingsController(settingsModel);
-var touchSupport = new TouchSupport(settingsModel);
+const mediaSizeController = new MediaSizeController(playlistModel);
+const windowController = new WindowController(playerModel);
+const cssSettingsController = new CssSettingsController(settingsModel);
+const touchSupport = new TouchSupport(settingsModel);
 
 var router = new Navigo(null, true);
 
