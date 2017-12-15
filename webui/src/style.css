@@ -44,6 +44,14 @@ html.setting-fontsize-large {
     border-radius: 0.125rem;
 }
 
+.button-bar > a:first-child {
+    margin-left: 0;
+}
+
+.button-bar > a:last-child {
+    margin-right: 0;
+}
+
 .button-bar > a:hover,
 .button-bar > a.active {
     background: #E0E0E0;
@@ -54,6 +62,22 @@ html.setting-fontsize-large {
     width: 1.75rem;
     height: 1.75rem;
     padding: 0.25rem;
+}
+
+.tab > .icon {
+    width: 1rem;
+    height: 1rem;
+    padding: 0.125rem;
+    margin: 0 0.125rem;
+    vertical-align: bottom;
+}
+
+.tab > .icon:first-child {
+    margin-left: 0;
+}
+
+.tab > .icon:last-child {
+    margin-right: 0;
 }
 
 .icon > use {

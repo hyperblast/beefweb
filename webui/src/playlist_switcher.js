@@ -1,17 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PlaylistModel from './playlist_model'
 import TouchSupport from './touch_support'
-import { IconLink } from './elements'
+import { Icon, IconLink } from './elements'
 import urls from './urls'
 
-const PlaylistTab = SortableElement(state => {
-    let p = state.playlist;
-    let currentId = state.currentId;
+const PlaylistTabHandle = SortableHandle(() => (
+    <Icon name='align-center' />
+));
+
+const PlaylistTab = SortableElement(props => {
+    const { playlist: p, currentId, drawHandle } = props;
+    const handle = drawHandle ? <PlaylistTabHandle /> : null;
 
     return (
         <li className={p.id == currentId ? 'tab active' : 'tab'}>
+            { handle }
             <a href={urls.viewPlaylist(p.id)} title={p.title}>
                 {p.title}
             </a>
@@ -19,7 +24,9 @@ const PlaylistTab = SortableElement(state => {
     );
 });
 
-const PlaylistTabList = SortableContainer(({ playlists, currentId }) => {
+const PlaylistTabList = SortableContainer(props => {
+    const { playlists, currentId, drawHandle } = props;
+
     return (
         <ul className='tabs'>
         {
@@ -28,7 +35,8 @@ const PlaylistTabList = SortableContainer(({ playlists, currentId }) => {
                     key={p.id}
                     index={p.index}
                     playlist={p}
-                    currentId={currentId} />
+                    currentId={currentId}
+                    drawHandle={drawHandle} />
             ))
         }
         </ul>
@@ -58,7 +66,7 @@ export default class PlaylistSwitcher extends React.PureComponent
         return {
             playlists: model.playlists,
             currentPlaylistId: model.currentPlaylistId,
-            touchSupport: this.props.touchSupport.isEnabled,
+            touchMode: this.props.touchSupport.isEnabled,
         };
     }
 
@@ -135,7 +143,7 @@ export default class PlaylistSwitcher extends React.PureComponent
 
     render()
     {
-        const { playlists, currentPlaylistId: currentId, touchSupport } = this.state;
+        const { playlists, currentPlaylistId: currentId, touchMode } = this.state;
 
         const playlistTabs = (
             <PlaylistTabList
@@ -146,8 +154,9 @@ export default class PlaylistSwitcher extends React.PureComponent
                 axis='x'
                 lockAxis='x'
                 helperClass='active'
-                distance={touchSupport ? null : 30}
-                pressDelay={touchSupport ? 200 : null} />
+                distance={touchMode ? null : 30}
+                useDragHandle={touchMode}
+                drawHandle={touchMode} />
         );
 
         const buttonBar = (
