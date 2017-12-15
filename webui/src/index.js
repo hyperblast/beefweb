@@ -7,6 +7,7 @@ import AppModel, { ViewId } from './app_model'
 import MediaSizeController from './media_size_controller'
 import WindowController from './window_controller'
 import CssSettingsController from './css_settings_controller'
+import TouchSupport from './touch_support'
 import urls, { getPathFromUrl } from './urls'
 
 var client = new Client();
@@ -21,6 +22,7 @@ var settingsModel = appModel.settingsModel;
 var mediaSizeController = new MediaSizeController(playlistModel);
 var windowController = new WindowController(playerModel);
 var cssSettingsController = new CssSettingsController(settingsModel);
+var touchSupport = new TouchSupport(settingsModel);
 
 var router = new Navigo(null, true);
 
@@ -83,8 +85,9 @@ mediaSizeController.start();
 appModel.start();
 windowController.start();
 cssSettingsController.start();
+touchSupport.start();
 router.resolve();
 
 ReactDom.render(
-    <App appModel={appModel} />,
+    <App appModel={appModel} touchSupport={touchSupport} />,
     document.getElementById('app-container'));

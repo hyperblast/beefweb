@@ -9,6 +9,7 @@ import FileBrowser from './file_browser'
 import FileBrowserHeader from './file_browser_header'
 import Settings from './settings'
 import StatusBar from './status_bar'
+import TouchSupport from './touch_support'
 
 export default class App extends React.PureComponent
 {
@@ -41,14 +42,20 @@ export default class App extends React.PureComponent
 
     renderElements()
     {
-        var view = this.state.view;
-        var appModel = this.props.appModel;
+        const view = this.state.view;
+        const { appModel, touchSupport } = this.props;
 
         if (view == ViewId.playlist)
         {
             return {
-                header: <PlaylistSwitcher playlistModel={appModel.playlistModel} />,
-                main: <PlaylistContent playlistModel={appModel.playlistModel} />
+                header:
+                    <PlaylistSwitcher
+                        playlistModel={appModel.playlistModel}
+                        touchSupport={touchSupport} />,
+
+                main:
+                    <PlaylistContent
+                        playlistModel={appModel.playlistModel} />
             };
         }
 
@@ -88,12 +95,16 @@ export default class App extends React.PureComponent
                 <ControlBar key='control-bar' appModel={appModel} />
                 { elements.header }
                 { elements.main }
-                <StatusBar key='status-bar' playerModel={appModel.playerModel} playlistModel={appModel.playlistModel} />
+                <StatusBar
+                    key='status-bar'
+                    playerModel={appModel.playerModel}
+                    playlistModel={appModel.playlistModel} />
             </div>
         );
     }
 }
 
 App.propTypes = {
-    appModel: PropTypes.instanceOf(AppModel).isRequired
+    appModel: PropTypes.instanceOf(AppModel).isRequired,
+    touchSupport: PropTypes.instanceOf(TouchSupport).isRequired,
 };

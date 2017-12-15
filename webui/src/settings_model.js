@@ -8,9 +8,16 @@ export const FontSize = Object.freeze({
     large: 'large'
 });
 
+export const InputMode = Object.freeze({
+    auto: 'auto',
+    forceMouse: 'forceMouse',
+    forceTouch: 'forceTouch'
+});
+
 const defaultSettings = Object.freeze({
     fullWidth: false,
-    fontSize: FontSize.normal
+    fontSize: FontSize.normal,
+    inputMode: InputMode.auto
 });
 
 function defineSettingProperties(obj)

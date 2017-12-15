@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc';
 import PlaylistModel from './playlist_model'
+import TouchSupport from './touch_support'
 import { IconLink } from './elements'
 import urls from './urls'
 
@@ -56,18 +57,21 @@ export default class PlaylistSwitcher extends React.PureComponent
 
         return {
             playlists: model.playlists,
-            currentPlaylistId: model.currentPlaylistId
+            currentPlaylistId: model.currentPlaylistId,
+            touchSupport: this.props.touchSupport.isEnabled,
         };
     }
 
     componentDidMount()
     {
         this.props.playlistModel.on('playlistsChange', this.handleUpdate);
+        this.props.touchSupport.on('change', this.handleUpdate);
     }
 
     componentWillUnmount()
     {
         this.props.playlistModel.off('playlistsChange', this.handleUpdate);
+        this.props.touchSupport.off('change', this.handleUpdate);
     }
 
     handleSortEnd(e)
@@ -131,10 +135,9 @@ export default class PlaylistSwitcher extends React.PureComponent
 
     render()
     {
-        var playlists = this.state.playlists;
-        var currentId = this.state.currentPlaylistId;
+        const { playlists, currentPlaylistId: currentId, touchSupport } = this.state;
 
-        var playlistTabs = (
+        const playlistTabs = (
             <PlaylistTabList
                 key='playlists'
                 playlists={playlists}
@@ -143,10 +146,11 @@ export default class PlaylistSwitcher extends React.PureComponent
                 axis='x'
                 lockAxis='x'
                 helperClass='active'
-                distance={30} />
+                distance={touchSupport ? null : 30}
+                pressDelay={touchSupport ? 200 : null} />
         );
 
-        var buttonBar = (
+        const buttonBar = (
             <div key='buttons' className='tabs extra'>
                 <div className='tab button-bar'>
                     <IconLink name='plus' href='#' title='Add playlist' onClick={this.handleAddClick} />
@@ -158,10 +162,15 @@ export default class PlaylistSwitcher extends React.PureComponent
             </div>
         );
 
-        return <div className='panel-header tabs-wrapper'>{ [playlistTabs, buttonBar] }</div>;
+        return (
+            <div className='panel-header tabs-wrapper'>
+                { [ playlistTabs, buttonBar ] }
+            </div>
+        );
     }
 }
 
 PlaylistSwitcher.propTypes = {
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired
+    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
+    touchSupport: PropTypes.instanceOf(TouchSupport).isRequired
 };
