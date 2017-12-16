@@ -1,4 +1,4 @@
-import QUnit from 'qunitjs'
+import QUnit from 'qunit'
 import Client from '../client'
 
 QUnit.test( "hello test", function( assert ) {

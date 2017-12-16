@@ -48,7 +48,7 @@ function configTests(cfg, opts)
 
     cfg.output.path = path.join(opts.outputDir, 'tests');
 
-    cfg.entry.push('qunitjs/qunit/qunit.css');
+    cfg.entry.push('qunit/qunit/qunit.css');
     cfg.entry.push('./src/tests/index.js');
 
     cfg.plugins.push(new HtmlPlugin({
