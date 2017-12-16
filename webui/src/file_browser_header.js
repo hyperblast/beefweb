@@ -67,26 +67,30 @@ export default class FileBrowserHeader extends React.PureComponent
         var title = this.state.currentPath == rootPath ? 'Music directories' : this.state.currentPath;
 
         return (
-            <div className='panel-header file-browser-header tabs-wrapper'>
-                <div className='tabs'>
-                    <span className='file-browser-path tab active' title={title}>{title}</span>
+            <div className='panel-header tabs-wrapper'>
+                <div className='tabs tabs-primary'>
+                    <div className='tab active'>
+                        <span className='file-browser-path' title={title}>{title}</span>
+                    </div>
                 </div>
-                <div className='tabs extra'>
-                    <div className='tab button-bar'>
-                        <IconLink
-                            name='data-transfer-download'
-                            href='#'
-                            onClick={this.handleAddClick}
-                            title='Add current directory' />
-                        <IconLink
-                            name='home'
-                            href={urls.browsePath(rootPath)}
-                            title='Navigate to list of music directories' />
-                        <IconLink
-                            name='arrow-thick-top'
-                            href={parentLink.url}
-                            onClick={parentLink.onClick}
-                            title='Navigate to parent directory' />
+                <div className='tabs'>
+                    <div className='tab active'>
+                        <div className='button-bar'>
+                            <IconLink
+                                name='data-transfer-download'
+                                href='#'
+                                onClick={this.handleAddClick}
+                                title='Add current directory' />
+                            <IconLink
+                                name='home'
+                                href={urls.browsePath(rootPath)}
+                                title='Navigate to list of music directories' />
+                            <IconLink
+                                name='arrow-thick-top'
+                                href={parentLink.url}
+                                onClick={parentLink.onClick}
+                                title='Navigate to parent directory' />
+                        </div>
                     </div>
                 </div>
             </div>

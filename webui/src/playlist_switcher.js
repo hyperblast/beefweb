@@ -7,7 +7,7 @@ import { Icon, IconLink } from './elements'
 import urls from './urls'
 
 const PlaylistTabHandle = SortableHandle(() => (
-    <Icon name='align-center' />
+    <Icon name='ellipses' />
 ));
 
 const PlaylistTab = SortableElement(props => {
@@ -28,7 +28,7 @@ const PlaylistTabList = SortableContainer(props => {
     const { playlists, currentId, drawHandle } = props;
 
     return (
-        <ul className='tabs'>
+        <ul className='tabs tabs-primary'>
         {
             playlists.map(p => (
                 <PlaylistTab
@@ -160,13 +160,15 @@ export default class PlaylistSwitcher extends React.PureComponent
         );
 
         const buttonBar = (
-            <div key='buttons' className='tabs extra'>
-                <div className='tab button-bar'>
-                    <IconLink name='plus' href='#' title='Add playlist' onClick={this.handleAddClick} />
-                    <IconLink name='minus' href='#' title='Remove playlist' onClick={this.handleRemoveClick} />
-                    <IconLink name='comment-square' href='#' title='Rename playlist' onClick={this.handleRenameClick} />
-                    <IconLink name='browser' href='#' title='Clear playlist' onClick={this.handleClearClick} />
-                    <IconLink name='external-link' href='#' title='Add URL' onClick={this.handleAddUrlClick} />
+            <div key='buttons' className='tabs'>
+                <div className='tab active'>
+                    <div className='button-bar'>
+                        <IconLink name='plus' href='#' title='Add playlist' onClick={this.handleAddClick} />
+                        <IconLink name='minus' href='#' title='Remove playlist' onClick={this.handleRemoveClick} />
+                        <IconLink name='comment-square' href='#' title='Rename playlist' onClick={this.handleRenameClick} />
+                        <IconLink name='browser' href='#' title='Clear playlist' onClick={this.handleClearClick} />
+                        <IconLink name='external-link' href='#' title='Add URL' onClick={this.handleAddUrlClick} />
+                    </div>
                 </div>
             </div>
         );

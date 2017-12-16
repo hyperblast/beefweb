@@ -30,8 +30,10 @@ export function SwitcherHeader(props)
 {
     return (
         <div className='panel-header tabs-wrapper'>
-            <div className='tabs'>
-                <span className='tab active'>{props.title}</span>
+            <div className='tabs tabs-primary'>
+                <div className='tab active'>
+                    <span>{props.title}</span>
+                </div>
             </div>
         </div>
     );

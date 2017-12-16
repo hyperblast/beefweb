@@ -64,22 +64,6 @@ html.setting-fontsize-large {
     padding: 0.25rem;
 }
 
-.tab > .icon {
-    width: 1rem;
-    height: 1rem;
-    padding: 0.125rem;
-    margin: 0 0.125rem;
-    vertical-align: bottom;
-}
-
-.tab > .icon:first-child {
-    margin-left: 0;
-}
-
-.tab > .icon:last-child {
-    margin-right: 0;
-}
-
 .icon > use {
     fill: #212121;
 }
@@ -93,35 +77,40 @@ html.setting-fontsize-large {
     margin: 0;
     padding: 0;
     white-space: nowrap;
+    height: 100%;
 }
 
-.tabs.extra {
-    float: right;
-    margin-left: auto;
+.tabs-primary {
+    flex: 1;
+    overflow-x: auto;
 }
 
 .tab {
     display: inline-block;
-    height: 2.5rem;
-    margin-bottom: -0.25rem;
-    border: 0.0625rem solid #BDBDBD;
-    border-bottom: none;
-    border-radius: 0.125rem;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
+    border-left: 0.0625rem solid #BDBDBD;
+    border-top: 0.0625rem solid #BDBDBD;
+    height: 100%;
+    position: relative;
 }
 
-a.tab,
-li.tab,
-span.tab {
+.tab:first-child {
+    border-top-left-radius: 0.125rem;
+}
+
+.tab:last-child {
+    border-right: 0.0625rem solid #BDBDBD;
+    border-top-right-radius: 0.125rem;
+}
+
+.tab > span,
+.tab > a {
+    display: inline-block;
     padding: 0.5rem;
-    padding-bottom: 0.75rem;
     min-width: 6em;
     max-width: 12em;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: center;
-    vertical-align: top;
     white-space: nowrap;
 }
 
@@ -130,18 +119,19 @@ span.tab {
     color: #212121;
 }
 
-div.tab {
-    padding: 0.0625rem;
+.tab > .icon-ellipses {
+    position: absolute;
+    width: 2.0rem;
+    height: 1.5rem;
+    margin-top: -0.5rem;
 }
 
 .tab.active {
     background: #FFFFFF;
 }
 
-.tab.button-bar {
-    background: #FFFFFF;
-    padding: 0.25rem;
-    padding-bottom: 0.5rem;
+.tab > .button-bar {
+    padding: 0.125rem;
 }
 
 .progress-bar {
@@ -265,8 +255,8 @@ div.tab {
     text-overflow: ellipsis;
 }
 
-.file-browser-header > .file-browser-path {
-    max-width: none;
+.file-browser-path {
+    max-width: none !important;
 }
 
 .playback-control .icon-media-play > use {
