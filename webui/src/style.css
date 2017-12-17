@@ -45,14 +45,6 @@ html {
     border-radius: 0.125rem;
 }
 
-.button:first-child {
-    margin-left: 0;
-}
-
-.button:last-child {
-    margin-right: 0;
-}
-
 .button:hover,
 .button.active {
     background: #E0E0E0;
@@ -301,7 +293,6 @@ html {
 .control-bar {
     display: flex;
     padding: 0.5rem;
-    height: 2.75rem;
 }
 
 .control-bar > * {
@@ -365,7 +356,6 @@ html {
 
 @media screen and (max-width: 700px) {
     .control-bar {
-        height: auto;
         flex-wrap: wrap;
         justify-content: space-between;
     }
