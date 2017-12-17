@@ -75,7 +75,7 @@ export class Dropdown extends React.PureComponent
     render()
     {
         const { isVisible } = this.state;
-        const { iconName, children } = this.props;
+        const { title, iconName, children } = this.props;
 
         const activeClass = isVisible ? ' active' : '';
         const linkClass = 'button' + activeClass;
@@ -83,7 +83,7 @@ export class Dropdown extends React.PureComponent
 
         return (
             <div className='dropdown'>
-                <a href='#' className={linkClass} onClick={this.handleDropdownClick}>
+                <a href='#' title={title} className={linkClass} onClick={this.handleDropdownClick}>
                     <Icon name={iconName} />
                 </a>
                 <div className={contentClass}>
@@ -95,6 +95,7 @@ export class Dropdown extends React.PureComponent
 }
 
 Dropdown.propTypes = {
+    title: PropTypes.string.isRequired,
     iconName: PropTypes.string.isRequired,
 };
 
