@@ -7,15 +7,16 @@ import { Icon, IconLink, Dropdown, Menu, MenuItem, MenuSeparator } from './eleme
 import urls from './urls'
 
 const PlaylistTabHandle = SortableHandle(() => (
-    <Icon name='ellipses' />
+    <Icon name='ellipses' className='drag-handle' />
 ));
 
 const PlaylistTab = SortableElement(props => {
     const { playlist: p, currentId, drawHandle } = props;
     const handle = drawHandle ? <PlaylistTabHandle /> : null;
+    const className = 'header-tab' + (p.id == currentId ? ' active' : '');
 
     return (
-        <li className={p.id == currentId ? 'tab active' : 'tab'}>
+        <li className={className}>
             { handle }
             <a href={urls.viewPlaylist(p.id)} title={p.title}>
                 {p.title}
@@ -28,7 +29,7 @@ const PlaylistTabList = SortableContainer(props => {
     const { playlists, currentId, drawHandle } = props;
 
     return (
-        <ul className='tabs tabs-primary'>
+        <ul className='header-block header-block-primary'>
         {
             playlists.map(p => (
                 <PlaylistTab
@@ -153,7 +154,7 @@ export default class PlaylistSwitcher extends React.PureComponent
                 onSortEnd={this.handleSortEnd}
                 axis='x'
                 lockAxis='x'
-                helperClass='active'
+                helperClass='dragged'
                 distance={touchMode ? null : 30}
                 useDragHandle={touchMode}
                 drawHandle={touchMode} />
@@ -173,17 +174,15 @@ export default class PlaylistSwitcher extends React.PureComponent
         );
 
         const buttonBar = (
-            <div key='buttons' className='tabs'>
-                <div className='tab active'>
-                    <div className='button-bar'>
-                        {playlistMenu}
-                    </div>
+            <div key='menu' className='header-block'>
+                <div className='button-bar'>
+                    {playlistMenu}
                 </div>
             </div>
         );
 
         return (
-            <div className='panel-header tabs-wrapper'>
+            <div className='panel-header'>
                 { [ playlistTabs, buttonBar ] }
             </div>
         );

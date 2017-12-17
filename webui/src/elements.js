@@ -4,15 +4,19 @@ import spriteSvg from 'open-iconic/sprite/sprite.svg'
 
 export function Icon(props)
 {
+    const { name, className } = props;
+    const fullClassName = 'icon icon-' + name + (className ? ' ' + className : '');
+
     return (
-        <svg className={'icon icon-' + props.name}>
-            <use xlinkHref={spriteSvg + '#' + props.name} />
+        <svg className={fullClassName}>
+            <use xlinkHref={spriteSvg + '#' + name} />
         </svg>
     );
 }
 
 Icon.propTypes = {
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    className: PropTypes.string,
 };
 
 export function IconLink(props)
@@ -134,11 +138,9 @@ export function MenuSeparator(props)
 export function SwitcherHeader(props)
 {
     return (
-        <div className='panel-header tabs-wrapper'>
-            <div className='tabs tabs-primary'>
-                <div className='tab active'>
-                    <span>{props.title}</span>
-                </div>
+        <div className='panel-header'>
+            <div className='header-block header-block-primary'>
+                <span className='header-label header-label-primary'>{props.title}</span>
             </div>
         </div>
     );

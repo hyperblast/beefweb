@@ -18,15 +18,15 @@ html {
     box-sizing: inherit;
 }
 
-html.setting-fontsize-small {
+.setting-fontsize-small {
     font-size: 14px;
 }
 
-html.setting-fontsize-normal {
+.setting-fontsize-normal {
     font-size: 16px;
 }
 
-html.setting-fontsize-large {
+.setting-fontsize-large {
     font-size: 18px;
 }
 
@@ -69,70 +69,75 @@ html.setting-fontsize-large {
     fill: #212121;
 }
 
-.tabs-wrapper {
-    display: flex;
-    border-bottom: 0.0625rem solid #BDBDBD;
-}
-
-.tabs {
+.header-block {
     margin: 0;
     padding: 0;
     white-space: nowrap;
-    height: 100%;
 }
 
-.tabs-primary {
+.header-block-primary {
     flex: 1;
     overflow-x: auto;
+    overflow-y: hidden;
 }
 
-.tab {
+.header-block > .button-bar {
+    padding: 0.125rem;
+}
+
+.header-tab {
     display: inline-block;
-    border-left: 0.0625rem solid #BDBDBD;
-    border-top: 0.0625rem solid #BDBDBD;
-    height: 100%;
     position: relative;
+    background: #FFFFFF;
 }
 
-.tab:first-child {
-    border-top-left-radius: 0.125rem;
-}
-
-.tab:last-child {
-    border-right: 0.0625rem solid #BDBDBD;
-    border-top-right-radius: 0.125rem;
-}
-
-.tab > span,
-.tab > a {
+.header-label,
+.header-tab > a {
     display: inline-block;
-    padding: 0.5rem;
-    min-width: 6em;
+    padding: 0.25rem;
+    margin: 0.25rem;
+    min-width: 4em;
     max-width: 12em;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: center;
     white-space: nowrap;
+    vertical-align: bottom;
 }
 
-.tab > a {
+.header-tab:after {
+    content: " ";
+    display: inline-block;
+    width: 0.0625rem;
+    height: 1.5rem;
+    background: #BDBDBD;
+}
+
+.header-label-primary {
+    max-width: none;
+}
+
+.header-tab > a {
     text-decoration: none;
-    color: #212121;
+    color: #BDBDBD;
 }
 
-.tab > .icon-ellipses {
+.header-tab > .drag-handle {
     position: absolute;
     width: 2.0rem;
     height: 1.5rem;
     margin-top: -0.5rem;
 }
 
-.tab.active {
-    background: #FFFFFF;
+.header-tab.active > a {
+    color: #212121;
 }
 
-.tab > .button-bar {
-    padding: 0.125rem;
+.drag-handle > use {
+    fill: #BDBDBD;
+}
+
+.header-tab.active .drag-handle > use {
+    fill: #212121;
 }
 
 .dropdown {
@@ -253,7 +258,8 @@ html.setting-fontsize-large {
     top: 0.5rem;
 }
 
-.panel {
+.panel,
+.panel-header {
     background: #FFFFFF;
     border: 0.0625rem solid #BDBDBD;
     border-radius: 0.125rem;
@@ -261,20 +267,20 @@ html.setting-fontsize-large {
 }
 
 .panel-header {
-    margin: 0 0.5rem;
-}
-
-.panel-header + .panel {
+    display: flex;
     margin-top: 0;
-    border-top: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .main-panel {
     flex: 1;
     margin-top: 0;
     margin-bottom: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
     overflow: hidden;
 }
 
@@ -312,10 +318,6 @@ html.setting-fontsize-large {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.file-browser-path {
-    max-width: none !important;
 }
 
 .playback-control .icon-media-play > use {
