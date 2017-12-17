@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AppModel, { ViewId } from './app_model'
-import { SwitcherHeader } from './elements'
+import { PanelHeader } from './elements'
 import ControlBar from './control_bar'
 import PlaylistSwitcher from './playlist_switcher'
 import PlaylistContent from './playlist_content'
@@ -77,7 +77,7 @@ export default class App extends React.PureComponent
         if (view == ViewId.settings)
         {
             return {
-                header: <SwitcherHeader title='Settings' />,
+                header: <PanelHeader title='Settings' />,
                 main: <Settings settingsModel={appModel.settingsModel} />
             };
         }

@@ -135,7 +135,7 @@ export function MenuSeparator(props)
     );
 }
 
-export function SwitcherHeader(props)
+export function PanelHeader(props)
 {
     return (
         <div className='panel-header'>
@@ -146,7 +146,7 @@ export function SwitcherHeader(props)
     );
 }
 
-SwitcherHeader.propTypes = {
+PanelHeader.propTypes = {
     title: PropTypes.string.isRequired
 };
 
