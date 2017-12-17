@@ -154,7 +154,7 @@ html {
     background: #FFFFFF;
     border: 0.0625rem solid #BDBDBD;
     border-radius: 0.125rem;
-    box-shadow: 0.0625rem 0.0625rem 0.0625rem 0 rgba(189,189,189,0.7);
+    box-shadow: 0.25rem 0.25rem 0.25rem 0 rgba(189,189,189,0.7);
 }
 
 .dropdown-content.active {
@@ -264,6 +264,7 @@ html {
     border: 0.0625rem solid #BDBDBD;
     border-radius: 0.125rem;
     margin: 0.5rem;
+    box-shadow: 0.0625rem 0.0625rem 0.0625rem 0 rgba(189,189,189,0.7);
 }
 
 .panel-header {
