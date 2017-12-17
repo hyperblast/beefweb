@@ -50,11 +50,11 @@ export default class PlaybackControl extends React.PureComponent
     {
         return (
             <div className='playback-control button-bar'>
-                <IconLink name='media-stop' href='#' title='Stop' onClick={this.handleStop} />
-                <IconLink name='media-play' href='#' title='Play' onClick={this.handlePlay} />
-                <IconLink name='media-pause' href='#' title='Pause' onClick={this.handlePause} />
-                <IconLink name='media-step-backward' href='#' title='Previous' onClick={this.handlePrevious} />
-                <IconLink name='media-step-forward' href='#' title='Next' onClick={this.handleNext} />
+                <IconLink name='media-stop' title='Stop' onClick={this.handleStop} />
+                <IconLink name='media-play' title='Play' onClick={this.handlePlay} />
+                <IconLink name='media-pause' title='Pause' onClick={this.handlePause} />
+                <IconLink name='media-step-backward' title='Previous' onClick={this.handlePrevious} />
+                <IconLink name='media-step-forward' title='Next' onClick={this.handleNext} />
             </div>
         );
     }

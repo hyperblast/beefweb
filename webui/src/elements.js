@@ -17,13 +17,20 @@ Icon.propTypes = {
 
 export function IconLink(props)
 {
-    var linkProps = Object.assign({}, props);
-    delete linkProps.name;
-    return <a { ...linkProps }><Icon name={props.name} /></a>;
+    const { name, className, href, onClick } = props;
+    return (
+        <a href={href || '#'} className={className} onClick={onClick}>
+            <Icon name={name} />
+        </a>
+    );
 }
 
 IconLink.propTypes = {
-    name: PropTypes.string.isRequired
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    href: PropTypes.string,
+    onClick: PropTypes.func,
 };
 
 export function SwitcherHeader(props)

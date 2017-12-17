@@ -59,7 +59,7 @@ export default class VolumeControl extends React.PureComponent
         return (
             <div className='volume-control'>
                 <div className='button-bar'>
-                    <IconLink name={volumeIcon} href='#' onClick={this.handleMuteClick} title='Toggle mute' />
+                    <IconLink name={volumeIcon} onClick={this.handleMuteClick} title='Toggle mute' />
                 </div>
                 <input type='range'
                     max={this.state.volumeMax}

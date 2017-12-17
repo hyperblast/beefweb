@@ -46,7 +46,7 @@ export default class FileBrowserHeader extends React.PureComponent
         }
         else
         {
-            return { url: '#', onClick: e => e.preventDefault() };
+            return { url: null, onClick: e => e.preventDefault() };
         }
     }
 
@@ -78,7 +78,6 @@ export default class FileBrowserHeader extends React.PureComponent
                         <div className='button-bar'>
                             <IconLink
                                 name='data-transfer-download'
-                                href='#'
                                 onClick={this.handleAddClick}
                                 title='Add current directory' />
                             <IconLink
