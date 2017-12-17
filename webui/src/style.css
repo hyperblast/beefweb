@@ -34,9 +34,10 @@ html.setting-fontsize-large {
 
 .button-bar {
     display: inline-block;
+    background: #FFFFFF;
 }
 
-.button-bar > a {
+.button {
     display: inline-block;
     width: 1.75rem;
     height: 1.75rem;
@@ -44,16 +45,16 @@ html.setting-fontsize-large {
     border-radius: 0.125rem;
 }
 
-.button-bar > a:first-child {
+.button:first-child {
     margin-left: 0;
 }
 
-.button-bar > a:last-child {
+.button:last-child {
     margin-right: 0;
 }
 
-.button-bar > a:hover,
-.button-bar > a.active {
+.button:hover,
+.button.active {
     background: #E0E0E0;
 }
 
@@ -132,6 +133,64 @@ html.setting-fontsize-large {
 
 .tab > .button-bar {
     padding: 0.125rem;
+}
+
+.dropdown {
+    display: inline-block;
+    position: relative;
+}
+
+.dropdown-content {
+    position: absolute;
+    display: none;
+    z-index: 10;
+    right: 0;
+    padding: 0.5rem;
+    background: #FFFFFF;
+    border: 0.0625rem solid #BDBDBD;
+    border-radius: 0.125rem;
+    box-shadow: 0.0625rem 0.0625rem 0.0625rem 0 rgba(189,189,189,0.7);
+}
+
+.dropdown-content.active {
+    display: block;
+}
+
+.menu {
+    margin: 0;
+    padding: 0;
+}
+
+.menu > *:first-child {
+    margin-top: 0;
+}
+
+.menu > *:last-child {
+    margin-bottom: 0;
+}
+
+.menu-item {
+    display: block;
+    margin: 0.125rem 0;
+}
+
+.menu-item > a {
+    display: block;
+    padding: 0.25rem;
+    border-radius: 0.125rem;
+    text-decoration: none;
+    color: #212121;
+}
+
+.menu-item > a:hover {
+    background: #E0E0E0;
+}
+
+.menu-separator {
+    display: block;
+    height: 0.0625rem;
+    background: #BDBDBD;
+    margin: 0.5rem 0;
 }
 
 .progress-bar {

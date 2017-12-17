@@ -18,8 +18,10 @@ Icon.propTypes = {
 export function IconLink(props)
 {
     const { name, className, href, onClick } = props;
+    const fullClassName = className ? className + ' button' : 'button';
+
     return (
-        <a href={href || '#'} className={className} onClick={onClick}>
+        <a href={href || '#'} className={fullClassName} onClick={onClick}>
             <Icon name={name} />
         </a>
     );
@@ -32,6 +34,102 @@ IconLink.propTypes = {
     href: PropTypes.string,
     onClick: PropTypes.func,
 };
+
+export class Dropdown extends React.PureComponent
+{
+    constructor()
+    {
+        super();
+        this.state = { isVisible: false };
+        this.handleDropdownClick = this.handleDropdownClick.bind(this);
+        this.handleWindowClick = this.handleWindowClick.bind(this);
+    }
+
+    handleDropdownClick(e)
+    {
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.setState({ isVisible: !this.state.isVisible });
+    }
+
+    handleWindowClick()
+    {
+        this.setState({ isVisible: false });
+    }
+
+    componentDidMount()
+    {
+        window.addEventListener('click', this.handleWindowClick);
+    }
+
+    componentWillUnmount()
+    {
+        window.removeEventListener('click', this.handleWindowClick);
+    }
+
+    render()
+    {
+        const { isVisible } = this.state;
+        const { iconName, children } = this.props;
+
+        const activeClass = isVisible ? ' active' : '';
+        const linkClass = 'button' + activeClass;
+        const contentClass = 'dropdown-content' + activeClass;
+
+        return (
+            <div className='dropdown'>
+                <a href='#' className={linkClass} onClick={this.handleDropdownClick}>
+                    <Icon name={iconName} />
+                </a>
+                <div className={contentClass}>
+                    {children}
+                </div>
+            </div>
+        );
+    }
+}
+
+Dropdown.propTypes = {
+    iconName: PropTypes.string.isRequired,
+};
+
+export function Menu(props)
+{
+    const { children } = props;
+
+    return (
+        <ul className='menu'>
+            {children}
+        </ul>
+    );
+}
+
+export function MenuItem(props)
+{
+    const { title, href, onClick } = props;
+
+    return (
+        <li className='menu-item'>
+            <a href={href || '#'} onClick={onClick}>
+                {title}
+            </a>
+        </li>
+    );
+}
+
+MenuItem.propTypes = {
+    title: PropTypes.string.isRequired,
+    href: PropTypes.string,
+    onClick: PropTypes.func,
+};
+
+export function MenuSeparator(props)
+{
+    return (
+        <li className='menu-separator' />
+    );
+}
 
 export function SwitcherHeader(props)
 {

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PlaylistModel from './playlist_model'
 import TouchSupport from './touch_support'
-import { Icon, IconLink } from './elements'
+import { Icon, IconLink, Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
 import urls from './urls'
 
 const PlaylistTabHandle = SortableHandle(() => (
@@ -101,7 +101,7 @@ export default class PlaylistSwitcher extends React.PureComponent
         var currentPlaylist = model.currentPlaylist;
 
         if (currentPlaylist && window.confirm(`Do you want to remove '${currentPlaylist.title}' playlist?`))
-            model.removePlaylist(currentPlaylist.id);
+            model.removePlaylist();
     }
 
     handleRenameClick(e)
@@ -128,7 +128,7 @@ export default class PlaylistSwitcher extends React.PureComponent
         var currentPlaylist = model.currentPlaylist;
 
         if (currentPlaylist && window.confirm(`Do you want to clear '${currentPlaylist.title}' playlist?`))
-            model.clearPlaylist(currentPlaylist.id);
+            model.clearPlaylist();
     }
 
     handleAddUrlClick(e)
@@ -159,15 +159,24 @@ export default class PlaylistSwitcher extends React.PureComponent
                 drawHandle={touchMode} />
         );
 
+        const playlistMenu = (
+            <Dropdown iconName='menu'>
+                <Menu>
+                    <MenuItem title='Add playlist' onClick={this.handleAddClick} />
+                    <MenuItem title='Remove playlist' onClick={this.handleRemoveClick} />
+                    <MenuSeparator />
+                    <MenuItem title='Rename playlist' onClick={this.handleRenameClick} />
+                    <MenuItem title='Clear playlist' onClick={this.handleClearClick} />
+                    <MenuItem title='Add URL' onClick={this.handleAddUrlClick} />
+                </Menu>
+            </Dropdown>
+        );
+
         const buttonBar = (
             <div key='buttons' className='tabs'>
                 <div className='tab active'>
                     <div className='button-bar'>
-                        <IconLink name='plus' title='Add playlist' onClick={this.handleAddClick} />
-                        <IconLink name='minus' title='Remove playlist' onClick={this.handleRemoveClick} />
-                        <IconLink name='comment-square' title='Rename playlist' onClick={this.handleRenameClick} />
-                        <IconLink name='browser' title='Clear playlist' onClick={this.handleClearClick} />
-                        <IconLink name='external-link' title='Add URL' onClick={this.handleAddUrlClick} />
+                        {playlistMenu}
                     </div>
                 </div>
             </div>
