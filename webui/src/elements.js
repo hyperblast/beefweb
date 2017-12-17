@@ -21,11 +21,11 @@ Icon.propTypes = {
 
 export function Button(props)
 {
-    const { name, className, href, onClick } = props;
+    const { name, title, className, href, onClick } = props;
     const fullClassName = className ? className + ' button' : 'button';
 
     return (
-        <a href={href || '#'} className={fullClassName} onClick={onClick}>
+        <a href={href || '#'} title={title} className={fullClassName} onClick={onClick}>
             <Icon name={name} />
         </a>
     );
