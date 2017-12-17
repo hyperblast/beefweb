@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlayerModel from './player_model'
-import { IconLink } from './elements'
+import { Button } from './elements'
 
 export default class PlaybackControl extends React.PureComponent
 {
@@ -50,11 +50,11 @@ export default class PlaybackControl extends React.PureComponent
     {
         return (
             <div className='playback-control button-bar'>
-                <IconLink name='media-stop' title='Stop' onClick={this.handleStop} />
-                <IconLink name='media-play' title='Play' onClick={this.handlePlay} />
-                <IconLink name='media-pause' title='Pause' onClick={this.handlePause} />
-                <IconLink name='media-step-backward' title='Previous' onClick={this.handlePrevious} />
-                <IconLink name='media-step-forward' title='Next' onClick={this.handleNext} />
+                <Button name='media-stop' title='Stop' onClick={this.handleStop} />
+                <Button name='media-play' title='Play' onClick={this.handlePlay} />
+                <Button name='media-pause' title='Pause' onClick={this.handlePause} />
+                <Button name='media-step-backward' title='Previous' onClick={this.handlePrevious} />
+                <Button name='media-step-forward' title='Next' onClick={this.handleNext} />
             </div>
         );
     }

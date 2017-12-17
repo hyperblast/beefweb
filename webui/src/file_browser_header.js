@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import FileBrowserModel, { rootPath } from './file_browser_model'
 import PlaylistModel from './playlist_model'
-import { IconLink } from './elements'
+import { Button } from './elements'
 import urls from './urls'
 
 export default class FileBrowserHeader extends React.PureComponent
@@ -73,15 +73,15 @@ export default class FileBrowserHeader extends React.PureComponent
                 </div>
                 <div className='header-block'>
                     <div className='button-bar'>
-                        <IconLink
+                        <Button
                             name='data-transfer-download'
                             onClick={this.handleAddClick}
                             title='Add current directory' />
-                        <IconLink
+                        <Button
                             name='home'
                             href={urls.browsePath(rootPath)}
                             title='Navigate to list of music directories' />
-                        <IconLink
+                        <Button
                             name='arrow-thick-top'
                             href={parentLink.url}
                             onClick={parentLink.onClick}

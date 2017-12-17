@@ -19,7 +19,7 @@ Icon.propTypes = {
     className: PropTypes.string,
 };
 
-export function IconLink(props)
+export function Button(props)
 {
     const { name, className, href, onClick } = props;
     const fullClassName = className ? className + ' button' : 'button';
@@ -31,7 +31,7 @@ export function IconLink(props)
     );
 }
 
-IconLink.propTypes = {
+Button.propTypes = {
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     className: PropTypes.string,

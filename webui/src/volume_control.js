@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlayerModel from './player_model'
-import { IconLink } from './elements'
+import { Button } from './elements'
 
 export default class VolumeControl extends React.PureComponent
 {
@@ -59,7 +59,7 @@ export default class VolumeControl extends React.PureComponent
         return (
             <div className='volume-control'>
                 <div className='button-bar'>
-                    <IconLink name={volumeIcon} onClick={this.handleMuteClick} title='Toggle mute' />
+                    <Button name={volumeIcon} onClick={this.handleMuteClick} title='Toggle mute' />
                 </div>
                 <input type='range'
                     max={this.state.volumeMax}

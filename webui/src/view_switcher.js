@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AppModel, { ViewId } from './app_model'
-import { IconLink } from './elements'
+import { Button } from './elements'
 import urls from './urls'
 
 export default class ViewSwitcher extends React.PureComponent
@@ -43,9 +43,9 @@ export default class ViewSwitcher extends React.PureComponent
 
         return (
             <div className='view-switcher button-bar'>
-                <IconLink name='list' href={urls.viewCurrentPlaylist} className={playlistActive} title='View playlists' />
-                <IconLink name='folder' href={urls.browseCurrentPath} className={fileBrowserActive} title='Browse files' />
-                <IconLink name='cog' href={urls.viewSettings} className={settingsActive} title='View settings' />
+                <Button name='list' href={urls.viewCurrentPlaylist} className={playlistActive} title='View playlists' />
+                <Button name='folder' href={urls.browseCurrentPath} className={fileBrowserActive} title='Browse files' />
+                <Button name='cog' href={urls.viewSettings} className={settingsActive} title='View settings' />
             </div>
         );
     }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PlaylistModel from './playlist_model'
 import TouchSupport from './touch_support'
-import { Icon, IconLink, Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
+import { Icon, Button, Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
 import urls from './urls'
 
 const PlaylistTabHandle = SortableHandle(() => (
