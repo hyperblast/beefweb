@@ -21,8 +21,11 @@ Icon.propTypes = {
 
 export function Button(props)
 {
-    const { name, title, className, href, onClick } = props;
-    const fullClassName = className ? className + ' button' : 'button';
+    const { name, title, className, href, onClick, active } = props;
+
+    const fullClassName = 'button'
+        + (className ? ' ' + className : '')
+        + (active ? ' active' : '');
 
     return (
         <a href={href || '#'} title={title} className={fullClassName} onClick={onClick}>
@@ -37,6 +40,7 @@ Button.propTypes = {
     className: PropTypes.string,
     href: PropTypes.string,
     onClick: PropTypes.func,
+    active: PropTypes.bool,
 };
 
 export class Dropdown extends React.PureComponent

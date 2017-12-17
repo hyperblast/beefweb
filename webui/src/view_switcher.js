@@ -37,15 +37,23 @@ export default class ViewSwitcher extends React.PureComponent
     {
         const { view } = this.state;
 
-        var playlistActive = view == ViewId.playlist ? 'active' : null;
-        var fileBrowserActive = view == ViewId.fileBrowser ? 'active' : null;
-        var settingsActive = view == ViewId.settings ? 'active' : null;
-
         return (
             <div className='view-switcher button-bar'>
-                <Button name='list' href={urls.viewCurrentPlaylist} className={playlistActive} title='View playlists' />
-                <Button name='folder' href={urls.browseCurrentPath} className={fileBrowserActive} title='Browse files' />
-                <Button name='cog' href={urls.viewSettings} className={settingsActive} title='View settings' />
+                <Button
+                    name='list'
+                    href={urls.viewCurrentPlaylist}
+                    active={view == ViewId.playlist}
+                    title='View playlists' />
+                <Button
+                    name='folder'
+                    href={urls.browseCurrentPath}
+                    active={view == ViewId.fileBrowser}
+                    title='Browse files' />
+                <Button
+                    name='cog'
+                    href={urls.viewSettings}
+                    active={view == ViewId.settings}
+                    title='View settings' />
             </div>
         );
     }
