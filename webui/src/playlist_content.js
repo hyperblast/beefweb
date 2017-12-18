@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlaylistModel from './playlist_model'
-import { Table } from './elements'
+import Table from './table'
 
 export default class PlaylistContent extends React.PureComponent
 {

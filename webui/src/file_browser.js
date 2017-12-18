@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import urls from './urls'
-import { Table } from './elements'
+import Table from './table'
 
 const fileTypes = Object.freeze({
     F: 'File',
