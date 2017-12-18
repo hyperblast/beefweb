@@ -1,9 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlayerModel from './player_model'
-import { Button } from './elements'
+import { Button, Dropdown } from './elements'
 
-export default class VolumeControl extends React.PureComponent
+function volumeIcon(isMuted)
+{
+    return isMuted ? 'volume-off' : 'volume-high';
+}
+
+class VolumeControlPanel extends React.PureComponent
 {
     constructor(props)
     {
@@ -17,14 +22,13 @@ export default class VolumeControl extends React.PureComponent
 
     getStateFromModel()
     {
-        var playerModel = this.props.playerModel;
-        var volume = playerModel.volume;
+        const { db, dbMin, isMuted } = this.props.playerModel.volume;
 
         return {
-            isMuted: volume.isMuted,
+            volume: db,
             volumeMax: 0.0,
-            volumeMin: volume.dbMin,
-            volume: volume.db,
+            volumeMin: dbMin,
+            isMuted: isMuted,
         };
     }
 
@@ -47,26 +51,82 @@ export default class VolumeControl extends React.PureComponent
     handleVolumeChange(e)
     {
         e.preventDefault();
-        var newVolume = Number(e.target.value);
-        this.setState({ volume: newVolume });
+        const newVolume = Number(e.target.value);
         this.props.playerModel.setVolume(newVolume);
     }
 
     render()
     {
-        var volumeIcon = this.state.isMuted ? 'volume-off' : 'volume-high';
+        const { isMuted, volume, volumeMin, volumeMax } = this.state;
+
+        return (
+            <div className='volume-control-panel'>
+                <div className='button-bar'>
+                    <Button
+                        name={volumeIcon(isMuted)}
+                        onClick={this.handleMuteClick}
+                        title='Toggle mute' />
+                </div>
+                <input type='range'
+                    className='volume-slider'
+                    max={volumeMax}
+                    min={volumeMin}
+                    value={volume}
+                    title={volume + 'dB'}
+                    onChange={this.handleVolumeChange} />
+            </div>
+        );
+    }
+}
+
+VolumeControlPanel.propTypes = {
+    playerModel: PropTypes.instanceOf(PlayerModel).isRequired
+};
+
+export default class VolumeControl extends React.PureComponent
+{
+    constructor(props)
+    {
+        super(props);
+
+        this.state = this.getStateFromModel();
+        this.handleUpdate = () => this.setState(this.getStateFromModel());
+    }
+
+    getStateFromModel()
+    {
+        return {
+            isMuted: this.props.playerModel.volume.isMuted
+        };
+    }
+
+    componentDidMount()
+    {
+        this.props.playerModel.on('change', this.handleUpdate);
+    }
+
+    componentWillUnmount()
+    {
+        this.props.playerModel.off('change', this.handleUpdate);
+    }
+
+    render()
+    {
+        const { playerModel } = this.props;
+        const { isMuted } = this.state;
 
         return (
             <div className='volume-control'>
-                <div className='button-bar'>
-                    <Button name={volumeIcon} onClick={this.handleMuteClick} title='Toggle mute' />
+                <div className='volume-control-compact'>
+                    <div className='button-bar'>
+                        <Dropdown title='Show volume panel' iconName={volumeIcon(isMuted)} autoHide={false}>
+                            <VolumeControlPanel playerModel={playerModel} />
+                        </Dropdown>
+                    </div>
                 </div>
-                <input type='range'
-                    max={this.state.volumeMax}
-                    min={this.state.volumeMin}
-                    value={this.state.volume}
-                    title={this.state.volume + 'dB'}
-                    onChange={this.handleVolumeChange} />
+                <div className='volume-control-full'>
+                    <VolumeControlPanel playerModel={playerModel} />
+                </div>
             </div>
         );
     }

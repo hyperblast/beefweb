@@ -66,12 +66,16 @@ export default class PlayerModel extends EventEmitter
 
     mute()
     {
+        this.volume.isMuted = !this.volume.isMuted;
         this.client.setMuted(SwitchParam.toggle);
+        this.emit('change');
     }
 
     setVolume(value)
     {
+        this.volume.db = value;
         this.client.setVolumeDb(value);
+        this.emit('change');
     }
 
     setPosition(value)

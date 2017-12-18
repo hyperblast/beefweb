@@ -349,11 +349,20 @@ html {
     padding: 0.25rem;
 }
 
-.volume-control {
+.volume-control,
+.volume-control-full {
     display: inline-block;
 }
 
-.volume-control > input[type='range'] {
+.volume-control-compact {
+    display: none;
+}
+
+.volume-control-compact .volume-control-panel {
+    width: 9rem;
+}
+
+.volume-slider {
     width: 6rem;
     margin-left: 0.25rem;
     margin-bottom: 0.25rem;
@@ -396,14 +405,12 @@ html {
     }
 
     @media (max-width: (28em * @scale)) {
-        .volume-control > input[type='range'] {
+        .volume-control-full {
             display: none;
         }
-    }
 
-    @media (max-width: (20.5em * @scale)) {
-        .volume-control {
-            display: none;
+        .volume-control-compact {
+            display: inline-block;
         }
     }
 }

@@ -63,7 +63,8 @@ export class Dropdown extends React.PureComponent
 
     handleWindowClick()
     {
-        this.setState({ isVisible: false });
+        if (this.props.autoHide)
+            this.setState({ isVisible: false });
     }
 
     componentDidMount()
@@ -101,7 +102,12 @@ export class Dropdown extends React.PureComponent
 Dropdown.propTypes = {
     title: PropTypes.string.isRequired,
     iconName: PropTypes.string.isRequired,
+    autoHide: PropTypes.bool,
 };
+
+Dropdown.defaultProps = {
+    autoHide: true,
+}
 
 export function Menu(props)
 {
