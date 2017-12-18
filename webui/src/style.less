@@ -4,6 +4,9 @@
 @scale-normal: 1.0;
 @scale-large: 1.125;
 
+@layout-compact-size: 43em;
+@layout-tiny-size: 28em;
+
 /* text, icons */
 @color-text: #212121;
 
@@ -30,6 +33,46 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.layout-compact(@rules) {
+    @media (max-width: (@layout-compact-size * @scale-small)) {
+        .setting-fontsize-small {
+            @rules();
+        }
+    }
+
+    @media (max-width: (@layout-compact-size * @scale-normal)) {
+        .setting-fontsize-normal {
+            @rules();
+        }
+    }
+
+    @media (max-width: (@layout-compact-size * @scale-large)) {
+        .setting-fontsize-large {
+            @rules();
+        }
+    }
+}
+
+.layout-tiny(@rules) {
+    @media (max-width: (@layout-tiny-size * @scale-small)) {
+        .setting-fontsize-small {
+            @rules();
+        }
+    }
+
+    @media (max-width: (@layout-tiny-size * @scale-normal)) {
+        .setting-fontsize-normal {
+            @rules();
+        }
+    }
+
+    @media (max-width: (@layout-tiny-size * @scale-large)) {
+        .setting-fontsize-large {
+            @rules();
+        }
+    }
 }
 
 /* Base setup */
@@ -329,6 +372,22 @@ html {
     margin-right: 0;
 }
 
+.layout-compact({
+    .control-bar {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .control-bar > * {
+        margin-right: 0;
+    }
+
+    .position-control {
+        order: 10;
+        min-width: 100%;
+    }
+});
+
 .status-bar {
     padding: 0.5rem;
     margin: 0.5rem;
@@ -354,13 +413,23 @@ html {
     display: inline-block;
 }
 
-.volume-control-compact {
+.volume-control-mini {
     display: none;
 }
 
-.volume-control-compact .volume-control-panel {
+.volume-control-mini .volume-control-panel {
     width: 9rem;
 }
+
+.layout-tiny({
+    .volume-control-full {
+        display: none;
+    }
+
+    .volume-control-mini {
+        display: inline-block;
+    }
+});
 
 .volume-slider {
     width: 6rem;
@@ -383,46 +452,4 @@ html {
 
 .settings label > span:first-child {
     margin-left: 0;
-}
-
-/* Responsiveness */
-
-.responsive-layout(@scale) {
-    @media (max-width: (43em * @scale)) {
-        .control-bar {
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
-        .control-bar > * {
-            margin-right: 0;
-        }
-
-        .position-control {
-            order: 10;
-            min-width: 100%;
-        }
-    }
-
-    @media (max-width: (28em * @scale)) {
-        .volume-control-full {
-            display: none;
-        }
-
-        .volume-control-compact {
-            display: inline-block;
-        }
-    }
-}
-
-.setting-fontsize-small {
-    .responsive-layout(@scale-small);
-}
-
-.setting-fontsize-normal {
-    .responsive-layout(@scale-normal);
-}
-
-.setting-fontsize-large {
-    .responsive-layout(@scale-large);
 }

@@ -117,7 +117,7 @@ export default class VolumeControl extends React.PureComponent
 
         return (
             <div className='volume-control'>
-                <div className='volume-control-compact'>
+                <div className='volume-control-mini'>
                     <div className='button-bar'>
                         <Dropdown title='Show volume panel' iconName={volumeIcon(isMuted)} autoHide={false}>
                             <VolumeControlPanel playerModel={playerModel} />
