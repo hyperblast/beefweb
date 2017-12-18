@@ -8,6 +8,10 @@
 
 /* Base setup */
 
+@scale-small: 0.875;
+@scale-normal: 1.0;
+@scale-large: 1.125;
+
 html {
   box-sizing: border-box;
   background: #EEEEEE;
@@ -19,15 +23,15 @@ html {
 }
 
 .setting-fontsize-small {
-    font-size: 14px;
+    font-size: percentage(@scale-small);
 }
 
 .setting-fontsize-normal {
-    font-size: 16px;
+    font-size: percentage(@scale-normal);
 }
 
 .setting-fontsize-large {
-    font-size: 18px;
+    font-size: percentage(@scale-large);
 }
 
 /* Elements */
@@ -287,7 +291,7 @@ html {
 }
 
 .setting-no-fullwidth .app {
-    max-width: 1000px;
+    max-width: 62rem;
 }
 
 .control-bar {
@@ -354,31 +358,44 @@ html {
 
 /* Responsiveness */
 
-@media screen and (max-width: 700px) {
-    .control-bar {
-        flex-wrap: wrap;
-        justify-content: space-between;
+.responsive-layout(@scale) {
+    @media (max-width: (43em * @scale)) {
+        .control-bar {
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .control-bar > * {
+            margin-right: 0;
+        }
+
+        .position-control {
+            order: 10;
+            min-width: 100%;
+        }
     }
 
-    .control-bar > * {
-        margin-right: 0;
+    @media (max-width: (28em * @scale)) {
+        .volume-control > input[type='range'] {
+            display: none;
+        }
     }
 
-    .position-control {
-        order: 10;
-        min-width: 100%;
+    @media (max-width: (20.5em * @scale)) {
+        .volume-control {
+            display: none;
+        }
     }
 }
 
-@media screen and (max-width: 450px) {
-    .volume-control > input[type='range'] {
-        display: none;
-    }
+.setting-fontsize-small {
+    .responsive-layout(@scale-small);
 }
 
-@media screen and (max-width: 325px) {
-    .volume-control {
-        display: none;
-    }
+.setting-fontsize-normal {
+    .responsive-layout(@scale-normal);
 }
 
+.setting-fontsize-large {
+    .responsive-layout(@scale-large);
+}
