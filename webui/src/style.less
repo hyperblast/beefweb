@@ -19,6 +19,13 @@
 /* ui background */
 @color-background: #FFFFFF;
 
+/* Mixins */
+
+.border() {
+    border: 0.0625rem solid @color-border;
+    border-radius: 0.125rem;
+}
+
 /* Base setup */
 
 html {
@@ -157,9 +164,9 @@ html {
     right: 0;
     padding: 0.5rem;
     background: @color-background;
-    border: 0.0625rem solid @color-border;
-    border-radius: 0.125rem;
     box-shadow: 0.25rem 0.25rem 0.25rem 0 rgba(189,189,189,0.7);
+
+    .border();
 }
 
 .dropdown-content.active {
@@ -207,8 +214,8 @@ html {
     height: 100%;
     position: relative;
     background: @color-hover;
-    border: 0.0625rem solid @color-border;
-    border-radius: 0.125rem;
+
+    .border();
 }
 
 .progress-bar-gauge {
@@ -266,10 +273,10 @@ html {
 .panel,
 .panel-header {
     background: @color-background;
-    border: 0.0625rem solid @color-border;
-    border-radius: 0.125rem;
     margin: 0.5rem;
     box-shadow: 0.0625rem 0.0625rem 0.0625rem 0 rgba(189,189,189,0.7);
+
+    .border();
 }
 
 .panel-header {
