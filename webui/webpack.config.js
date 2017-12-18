@@ -9,8 +9,8 @@ function configCommon(cfg, opts)
 
     cfg.output.filename = 'bundle.js';
 
-    cfg.entry.push('event-source-polyfill');
     cfg.entry.push('normalize.css');
+    cfg.entry.push('event-source-polyfill');
 
     cfg.module.rules.push({
         test: /\.js$/,
@@ -34,7 +34,7 @@ function configApp(cfg, opts)
 
     cfg.output.path = opts.outputDir;
 
-    cfg.entry.push('./src/style.css');
+    cfg.entry.push('./src/style.less');
     cfg.entry.push('./src/index.js');
 
     cfg.plugins.push(new HtmlPlugin({
@@ -70,6 +70,11 @@ function configDebug(cfg)
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
     });
+
+    cfg.module.rules.push({
+        test: /\.less$/,
+        use: ['style-loader', 'css-loader', 'less-loader']
+    });
 }
 
 function configRelease(cfg)
@@ -88,17 +93,25 @@ function configRelease(cfg)
         'process.env.NODE_ENV': '"production"'
     }));
 
-    var cssExtractor = new ExtractTextPlugin({
+    var styleExtractor = new ExtractTextPlugin({
         filename: 'bundle.css'
     });
 
-    cfg.plugins.push(cssExtractor);
+    cfg.plugins.push(styleExtractor);
 
     cfg.module.rules.push({
         test: /\.css$/,
-        use: cssExtractor.extract({
-            fallback: 'style-loader',
-            use: 'css-loader'
+        use: styleExtractor.extract({
+            use: 'css-loader',
+            fallback: 'style-loader'
+        })
+    });
+
+    cfg.module.rules.push({
+        test: /\.less$/,
+        use: styleExtractor.extract({
+            use: ['css-loader', 'less-loader'],
+            fallback: 'style-loader'
         })
     });
 }
