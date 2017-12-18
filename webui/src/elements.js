@@ -80,17 +80,17 @@ export class Dropdown extends React.PureComponent
     render()
     {
         const { isVisible } = this.state;
-        const { title, iconName, children } = this.props;
+        const { title, iconName, children, direction } = this.props;
 
-        const activeClass = isVisible ? ' active' : '';
-        const linkClass = 'button' + activeClass;
-        const contentClass = 'dropdown-content' + activeClass;
+        const contentClass = 'dropdown-content dropdown-' + direction + (isVisible ? ' active' : '');
 
         return (
             <div className='dropdown'>
-                <a href='#' title={title} className={linkClass} onClick={this.handleDropdownClick}>
-                    <Icon name={iconName} />
-                </a>
+                <Button
+                    name={iconName}
+                    title={title}
+                    active={isVisible}
+                    onClick={this.handleDropdownClick} />
                 <div className={contentClass}>
                     {children}
                 </div>
@@ -103,10 +103,12 @@ Dropdown.propTypes = {
     title: PropTypes.string.isRequired,
     iconName: PropTypes.string.isRequired,
     autoHide: PropTypes.bool,
+    direction: PropTypes.oneOf(['left', 'center', 'right']),
 };
 
 Dropdown.defaultProps = {
     autoHide: true,
+    direction: 'right'
 }
 
 export function Menu(props)

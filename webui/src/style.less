@@ -209,12 +209,20 @@ html {
     position: absolute;
     display: none;
     z-index: 10;
-    right: 0;
     padding: 0.5rem;
     background: @color-background;
     box-shadow: 0.25rem 0.25rem 0.25rem 0 rgba(189,189,189,0.7);
 
     .border();
+}
+
+.dropdown-left {
+    right: 0;
+}
+
+.dropdown-center {
+    margin-left: 50%;
+    transform: translateX(-50%);
 }
 
 .dropdown-content.active {

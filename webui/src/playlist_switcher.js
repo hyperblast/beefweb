@@ -161,7 +161,7 @@ export default class PlaylistSwitcher extends React.PureComponent
         );
 
         const playlistMenu = (
-            <Dropdown title='Playlist menu' iconName='menu'>
+            <Dropdown title='Playlist menu' iconName='menu' direction='left'>
                 <Menu>
                     <MenuItem title='Add playlist' onClick={this.handleAddClick} />
                     <MenuItem title='Remove playlist' onClick={this.handleRemoveClick} />
