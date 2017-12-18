@@ -26,6 +26,12 @@
     border-radius: 0.125rem;
 }
 
+.no-text-overflow() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 /* Base setup */
 
 html {
@@ -110,10 +116,9 @@ html {
     margin: 0.25rem;
     min-width: 4em;
     max-width: 12em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     vertical-align: bottom;
+
+    .no-text-overflow();
 }
 
 .header-tab:after {
@@ -327,9 +332,8 @@ html {
 .status-bar {
     padding: 0.5rem;
     margin: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+
+    .no-text-overflow();
 }
 
 .playback-control .icon-media-play > use {
