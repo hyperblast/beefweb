@@ -1,21 +1,30 @@
-/*
-    #212121 - text, icons
-    #BDBDBD - medium indication (progress gauge, ui border)
-    #E0E0E0 - soft indication (table row hover, button hover, progress background)
-    #EEEEEE - spacer background
-    #FFFFFF - ui background
-*/
-
-/* Base setup */
+/* Variables */
 
 @scale-small: 0.875;
 @scale-normal: 1.0;
 @scale-large: 1.125;
 
+/* text, icons */
+@color-text: #212121;
+
+/* progress gauge, ui border */
+@color-hover: #E0E0E0;
+
+/* table row hover, button hover, progress background */
+@color-border: #BDBDBD;
+
+/* spacer background */
+@color-spacer: #EEEEEE;
+
+/* ui background */
+@color-background: #FFFFFF;
+
+/* Base setup */
+
 html {
   box-sizing: border-box;
-  background: #EEEEEE;
-  color: #212121;
+  background: @color-spacer;
+  color: @color-text;
 }
 
 *, *:before, *:after {
@@ -38,7 +47,7 @@ html {
 
 .button-bar {
     display: inline-block;
-    background: #FFFFFF;
+    background: @color-background;
 }
 
 .button {
@@ -51,7 +60,7 @@ html {
 
 .button:hover,
 .button.active {
-    background: #E0E0E0;
+    background: @color-hover;
 }
 
 .icon {
@@ -62,7 +71,7 @@ html {
 }
 
 .icon > use {
-    fill: #212121;
+    fill: @color-text;
 }
 
 .header-block {
@@ -84,7 +93,7 @@ html {
 .header-tab {
     display: inline-block;
     position: relative;
-    background: #FFFFFF;
+    background: @color-background;
 }
 
 .header-label,
@@ -105,7 +114,7 @@ html {
     display: inline-block;
     width: 0.0625rem;
     height: 1.5rem;
-    background: #BDBDBD;
+    background: @color-border;
 }
 
 .header-label-primary {
@@ -114,7 +123,7 @@ html {
 
 .header-tab > a {
     text-decoration: none;
-    color: #BDBDBD;
+    color: @color-border;
 }
 
 .header-tab > .drag-handle {
@@ -125,15 +134,15 @@ html {
 }
 
 .header-tab.active > a {
-    color: #212121;
+    color: @color-text;
 }
 
 .drag-handle > use {
-    fill: #BDBDBD;
+    fill: @color-border;
 }
 
 .header-tab.active .drag-handle > use {
-    fill: #212121;
+    fill: @color-text;
 }
 
 .dropdown {
@@ -147,8 +156,8 @@ html {
     z-index: 10;
     right: 0;
     padding: 0.5rem;
-    background: #FFFFFF;
-    border: 0.0625rem solid #BDBDBD;
+    background: @color-background;
+    border: 0.0625rem solid @color-border;
     border-radius: 0.125rem;
     box-shadow: 0.25rem 0.25rem 0.25rem 0 rgba(189,189,189,0.7);
 }
@@ -180,31 +189,31 @@ html {
     padding: 0.25rem;
     border-radius: 0.125rem;
     text-decoration: none;
-    color: #212121;
+    color: @color-text;
 }
 
 .menu-item > a:hover {
-    background: #E0E0E0;
+    background: @color-hover;
 }
 
 .menu-separator {
     display: block;
     height: 0.0625rem;
-    background: #BDBDBD;
+    background: @color-border;
     margin: 0.5rem 0;
 }
 
 .progress-bar {
     height: 100%;
     position: relative;
-    background: #E0E0E0;
-    border: 0.0625rem solid #BDBDBD;
+    background: @color-hover;
+    border: 0.0625rem solid @color-border;
     border-radius: 0.125rem;
 }
 
 .progress-bar-gauge {
     height: 100%;
-    background: #BDBDBD;
+    background: @color-border;
 }
 
 .progress-bar-text {
@@ -236,17 +245,17 @@ html {
 }
 
 .table-content tbody tr:hover {
-    background: #E0E0E0;
+    background: @color-hover;
 }
 
 .table-content a {
     text-decoration: none;
-    color: #212121;
+    color: @color-text;
     display: block;
 }
 
 .table-content a:visited {
-    color: #212121;
+    color: @color-text;
 }
 
 .table-header-cell {
@@ -256,8 +265,8 @@ html {
 
 .panel,
 .panel-header {
-    background: #FFFFFF;
-    border: 0.0625rem solid #BDBDBD;
+    background: @color-background;
+    border: 0.0625rem solid @color-border;
     border-radius: 0.125rem;
     margin: 0.5rem;
     box-shadow: 0.0625rem 0.0625rem 0.0625rem 0 rgba(189,189,189,0.7);
