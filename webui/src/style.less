@@ -230,6 +230,7 @@ html {
 }
 
 .menu {
+    display: block;
     margin: 0;
     padding: 0;
 }
@@ -242,9 +243,17 @@ html {
     margin-bottom: 0;
 }
 
-.menu-item {
+.menu-item,
+.menu-label {
     display: block;
     margin: 0.125rem 0;
+    white-space: nowrap;
+}
+
+.menu-label {
+    padding: 0.25rem;
+    color: @color-border;
+    font-weight: bold;
 }
 
 .menu-item > a {
@@ -257,6 +266,13 @@ html {
 
 .menu-item > a:hover {
     background: @color-hover;
+}
+
+.menu-item .icon {
+    width: 1rem;
+    height: 1rem;
+    padding: 0.0625rem;
+    margin-right: 0.25rem;
 }
 
 .menu-separator {

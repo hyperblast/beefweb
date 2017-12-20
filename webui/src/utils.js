@@ -35,3 +35,16 @@ export function getParentDir(path)
 
     return path.substr(0, index);
 }
+
+export function mapObject(obj, callback)
+{
+    let result = {};
+
+    for (let prop in obj)
+    {
+        if (obj.hasOwnProperty(prop))
+            result[prop] = callback(obj[prop], prop);
+    }
+
+    return result;
+}

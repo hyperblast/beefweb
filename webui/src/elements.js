@@ -5,6 +5,10 @@ import spriteSvg from 'open-iconic/sprite/sprite.svg'
 export function Icon(props)
 {
     const { name, className } = props;
+
+    if (name === 'none')
+        return (<div className='icon icon-none' />);
+
     const fullClassName = 'icon icon-' + name + (className ? ' ' + className : '');
 
     return (
@@ -124,12 +128,21 @@ export function Menu(props)
 
 export function MenuItem(props)
 {
-    const { title, href, onClick } = props;
+    const { title, href, onClick, checked } = props;
+
+    let menuIcon;
+
+    if (checked === true)
+        menuIcon = (<Icon name='check' />);
+    else if (checked === false)
+        menuIcon = (<Icon name='none' />);
+    else
+        menuIcon = null;
 
     return (
         <li className='menu-item'>
             <a href={href || '#'} onClick={onClick}>
-                {title}
+                { menuIcon }<span>{ title }</span>
             </a>
         </li>
     );
@@ -139,6 +152,7 @@ MenuItem.propTypes = {
     title: PropTypes.string.isRequired,
     href: PropTypes.string,
     onClick: PropTypes.func,
+    checked: PropTypes.bool,
 };
 
 export function MenuSeparator(props)
@@ -147,6 +161,17 @@ export function MenuSeparator(props)
         <li className='menu-separator' />
     );
 }
+
+export function MenuLabel(props)
+{
+    return (
+        <li className='menu-label'>{props.title}</li>
+    );
+}
+
+MenuLabel.propTypes = {
+    title: PropTypes.string.isRequired
+};
 
 export function PanelHeader(props)
 {

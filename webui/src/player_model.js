@@ -1,5 +1,5 @@
 import EventEmitter from 'wolfy87-eventemitter'
-import { SwitchParam, PlaybackState } from './client'
+import { SwitchParam, PlaybackState, PlaybackOrder, LoopMode } from './client'
 import { clamp } from './utils'
 
 const initialPlayerInfo = Object.freeze({
@@ -13,6 +13,10 @@ const initialPlayerInfo = Object.freeze({
         position: -1,
         duration: -1,
         columns: []
+    },
+    options: {
+        order: PlaybackOrder.linear,
+        loop: LoopMode.all,
     }
 });
 
@@ -81,6 +85,17 @@ export default class PlayerModel extends EventEmitter
     setPosition(value)
     {
         this.client.setPlaybackPosition(value);
+    }
+
+    setPlaybackOrder(value)
+    {
+        this.client.setPlaybackOrder(value);
+    }
+
+
+    setLoopMode(value)
+    {
+        this.client.setLoopMode(value);
     }
 
     update(playerInfo)
