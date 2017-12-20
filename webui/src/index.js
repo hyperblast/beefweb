@@ -17,7 +17,7 @@ const appModel = new AppModel(client, settingsStore);
 
 const { playerModel, playlistModel, fileBrowserModel, settingsModel } = appModel;
 
-const mediaSizeController = new MediaSizeController(playlistModel);
+const mediaSizeController = new MediaSizeController(playlistModel, settingsModel);
 const windowController = new WindowController(playerModel);
 const cssSettingsController = new CssSettingsController(settingsModel);
 const touchSupport = new TouchSupport(settingsModel);
@@ -79,6 +79,7 @@ router.notFound(() => {
 
 playlistModel.on('playlistsChange', navigateToCurrentPlaylist);
 
+appModel.load();
 mediaSizeController.start();
 appModel.start();
 windowController.start();

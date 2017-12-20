@@ -30,9 +30,13 @@ export default class AppModel extends EventEmitter
         this.defineEvent('currentViewChange');
     }
 
-    start()
+    load()
     {
         this.settingsModel.load();
+    }
+
+    start()
+    {
         this.playerModel.start();
         this.playlistModel.start();
         this.dataSource.start();
