@@ -48,3 +48,28 @@ export function mapObject(obj, callback)
 
     return result;
 }
+
+export function isFunction(value)
+{
+    return Object.prototype.toString.call(value) == '[object Function]';
+}
+
+export function bindHandlers(obj)
+{
+    const proto = Object.getPrototypeOf(obj);
+
+    for (let prop in proto)
+    {
+        if (!proto.hasOwnProperty(prop))
+            continue;
+
+        if (prop.indexOf('handle') !== 0)
+            continue;
+
+        const handler = proto[prop];
+        if (!isFunction(handler))
+            continue;
+
+        obj[prop] = handler.bind(obj);
+    }
+}

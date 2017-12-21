@@ -4,7 +4,9 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import PlaylistModel from './playlist_model'
 import TouchSupport from './touch_support'
 import { Icon, Button, Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
+import { ConfirmDialog, InputDialog } from './dialogs'
 import urls from './urls'
+import { bindHandlers } from './utils'
 
 const PlaylistTabHandle = SortableHandle(() => (
     <Icon name='ellipses' className='drag-handle' />
@@ -50,24 +52,33 @@ export default class PlaylistSwitcher extends React.PureComponent
     {
         super(props);
 
-        this.state = this.getStateFromModel();
+        this.state = Object.assign(this.getStateFromModel(), {
+            removeDialogOpen: false,
+            clearDialogOpen: false,
+            addUrlDialogOpen: false,
+            renameDialogOpen: false,
+        });
+
         this.handleUpdate = () => this.setState(this.getStateFromModel());
-        this.handleSortEnd = this.handleSortEnd.bind(this);
-        this.handleAddClick = this.handleAddClick.bind(this);
-        this.handleRemoveClick = this.handleRemoveClick.bind(this);
-        this.handleRenameClick = this.handleRenameClick.bind(this);
-        this.handleClearClick = this.handleClearClick.bind(this);
-        this.handleAddUrlClick = this.handleAddUrlClick.bind(this);
+
+        bindHandlers(this);
     }
 
     getStateFromModel()
     {
-        var model = this.props.playlistModel;
+        const {
+            playlists,
+            currentPlaylistId,
+            currentPlaylist,
+        } = this.props.playlistModel;
+
+        const touchMode = this.props.touchSupport.isEnabled;
 
         return {
-            playlists: model.playlists,
-            currentPlaylistId: model.currentPlaylistId,
-            touchMode: this.props.touchSupport.isEnabled,
+            playlists,
+            currentPlaylistId,
+            currentPlaylist: currentPlaylist || {},
+            touchMode,
         };
     }
 
@@ -97,60 +108,97 @@ export default class PlaylistSwitcher extends React.PureComponent
     handleRemoveClick(e)
     {
         e.preventDefault();
+        this.setState({ removeDialogOpen: true });
+    }
 
-        var model = this.props.playlistModel;
-        var currentPlaylist = model.currentPlaylist;
+    handleRemoveOk()
+    {
+        this.setState({ removeDialogOpen: false });
+        this.props.playlistModel.removePlaylist();
+    }
 
-        if (currentPlaylist && window.confirm(`Do you want to remove '${currentPlaylist.title}' playlist?`))
-            model.removePlaylist();
+    handleRemoveCancel()
+    {
+        this.setState({ removeDialogOpen: false });
     }
 
     handleRenameClick(e)
     {
         e.preventDefault();
+        this.setState({ renameDialogOpen: true });
+    }
 
-        var model = this.props.playlistModel;
-        var currentPlaylist = model.currentPlaylist;
+    handleRenameOk(newTitle)
+    {
+        this.setState({ renameDialogOpen: false });
 
-        if (!currentPlaylist)
-            return;
+        const { playlistModel } = this.props;
+        const { currentPlaylist } = playlistModel;
 
-        var newTitle = window.prompt('Enter new playlist name:', currentPlaylist.title);
+        if (currentPlaylist && newTitle !== currentPlaylist.title)
+            playlistModel.renamePlaylist(newTitle);
+    }
 
-        if (newTitle && newTitle !== currentPlaylist.title)
-            model.renamePlaylist(newTitle);
+    handleRenameCancel()
+    {
+        this.setState({ renameDialogOpen: false });
     }
 
     handleClearClick(e)
     {
         e.preventDefault();
+        this.setState({ clearDialogOpen: true });
+    }
 
-        var model = this.props.playlistModel;
-        var currentPlaylist = model.currentPlaylist;
+    handleClearOk()
+    {
+        this.setState({ clearDialogOpen: false });
+        this.props.playlistModel.clearPlaylist();
+    }
 
-        if (currentPlaylist && window.confirm(`Do you want to clear '${currentPlaylist.title}' playlist?`))
-            model.clearPlaylist();
+    handleClearCancel()
+    {
+        this.setState({ clearDialogOpen: false });
     }
 
     handleAddUrlClick(e)
     {
         e.preventDefault();
+        this.setState({ addUrlDialogOpen: true });
+    }
 
-        var url = window.prompt('Add URL to playlist:', '');
+    handleAddUrlOk(value)
+    {
+        this.setState({ addUrlDialogOpen: false });
+
+        const url = value.trim();
 
         if (url)
-            this.props.playlistModel.addItems([url.trim()]);
+            this.props.playlistModel.addItems([ url ]);
+    }
+
+    handleAddUrlCancel()
+    {
+        this.setState({ addUrlDialogOpen: false });
     }
 
     render()
     {
-        const { playlists, currentPlaylistId: currentId, touchMode } = this.state;
+        const {
+            playlists,
+            currentPlaylistId,
+            currentPlaylist,
+            touchMode,
+            addUrlDialogOpen,
+            renameDialogOpen,
+            clearDialogOpen,
+            removeDialogOpen,
+        } = this.state;
 
         const playlistTabs = (
             <PlaylistTabList
-                key='playlists'
                 playlists={playlists}
-                currentId={currentId}
+                currentId={currentPlaylistId}
                 onSortEnd={this.handleSortEnd}
                 axis='x'
                 lockAxis='x'
@@ -174,16 +222,42 @@ export default class PlaylistSwitcher extends React.PureComponent
         );
 
         const buttonBar = (
-            <div key='menu' className='header-block'>
+            <div className='header-block'>
                 <div className='button-bar'>
                     {playlistMenu}
                 </div>
             </div>
         );
 
+        const dialogs = (
+            <div className='dialog-placeholder'>
+                <ConfirmDialog
+                    message={`Do you want to remove '${currentPlaylist.title}' playlist?`}
+                    isOpen={removeDialogOpen}
+                    onOk={this.handleRemoveOk}
+                    onCancel={this.handleRemoveCancel} />
+                <ConfirmDialog
+                    message={`Do you want to clear '${currentPlaylist.title}' playlist?`}
+                    isOpen={clearDialogOpen}
+                    onOk={this.handleClearOk}
+                    onCancel={this.handleClearCancel} />
+                <InputDialog
+                    message='Add URL to playlist:'
+                    isOpen={addUrlDialogOpen}
+                    onOk={this.handleAddUrlOk}
+                    onCancel={this.handleAddUrlCancel} />
+                <InputDialog
+                    message='Enter new playlist name:'
+                    isOpen={renameDialogOpen}
+                    initialValue={currentPlaylist.title}
+                    onOk={this.handleRenameOk}
+                    onCancel={this.handleRenameCancel} />
+            </div>
+        );
+
         return (
             <div className='panel-header'>
-                { [ playlistTabs, buttonBar ] }
+                { playlistTabs }{ buttonBar }{ dialogs }
             </div>
         );
     }
