@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import mapValues from 'lodash/mapValues'
 import { PlaybackOrder, LoopMode } from './client'
 import PlayerModel from './player_model'
 import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
@@ -19,14 +20,14 @@ export default class PlaybackControl extends React.PureComponent
 
         bindHandlers(this);
 
-        this.playbackOrderHandlers = mapObject(PlaybackOrder, order => {
+        this.playbackOrderHandlers = mapValues(PlaybackOrder, order => {
             return e => {
                 e.preventDefault();
                 this.props.playerModel.setPlaybackOrder(order);
             };
         });
 
-        this.loopModeHandlers = mapObject(LoopMode, mode => {
+        this.loopModeHandlers = mapValues(LoopMode, mode => {
             return e => {
                 e.preventDefault();
                 this.props.playerModel.setLoopMode(mode);

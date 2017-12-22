@@ -14,6 +14,7 @@
     "babel-runtime": "^6.25.0",
     "detect-it": "^3.0.4",
     "event-source-polyfill": "^0.0.9",
+    "lodash": "^4.17.4",
     "navigo": "^5.3.0",
     "normalize.css": "^5.0.0",
     "open-iconic": "^1.1.1",

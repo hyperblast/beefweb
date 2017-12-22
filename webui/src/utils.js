@@ -1,3 +1,5 @@
+import isFunction from 'lodash/isFunction'
+
 function formatTimePart(value)
 {
     var str = '' + value;
@@ -34,24 +36,6 @@ export function getParentDir(path)
         return '';
 
     return path.substr(0, index);
-}
-
-export function mapObject(obj, callback)
-{
-    let result = {};
-
-    for (let prop in obj)
-    {
-        if (obj.hasOwnProperty(prop))
-            result[prop] = callback(obj[prop], prop);
-    }
-
-    return result;
-}
-
-export function isFunction(value)
-{
-    return Object.prototype.toString.call(value) == '[object Function]';
 }
 
 export function bindHandlers(obj)
