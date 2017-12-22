@@ -4,6 +4,7 @@ import AppModel, { ViewId } from './app_model'
 import { PanelHeader } from './elements'
 import ControlBar from './control_bar'
 import PlaylistSwitcher from './playlist_switcher'
+import PlaylistMenu from './playlist_menu'
 import PlaylistContent from './playlist_content'
 import FileBrowser from './file_browser'
 import FileBrowserHeader from './file_browser_header'
@@ -48,11 +49,15 @@ export default class App extends React.PureComponent
         if (view == ViewId.playlist)
         {
             return {
-                header:
-                    <PlaylistSwitcher
-                        playlistModel={appModel.playlistModel}
-                        touchSupport={touchSupport} />,
-
+                header: (
+                    <div className='panel-header'>
+                        <PlaylistSwitcher
+                            playlistModel={appModel.playlistModel}
+                            touchSupport={touchSupport} />
+                        <PlaylistMenu
+                            playlistModel={appModel.playlistModel} />
+                    </div>
+                ),
                 main:
                     <PlaylistContent
                         playlistModel={appModel.playlistModel} />
