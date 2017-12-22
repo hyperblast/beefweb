@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import PlayerModel from './player_model'
 import { Button, Dropdown } from './elements'
+import { bindHandlers } from './utils'
 
 function volumeIcon(isMuted)
 {
@@ -16,8 +17,8 @@ class VolumeControlPanel extends React.PureComponent
 
         this.state = this.getStateFromModel();
         this.handleUpdate = () => this.setState(this.getStateFromModel());
-        this.handleMuteClick = this.handleMuteClick.bind(this);
-        this.handleVolumeChange = this.handleVolumeChange.bind(this);
+
+        bindHandlers(this);
     }
 
     getStateFromModel()
@@ -45,7 +46,11 @@ class VolumeControlPanel extends React.PureComponent
     handleMuteClick(e)
     {
         e.preventDefault();
+
         this.props.playerModel.mute();
+
+        if (this.props.onAfterMuteClick)
+            this.props.onAfterMuteClick();
     }
 
     handleVolumeChange(e)
@@ -80,7 +85,8 @@ class VolumeControlPanel extends React.PureComponent
 }
 
 VolumeControlPanel.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired
+    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
+    onAfterMuteClick: PropTypes.func,
 };
 
 export default class VolumeControl extends React.PureComponent
@@ -89,8 +95,13 @@ export default class VolumeControl extends React.PureComponent
     {
         super(props);
 
-        this.state = this.getStateFromModel();
+        this.state = Object.assign(this.getStateFromModel(), {
+           panelOpen: false
+        });
+
         this.handleUpdate = () => this.setState(this.getStateFromModel());
+
+        bindHandlers(this);
     }
 
     getStateFromModel()
@@ -110,10 +121,20 @@ export default class VolumeControl extends React.PureComponent
         this.props.playerModel.off('change', this.handleUpdate);
     }
 
+    handlePanelToggle(value)
+    {
+        this.setState({ panelOpen: value });
+    }
+
+    handleMuteClick()
+    {
+        this.setState({ panelOpen: false });
+    }
+
     render()
     {
         const { playerModel } = this.props;
-        const { isMuted } = this.state;
+        const { isMuted, panelOpen } = this.state;
 
         return (
             <div className='volume-control'>
@@ -123,8 +144,12 @@ export default class VolumeControl extends React.PureComponent
                             title='Show volume panel'
                             iconName={volumeIcon(isMuted)}
                             autoHide={false}
-                            direction='center'>
-                            <VolumeControlPanel playerModel={playerModel} />
+                            direction='center'
+                            isOpen={panelOpen}
+                            onRequestToggle={this.handlePanelToggle}>
+                            <VolumeControlPanel
+                                playerModel={playerModel}
+                                onAfterMuteClick={this.handleMuteClick} />
                         </Dropdown>
                     </div>
                 </div>

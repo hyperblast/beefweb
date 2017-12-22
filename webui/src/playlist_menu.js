@@ -12,6 +12,7 @@ export default class PlaylistMenu extends React.PureComponent
         super(props);
 
         this.state = Object.assign(this.getStateFromModel(), {
+            menuOpen: false,
             removeDialogOpen: false,
             clearDialogOpen: false,
             addUrlDialogOpen: false,
@@ -45,6 +46,10 @@ export default class PlaylistMenu extends React.PureComponent
         this.props.playlistModel.off('playlistsChange', this.handleUpdate);
     }
 
+    handleMenuToggle(value)
+    {
+        this.setState({ menuOpen: value });
+    }
 
     handleAddClick(e)
     {
@@ -152,6 +157,7 @@ export default class PlaylistMenu extends React.PureComponent
         const {
             currentPlaylistId,
             currentPlaylist,
+            menuOpen,
             clearDialogOpen,
             removeDialogOpen,
             addUrlDialogOpen,
@@ -161,7 +167,12 @@ export default class PlaylistMenu extends React.PureComponent
         } = this.state;
 
         const menu = (
-            <Dropdown title='Playlist menu' iconName='menu' direction='left'>
+            <Dropdown
+                title='Playlist menu'
+                iconName='menu'
+                direction='left'
+                isOpen={menuOpen}
+                onRequestToggle={this.handleMenuToggle}>
                 <Menu>
                     <MenuItem title='Add playlist' onClick={this.handleAddClick} />
                     <MenuItem title='Remove playlist' onClick={this.handleRemoveClick} />

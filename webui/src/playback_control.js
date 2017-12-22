@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { PlaybackOrder, LoopMode } from './client'
 import PlayerModel from './player_model'
 import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
-import { mapObject } from './utils'
+import { bindHandlers, mapObject } from './utils'
 
 export default class PlaybackControl extends React.PureComponent
 {
@@ -11,14 +11,13 @@ export default class PlaybackControl extends React.PureComponent
     {
         super(props);
 
-        this.state = this.getStateFromModel();
+        this.state = Object.assign(this.getStateFromModel(), {
+            audioMenuOpen: false
+        });
+
         this.handleUpdate = () => this.setState(this.getStateFromModel());
 
-        this.handleStop = this.handleStop.bind(this);
-        this.handlePlay = this.handlePlay.bind(this);
-        this.handlePause = this.handlePause.bind(this);
-        this.handlePrevious = this.handlePrevious.bind(this);
-        this.handleNext = this.handleNext.bind(this);
+        bindHandlers(this);
 
         this.playbackOrderHandlers = mapObject(PlaybackOrder, order => {
             return e => {
@@ -81,9 +80,14 @@ export default class PlaybackControl extends React.PureComponent
         this.props.playerModel.next();
     }
 
+    handleAudioMenuToggle(value)
+    {
+        this.setState({ audioMenuOpen: value });
+    }
+
     render()
     {
-        const { order, loop } = this.state;
+        const { order, loop, audioMenuOpen } = this.state;
 
         return (
             <div className='playback-control button-bar'>
@@ -107,7 +111,11 @@ export default class PlaybackControl extends React.PureComponent
                     name='media-step-forward'
                     title='Next'
                     onClick={this.handleNext} />
-                <Dropdown iconName='audio' title='Audio menu'>
+                <Dropdown
+                    iconName='audio'
+                    title='Audio menu'
+                    isOpen={audioMenuOpen}
+                    onRequestToggle={this.handleAudioMenuToggle}>
                     <Menu>
                         <MenuLabel title='Order' />
                         <MenuItem

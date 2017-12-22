@@ -1,15 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
+import { bindHandlers } from './utils'
 
 export function Icon(props)
 {
     const { name, className } = props;
+    const fullClassName = 'icon icon-' + name + (className ? ' ' + className : '');
 
     if (name === 'none')
-        return (<div className='icon icon-none' />);
-
-    const fullClassName = 'icon icon-' + name + (className ? ' ' + className : '');
+        return (<div className={fullClassName} />);
 
     return (
         <svg className={fullClassName}>
@@ -49,12 +49,12 @@ Button.propTypes = {
 
 export class Dropdown extends React.PureComponent
 {
-    constructor()
+    constructor(props)
     {
-        super();
-        this.state = { isVisible: false };
-        this.handleDropdownClick = this.handleDropdownClick.bind(this);
-        this.handleWindowClick = this.handleWindowClick.bind(this);
+        super(props);
+
+        this.state = { };
+        bindHandlers(this);
     }
 
     handleDropdownClick(e)
@@ -62,13 +62,13 @@ export class Dropdown extends React.PureComponent
         e.preventDefault();
         e.stopPropagation();
 
-        this.setState({ isVisible: !this.state.isVisible });
+        this.props.onRequestToggle(!this.props.isOpen);
     }
 
     handleWindowClick()
     {
         if (this.props.autoHide)
-            this.setState({ isVisible: false });
+            this.props.onRequestToggle(false);
     }
 
     componentDidMount()
@@ -83,20 +83,23 @@ export class Dropdown extends React.PureComponent
 
     render()
     {
-        const { isVisible } = this.state;
-        const { title, iconName, children, direction } = this.props;
+        const { isOpen, title, iconName, children, direction } = this.props;
 
-        const contentClass = 'dropdown-content dropdown-' + direction + (isVisible ? ' active' : '');
+        const contentClass = (
+            'dropdown-content dropdown-'
+            + direction
+            + (isOpen ? ' active' : '')
+        );
 
         return (
             <div className='dropdown'>
                 <Button
                     name={iconName}
                     title={title}
-                    active={isVisible}
+                    active={isOpen}
                     onClick={this.handleDropdownClick} />
                 <div className={contentClass}>
-                    {children}
+                    { children }
                 </div>
             </div>
         );
@@ -106,6 +109,8 @@ export class Dropdown extends React.PureComponent
 Dropdown.propTypes = {
     title: PropTypes.string.isRequired,
     iconName: PropTypes.string.isRequired,
+    isOpen: PropTypes.bool.isRequired,
+    onRequestToggle: PropTypes.func.isRequired,
     autoHide: PropTypes.bool,
     direction: PropTypes.oneOf(['left', 'center', 'right']),
 };
