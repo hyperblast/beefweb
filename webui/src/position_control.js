@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import clamp from 'lodash/clamp'
 import PlayerModel from './player_model'
-import { clamp, formatTime } from './utils'
+import { formatTime } from './utils'
 
 export default class PositionControl extends React.PureComponent
 {

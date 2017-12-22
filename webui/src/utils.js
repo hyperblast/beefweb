@@ -17,17 +17,6 @@ export function formatTime(value, withHours = false)
     return hoursStr + formatTimePart(minutes) + ':' + formatTimePart(seconds);
 }
 
-export function clamp(value, lower, upper)
-{
-    if (value < lower)
-        return lower;
-
-    if (value > upper)
-        return upper;
-
-    return value;
-}
-
 export function getParentDir(path)
 {
     var index = path.lastIndexOf('/');

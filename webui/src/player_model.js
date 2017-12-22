@@ -1,6 +1,7 @@
 import EventEmitter from 'wolfy87-eventemitter'
+import throttle from 'lodash/throttle'
+import clamp from 'lodash/clamp'
 import { SwitchParam, PlaybackState, PlaybackOrder, LoopMode } from './client'
-import { clamp } from './utils'
 
 const initialPlayerInfo = Object.freeze({
     playbackState: PlaybackState.stopped,
@@ -33,6 +34,8 @@ export default class PlayerModel extends EventEmitter
 
         this.updatePosition = this.updatePosition.bind(this);
         this.defineEvent('change');
+
+        this.setVolumeRemote = throttle(value => this.client.setVolumeDb(value), 100);
     }
 
     start()
@@ -78,8 +81,8 @@ export default class PlayerModel extends EventEmitter
     setVolume(value)
     {
         this.volume.db = value;
-        this.client.setVolumeDb(value);
         this.emit('change');
+        this.setVolumeRemote(value);
     }
 
     setPosition(value)
