@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
+import { bindHandlers } from './utils'
 
 const dialogTitles = Object.freeze({
     ok: 'OK',
@@ -15,7 +16,7 @@ export function DialogButton(props)
         <button
             className={'dialog-button dialog-button-' + type}
             onClick={onClick}>
-            {dialogTitles[type]}
+            { dialogTitles[type] }
         </button>
     );
 }
@@ -62,26 +63,17 @@ export class InputDialog extends React.PureComponent
     {
         super(props);
 
-        this.state = { value: this.props.initialValue };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleOkClick = this.handleOkClick.bind(this);
+        bindHandlers(this);
     }
 
     handleChange(e)
     {
-        this.setState({ value: e.target.value });
-    }
-
-    handleOkClick()
-    {
-        if (this.props.onOk)
-            this.props.onOk(this.state.value);
+        this.props.onUpdate(e.target.value);
     }
 
     render()
     {
-        const { isOpen, message, onCancel } = this.props;
-        const { value } = this.state;
+        const { isOpen, message, value, onOk, onCancel } = this.props;
 
         return (
             <ReactModal
@@ -98,7 +90,7 @@ export class InputDialog extends React.PureComponent
                         </label>
                     </div>
                     <div className='dialog-buttons'>
-                        <DialogButton type='ok' onClick={this.handleOkClick} />
+                        <DialogButton type='ok' onClick={onOk} />
                         <DialogButton type='cancel' onClick={onCancel} />
                     </div>
                 </form>
@@ -110,11 +102,8 @@ export class InputDialog extends React.PureComponent
 InputDialog.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     message: PropTypes.string.isRequired,
-    initialValue: PropTypes.string,
+    value: PropTypes.string.isRequired,
+    onUpdate: PropTypes.func.isRequired,
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
-};
-
-InputDialog.defaultProps = {
-    initialValue: ''
 };

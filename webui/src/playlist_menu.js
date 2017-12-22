@@ -15,7 +15,9 @@ export default class PlaylistMenu extends React.PureComponent
             removeDialogOpen: false,
             clearDialogOpen: false,
             addUrlDialogOpen: false,
+            addUrlDialogValue: '',
             renameDialogOpen: false,
+            renameDialogValue: '',
         });
 
         this.handleUpdate = () => this.setState(this.getStateFromModel());
@@ -70,18 +72,27 @@ export default class PlaylistMenu extends React.PureComponent
     handleRenameClick(e)
     {
         e.preventDefault();
-        this.setState({ renameDialogOpen: true });
+
+        this.setState({
+            renameDialogOpen: true,
+            renameDialogValue: this.state.currentPlaylist.title
+        });
     }
 
-    handleRenameOk(newTitle)
+    handleRenameUpdate(value)
+    {
+        this.setState({ renameDialogValue: value });
+    }
+
+    handleRenameOk()
     {
         this.setState({ renameDialogOpen: false });
 
-        const { playlistModel } = this.props;
-        const { currentPlaylist } = playlistModel;
+        const oldTitle = this.state.currentPlaylist.title;
+        const newTitle = this.state.renameDialogValue;
 
-        if (currentPlaylist && newTitle !== currentPlaylist.title)
-            playlistModel.renamePlaylist(newTitle);
+        if (oldTitle !== newTitle)
+            this.props.playlistModel.renamePlaylist(newTitle);
     }
 
     handleRenameCancel()
@@ -109,14 +120,23 @@ export default class PlaylistMenu extends React.PureComponent
     handleAddUrlClick(e)
     {
         e.preventDefault();
-        this.setState({ addUrlDialogOpen: true });
+
+        this.setState({
+            addUrlDialogOpen: true,
+            addUrlDialogValue: ''
+        });
     }
 
-    handleAddUrlOk(value)
+    handleAddUrlUpdate(value)
+    {
+        this.setState({ addUrlDialogValue: value });
+    }
+
+    handleAddUrlOk()
     {
         this.setState({ addUrlDialogOpen: false });
 
-        const url = value.trim();
+        const url = this.state.addUrlDialogValue.trim();
 
         if (url)
             this.props.playlistModel.addItems([ url ]);
@@ -132,10 +152,12 @@ export default class PlaylistMenu extends React.PureComponent
         const {
             currentPlaylistId,
             currentPlaylist,
-            addUrlDialogOpen,
-            renameDialogOpen,
             clearDialogOpen,
             removeDialogOpen,
+            addUrlDialogOpen,
+            addUrlDialogValue,
+            renameDialogOpen,
+            renameDialogValue,
         } = this.state;
 
         const menu = (
@@ -166,14 +188,17 @@ export default class PlaylistMenu extends React.PureComponent
                 <InputDialog
                     message='Add URL to playlist:'
                     isOpen={addUrlDialogOpen}
+                    value={addUrlDialogValue}
                     onOk={this.handleAddUrlOk}
-                    onCancel={this.handleAddUrlCancel} />
+                    onCancel={this.handleAddUrlCancel}
+                    onUpdate={this.handleAddUrlUpdate} />
                 <InputDialog
                     message='Enter new playlist name:'
                     isOpen={renameDialogOpen}
-                    initialValue={currentPlaylist.title}
+                    value={renameDialogValue}
                     onOk={this.handleRenameOk}
-                    onCancel={this.handleRenameCancel} />
+                    onCancel={this.handleRenameCancel}
+                    onUpdate={this.handleRenameUpdate} />
             </div>
         );
 
