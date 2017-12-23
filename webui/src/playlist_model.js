@@ -1,5 +1,6 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import { arrayMove } from 'react-sortable-hoc'
+import { MediaSize } from './settings_model'
 
 const standardPreset = Object.freeze({
     names: [
@@ -31,16 +32,18 @@ const compactPreset = Object.freeze({
 
 export default class PlaylistModel extends EventEmitter
 {
-    constructor(client, dataSource)
+    constructor(client, dataSource, settingsModel)
     {
         super();
 
         this.client = client;
         this.dataSource = dataSource;
+        this.settingsModel = settingsModel;
+
         this.playlists = [];
         this.playlistItems = [];
         this.currentPlaylistId = null;
-        this.columns = standardPreset;
+        this.columns = null;
 
         this.defineEvent('playlistsChange');
         this.defineEvent('itemsChange');
@@ -48,6 +51,13 @@ export default class PlaylistModel extends EventEmitter
 
     start()
     {
+        this.updateLayout();
+
+        this.settingsModel.on('mediaSizeChange', () => {
+            if (this.updateLayout())
+                this.watchPlaylistItems();
+        });
+
         this.dataSource.on('playlists', this.setPlaylists.bind(this));
         this.dataSource.on('playlistItems', this.setPlaylistItems.bind(this));
         this.dataSource.watch('playlists');
@@ -104,15 +114,17 @@ export default class PlaylistModel extends EventEmitter
         this.dataSource.watch('playlistItems', request);
     }
 
-    setCompactMode(enabled)
+    updateLayout()
     {
-        var newColumns = enabled ? compactPreset : standardPreset;
+        const newColumns = this.settingsModel.mediaSize === MediaSize.full
+            ? standardPreset
+            : compactPreset;
 
         if (this.columns === newColumns)
-            return;
+            return false;
 
         this.columns = newColumns;
-        this.watchPlaylistItems();
+        return true;
     }
 
     addItems(items)

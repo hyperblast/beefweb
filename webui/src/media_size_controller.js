@@ -1,35 +1,70 @@
-import SettingsModel, { FontSize } from './settings_model'
+import mapValues from 'lodash/mapValues'
+import objectValues from 'lodash/values'
+import SettingsModel, { FontSize, MediaSize } from './settings_model'
+
+const MediaSizes = Object.freeze({
+    tiny: 28,
+    compact: 43,
+});
+
+const FontScale = Object.freeze({
+    small: 0.875,
+    normal: 1.0,
+    large: 1.125,
+});
 
 function queryMaxWidth(em)
 {
     return window.matchMedia(`(max-width: ${em}em)`);
 }
 
-const compactLayoutSize = 43;
+class MediaSizeQuery
+{
+    constructor(scale)
+    {
+        this.queries = mapValues(MediaSizes, size => queryMaxWidth(size * scale));
+    }
+
+    getMediaSize()
+    {
+        if (this.queries.tiny.matches)
+            return MediaSize.tiny;
+
+        if (this.queries.compact.matches)
+            return MediaSize.compact;
+
+        return MediaSize.full;
+    }
+
+    addListener(callback)
+    {
+        for (let query of objectValues(this.queries))
+            query.addListener(callback);
+    }
+
+    removeListener(callback)
+    {
+        for (let query of objectValues(this.queries))
+            query.removeListener(callback);
+    }
+}
 
 export default class MediaSizeController
 {
-    constructor(playlistModel, settingsModel)
+    constructor(settingsModel)
     {
-        this.playlistModel = playlistModel;
         this.settingsModel = settingsModel;
 
+        this.mediaQueries = mapValues(FontScale, scale => new MediaSizeQuery(scale));
         this.update = this.update.bind(this);
-
-        this.mediaQueries = {
-            [FontSize.small]: queryMaxWidth(0.875 * compactLayoutSize),
-            [FontSize.normal]: queryMaxWidth(1.0 * compactLayoutSize),
-            [FontSize.large]: queryMaxWidth(1.125 * compactLayoutSize),
-        };
     }
 
     start()
     {
-        this.settingsModel.on('change', this.update);
+        this.settingsModel.on('fontSizeChange', this.update);
 
-        this.mediaQueries[FontSize.small].addListener(this.update);
-        this.mediaQueries[FontSize.normal].addListener(this.update);
-        this.mediaQueries[FontSize.large].addListener(this.update);
+        for (let query of objectValues(this.mediaQueries))
+            query.addListener(this.update);
 
         this.update();
     }
@@ -38,6 +73,6 @@ export default class MediaSizeController
     {
         const query = this.mediaQueries[this.settingsModel.fontSize];
 
-        this.playlistModel.setCompactMode(query.matches);
+        this.settingsModel.mediaSize = query.getMediaSize();
     }
 }

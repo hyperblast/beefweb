@@ -22,10 +22,10 @@ export default class AppModel extends EventEmitter
         this.currentView = ViewId.playlist;
 
         this.dataSource = new DataSource(client);
-        this.playerModel = new PlayerModel(client, this.dataSource);
-        this.playlistModel = new PlaylistModel(client, this.dataSource);
-        this.fileBrowserModel = new FileBrowserModel(client);
         this.settingsModel = new SettingsModel(settingsStore);
+        this.playerModel = new PlayerModel(client, this.dataSource);
+        this.playlistModel = new PlaylistModel(client, this.dataSource, this.settingsModel);
+        this.fileBrowserModel = new FileBrowserModel(client);
 
         this.defineEvent('currentViewChange');
     }

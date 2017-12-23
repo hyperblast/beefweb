@@ -4,21 +4,27 @@ import pickBy from 'lodash/pickBy'
 
 const storageKey = 'player_settings';
 
+export const SettingType = Object.freeze({
+    bool: 'bool',
+    enum: 'enum',
+});
+
 export const FontSize = Object.freeze({
     small: 'small',
     normal: 'normal',
-    large: 'large'
+    large: 'large',
 });
 
 export const InputMode = Object.freeze({
     auto: 'auto',
     forceMouse: 'forceMouse',
-    forceTouch: 'forceTouch'
+    forceTouch: 'forceTouch',
 });
 
-export const SettingType = Object.freeze({
-    bool: 'bool',
-    enum: 'enum',
+export const MediaSize = Object.freeze({
+    full: 'full',
+    compact: 'compact',
+    tiny: 'tiny',
 });
 
 const defaultSettingProps = Object.freeze({
@@ -76,6 +82,14 @@ export default class SettingsModel extends EventEmitter
             key: 'touchMode',
             type: SettingType.bool,
             defaultValue: false,
+            persistent: false,
+        });
+
+        this.define({
+            key: 'mediaSize',
+            type: SettingType.enum,
+            defaultValue: MediaSize.full,
+            enumKeys: MediaSize,
             persistent: false,
         });
 

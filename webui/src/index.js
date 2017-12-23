@@ -17,7 +17,7 @@ const appModel = new AppModel(client, settingsStore);
 
 const { playerModel, playlistModel, fileBrowserModel, settingsModel } = appModel;
 
-const mediaSizeController = new MediaSizeController(playlistModel, settingsModel);
+const mediaSizeController = new MediaSizeController(settingsModel);
 const touchModeController = new TouchModeController(settingsModel);
 const cssSettingsController = new CssSettingsController(settingsModel);
 const windowController = new WindowController(playerModel);
@@ -82,9 +82,9 @@ playlistModel.on('playlistsChange', navigateToCurrentPlaylist);
 appModel.load();
 mediaSizeController.start();
 touchModeController.start();
+cssSettingsController.start();
 appModel.start();
 windowController.start();
-cssSettingsController.start();
 router.resolve();
 
 ReactDom.render(
