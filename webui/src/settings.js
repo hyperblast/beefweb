@@ -1,20 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import SettingsModel, { FontSize, InputMode } from './settings_model'
+import objectValues from 'lodash/values'
+import SettingsModel, { SettingType } from './settings_model'
 
-const FontSizeNames = Object.freeze({
-    [FontSize.small]: 'Small',
-    [FontSize.normal]: 'Normal',
-    [FontSize.large]: 'Large'
-});
-
-const InputModeNames = Object.freeze({
-    [InputMode.auto]: 'Auto',
-    [InputMode.forceMouse]: 'Force mouse',
-    [InputMode.forceTouch]: 'Force touch'
-});
-
-class BooleanSetting extends React.PureComponent
+class BoolSettingEditor extends React.PureComponent
 {
     constructor(props)
     {
@@ -27,105 +16,137 @@ class BooleanSetting extends React.PureComponent
 
     componentDidMount()
     {
-        this.props.settingsModel.on('change', this.handleUpdate);
+        this.props.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     componentWillUnmount()
     {
-        this.props.settingsModel.off('change', this.handleUpdate);
+        this.props.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     getStateFromModel()
     {
+        const { settingKey, settingsModel } = this.props;
+
         return {
-            value: this.props.settingsModel[this.props.settingKey]
-        };
-    }
-
-    handleInput()
-    {
-        const model = this.props.settingsModel;
-        model.fullWidth = !model.fullWidth;
-    }
-
-    render()
-    {
-        return (
-            <label>
-                <input type='checkbox' checked={this.state.value} onChange={this.handleInput} />
-                <span>{this.props.title}</span>
-            </label>
-        );
-    }
-}
-
-BooleanSetting.propTypes = {
-    title: PropTypes.string.isRequired,
-    settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
-};
-
-class EnumSetting extends React.PureComponent
-{
-    constructor(props)
-    {
-        super(props);
-
-        this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
-        this.handleInput = this.handleInput.bind(this);
-    }
-
-    componentDidMount()
-    {
-        this.props.settingsModel.on('change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.settingsModel.off('change', this.handleUpdate);
-    }
-
-    getStateFromModel()
-    {
-        return {
-            value: this.props.settingsModel[this.props.settingKey]
+            value: settingsModel[settingKey],
+            metadata: settingsModel.metadata[settingKey]
         };
     }
 
     handleInput(e)
     {
-        this.props.settingsModel[this.props.settingKey] = String(e.target.value);
+        const { settingKey, settingsModel } = this.props;
+
+        settingsModel[settingKey] = e.target.checked;
     }
 
     render()
     {
-        const { enumValues, enumNames, title } = this.props;
+        const { value, metadata } = this.state;
 
-        const options = Object.keys(enumValues).map(key => {
-            const value = enumValues[key];
+        return (
+            <label>
+                <input type='checkbox' checked={value} onChange={this.handleInput} />
+                <span>{metadata.title}</span>
+            </label>
+        );
+    }
+}
 
+BoolSettingEditor.propTypes = {
+    settingKey: PropTypes.string.isRequired,
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
+};
+
+class EnumSettingEditor extends React.PureComponent
+{
+    constructor(props)
+    {
+        super(props);
+
+        this.state = this.getStateFromModel();
+        this.handleUpdate = () => this.setState(this.getStateFromModel());
+        this.handleInput = this.handleInput.bind(this);
+    }
+
+    componentDidMount()
+    {
+        this.props.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
+    componentWillUnmount()
+    {
+        this.props.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
+    getStateFromModel()
+    {
+        const { settingKey, settingsModel } = this.props;
+
+        return {
+            value: settingsModel[settingKey],
+            metadata:settingsModel.metadata[settingKey]
+        };
+    }
+
+    handleInput(e)
+    {
+        const { settingKey, settingsModel } = this.props;
+
+        settingsModel[settingKey] = e.target.value;
+    }
+
+    render()
+    {
+        const { value, metadata } = this.state;
+
+        const options = objectValues(metadata.enumKeys).map(value => {
             return (
                 <option key={value} value={value}>
-                    { enumNames[value] }
+                    { metadata.enumNames[value] }
                 </option>
             );
         });
 
         return (
             <label>
-                <span>{title + ':'}</span>
-                <select value={this.state.value} onChange={this.handleInput}>{ options }</select>
+                <span>{metadata.title + ':'}</span>
+                <select value={value} onChange={this.handleInput}>{ options }</select>
             </label>
         );
     }
 }
 
-EnumSetting.propTypes = {
-    title: PropTypes.string.isRequired,
+EnumSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    enumValues: PropTypes.object.isRequired,
-    enumNames: PropTypes.object.isRequired,
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
+};
+
+function SettingEditor(props)
+{
+    const { settingKey, settingsModel } = props;
+    const metadata = settingsModel.metadata[settingKey];
+
+    if (metadata.type === SettingType.bool)
+        return (
+            <BoolSettingEditor
+                settingKey={settingKey}
+                settingsModel={settingsModel} />
+        );
+
+    if (metadata.type === SettingType.enum)
+        return (
+            <EnumSettingEditor
+                settingKey={settingKey}
+                settingsModel={settingsModel} />
+        );
+
+    return null;
+}
+
+SettingEditor.propTypes = {
+    settingKey: PropTypes.string.isRequired,
     settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
 };
 
@@ -136,22 +157,9 @@ export default function Settings(props)
     return (
         <div className='panel main-panel settings'>
             <form>
-                <BooleanSetting
-                    settingsModel={model}
-                    settingKey='fullWidth'
-                    title='Use full screen width' />
-                <EnumSetting
-                    settingsModel={model}
-                    settingKey='fontSize'
-                    enumValues={FontSize}
-                    enumNames={FontSizeNames}
-                    title='Font size' />
-                <EnumSetting
-                    settingsModel={model}
-                    settingKey='inputMode'
-                    enumValues={InputMode}
-                    enumNames={InputModeNames}
-                    title='Input mode' />
+                <SettingEditor settingKey='fullWidth' settingsModel={model} />
+                <SettingEditor settingKey='fontSize' settingsModel={model} />
+                <SettingEditor settingKey='inputMode' settingsModel={model} />
             </form>
         </div>
     );
