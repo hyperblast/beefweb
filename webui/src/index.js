@@ -6,9 +6,9 @@ import Client from './client'
 import SettingsStore from './settings_store'
 import AppModel, { ViewId } from './app_model'
 import MediaSizeController from './media_size_controller'
+import TouchModeController from './touch_mode_controller'
 import WindowController from './window_controller'
 import CssSettingsController from './css_settings_controller'
-import TouchSupport from './touch_support'
 import urls, { getPathFromUrl } from './urls'
 
 const client = new Client();
@@ -18,11 +18,11 @@ const appModel = new AppModel(client, settingsStore);
 const { playerModel, playlistModel, fileBrowserModel, settingsModel } = appModel;
 
 const mediaSizeController = new MediaSizeController(playlistModel, settingsModel);
-const windowController = new WindowController(playerModel);
+const touchModeController = new TouchModeController(settingsModel);
 const cssSettingsController = new CssSettingsController(settingsModel);
-const touchSupport = new TouchSupport(settingsModel);
+const windowController = new WindowController(playerModel);
 
-var router = new Navigo(null, true);
+const router = new Navigo(null, true);
 
 function navigateToCurrentPlaylist()
 {
@@ -81,12 +81,12 @@ playlistModel.on('playlistsChange', navigateToCurrentPlaylist);
 
 appModel.load();
 mediaSizeController.start();
+touchModeController.start();
 appModel.start();
 windowController.start();
 cssSettingsController.start();
-touchSupport.start();
 router.resolve();
 
 ReactDom.render(
-    <App appModel={appModel} touchSupport={touchSupport} />,
+    <App appModel={appModel} />,
     document.getElementById('app-container'));

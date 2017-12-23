@@ -72,6 +72,13 @@ export default class SettingsModel extends EventEmitter
             },
         });
 
+        this.define({
+            key: 'touchMode',
+            type: SettingType.bool,
+            defaultValue: false,
+            persistent: false,
+        });
+
         Object.freeze(this.metadata);
     }
 

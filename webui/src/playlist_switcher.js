@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import PlaylistModel from './playlist_model'
-import TouchSupport from './touch_support'
+import SettingsModel from './settings_model'
 import { Icon } from './elements'
 import urls from './urls'
 import { bindHandlers } from './utils'
@@ -60,20 +60,20 @@ export default class PlaylistSwitcher extends React.PureComponent
     getStateFromModel()
     {
         const { currentPlaylistId, playlists } = this.props.playlistModel;
-        const touchMode = this.props.touchSupport.isEnabled;
+        const { touchMode } = this.props.settingsModel;
         return { currentPlaylistId, playlists, touchMode };
     }
 
     componentDidMount()
     {
         this.props.playlistModel.on('playlistsChange', this.handleUpdate);
-        this.props.touchSupport.on('change', this.handleUpdate);
+        this.props.settingsModel.on('touchModeChange', this.handleUpdate);
     }
 
     componentWillUnmount()
     {
         this.props.playlistModel.off('playlistsChange', this.handleUpdate);
-        this.props.touchSupport.off('change', this.handleUpdate);
+        this.props.settingsModel.off('touchModeChange', this.handleUpdate);
     }
 
     handleSortEnd(e)
@@ -102,5 +102,5 @@ export default class PlaylistSwitcher extends React.PureComponent
 
 PlaylistSwitcher.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    touchSupport: PropTypes.instanceOf(TouchSupport).isRequired
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
 };

@@ -10,7 +10,6 @@ import FileBrowser from './file_browser'
 import FileBrowserHeader from './file_browser_header'
 import Settings from './settings'
 import StatusBar from './status_bar'
-import TouchSupport from './touch_support'
 
 export default class App extends React.PureComponent
 {
@@ -44,7 +43,8 @@ export default class App extends React.PureComponent
     renderElements()
     {
         const view = this.state.view;
-        const { appModel, touchSupport } = this.props;
+        const { appModel } = this.props;
+        const { playerModel, playlistModel, fileBrowserModel, settingsModel } = appModel;
 
         if (view == ViewId.playlist)
         {
@@ -52,15 +52,15 @@ export default class App extends React.PureComponent
                 header: (
                     <div className='panel-header'>
                         <PlaylistSwitcher
-                            playlistModel={appModel.playlistModel}
-                            touchSupport={touchSupport} />
+                            playlistModel={playlistModel}
+                            settingsModel={settingsModel} />
                         <PlaylistMenu
-                            playlistModel={appModel.playlistModel} />
+                            playlistModel={playlistModel} />
                     </div>
                 ),
                 main:
                     <PlaylistContent
-                        playlistModel={appModel.playlistModel} />
+                        playlistModel={playlistModel} />
             };
         }
 
@@ -69,13 +69,13 @@ export default class App extends React.PureComponent
             return {
                 header:
                     <FileBrowserHeader
-                        fileBrowserModel={appModel.fileBrowserModel}
-                        playlistModel={appModel.playlistModel} />,
+                        fileBrowserModel={fileBrowserModel}
+                        playlistModel={playlistModel} />,
 
                 main:
                     <FileBrowser
-                        fileBrowserModel={appModel.fileBrowserModel}
-                        playlistModel={appModel.playlistModel} />
+                        fileBrowserModel={fileBrowserModel}
+                        playlistModel={playlistModel} />
             };
         }
 
@@ -83,7 +83,7 @@ export default class App extends React.PureComponent
         {
             return {
                 header: <PanelHeader title='Settings' />,
-                main: <Settings settingsModel={appModel.settingsModel} />
+                main: <Settings settingsModel={settingsModel} />
             };
         }
 
@@ -92,8 +92,9 @@ export default class App extends React.PureComponent
 
     render()
     {
-        var appModel = this.props.appModel;
-        var elements = this.renderElements();
+        const { appModel } = this.props;
+
+        const elements = this.renderElements();
 
         return (
             <div className='app'>
@@ -110,6 +111,5 @@ export default class App extends React.PureComponent
 }
 
 App.propTypes = {
-    appModel: PropTypes.instanceOf(AppModel).isRequired,
-    touchSupport: PropTypes.instanceOf(TouchSupport).isRequired,
+    appModel: PropTypes.instanceOf(AppModel).isRequired
 };
