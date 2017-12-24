@@ -1,9 +1,6 @@
 {
     "presets": [
-        ["env", { loose: true }],
+        ["env", { "loose": true }],
         "react"
-    ],
-    "plugins": [
-        ["transform-runtime", { polyfill: false, regenerator: false }]
     ]
 }

@@ -11,7 +11,6 @@
     "watch": "webpack --watch"
   },
   "dependencies": {
-    "babel-runtime": "^6.25.0",
     "detect-it": "^3.0.4",
     "event-source-polyfill": "^0.0.12",
     "lodash": "^4.17.4",
@@ -28,7 +27,6 @@
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.4",
