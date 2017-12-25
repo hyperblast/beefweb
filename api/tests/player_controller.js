@@ -3,31 +3,49 @@
 const path = require('path');
 const fs = require('fs');
 const childProcess = require('child_process');
+const { promisify } = require('util');
 const tmp = require('tmp');
-const mkdirp = require('mkdirp');
-const rimraf = require('rimraf');
+
+const accessCheck = promisify(fs.access);
+const writeFile = promisify(fs.writeFile);
+const symlink = promisify(fs.symlink);
+
+const mkdirp = promisify(require('mkdirp'));
+const rimraf = promisify(require('rimraf'));
 
 const pluginFileName = 'beefweb.so'
 const rootPath = path.dirname(path.dirname(__dirname));
 
+function tmpDir(args)
+{
+    return new Promise((resolve, reject) => {
+        tmp.dir(args, (err, path) => {
+            if (err)
+                reject(err);
+            else
+                resolve(path);
+        });
+    });
+}
+
 class PlayerController
 {
-    start()
+    async start()
     {
         this.paths = {};
 
         this.initConfig();
-        this.findPlayerBinary();
-        this.initProfile();
-        this.writePlayerConfig();
-        this.installPlugin();
+        await this.findPlayerBinary();
+        await this.initProfile();
+        await this.writePlayerConfig();
+        await this.installPlugin();
         this.startProcess();
     }
 
-    stop()
+    async stop()
     {
         this.stopProcess();
-        this.cleanUpProfile();
+        await this.cleanUpProfile();
     }
 
     initConfig()
@@ -40,7 +58,7 @@ class PlayerController
         };
     }
 
-    findPlayerBinary()
+    async findPlayerBinary()
     {
         const prefixes = [
             path.join(rootPath, 'tools/deadbeef'),
@@ -55,7 +73,7 @@ class PlayerController
 
             try
             {
-                fs.accessSync(fullPath, fs.constants.X_OK);
+                await accessCheck(fullPath, fs.constants.X_OK);
                 this.paths.playerBinary = fullPath;
                 return;
             }
@@ -67,9 +85,9 @@ class PlayerController
         throw Error('Unable to find deadbeef executable');
     }
 
-    initProfile()
+    async initProfile()
     {
-        const profileDir = tmp.dirSync({ prefix: 'api-tests-' }).name;
+        const profileDir = await tmpDir({ prefix: 'api-tests-' });
         const configDir = path.join(profileDir, '.config/deadbeef');
         const libDir = path.join(profileDir, '.local/lib/deadbeef');
         const configFile = path.join(configDir, 'config');
@@ -93,7 +111,7 @@ class PlayerController
         });
     }
 
-    writePlayerConfig()
+    async writePlayerConfig()
     {
         const settings = {
             'output_plugin': 'Null output plugin',
@@ -102,8 +120,8 @@ class PlayerController
             'beefweb.port': this.config.port,
         };
 
-        mkdirp.sync(this.paths.configDir);
-        fs.writeFileSync(this.paths.configFile, this.generatePlayerConfig(settings));
+        await mkdirp(this.paths.configDir);
+        await writeFile(this.paths.configFile, this.generatePlayerConfig(settings));
     }
 
     generatePlayerConfig(settings)
@@ -116,16 +134,16 @@ class PlayerController
         return data;
     }
 
-    installPlugin()
+    async installPlugin()
     {
-        mkdirp.sync(this.paths.libDir);
-        fs.symlinkSync(this.paths.pluginFile, this.paths.installedPluginFile);
+        await mkdirp(this.paths.libDir);
+        await symlink(this.paths.pluginFile, this.paths.installedPluginFile);
     }
 
-    cleanUpProfile()
+    async cleanUpProfile()
     {
         if (this.paths.profileDir)
-            rimraf.sync(this.paths.profileDir);
+            await rimraf(this.paths.profileDir);
     }
 
     startProcess()

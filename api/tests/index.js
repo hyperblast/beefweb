@@ -1,12 +1,14 @@
 const PlayerController = require('./player_controller');
 
-function runPlayer()
+async function runPlayer()
 {
     const player = new PlayerController();
 
-    player.start();
+    await player.start();
 
     console.log(player);
+
+    await player.stop();
 }
 
 runPlayer();
