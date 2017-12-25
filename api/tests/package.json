@@ -1,0 +1,14 @@
+{
+  "name": "api-tests",
+  "version": "0.1.0",
+  "description": "Player API tests",
+  "main": "index.js",
+  "author": "Hyperblast",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.2",
+    "tmp": "^0.0.33"
+  }
+}

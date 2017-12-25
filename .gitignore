@@ -1,6 +1,8 @@
 build/*
 tools/*
 
+api/tests/node_modules/*
+
 server/build/*
 server/extlibs/.cache/*
 
