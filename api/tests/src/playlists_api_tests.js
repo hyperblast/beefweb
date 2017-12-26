@@ -3,7 +3,7 @@
 const q = require('qunit');
 const { client, moduleHooks } = require('./test_context');
 
-q.module('player api', moduleHooks);
+q.module('playlists api', moduleHooks);
 
 q.test('getPlaylists', async assert => {
     const result = await client.getPlaylists();
