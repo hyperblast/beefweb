@@ -58,21 +58,19 @@ class PlayerController
 
     async findPlayerBinary()
     {
-        const prefixes = [
-            path.join(rootPath, 'tools/deadbeef'),
-            '/opt/deadbeef',
-            '/usr/local',
-            '/usr'
+        const locations = [
+            path.join(rootPath, 'tools/deadbeef/deadbeef'),
+            '/opt/deadbeef/bin/deadbeef',
+            '/usr/local/bin/deadbeef',
+            '/usr/bin/deadbeef'
         ];
 
-        for (let prefix of prefixes)
+        for (let location of locations)
         {
-            const fullPath = path.join(prefix, 'bin/deadbeef');
-
             try
             {
-                await accessCheck(fullPath, fs.constants.X_OK);
-                this.paths.playerBinary = fullPath;
+                await accessCheck(location, fs.constants.X_OK);
+                this.paths.playerBinary = location;
                 return;
             }
             catch(e)
