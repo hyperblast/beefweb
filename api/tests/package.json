@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "qunit *_tests.js"
+    "test": "qunit src/*_tests.js"
   },
   "dependencies": {
     "axios": "^0.17.1",

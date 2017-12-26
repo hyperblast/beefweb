@@ -13,7 +13,7 @@ const symlink = promisify(fs.symlink);
 const mkdirp = promisify(require('mkdirp'));
 const rimraf = promisify(require('rimraf'));
 
-const rootPath = path.dirname(path.dirname(__dirname));
+const rootPath = path.dirname(path.dirname(path.dirname(__dirname)));
 const pluginFiles = ['beefweb.so', 'ddb_gui_dummy.so'];
 
 function tmpDir(args)
