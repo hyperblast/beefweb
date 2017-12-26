@@ -4,6 +4,7 @@ set -ve
 
 cd "$(dirname $0)/.."
 
+scripts/get-deadbeef.sh
 scripts/get-cmake.sh
 export PATH="$(pwd)/tools/cmake/bin:$PATH"
 
@@ -18,6 +19,8 @@ fi
 scripts/build.sh --all --release --tests --verbose --werror
 
 server/build/release/src/tests/run_tests
+
+(cd api/tests; yarn install; yarn run test)
 
 if [ -n "$upload_artifacts" ]; then
     scripts/upload.sh
