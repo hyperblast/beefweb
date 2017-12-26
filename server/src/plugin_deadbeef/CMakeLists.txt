@@ -38,3 +38,16 @@ set_target_properties(
 )
 
 add_dependencies(plugin_deadbeef extlibs)
+
+if(ENABLE_TESTS)
+    add_library(
+        plugin_deadbeef_dummy_gui MODULE
+        dummy_gui.c
+    )
+
+    set_target_properties(
+        plugin_deadbeef_dummy_gui PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "ddb_gui_dummy"
+    )
+endif()

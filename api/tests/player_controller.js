@@ -13,8 +13,8 @@ const symlink = promisify(fs.symlink);
 const mkdirp = promisify(require('mkdirp'));
 const rimraf = promisify(require('rimraf'));
 
-const pluginFileName = 'beefweb.so'
 const rootPath = path.dirname(path.dirname(__dirname));
+const pluginFiles = ['beefweb.so', 'ddb_gui_dummy.so'];
 
 function tmpDir(args)
 {
@@ -45,7 +45,7 @@ class PlayerController
             await this.initProfile();
 
         await this.writePlayerConfig();
-        await this.installPlugin();
+        await this.installPlugins();
 
         this.startProcess();
     }
@@ -90,28 +90,22 @@ class PlayerController
         const libDir = path.join(profileDir, '.local/lib/deadbeef');
         const configFile = path.join(configDir, 'config');
 
-        const pluginFile = path.join(
-            rootPath,
-            'server/build',
-            this.config.buildType,
-            'src/plugin_deadbeef',
-            pluginFileName);
-
-        const installedPluginFile = path.join(libDir, pluginFileName);
+        const pluginBuildDir = path.join(
+            rootPath, 'server/build', this.config.buildType, 'src/plugin_deadbeef');
 
         Object.assign(this.paths, {
             profileDir,
             configDir,
             configFile,
             libDir,
-            pluginFile,
-            installedPluginFile,
+            pluginBuildDir,
         });
     }
 
     async writePlayerConfig()
     {
         const settings = {
+            'gui_plugin': 'dummy',
             'output_plugin': 'Null output plugin',
             'beefweb.allow_remote': 0,
             'beefweb.music_dirs': '',
@@ -130,10 +124,16 @@ class PlayerController
             .join('');
     }
 
-    async installPlugin()
+    async installPlugins()
     {
         await mkdirp(this.paths.libDir);
-        await symlink(this.paths.pluginFile, this.paths.installedPluginFile);
+
+        for (let name of pluginFiles)
+        {
+            await symlink(
+                path.join(this.paths.pluginBuildDir, name),
+                path.join(this.paths.libDir, name));
+        }
     }
 
     async cleanUpProfile()
