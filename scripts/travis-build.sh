@@ -20,7 +20,7 @@ scripts/build.sh --all --release --tests --verbose --werror
 
 server/build/release/src/tests/run_tests
 
-(cd api/tests; yarn install; yarn run test)
+(cd api/tests; yarn install; API_TESTS_BUILD_TYPE=release yarn run test)
 
 if [ -n "$upload_artifacts" ]; then
     scripts/upload.sh
