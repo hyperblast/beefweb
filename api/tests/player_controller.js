@@ -30,15 +30,23 @@ function tmpDir(args)
 
 class PlayerController
 {
-    async start()
+    constructor(config)
     {
         this.paths = {};
+        this.config = config;
+    }
 
-        this.initConfig();
-        await this.findPlayerBinary();
-        await this.initProfile();
+    async start()
+    {
+        if (!this.paths.playerBinary)
+            await this.findPlayerBinary();
+
+        if (!this.paths.profileDir)
+            await this.initProfile();
+
         await this.writePlayerConfig();
         await this.installPlugin();
+
         this.startProcess();
     }
 
@@ -46,16 +54,6 @@ class PlayerController
     {
         this.stopProcess();
         await this.cleanUpProfile();
-    }
-
-    initConfig()
-    {
-        const { API_TESTS_BUILD_TYPE, API_TESTS_PORT } = process.env;
-
-        this.config = {
-            buildType: API_TESTS_BUILD_TYPE  || 'debug',
-            port: parseInt(API_TESTS_PORT) || 8879,
-        };
     }
 
     async findPlayerBinary()
@@ -126,12 +124,10 @@ class PlayerController
 
     generatePlayerConfig(settings)
     {
-        let data = '';
-
-        for (let key of Object.getOwnPropertyNames(settings))
-            data += `${key} ${settings[key]}\n`;
-
-        return data;
+        return Object
+            .getOwnPropertyNames(settings)
+            .map(key => `${key} ${settings[key]}\n`)
+            .join('');
     }
 
     async installPlugin()

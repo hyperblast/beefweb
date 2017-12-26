@@ -6,8 +6,13 @@
   "author": "Hyperblast",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "test": "qunit *_tests.js"
+  },
   "dependencies": {
+    "axios": "^0.17.1",
     "mkdirp": "^0.5.1",
+    "qunit": "^2.4.1",
     "rimraf": "^2.6.2",
     "tmp": "^0.0.33"
   }
