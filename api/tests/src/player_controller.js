@@ -26,10 +26,10 @@ async function getBinaryArch(path)
 {
     const { stdout } = await execFile('file', ['-L', path]);
 
-    if (stdout.indexOf('x86-64') !== 0)
+    if (stdout.indexOf('x86-64') !== -1)
         return 'x86_64';
 
-    if (stdout.indexOf('Intel 80386') !== 0)
+    if (stdout.indexOf('Intel 80386') !== -1)
         return 'x86';
 
     throw Error(`Unsupported file type: ${stdout}`);
@@ -98,6 +98,7 @@ class PlayerController
                 await accessCheck(location, fs.constants.X_OK);
 
                 const binaryArch = await getBinaryArch(location);
+
                 if (binaryArch !== this.pluginArch)
                     continue;
 

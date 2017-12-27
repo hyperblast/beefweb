@@ -29,8 +29,11 @@ class TestContext
 
         const isReady = await this.client.waitUntilReady();
 
-        if (!isReady)
-            throw Error(await this.player.getLog());
+        if (isReady)
+            return;
+
+        const logData = await this.player.getLog();
+        throw Error(`Failed to reach API endpoint, player run log:\n${logData}`);
     }
 
     async endTests()
