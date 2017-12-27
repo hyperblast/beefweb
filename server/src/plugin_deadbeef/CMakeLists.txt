@@ -50,4 +50,6 @@ if(ENABLE_TESTS)
         PREFIX ""
         OUTPUT_NAME "ddb_gui_dummy"
     )
+
+    add_dependencies(plugin_deadbeef_dummy_gui extlibs)
 endif()
