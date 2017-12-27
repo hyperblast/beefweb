@@ -9,6 +9,9 @@ const tmp = require('tmp');
 const accessCheck = promisify(fs.access);
 const writeFile = promisify(fs.writeFile);
 const symlink = promisify(fs.symlink);
+const open = promisify(fs.open);
+const close = promisify(fs.close);
+
 const execFile = promisify(childProcess.execFile);
 
 const mkdirp = promisify(require('mkdirp'));
@@ -55,8 +58,7 @@ class PlayerController
 
         await this.writePlayerConfig();
         await this.installPlugins();
-
-        this.startProcess();
+        await this.startProcess();
     }
 
     async stop()
@@ -156,18 +158,22 @@ class PlayerController
             await rimraf(this.paths.profileDir);
     }
 
-    startProcess()
+    async startProcess()
     {
         const env = Object.assign({}, process.env, { HOME: this.paths.profileDir });
+
+        const logFile = await open(path.join(this.paths.profileDir, 'run.log'), 'w');
 
         this.process = childProcess.spawn(this.paths.playerBinary, [], {
             cwd: this.paths.profileDir,
             env,
-            stdio: 'ignore',
+            stdio: ['ignore', logFile, logFile],
             detached: true,
         });
 
         this.process.unref();
+
+        await close(logFile);
     }
 
     stopProcess()
