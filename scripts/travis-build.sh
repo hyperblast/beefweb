@@ -1,12 +1,8 @@
 #!/bin/bash
 
-set -ve
+set -e
 
 cd "$(dirname $0)/.."
-
-scripts/get-deadbeef.sh
-scripts/get-cmake.sh
-export PATH="$(pwd)/tools/cmake/bin:$PATH"
 
 upload_artifacts=
 
@@ -16,12 +12,41 @@ if [ "$CC" = "gcc" ]; then
     upload_artifacts=1
 fi
 
+echo
+echo '=== Downloading deadbeef binaries ==='
+echo
+
+scripts/get-deadbeef.sh
+
+echo
+echo '=== Downloading cmake binaries ==='
+echo
+
+scripts/get-cmake.sh
+export PATH="$(pwd)/tools/cmake/bin:$PATH"
+
+echo
+echo '=== Building everything ==='
+echo
+
 scripts/build.sh --all --release --tests --verbose --werror
 
+echo
+echo '=== Running server tests ==='
+echo
+
 server/build/release/src/tests/run_tests
+
+echo
+echo '=== Running API tests ==='
+echo
 
 (cd api/tests; yarn install; API_TESTS_BUILD_TYPE=release yarn run test)
 
 if [ -n "$upload_artifacts" ]; then
+    echo
+    echo '=== Uploading artifacts ==='
+    echo
+
     scripts/upload.sh
 fi
