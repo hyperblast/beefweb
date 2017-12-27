@@ -9,35 +9,44 @@ const tmp = require('tmp');
 const accessCheck = promisify(fs.access);
 const writeFile = promisify(fs.writeFile);
 const symlink = promisify(fs.symlink);
+const execFile = promisify(childProcess.execFile);
 
 const mkdirp = promisify(require('mkdirp'));
 const rimraf = promisify(require('rimraf'));
+const tmpdir = promisify(require('tmp').dir);
 
 const rootPath = path.dirname(path.dirname(path.dirname(__dirname)));
 const pluginFiles = ['beefweb.so', 'ddb_gui_dummy.so'];
 
-function tmpDir(args)
+async function getBinaryArch(path)
 {
-    return new Promise((resolve, reject) => {
-        tmp.dir(args, (err, path) => {
-            if (err)
-                reject(err);
-            else
-                resolve(path);
-        });
-    });
+    const { stdout } = await execFile('file', ['-L', path]);
+
+    if (stdout.indexOf('x86-64') !== 0)
+        return 'x86_64';
+
+    if (stdout.indexOf('Intel 80386') !== 0)
+        return 'x86';
+
+    throw Error(`Unsupported file type: ${stdout}`);
 }
 
 class PlayerController
 {
     constructor(config)
     {
-        this.paths = {};
+        const pluginBuildDir = path.join(
+            rootPath, 'server/build', config.buildType, 'src/plugin_deadbeef');
+
+        this.paths = { pluginBuildDir };
         this.config = config;
     }
 
     async start()
     {
+        if (!this.pluginArch)
+            await this.detectPluginArch();
+
         if (!this.paths.playerBinary)
             await this.findPlayerBinary();
 
@@ -56,10 +65,16 @@ class PlayerController
         await this.cleanUpProfile();
     }
 
+    async detectPluginArch()
+    {
+        this.pluginArch = await getBinaryArch(
+            path.join(this.paths.pluginBuildDir, pluginFiles[0]));
+    }
+
     async findPlayerBinary()
     {
         const locations = [
-            path.join(rootPath, 'tools/deadbeef/deadbeef'),
+            path.join(rootPath, `tools/deadbeef.${this.pluginArch}/deadbeef`),
             '/opt/deadbeef/bin/deadbeef',
             '/usr/local/bin/deadbeef',
             '/usr/bin/deadbeef'
@@ -70,6 +85,11 @@ class PlayerController
             try
             {
                 await accessCheck(location, fs.constants.X_OK);
+
+                const binaryArch = await getBinaryArch(location);
+                if (binaryArch !== this.pluginArch)
+                    continue;
+
                 this.paths.playerBinary = location;
                 return;
             }
@@ -78,25 +98,21 @@ class PlayerController
             }
         }
 
-        throw Error('Unable to find deadbeef executable');
+        throw Error(`Unable to find deadbeef ${this.pluginArch} executable`);
     }
 
     async initProfile()
     {
-        const profileDir = await tmpDir({ prefix: 'api-tests-' });
+        const profileDir = await tmpdir({ prefix: 'api-tests-' });
         const configDir = path.join(profileDir, '.config/deadbeef');
         const libDir = path.join(profileDir, '.local/lib/deadbeef');
         const configFile = path.join(configDir, 'config');
-
-        const pluginBuildDir = path.join(
-            rootPath, 'server/build', this.config.buildType, 'src/plugin_deadbeef');
 
         Object.assign(this.paths, {
             profileDir,
             configDir,
             configFile,
             libDir,
-            pluginBuildDir,
         });
     }
 
