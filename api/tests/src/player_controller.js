@@ -65,7 +65,7 @@ class PlayerController
     async stop()
     {
         this.stopProcess();
-        await this.cleanUpProfile();
+        await this.removeTempFiles();
     }
 
     async getLog()
@@ -164,7 +164,7 @@ class PlayerController
         }
     }
 
-    async cleanUpProfile()
+    async removeTempFiles()
     {
         if (this.paths.profileDir)
             await rimraf(this.paths.profileDir);
@@ -183,6 +183,8 @@ class PlayerController
             detached: true,
         });
 
+        this.process.on('error', err => console.error('Error spawning player process: %s', err));
+        this.process.on('exit', () => this.process = null);
         this.process.unref();
 
         await close(logFile);
@@ -190,8 +192,11 @@ class PlayerController
 
     stopProcess()
     {
-        if (this.process)
-            this.process.kill();
+        if (!this.process)
+            return;
+
+        this.process.kill();
+        this.process = null;
     }
 }
 
