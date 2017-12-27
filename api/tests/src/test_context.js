@@ -26,7 +26,11 @@ class TestContext
     async beginTests()
     {
         await this.player.start();
-        await this.client.waitUntilReady();
+
+        const isReady = await this.client.waitUntilReady();
+
+        if (!isReady)
+            throw Error(await this.player.getLog());
     }
 
     async endTests()

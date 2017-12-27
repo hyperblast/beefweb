@@ -7,6 +7,7 @@ const { promisify } = require('util');
 const tmp = require('tmp');
 
 const accessCheck = promisify(fs.access);
+const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 const symlink = promisify(fs.symlink);
 const open = promisify(fs.open);
@@ -67,6 +68,14 @@ class PlayerController
         await this.cleanUpProfile();
     }
 
+    async getLog()
+    {
+        if (this.paths.logFile)
+            return await readFile(this.paths.logFile, 'utf8');
+
+        return null;
+    }
+
     async detectPluginArch()
     {
         this.pluginArch = await getBinaryArch(
@@ -109,12 +118,14 @@ class PlayerController
         const configDir = path.join(profileDir, '.config/deadbeef');
         const libDir = path.join(profileDir, '.local/lib/deadbeef');
         const configFile = path.join(configDir, 'config');
+        const logFile = path.join(profileDir, 'run.log');
 
         Object.assign(this.paths, {
             profileDir,
             configDir,
             configFile,
             libDir,
+            logFile,
         });
     }
 
@@ -162,7 +173,7 @@ class PlayerController
     {
         const env = Object.assign({}, process.env, { HOME: this.paths.profileDir });
 
-        const logFile = await open(path.join(this.paths.profileDir, 'run.log'), 'w');
+        const logFile = await open(this.paths.logFile, 'w');
 
         this.process = childProcess.spawn(this.paths.playerBinary, [], {
             cwd: this.paths.profileDir,

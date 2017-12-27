@@ -87,7 +87,7 @@ class ApiClient
                 return true;
         }
 
-        throw new Error('Failed to reach API endpoint within timeout');
+        return false;
     }
 
     async checkIsReady()
