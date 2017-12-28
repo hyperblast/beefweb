@@ -37,15 +37,15 @@ class RequestHandler
         });
     }
 
-    async get()
+    async get(url, config)
     {
-        const response = await this.axios.get.apply(this.axios, arguments);
+        const response = await this.axios.get(url, config);
         return response.data;
     }
 
-    async post()
+    async post(url, config)
     {
-        const response = await this.axios.post.apply(this.axios, arguments);
+        const response = await this.axios.post(url, config);
         return response.data;
     }
 
@@ -59,13 +59,13 @@ class ApiClient
 {
     constructor(serverUrl)
     {
-        this.apiUrl = new URL('/api', serverUrl).toString();
+        this.serverUrl = serverUrl;
         this.createHandler();
     }
 
     createHandler()
     {
-        this.handler = new RequestHandler(this.apiUrl);
+        this.handler = new RequestHandler(this.serverUrl);
     }
 
     cancelRequests()
@@ -105,12 +105,12 @@ class ApiClient
 
     getPlayerState()
     {
-        return this.handler.get('/player');
+        return this.handler.get('api/player');
     }
 
     getPlaylists()
     {
-        return this.handler.get('/playlists');
+        return this.handler.get('api/playlists');
     }
 }
 

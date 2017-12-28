@@ -19,7 +19,9 @@ const mkdirp = promisify(require('mkdirp'));
 const rimraf = promisify(require('rimraf'));
 const tmpdir = promisify(require('tmp').dir);
 
-const rootPath = path.dirname(path.dirname(path.dirname(__dirname)));
+const testsRootDir = path.dirname(__dirname);
+const rootDir = path.dirname(path.dirname(testsRootDir));
+
 const pluginFiles = ['beefweb.so', 'ddb_gui_dummy.so'];
 
 async function getBinaryArch(path)
@@ -40,7 +42,7 @@ class PlayerController
     constructor(config)
     {
         const pluginBuildDir = path.join(
-            rootPath, 'server/build', config.buildType, 'src/plugin_deadbeef');
+            rootDir, 'server/build', config.buildType, 'src/plugin_deadbeef');
 
         this.paths = { pluginBuildDir };
         this.config = config;
@@ -85,7 +87,7 @@ class PlayerController
     async findPlayerBinary()
     {
         const locations = [
-            path.join(rootPath, `tools/deadbeef.${this.pluginArch}/deadbeef`),
+            path.join(rootDir, `tools/deadbeef.${this.pluginArch}/deadbeef`),
             '/opt/deadbeef/bin/deadbeef',
             '/usr/local/bin/deadbeef',
             '/usr/bin/deadbeef'
@@ -162,6 +164,10 @@ class PlayerController
                 path.join(this.paths.pluginBuildDir, name),
                 path.join(this.paths.libDir, name));
         }
+
+        await symlink(
+            path.join(testsRootDir, 'webroot'),
+            path.join(this.paths.libDir, 'beefweb.root'));
     }
 
     async removeTempFiles()
