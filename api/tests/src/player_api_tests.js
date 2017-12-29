@@ -211,3 +211,52 @@ q.test('previous', async assert =>
 
     assert.ok(true);
 });
+
+q.test('set position absolute', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t3]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.pause();
+    await client.waitForState(s => {
+        return s.playbackState === 'paused';
+    });
+
+    await client.setPlayerState({ position: 33.0 });
+    await client.waitForState(s => {
+        return s.activeItem.position === 33.0;
+    });
+
+    assert.ok(true);
+});
+
+q.test('set position relative', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t3]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.pause();
+    await client.waitForState(s => {
+        return s.playbackState === 'paused';
+    });
+
+    await client.setPlayerState({ position: 33.0 });
+    await client.waitForState(s => {
+        return s.activeItem.position === 33.0;
+    });
+
+    await client.setPlayerState({ relativePosition: 11.0 });
+    await client.waitForState(s => {
+        return s.activeItem.position === 44.0;
+    });
+
+    assert.ok(true);
+});
