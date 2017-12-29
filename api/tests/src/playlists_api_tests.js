@@ -2,6 +2,7 @@
 
 const q = require('qunit');
 const { client, moduleHooks, tracks } = require('./test_context');
+const { arraysEqual } = require('./utils');
 
 q.module('playlists api', moduleHooks);
 
@@ -162,10 +163,20 @@ q.test('sort playlist items random', async assert =>
 {
     const initialFiles = [tracks.t1, tracks.t2, tracks.t3];
     await client.addPlaylistItems(0, initialFiles);
-    await client.sortPlaylistItemsRandom(0);
 
-    const files = await client.getPlaylistFiles(0);
-    assert.notDeepEqual(files, initialFiles);
+    for (let i = 0; i < 10; i++)
+    {
+        await client.sortPlaylistItemsRandom(0);
+        const files = await client.getPlaylistFiles(0);
+
+        if (!arraysEqual(initialFiles, files))
+        {
+            assert.ok(true);
+            return;
+        }
+    }
+
+    assert.ok(false, 'expected to sort playlist randomly');
 });
 
 q.test('remove playlist items', async assert =>
