@@ -174,6 +174,21 @@ class ApiClient
         return response.playlists;
     }
 
+    addPlaylist(options)
+    {
+        return this.handler.post('api/playlists/add', options);
+    }
+
+    removePlaylist(plref)
+    {
+        return this.handler.post(`api/playlists/remove/${plref}`);
+    }
+
+    movePlaylist(plref, index)
+    {
+        return this.handler.post(`api/playlists/move/${plref}/${index}`);
+    }
+
     addPlaylistItems(plref, items)
     {
         return this.handler.post(`api/playlists/${plref}/items/add`, { items });
