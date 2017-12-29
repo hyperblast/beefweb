@@ -152,8 +152,8 @@ void PlaylistsController::copyItemsInPlaylist()
 void PlaylistsController::moveItemsBetweenPlaylists()
 {
     player_->movePlaylistItems(
-        param<PlaylistRef>("from"),
-        param<PlaylistRef>("to"),
+        param<PlaylistRef>("plref"),
+        param<PlaylistRef>("targetPlref"),
         param<std::vector<int32_t>>("items"),
         optionalParam<int32_t>("targetIndex", -1));
 }
@@ -161,8 +161,8 @@ void PlaylistsController::moveItemsBetweenPlaylists()
 void PlaylistsController::copyItemsBetweenPlaylists()
 {
     player_->copyPlaylistItems(
-        param<PlaylistRef>("from"),
-        param<PlaylistRef>("to"),
+        param<PlaylistRef>("plref"),
+        param<PlaylistRef>("targetPlref"),
         param<std::vector<int32_t>>("items"),
         optionalParam<int32_t>("targetIndex", -1));
 }
@@ -219,8 +219,8 @@ void PlaylistsController::defineRoutes(Router* router, Player* player, SettingsS
     routes.post(":plref/items/remove", &PlaylistsController::removeItems);
     routes.post(":plref/items/sort", &PlaylistsController::sortItems);
 
-    routes.post(":from/:to/items/move", &PlaylistsController::moveItemsBetweenPlaylists);
-    routes.post(":from/:to/items/copy", &PlaylistsController::copyItemsBetweenPlaylists);
+    routes.post(":plref/:targetPlref/items/move", &PlaylistsController::moveItemsBetweenPlaylists);
+    routes.post(":plref/:targetPlref/items/copy", &PlaylistsController::copyItemsBetweenPlaylists);
 
     routes.get(":plref/items/:range", &PlaylistsController::getPlaylistItems);
 }

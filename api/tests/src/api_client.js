@@ -189,11 +189,6 @@ class ApiClient
         return this.handler.post(`api/playlists/move/${plref}/${index}`);
     }
 
-    addPlaylistItems(plref, items)
-    {
-        return this.handler.post(`api/playlists/${plref}/items/add`, { items });
-    }
-
     removePlaylist(plref)
     {
         return this.handler.post(`api/playlists/remove/${plref}`);
@@ -205,6 +200,75 @@ class ApiClient
         const params = { columns };
         const response = await this.handler.get(url, { params });
         return response.playlistItems;
+    }
+
+    async getPlaylistFiles(plref, offset, count)
+    {
+        const items = await this.getPlaylistItems(
+            plref, ['%path%'], offset, count);
+
+        return items.map(i => i.columns[0]);
+    }
+
+    addPlaylistItems(plref, items, options)
+    {
+        const data = { items };
+
+        if (options)
+            Object.assign(data, options);
+
+        return this.handler.post(
+            `api/playlists/${plref}/items/add`, data);
+    }
+
+    removePlaylistItems(plref, items)
+    {
+        return this.handler.post(
+            `api/playlists/${plref}/items/remove`, { items });
+    }
+
+    copyPlaylistItems(plref, items, targetIndex)
+    {
+        const data = { items };
+
+        if (typeof targetIndex !== 'undefined')
+            data.targetIndex = targetIndex;
+
+        return this.handler.post(
+            `api/playlists/${plref}/items/copy`, data);
+    }
+
+    movePlaylistItems(plref, items, targetIndex)
+    {
+        const data = { items };
+
+        if (typeof targetIndex !== 'undefined')
+            data.targetIndex = targetIndex;
+
+        return this.handler.post(
+            `api/playlists/${plref}/items/move`, data);
+    }
+
+    copyPlaylistItemsEx(source, target, items, targetIndex)
+    {
+        const data = { items };
+
+        if (typeof targetIndex !== 'undefined')
+            data.targetIndex = targetIndex;
+
+        return this.handler.post(
+            `api/playlists/${source}/${target}/items/copy`, data);
+    }
+
+    movePlaylistItemsEx(source, target, items, targetIndex)
+    {
+        const data = { items };
+
+        if (typeof targetIndex !== 'undefined')
+            data.targetIndex = targetIndex;
+
+        return this.handler.post(
+            `api/playlists/${source}/${target}/items/move`, data);
     }
 }
 

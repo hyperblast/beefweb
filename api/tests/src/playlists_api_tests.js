@@ -117,8 +117,72 @@ q.test('add playlist items simple', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
 
-    const items = await client.getPlaylistItems(0, ['%path%']);
-    const addedTracks = items.map(i => i.columns[0]);
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, [tracks.t1, tracks.t2, tracks.t3]);
+});
 
-    assert.deepEqual(addedTracks, [tracks.t1, tracks.t2, tracks.t3]);
+q.test('add playlist items to position', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t1], { index: 0 });
+    await client.addPlaylistItems(0, [tracks.t3], { index: 1 });
+
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, [tracks.t1, tracks.t3, tracks.t2]);
+});
+
+q.test('remove playlist items', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.removePlaylistItems(0, [0, 2]);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, [tracks.t2]);
+});
+
+q.test('move playlist items', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.movePlaylistItems(0, [1, 2], 0);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, [tracks.t2, tracks.t3, tracks.t1]);
+});
+
+q.test('move playlist items between playlists', async assert =>
+{
+    await client.addPlaylist();
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(1, [tracks.t3]);
+
+    await client.movePlaylistItemsEx(0, 1, [1, 2]);
+
+    const files1 = await client.getPlaylistFiles(0);
+    assert.deepEqual(files1, [tracks.t1]);
+
+    const files2 = await client.getPlaylistFiles(1);
+    assert.deepEqual(files2, [tracks.t3, tracks.t2, tracks.t3]);
+});
+
+q.test('copy playlist items', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.copyPlaylistItems(0, [0, 1], 1);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, [tracks.t1, tracks.t1, tracks.t2, tracks.t2, tracks.t3]);
+});
+
+q.test('copy playlist items between playlists', async assert =>
+{
+    await client.addPlaylist();
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(1, [tracks.t3]);
+    await client.copyPlaylistItemsEx(0, 1, [0, 1]);
+
+    const files1 = await client.getPlaylistFiles(0);
+    assert.deepEqual(files1, [tracks.t1, tracks.t2, tracks.t3]);
+
+    const files2 = await client.getPlaylistFiles(1);
+    assert.deepEqual(files2, [tracks.t3, tracks.t1, tracks.t2]);
 });

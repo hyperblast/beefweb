@@ -203,6 +203,9 @@ void PlayerImpl::copyPlaylistItems(
     PlaylistPtr targetPlaylist = playlists_.resolve(targetRef);
     PlaylistItemPtr targetItem = resolvePlaylistItem(targetPlaylist.get(), targetIndex);
 
+    // Workaround invalid copying to current playlist, report a bug to deadbeef?
+    ddbApi->plt_set_curr(targetPlaylist.get());
+
     ddbApi->plt_copy_items(
         targetPlaylist.get(), PL_MAIN,
         sourcePlaylist.get(), targetItem.get(),
