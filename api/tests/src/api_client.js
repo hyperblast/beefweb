@@ -194,6 +194,11 @@ class ApiClient
         return this.handler.post(`api/playlists/remove/${plref}`);
     }
 
+    clearPlaylist(plref)
+    {
+        return this.handler.post(`api/playlists/${plref}/clear`)
+    }
+
     async getPlaylistItems(plref, columns, offset = 0, count = 1000)
     {
         const url = `api/playlists/${plref}/items/${offset}:${count}`;
@@ -219,6 +224,23 @@ class ApiClient
 
         return this.handler.post(
             `api/playlists/${plref}/items/add`, data);
+    }
+
+    sortPlaylistItems(plref, by, desc)
+    {
+        const data = { by };
+
+        if (typeof desc !== 'undefined')
+            data.desc = desc;
+
+        return this.handler.post(
+            `api/playlists/${plref}/items/sort`, data);
+    }
+
+    sortPlaylistItemsRandom(plref)
+    {
+        return this.handler.post(
+            `api/playlists/${plref}/items/sort`, { random: true });
     }
 
     removePlaylistItems(plref, items)

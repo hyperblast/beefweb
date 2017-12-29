@@ -113,6 +113,15 @@ q.test('move playlist', async assert =>
     assert.equal(playlists[2].id, id1);
 });
 
+q.test('clear playlist', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.clearPlaylist(0);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, []);
+});
+
 q.test('add playlist items simple', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
@@ -129,6 +138,34 @@ q.test('add playlist items to position', async assert =>
 
     const files = await client.getPlaylistFiles(0);
     assert.deepEqual(files, [tracks.t1, tracks.t3, tracks.t2]);
+});
+
+q.test('sort playlist items asc', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t2, tracks.t1, tracks.t3]);
+    await client.sortPlaylistItems(0, '%tracknumber%');
+
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, [tracks.t1, tracks.t2, tracks.t3]);
+});
+
+q.test('sort playlist items desc', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t2, tracks.t1, tracks.t3]);
+    await client.sortPlaylistItems(0, '%tracknumber%', true);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.deepEqual(files, [tracks.t3, tracks.t2, tracks.t1]);
+});
+
+q.test('sort playlist items random', async assert =>
+{
+    const initialFiles = [tracks.t1, tracks.t2, tracks.t3];
+    await client.addPlaylistItems(0, initialFiles);
+    await client.sortPlaylistItemsRandom(0);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.notDeepEqual(files, initialFiles);
 });
 
 q.test('remove playlist items', async assert =>
