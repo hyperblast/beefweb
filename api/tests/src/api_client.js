@@ -43,9 +43,9 @@ class RequestHandler
         return response.data;
     }
 
-    async post(url, config)
+    async post(url, data, config)
     {
-        const response = await this.axios.post(url, config);
+        const response = await this.axios.post(url, data, config);
         return response.data;
     }
 
@@ -103,9 +103,15 @@ class ApiClient
         }
     }
 
-    getPlayerState()
+    async getPlayerState()
     {
-        return this.handler.get('api/player');
+        const state = await this.handler.get('api/player');
+        return state.player;
+    }
+
+    setPlayerState(options)
+    {
+        return this.handler.post('api/player', options);
     }
 
     getPlaylists()
