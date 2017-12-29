@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const ApiClient = require('./api_client');
 const PlayerController = require('./player_controller');
 
@@ -17,13 +18,21 @@ class TestContext
         this.client = new ApiClient(`http://localhost:${this.config.port}`);
         this.player = new PlayerController(this.config);
 
+        this.musicDir = this.player.paths.musicDir;
+        this.tracks = Object.freeze({
+            t1: path.join(this.musicDir, 'track1.flac'),
+            t2: path.join(this.musicDir, 'track2.flac'),
+            t3: path.join(this.musicDir, 'subdir/track3.flac'),
+        });
+
         this.moduleHooks = Object.freeze({
-            before: this.beginTests.bind(this),
-            after: this.endTests.bind(this),
+            before: this.init.bind(this),
+            after: this.shutdown.bind(this),
+            beforeEach: this.prepare.bind(this),
         });
     }
 
-    async beginTests()
+    async init()
     {
         await this.player.start();
 
@@ -35,10 +44,15 @@ class TestContext
         throw Error('Failed to reach API endpoint');
     }
 
-    async endTests()
+    async shutdown()
     {
         this.client.cancelRequests();
         await this.player.stop();
+    }
+
+    async prepare()
+    {
+        await this.client.resetState();
     }
 }
 

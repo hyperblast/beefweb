@@ -1,7 +1,7 @@
 'use strict';
 
 const q = require('qunit');
-const { client, moduleHooks } = require('./test_context');
+const { client, moduleHooks, tracks } = require('./test_context');
 
 q.module('player api', moduleHooks);
 
@@ -74,4 +74,140 @@ q.test('set playback order', async assert =>
 
     const state = await client.getPlayerState();
     assert.equal(state.options.order, 'random');
+});
+
+q.test('play', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+
+    await client.play(0, 1);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 1;
+    });
+
+    assert.ok(true);
+});
+
+q.test('stop', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.stop();
+    await client.waitForState(s => {
+        return s.playbackState === 'stopped';
+    });
+
+    assert.ok(true);
+});
+
+q.test('play random', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    await client.playRandom();
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    assert.ok(true);
+});
+
+q.test('play current', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.pause();
+    await client.waitForState(s => {
+        return s.playbackState === 'paused';
+    });
+
+    await client.playCurrent();
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    assert.ok(true);
+});
+
+q.test('pause', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.pause();
+    await client.waitForState(s => {
+        return s.playbackState === 'paused';
+    });
+
+    assert.ok(true);
+});
+
+q.test('toggle pause', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.togglePause();
+    await client.waitForState(s => {
+        return s.playbackState === 'paused';
+    });
+
+    await client.togglePause();
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    assert.ok(true);
+});
+
+q.test('next', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.next();
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 1;
+    });
+
+    assert.ok(true);
+});
+
+q.test('previous', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+
+    await client.play(0, 1);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.previous();
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 0;
+    });
+
+    assert.ok(true);
 });

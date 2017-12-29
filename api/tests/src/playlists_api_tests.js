@@ -5,8 +5,9 @@ const { client, moduleHooks } = require('./test_context');
 
 q.module('playlists api', moduleHooks);
 
-q.test('getPlaylists', async assert => {
-    const result = await client.getPlaylists();
-    assert.ok(Array.isArray(result.playlists));
-    assert.ok(result.playlists.length, 1);
+q.test('get playlists', async assert =>
+{
+    const playlists = await client.getPlaylists();
+    assert.ok(Array.isArray(playlists));
+    assert.ok(playlists.length, 1);
 });

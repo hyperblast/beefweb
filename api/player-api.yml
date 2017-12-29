@@ -264,7 +264,7 @@ paths:
           schema:
             type: object
             properties:
-              playlists:
+              playlistItems:
                 type: array
                 items:
                   $ref: '#/definitions/PlaylistItemInfo'

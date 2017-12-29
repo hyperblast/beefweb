@@ -2,6 +2,7 @@
 
 const { URL } = require('url');
 const axios = require('axios');
+const { waitUntil } = require('./utils');
 
 function formatParam(key, value)
 {
@@ -14,13 +15,8 @@ function formatParams(params)
 {
     return Object
         .getOwnPropertyNames(params)
-        .map(key => formatParam(key, params[value]))
+        .map(key => formatParam(key, params[key]))
         .join('&');
-}
-
-function sleep(timeout)
-{
-    return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
 class RequestHandler
@@ -74,20 +70,26 @@ class ApiClient
         this.createHandler();
     }
 
+    async resetState()
+    {
+        await this.stop();
+
+        await this.setPlayerState({
+            order: 'linear',
+            loop: 'all',
+            isMuted: false,
+            volumeDb: 0.0,
+        });
+
+        const playlists = await this.getPlaylists();
+
+        for (let p of playlists)
+            await this.removePlaylist(p.id);
+    }
+
     async waitUntilReady()
     {
-        if (await this.checkIsReady())
-            return true;
-
-        for (let i = 1; i < 10; i++)
-        {
-            await sleep(200);
-
-            if (await this.checkIsReady())
-                return true;
-        }
-
-        return false;
+        return waitUntil(() => this.checkIsReady(), 200);
     }
 
     async checkIsReady()
@@ -105,8 +107,8 @@ class ApiClient
 
     async getPlayerState()
     {
-        const state = await this.handler.get('api/player');
-        return state.player;
+        const response = await this.handler.get('api/player');
+        return response.player;
     }
 
     setPlayerState(options)
@@ -114,9 +116,79 @@ class ApiClient
         return this.handler.post('api/player', options);
     }
 
-    getPlaylists()
+    async waitForState(check)
     {
-        return this.handler.get('api/playlists');
+        let result = await waitUntil(async () => {
+            const state = await this.getPlayerState();
+            return check(state) ? state : null;
+        });
+
+        if (!result)
+            throw Error('Failed to transition into expected state within allowed period');
+    }
+
+    play(plref, item)
+    {
+        return this.handler.post(`api/player/play/${plref}/${item}`);
+    }
+
+    playCurrent()
+    {
+        return this.handler.post('api/player/play');
+    }
+
+    playRandom()
+    {
+        return this.handler.post('api/player/play/random');
+    }
+
+    stop()
+    {
+        return this.handler.post('api/player/stop');
+    }
+
+    pause()
+    {
+        return this.handler.post('api/player/pause');
+    }
+
+    togglePause()
+    {
+        return this.handler.post('api/player/pause/toggle');
+    }
+
+    previous()
+    {
+        return this.handler.post('api/player/previous');
+    }
+
+    next()
+    {
+        return this.handler.post('api/player/next');
+    }
+
+    async getPlaylists()
+    {
+        const response = await this.handler.get('api/playlists');
+        return response.playlists;
+    }
+
+    addPlaylistItems(plref, items)
+    {
+        return this.handler.post(`api/playlists/${plref}/items/add`, { items });
+    }
+
+    removePlaylist(plref)
+    {
+        return this.handler.post(`api/playlists/remove/${plref}`);
+    }
+
+    async getPlaylistItems(plref, columns, offset = 0, count = 1000)
+    {
+        const url = `api/playlists/${plref}/items/${offset}:${count}`;
+        const params = { columns };
+        const response = await this.handler.get(url, { params });
+        return response.playlistItems;
     }
 }
 

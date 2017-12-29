@@ -44,7 +44,9 @@ class PlayerController
         const pluginBuildDir = path.join(
             rootDir, 'server/build', config.buildType, 'src/plugin_deadbeef');
 
-        this.paths = { pluginBuildDir };
+        const musicDir = path.join(testsRootDir, 'tracks');
+
+        this.paths = { pluginBuildDir, musicDir };
         this.config = config;
     }
 
@@ -138,7 +140,7 @@ class PlayerController
             'gui_plugin': 'dummy',
             'output_plugin': 'Null output plugin',
             'beefweb.allow_remote': 0,
-            'beefweb.music_dirs': '',
+            'beefweb.music_dirs': this.paths.musicDir,
             'beefweb.port': this.config.port,
         };
 
