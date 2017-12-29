@@ -80,7 +80,7 @@ q.test('set volume amp', async assert =>
     assert.equal(state.volume.amp, 0.5);
 });
 
-q.test('set muted amp', async assert =>
+q.test('set muted', async assert =>
 {
     await client.setPlayerState({ isMuted: true });
 
