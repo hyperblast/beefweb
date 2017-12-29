@@ -89,7 +89,7 @@ class ApiClient
 
     async waitUntilReady()
     {
-        return waitUntil(() => this.checkIsReady(), 200);
+        return waitUntil(() => this.checkIsReady(), 400);
     }
 
     async checkIsReady()

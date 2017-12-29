@@ -5,7 +5,7 @@ function sleep(timeout)
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-async function waitUntil(check, delay = 100, retry = 10)
+async function waitUntil(check, delay = 200, retry = 10)
 {
     let ret;
 
