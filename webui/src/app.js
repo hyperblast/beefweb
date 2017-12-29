@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import AppModel, { ViewId } from './app_model'
 import { PanelHeader } from './elements'
 import ControlBar from './control_bar'
@@ -11,33 +12,21 @@ import FileBrowserHeader from './file_browser_header'
 import Settings from './settings'
 import StatusBar from './status_bar'
 
-export default class App extends React.PureComponent
+export default class App extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ appModel: 'currentViewChange' });
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
     }
 
     getStateFromModel()
     {
-        var model = this.props.appModel;
+        const { currentView } = this.props.appModel;
 
-        return {
-            view: model.currentView,
-        };
-    }
-
-    componentDidMount()
-    {
-        this.props.appModel.on('currentViewChange', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.appModel.off('currentViewChange', this.handleUpdate);
+        return { view: currentView };
     }
 
     renderElements()

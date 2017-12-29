@@ -1,36 +1,24 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import AppModel, { ViewId } from './app_model'
 import { Button } from './elements'
 import urls from './urls'
 
-export default class ViewSwitcher extends React.PureComponent
+export default class ViewSwitcher extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ appModel: 'currentViewChange' });
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
     }
 
     getStateFromModel()
     {
-        var model = this.props.appModel;
-
-        return {
-            view: model.currentView,
-        };
-    }
-
-    componentDidMount()
-    {
-        this.props.appModel.on('currentViewChange', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.appModel.off('currentViewChange', this.handleUpdate);
+        const { currentView } = this.props.appModel;
+        return { view: currentView };
     }
 
     render()

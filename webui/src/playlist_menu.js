@@ -1,15 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import PlaylistModel from './playlist_model'
 import { Icon, Button, Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
 import { ConfirmDialog, InputDialog } from './dialogs'
 import { bindHandlers } from './utils'
 
-export default class PlaylistMenu extends React.PureComponent
+export default class PlaylistMenu extends Component
 {
     constructor(props)
     {
         super(props);
+
+        this.bindEvents({ playlistModel: 'playlistsChange' });
 
         this.state = Object.assign(this.getStateFromModel(), {
             menuOpen: false,
@@ -20,8 +23,6 @@ export default class PlaylistMenu extends React.PureComponent
             renameDialogOpen: false,
             renameDialogValue: '',
         });
-
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
 
         bindHandlers(this);
     }
@@ -34,16 +35,6 @@ export default class PlaylistMenu extends React.PureComponent
             currentPlaylistId,
             currentPlaylist: currentPlaylist || {},
         };
-    }
-
-    componentDidMount()
-    {
-        this.props.playlistModel.on('playlistsChange', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playlistModel.off('playlistsChange', this.handleUpdate);
     }
 
     handleMenuToggle(value)

@@ -1,37 +1,28 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import PlaylistModel from './playlist_model'
 import Table from './table'
 
-export default class PlaylistContent extends React.PureComponent
+export default class PlaylistContent extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ playlistModel: 'itemsChange' });
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleClick = index => this.props.playlistModel.activateItem(index);
     }
 
     getStateFromModel()
     {
-        var model = this.props.playlistModel;
+        const { columns, playlistItems } = this.props.playlistModel;
 
         return {
-            columns: model.columns.names,
-            rows: model.playlistItems
+            columns: columns.names,
+            rows: playlistItems
         };
-    }
-
-    componentDidMount()
-    {
-        this.props.playlistModel.on('itemsChange', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playlistModel.off('itemsChange', this.handleUpdate);
     }
 
     render()

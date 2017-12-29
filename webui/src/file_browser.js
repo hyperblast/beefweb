@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import urls from './urls'
@@ -10,37 +11,27 @@ const fileTypes = Object.freeze({
     D: 'Directory'
 });
 
-export default class FileBrowser extends React.PureComponent
+export default class FileBrowser extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ fileBrowserModel: 'change' });
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleClick = this.handleClick.bind(this);
     }
 
     getStateFromModel()
     {
-        var model = this.props.fileBrowserModel;
+        const { entries } = this.props.fileBrowserModel;
 
         return {
-            rows: model.entries.map(e => ({
+            rows: entries.map(e => ({
                 url: e.type == 'D' ? urls.browsePath(e.path) : null,
                 columns: [e.name, fileTypes[e.type]]
             }))
         };
-    }
-
-    componentDidMount()
-    {
-        this.props.fileBrowserModel.on('change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.fileBrowserModel.off('change', this.handleUpdate);
     }
 
     handleClick(idx)

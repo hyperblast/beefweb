@@ -2,11 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import mapValues from 'lodash/mapValues'
 import { PlaybackOrder, LoopMode } from './client'
+import Component from './component'
 import PlayerModel from './player_model'
 import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { bindHandlers, mapObject } from './utils'
 
-export default class PlaybackControl extends React.PureComponent
+export default class PlaybackControl extends Component
 {
     constructor(props)
     {
@@ -16,7 +17,7 @@ export default class PlaybackControl extends React.PureComponent
             audioMenuOpen: false
         });
 
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
+        this.bindEvents({ playerModel: 'change' });
 
         bindHandlers(this);
 
@@ -39,16 +40,6 @@ export default class PlaybackControl extends React.PureComponent
     {
         const { order, loop } = this.props.playerModel.options;
         return { order, loop };
-    }
-
-    componentDidMount()
-    {
-        this.props.playerModel.on('change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playerModel.off('change', this.handleUpdate);
     }
 
     handleStop(e)

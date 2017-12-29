@@ -1,17 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import clamp from 'lodash/clamp'
+import Component from './component'
 import PlayerModel from './player_model'
 import { formatTime } from './utils'
 
-export default class PositionControl extends React.PureComponent
+export default class PositionControl extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ playerModel: 'change' });
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleClick = this.handleClick.bind(this);
     }
 
@@ -24,16 +25,6 @@ export default class PositionControl extends React.PureComponent
             position: activeItem.position,
             duration: activeItem.duration
         };
-    }
-
-    componentDidMount()
-    {
-        this.props.playerModel.on('change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playerModel.off('change', this.handleUpdate);
     }
 
     handleClick(e)

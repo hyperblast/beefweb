@@ -1,39 +1,26 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import FileBrowserModel, { rootPath } from './file_browser_model'
 import PlaylistModel from './playlist_model'
 import { Button } from './elements'
 import urls from './urls'
 
-export default class FileBrowserHeader extends React.PureComponent
+export default class FileBrowserHeader extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ fileBrowserModel: 'change' });
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleAddClick = this.handleAddClick.bind(this);
     }
 
     getStateFromModel()
     {
-        var model = this.props.fileBrowserModel;
-
-        return {
-            currentPath: model.currentPath,
-            parentPath: model.parentPath
-        };
-    }
-
-    componentDidMount()
-    {
-        this.props.fileBrowserModel.on('change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.fileBrowserModel.off('change', this.handleUpdate);
+        const { currentPath, parentPath } = this.props.fileBrowserModel;
+        return { currentPath, parentPath };
     }
 
     getParentLink()

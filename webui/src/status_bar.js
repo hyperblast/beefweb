@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import { PlaybackState } from './client'
@@ -11,14 +12,18 @@ var stateToName = {
     [PlaybackState.stopped]: 'Stopped'
 };
 
-export default class StatusBar extends React.PureComponent
+export default class StatusBar extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({
+            playerModel: 'change',
+            playlistModel: 'playlistsChange',
+        });
+
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
     }
 
     getStateFromModel()
@@ -32,18 +37,6 @@ export default class StatusBar extends React.PureComponent
             itemCount: currentPlaylist ? currentPlaylist.itemCount : 0,
             totalTime: currentPlaylist ? currentPlaylist.totalTime : 0
         };
-    }
-
-    componentDidMount()
-    {
-        this.props.playerModel.on('change', this.handleUpdate);
-        this.props.playlistModel.on('playlistsChange', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playerModel.off('change', this.handleUpdate);
-        this.props.playlistModel.off('playlistsChange', this.handleUpdate);
     }
 
     getStatusLine()

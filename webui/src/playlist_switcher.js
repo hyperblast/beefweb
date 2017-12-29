@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import Component from './component'
 import PlaylistModel from './playlist_model'
 import SettingsModel from './settings_model'
 import { Icon } from './elements'
@@ -45,15 +46,18 @@ const PlaylistTabList = SortableContainer(props => {
     );
 });
 
-export default class PlaylistSwitcher extends React.PureComponent
+export default class PlaylistSwitcher extends Component
 {
     constructor(props)
     {
         super(props);
 
-        this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
+        this.bindEvents({
+            playlistModel: 'playlistsChange',
+            settingsModel: 'touchModeChange',
+        });
 
+        this.state = this.getStateFromModel();
         bindHandlers(this);
     }
 
@@ -62,18 +66,6 @@ export default class PlaylistSwitcher extends React.PureComponent
         const { currentPlaylistId, playlists } = this.props.playlistModel;
         const { touchMode } = this.props.settingsModel;
         return { currentPlaylistId, playlists, touchMode };
-    }
-
-    componentDidMount()
-    {
-        this.props.playlistModel.on('playlistsChange', this.handleUpdate);
-        this.props.settingsModel.on('touchModeChange', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playlistModel.off('playlistsChange', this.handleUpdate);
-        this.props.settingsModel.off('touchModeChange', this.handleUpdate);
     }
 
     handleSortEnd(e)

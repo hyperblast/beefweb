@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Component from './component'
 import PlayerModel from './player_model'
 import { Button, Dropdown } from './elements'
 import { bindHandlers } from './utils'
@@ -9,15 +10,14 @@ function volumeIcon(isMuted)
     return isMuted ? 'volume-off' : 'volume-high';
 }
 
-class VolumeControlPanel extends React.PureComponent
+class VolumeControlPanel extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ playerModel: 'change' });
         this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
-
         bindHandlers(this);
     }
 
@@ -31,16 +31,6 @@ class VolumeControlPanel extends React.PureComponent
             volumeMin: dbMin,
             isMuted: isMuted,
         };
-    }
-
-    componentDidMount()
-    {
-        this.props.playerModel.on('change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playerModel.off('change', this.handleUpdate);
     }
 
     handleMuteClick(e)
@@ -89,17 +79,17 @@ VolumeControlPanel.propTypes = {
     onAfterMuteClick: PropTypes.func,
 };
 
-export default class VolumeControl extends React.PureComponent
+export default class VolumeControl extends Component
 {
     constructor(props)
     {
         super(props);
 
+        this.bindEvents({ playerModel: 'change' });
+
         this.state = Object.assign(this.getStateFromModel(), {
            panelOpen: false
         });
-
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
 
         bindHandlers(this);
     }
@@ -109,16 +99,6 @@ export default class VolumeControl extends React.PureComponent
         return {
             isMuted: this.props.playerModel.volume.isMuted
         };
-    }
-
-    componentDidMount()
-    {
-        this.props.playerModel.on('change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.props.playerModel.off('change', this.handleUpdate);
     }
 
     handlePanelToggle(value)
