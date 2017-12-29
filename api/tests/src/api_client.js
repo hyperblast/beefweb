@@ -105,9 +105,10 @@ class ApiClient
         }
     }
 
-    async getPlayerState()
+    async getPlayerState(columns)
     {
-        const response = await this.handler.get('api/player');
+        const config = columns ? { params: { columns } } : undefined;
+        const response = await this.handler.get('api/player', config);
         return response.player;
     }
 

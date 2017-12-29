@@ -36,6 +36,34 @@ q.test('get state', async assert =>
     assert.equal(typeof order, 'string');
 });
 
+q.test('query current track', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t3]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    const state = await client.getPlayerState([
+        '%genre%',
+        '%artist%',
+        '%album%',
+        '%tracknumber%',
+        '%title%',
+        '%length%'
+    ]);
+
+    assert.deepEqual(state.activeItem.columns, [
+        'Ambient',
+        'Hyperblast',
+        'Silence Rocks',
+        '03',
+        'Silence Rocks - Part 3',
+        '1:10',
+    ]);
+});
+
 q.test('set volume db', async assert =>
 {
     await client.setPlayerState({ volumeDb: -5.0 });
