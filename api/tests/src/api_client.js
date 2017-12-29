@@ -292,6 +292,19 @@ class ApiClient
         return this.handler.post(
             `api/playlists/${source}/${target}/items/move`, data);
     }
+
+    async getRoots()
+    {
+        const response = await this.handler.get('api/browser/roots');
+        return response.roots;
+    }
+
+    async getEntries(path)
+    {
+        const response = await this.handler.get(
+            'api/browser/entries', { params: { path } });
+        return response.entries;
+    }
 }
 
 module.exports = ApiClient;
