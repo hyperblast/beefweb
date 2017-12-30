@@ -119,13 +119,18 @@ class ApiClient
 
     async waitForState(check)
     {
+        let state;
+
         let result = await waitUntil(async () => {
-            const state = await this.getPlayerState();
-            return check(state) ? state : null;
+            state = await this.getPlayerState();
+            return check(state);
         });
 
-        if (!result)
-            throw Error('Failed to transition into expected state within allowed period');
+        if (result)
+            return result;
+
+        console.error('Current player state:\n', state);
+        throw Error('Failed to transition into expected state within allowed period');
     }
 
     play(plref, item)
