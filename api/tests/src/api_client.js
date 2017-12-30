@@ -311,6 +311,11 @@ class ApiClient
             'api/browser/entries', { params: { path } });
         return response.entries;
     }
+
+    query(options)
+    {
+        return this.handler.get('api/query', { params: options });
+    }
 }
 
 module.exports = ApiClient;
