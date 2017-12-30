@@ -73,6 +73,7 @@ class ApiClient
     async resetState()
     {
         await this.stop();
+        await this.waitForState(s => s.playbackState === 'stopped');
 
         await this.setPlayerState({
             order: 'linear',
