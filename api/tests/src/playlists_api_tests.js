@@ -2,7 +2,7 @@
 
 const q = require('qunit');
 const { client, moduleHooks, tracks } = require('./test_context');
-const { arraysEqual } = require('./utils');
+const isEqual = require('lodash/isEqual');
 
 q.module('playlists api', moduleHooks);
 
@@ -169,7 +169,7 @@ q.test('sort playlist items random', async assert =>
         await client.sortPlaylistItemsRandom(0);
         const files = await client.getPlaylistFiles(0);
 
-        if (!arraysEqual(initialFiles, files))
+        if (!isEqual(initialFiles, files))
         {
             assert.ok(true);
             return;

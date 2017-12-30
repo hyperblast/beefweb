@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
     "qunit": "^2.4.1",
     "rimraf": "^2.6.2",
