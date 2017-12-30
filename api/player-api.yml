@@ -15,6 +15,8 @@ tags:
   description: Player APIs
 - name: playlists
   description: Playlist APIs
+- name: query
+  description: Query APIs
 - name: browser
   description: File browser APIs
 
@@ -482,6 +484,62 @@ paths:
       responses:
         204:
           description: Success
+
+  /query:
+    get:
+      operationId: query
+      tags: [ query ]
+      parameters:
+      - name: player
+        description: Request player state
+        in: query
+        type: boolean
+      - name: trcolumns
+        in: query
+        description: Active item columns to return
+        type: array
+        items:
+          type: string
+        collectionFormat: csv
+      - name: playlists
+        description: Request playlists
+        in: query
+        type: boolean
+      - name: playlistItems
+        description: Request playlist items
+        in: query
+        type: boolean
+      - name: plref
+        in: query
+        description: Playlist id or index to return items from
+        type: string
+      - name: plrange
+        in: query
+        description: Playlist range to return items from
+        type: string
+      - name: plcolumns
+        in: query
+        description: Playlist item columns to return
+        type: array
+        items:
+          type: string
+        collectionFormat: csv
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              player:
+                $ref: '#/definitions/PlayerState'
+              playlists:
+                type: array
+                items:
+                  $ref: '#/definitions/PlaylistInfo'
+              playlistItems:
+                type: array
+                items:
+                  $ref: '#/definitions/PlaylistItemInfo'
 
   /browser/roots:
     get:
