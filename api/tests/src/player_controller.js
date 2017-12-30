@@ -22,7 +22,7 @@ const tmpdir = promisify(require('tmp').dir);
 const testsRootDir = path.dirname(__dirname);
 const rootDir = path.dirname(path.dirname(testsRootDir));
 
-const pluginFiles = ['beefweb.so', 'ddb_gui_dummy.so'];
+const pluginFiles = ['beefweb.so', 'ddb_gui_dummy.so', 'nullout2.so'];
 
 async function getBinaryArch(path)
 {
@@ -138,7 +138,7 @@ class PlayerController
     {
         const settings = {
             'gui_plugin': 'dummy',
-            'output_plugin': 'Null output plugin',
+            'output_plugin': 'Null output plugin v2',
             'beefweb.allow_remote': 0,
             'beefweb.music_dirs': this.paths.musicDir,
             'beefweb.port': this.config.port,

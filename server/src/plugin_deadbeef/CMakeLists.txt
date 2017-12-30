@@ -52,4 +52,17 @@ if(ENABLE_TESTS)
     )
 
     add_dependencies(plugin_deadbeef_dummy_gui extlibs)
+
+    add_library(
+        plugin_deadbeef_nullout2 MODULE
+        nullout2.c
+    )
+
+    set_target_properties(
+        plugin_deadbeef_nullout2 PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "nullout2"
+    )
+
+    add_dependencies(plugin_deadbeef_nullout2 extlibs)
 endif()
