@@ -28,7 +28,7 @@ q.test('query player', async assert =>
 
 q.test('query playlists', async assert =>
 {
-    await client.addPlaylist();
+    await client.addPlaylist({ title: 'My playlist' });
 
     const playlists = await client.getPlaylists();
     const result = await client.query({ playlists: true });
@@ -51,4 +51,41 @@ q.test('query playlist items', async assert =>
     });
 
     assert.deepEqual(result.playlistItems, playlistItems);
+});
+
+q.test('query all', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing';
+    });
+
+    await client.pause();
+    await client.waitForState(s => {
+        return s.playbackState === 'paused';
+    });
+
+    await client.addPlaylist({ title: 'My playlist' });
+
+    const columns = ['%title%'];
+
+    const expected = {
+        player: await client.getPlayerState(columns),
+        playlists: await client.getPlaylists(),
+        playlistItems: await client.getPlaylistItems(0, columns),
+    };
+
+    const result = await client.query({
+        player: true,
+        trcolumns: columns,
+        playlists: true,
+        playlistItems: true,
+        plref: 0,
+        plrange: '0:100',
+        plcolumns: columns,
+    });
+
+    assert.deepEqual(result, expected);
 });
