@@ -59,11 +59,6 @@ class ApiClient
         }
     }
 
-    expectStatus(code)
-    {
-        this.handler.expectedStatus = code;
-    }
-
     async getPlayerState(columns)
     {
         const config = columns ? { params: { columns } } : undefined;

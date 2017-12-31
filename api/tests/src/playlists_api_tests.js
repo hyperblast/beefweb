@@ -141,10 +141,10 @@ q.test('add playlist items to position', async assert =>
 
 q.test('add playlist items async', async assert =>
 {
-    client.expectStatus(202);
-
     await client.addPlaylistItems(
         0, [tracks.t1, tracks.t2, tracks.t3], { async: true });
+
+    assert.equal(client.handler.lastStatus, 202);
 
     const files = await waitUntil(async () =>
     {
