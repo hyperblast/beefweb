@@ -1,22 +1,12 @@
 'use strict';
 
-const { URL } = require('url');
+const { URL, URLSearchParams } = require('url');
 const axios = require('axios');
 const EventSource = require('eventsource');
 
-function formatParam(key, value)
-{
-    const valueString = Array.isArray(value) ? value.join(',') : String(value);
-
-    return `${encodeURIComponent(key)}=${encodeURIComponent(valueString)}`
-}
-
 function formatParams(params)
 {
-    return Object
-        .getOwnPropertyNames(params)
-        .map(key => formatParam(key, params[key]))
-        .join('&');
+    return new URLSearchParams(params).toString();
 }
 
 class RequestHandler
