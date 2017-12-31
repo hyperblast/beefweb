@@ -66,7 +66,7 @@ q.test('add playlist full', async assert =>
     });
 });
 
-q.only('set current playlist', async assert =>
+q.test('set current playlist', async assert =>
 {
     await client.addPlaylist();
     await client.setCurrentPlaylist(1);
