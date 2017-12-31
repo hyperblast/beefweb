@@ -5,21 +5,9 @@ const { client, moduleHooks } = require('./test_context');
 
 q.module('static files', moduleHooks);
 
-async function getFile(url, config)
+function getFile(url, config)
 {
-    if (config && config.noThrow)
-    {
-        try
-        {
-            return await client.handler.axios.get(url, config);
-        }
-        catch(e)
-        {
-            return e;
-        }
-    }
-
-    return await client.handler.axios.get(url, config);
+    return client.handler.axios.get(url, config);
 }
 
 q.test('get index', async assert =>
@@ -73,9 +61,9 @@ q.test('etag support', async assert =>
     assert.ok(etag);
 
     const cachedResult = await getFile('file.html', {
-        noThrow: true,
-        headers: { 'If-None-Match': etag }
+        headers: { 'If-None-Match': etag },
+        validateStatus: () => true,
     });
 
-    assert.equal(cachedResult.response.status, 304);
+    assert.equal(cachedResult.status, 304);
 });
