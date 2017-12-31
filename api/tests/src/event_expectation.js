@@ -9,10 +9,11 @@ const ExpectationState = Object.freeze({
 
 class EventExpectation
 {
-    constructor(sourceFactory, condition)
+    constructor(sourceFactory, condition, options)
     {
         this.sourceFactory = sourceFactory;
         this.condition = condition;
+        this.options = options || {};
         this.state = ExpectationState.initializing;
         this.ready = new Promise(this.runReadyPromise.bind(this));
     }
@@ -28,9 +29,19 @@ class EventExpectation
     {
         this.resolveDone = resolve;
         this.rejectDone = reject;
+
         this.source = this.sourceFactory(this.handleEvent.bind(this));
         this.timeout = setTimeout(this.handleTimeout.bind(this), 3000);
-        this.state = ExpectationState.waitingFirstEvent;
+
+        if (this.options.useFirstEvent)
+        {
+            this.state = ExpectationState.waitingCondition;
+            this.resolveReady();
+        }
+        else
+        {
+            this.state = ExpectationState.waitingFirstEvent;
+        }
     }
 
     handleEvent(event)
@@ -63,10 +74,11 @@ class EventExpectation
         const error = new Error('Failed to recieve expected event');
 
         this.complete();
-        this.rejectDone(error);
 
         if (waitingFirstEvent)
             this.rejectReady(error);
+
+        this.rejectDone(error);
     }
 
     complete()

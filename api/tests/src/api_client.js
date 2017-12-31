@@ -58,20 +58,17 @@ class ApiClient
         return this.handler.post('api/player', options);
     }
 
-    async waitForState(check)
+    async waitForState(condition)
     {
-        let state;
+        const expectation = this.expectUpdate(
+            { player: true },
+            e => e.player && condition(e.player),
+            { useFirstEvent: true });
 
-        let result = await waitUntil(async () => {
-            state = await this.getPlayerState();
-            return check(state);
-        });
+        await expectation.ready;
+        await expectation.done;
 
-        if (result)
-            return result;
-
-        console.error('Current player state:\n', state);
-        throw Error('Failed to transition into expected state within allowed period');
+        return expectation.lastEvent.player;
     }
 
     play(plref, item)
@@ -260,22 +257,26 @@ class ApiClient
             'api/query/events', callback, options);
     }
 
-    expectEvent(options, condition)
-    {
-        return new EventExpectation(
-            cb => this.queryEvents(options, cb), condition);
-    }
-
     queryUpdates(options, callback)
     {
         return this.handler.createEventSource(
             'api/query/updates', callback, options);
     }
 
-    expectUpdate(options, condition)
+    expectEvent(options, condition, expectationOptions)
     {
         return new EventExpectation(
-            cb => this.queryUpdates(options, cb), condition);
+            cb => this.queryEvents(options, cb),
+            condition,
+            expectationOptions);
+    }
+
+    expectUpdate(options, condition, expectationOptions)
+    {
+        return new EventExpectation(
+            cb => this.queryUpdates(options, cb),
+            condition,
+            expectationOptions);
     }
 }
 
