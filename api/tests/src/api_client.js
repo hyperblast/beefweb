@@ -114,6 +114,8 @@ class EventExpectation
             return;
         }
 
+        this.lastEvent = event;
+
         if (!this.condition(event))
             return;
 
