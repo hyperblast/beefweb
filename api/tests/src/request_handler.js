@@ -9,6 +9,23 @@ function formatParams(params)
     return new URLSearchParams(params).toString();
 }
 
+class TrackedEventSource extends EventSource
+{
+    constructor(owner, url)
+    {
+        super(url);
+        this.owner = owner;
+    }
+
+    close(unregister = true)
+    {
+        if (unregister)
+            this.owner.unregisterEventSource(this);
+
+        super.close();
+    }
+}
+
 class RequestHandler
 {
     constructor(baseUrl)
@@ -21,6 +38,7 @@ class RequestHandler
     {
         this.lastStatus = 0;
         this.cancelSource = axios.CancelToken.source();
+        this.eventSources = new Set();
 
         this.axios = axios.create({
             baseURL: this.baseUrl,
@@ -33,6 +51,10 @@ class RequestHandler
     reset()
     {
         this.cancelSource.cancel('Abort');
+
+        for (let source of this.eventSources)
+            source.close(false);
+
         this.init();
     }
 
@@ -60,13 +82,19 @@ class RequestHandler
         if (options)
             urlObj.search = formatParams(options);
 
-        const source = new EventSource(urlObj.toString());
+        const source = new TrackedEventSource(this, urlObj.toString());
 
         source.addEventListener('message', event => {
             callback(JSON.parse(event.data));
         });
 
+        this.eventSources.add(source);
         return source;
+    }
+
+    unregisterEventSource(source)
+    {
+        this.eventSources.delete(source);
     }
 }
 
