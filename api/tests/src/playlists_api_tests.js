@@ -1,8 +1,9 @@
 'use strict';
 
 const q = require('qunit');
-const { client, moduleHooks, tracks } = require('./test_context');
 const isEqual = require('lodash/isEqual');
+const { client, moduleHooks, tracks } = require('./test_context');
+const { waitUntil } = require('./utils');
 
 q.module('playlists api', moduleHooks);
 
@@ -136,6 +137,22 @@ q.test('add playlist items to position', async assert =>
 
     const files = await client.getPlaylistFiles(0);
     assert.deepEqual(files, [tracks.t1, tracks.t3, tracks.t2]);
+});
+
+q.test('add playlist items async', async assert =>
+{
+    client.expectStatus(202);
+
+    await client.addPlaylistItems(
+        0, [tracks.t1, tracks.t2, tracks.t3], { async: true });
+
+    const files = await waitUntil(async () =>
+    {
+        const result = await client.getPlaylistFiles(0);
+        return result.length > 0 ? result : null;
+    });
+
+    assert.deepEqual(files, [tracks.t1, tracks.t2, tracks.t3]);
 });
 
 q.test('sort playlist items asc', async assert =>

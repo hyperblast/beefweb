@@ -25,6 +25,7 @@ class RequestHandler
     constructor(baseUrl)
     {
         this.baseUrl = baseUrl;
+        this.expectedStatus = 0;
         this.cancelSource = axios.CancelToken.source();
 
         this.axios = axios.create({
@@ -37,14 +38,30 @@ class RequestHandler
 
     async get(url, config)
     {
-        const response = await this.axios.get(url, config);
-        return response.data;
+        const result = await this.axios.get(url, config);
+        this.checkExpectedStatus(result);
+        return result.data;
     }
 
     async post(url, data, config)
     {
-        const response = await this.axios.post(url, data, config);
-        return response.data;
+        const result = await this.axios.post(url, data, config);
+        this.checkExpectedStatus(result);
+        return result.data;
+    }
+
+    checkExpectedStatus(result)
+    {
+        if (!this.expectedStatus)
+            return;
+
+        const expected = this.expectedStatus;
+        this.expectedStatus = 0;
+
+        const actual = result.status;
+
+        if (expected !== actual)
+            throw Error(`Expected status code ${expected}, got ${actual}`);
     }
 
     createEventSource(url, callback, options)
@@ -199,6 +216,11 @@ class ApiClient
         {
             return false;
         }
+    }
+
+    expectStatus(code)
+    {
+        this.handler.expectedStatus = code;
     }
 
     async getPlayerState(columns)
