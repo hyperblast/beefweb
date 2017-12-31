@@ -49,4 +49,4 @@ Development builds are [available](https://hyperblast.org/beefweb/builds).
 
 ### HTTP API
 
-Swagger API definition is in progress. [Check it out](https://hyperblast.org/beefweb/api).
+Swagger API definition is [available](https://hyperblast.org/beefweb/api).
