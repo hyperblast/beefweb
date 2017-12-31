@@ -89,3 +89,41 @@ q.test('query all', async assert =>
 
     assert.deepEqual(result, expected);
 });
+
+q.test('expect player events', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    const expectation = client.expectEvent(
+        { player: true }, e => e.player === true);
+
+    await expectation.ready;
+    await client.play(0, 0);
+    await expectation.done;
+
+    assert.ok(true);
+});
+
+q.test('expect playlist events', async assert =>
+{
+    const expectation = client.expectEvent(
+        { playlists: true }, e => e.playlists === true);
+
+    await expectation.ready;
+    await client.addPlaylist();
+    await expectation.done;
+
+    assert.ok(true);
+});
+
+q.test('expect playlist items events', async assert =>
+{
+    const expectation = client.expectEvent(
+        { playlistItems: true }, e => e.playlistItems === true);
+
+    await expectation.ready;
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await expectation.done;
+
+    assert.ok(true);
+});

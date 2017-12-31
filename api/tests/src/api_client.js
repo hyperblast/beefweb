@@ -2,6 +2,7 @@
 
 const { URL } = require('url');
 const axios = require('axios');
+const EventSource = require('eventsource');
 const { waitUntil } = require('./utils');
 
 function formatParam(key, value)
@@ -23,6 +24,7 @@ class RequestHandler
 {
     constructor(baseUrl)
     {
+        this.baseUrl = baseUrl;
         this.cancelSource = axios.CancelToken.source();
 
         this.axios = axios.create({
@@ -45,11 +47,102 @@ class RequestHandler
         return response.data;
     }
 
+    createEventSource(url, callback, options)
+    {
+        const urlObj = new URL(url, this.baseUrl);
+
+        if (options)
+            urlObj.search = formatParams(options);
+
+        const source = new EventSource(urlObj.toString());
+
+        source.addEventListener('message', event => {
+            callback(JSON.parse(event.data));
+        });
+
+        return source;
+    }
+
     cancelRequests()
     {
         this.cancelSource.cancel('Abort');
     }
 }
+
+const ExpectationState = Object.freeze({
+    initializing: 0,
+    waitingFirstEvent: 1,
+    waitingCondition: 2,
+    done: 3,
+});
+
+class EventExpectation
+{
+    constructor(sourceFactory, condition)
+    {
+        this.sourceFactory = sourceFactory;
+        this.condition = condition;
+        this.state = ExpectationState.initializing;
+        this.ready = new Promise(this.runReadyPromise.bind(this));
+    }
+
+    runReadyPromise(resolve, reject)
+    {
+        this.resolveReady = resolve;
+        this.rejectReady = reject;
+        this.done = new Promise(this.runDonePromise.bind(this));
+    }
+
+    runDonePromise(resolve, reject)
+    {
+        this.resolveDone = resolve;
+        this.rejectDone = reject;
+        this.source = this.sourceFactory(this.handleEvent.bind(this));
+        this.timeout = setTimeout(this.handleTimeout.bind(this), 3000);
+        this.state = ExpectationState.waitingFirstEvent;
+    }
+
+    handleEvent(event)
+    {
+        if (this.state === ExpectationState.done)
+            return;
+
+        if (this.state === ExpectationState.waitingFirstEvent)
+        {
+            this.state = ExpectationState.waitingCondition;
+            this.resolveReady();
+            return;
+        }
+
+        if (!this.condition(event))
+            return;
+
+        this.complete();
+        this.resolveDone();
+    }
+
+    handleTimeout()
+    {
+        if (this.state === ExpectationState.done)
+            return;
+
+        const waitingFirstEvent = this.state === ExpectationState.waitingFirstEvent;
+        const error = new Error('Failed to recieve expected event');
+
+        this.complete();
+        this.rejectDone(error);
+
+        if (waitingFirstEvent)
+            this.rejectReady(error);
+    }
+
+    complete()
+    {
+        this.state = ExpectationState.done;
+        this.source.close();
+        clearTimeout(this.timeout);
+    }
+};
 
 class ApiClient
 {
@@ -325,6 +418,30 @@ class ApiClient
     query(options)
     {
         return this.handler.get('api/query', { params: options });
+    }
+
+    queryEvents(options, callback)
+    {
+        return this.handler.createEventSource(
+            'api/query/events', callback, options);
+    }
+
+    expectEvent(options, condition)
+    {
+        return new EventExpectation(
+            cb => this.queryEvents(options, cb), condition);
+    }
+
+    queryUpdates(options, callback)
+    {
+        return this.handler.createEventSource(
+            'api/query/updates', callback, options);
+    }
+
+    expectUpdate(options, condition)
+    {
+        return new EventExpectation(
+            cb => this.queryUpdates(options, cb), condition);
     }
 }
 
