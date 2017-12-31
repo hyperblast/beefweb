@@ -24,18 +24,19 @@ class RequestHandler
         });
     }
 
-    async get(url, config)
+    async get(url, params)
     {
         this.lastStatus = 0;
+        const config = params ? { params } : undefined;
         const result = await this.axios.get(url, config);
         this.lastStatus = result.status;
         return result.data;
     }
 
-    async post(url, data, config)
+    async post(url, data)
     {
         this.lastStatus = 0;
-        const result = await this.axios.post(url, data, config);
+        const result = await this.axios.post(url, data);
         this.lastStatus = result.status;
         return result.data;
     }

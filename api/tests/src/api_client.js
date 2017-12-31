@@ -61,8 +61,8 @@ class ApiClient
 
     async getPlayerState(columns)
     {
-        const config = columns ? { params: { columns } } : undefined;
-        const response = await this.handler.get('api/player', config);
+        const params = columns ? { columns } : undefined;
+        const response = await this.handler.get('api/player', params);
         return response.player;
     }
 
@@ -171,8 +171,7 @@ class ApiClient
     async getPlaylistItems(plref, columns, offset = 0, count = 1000)
     {
         const url = `api/playlists/${plref}/items/${offset}:${count}`;
-        const params = { columns };
-        const response = await this.handler.get(url, { params });
+        const response = await this.handler.get(url, { columns });
         return response.playlistItems;
     }
 
@@ -259,14 +258,13 @@ class ApiClient
 
     async getEntries(path)
     {
-        const response = await this.handler.get(
-            'api/browser/entries', { params: { path } });
+        const response = await this.handler.get('api/browser/entries', { path });
         return response.entries;
     }
 
     query(options)
     {
-        return this.handler.get('api/query', { params: options });
+        return this.handler.get('api/query', options);
     }
 
     queryEvents(options, callback)
