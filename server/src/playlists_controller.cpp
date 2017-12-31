@@ -79,6 +79,12 @@ void PlaylistsController::updatePlaylist()
         player_->setPlaylistTitle(plref, *title);
 }
 
+void PlaylistsController::updatePlaylists()
+{
+    if (auto current = optionalParam<PlaylistRef>("current"))
+        player_->setCurrentPlaylist(*current);
+}
+
 void PlaylistsController::clearPlaylist()
 {
     player_->clearPlaylist(param<PlaylistRef>("plref"));
@@ -202,6 +208,7 @@ void PlaylistsController::defineRoutes(Router* router, Player* player, SettingsS
     routes.setPrefix("api/playlists");
 
     routes.get("", &PlaylistsController::getPlaylists);
+    routes.post("", &PlaylistsController::updatePlaylists);
 
     routes.post("add", &PlaylistsController::addPlaylist);
     routes.post("remove/:plref", &PlaylistsController::removePlaylist);

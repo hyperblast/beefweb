@@ -23,6 +23,7 @@ public:
     void movePlaylist();
 
     void updatePlaylist();
+    void updatePlaylists();
     void clearPlaylist();
 
     ResponsePtr addItems();

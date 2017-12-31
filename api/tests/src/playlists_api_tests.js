@@ -66,24 +66,14 @@ q.test('add playlist full', async assert =>
     });
 });
 
-q.test('add playlist simple', async assert =>
+q.only('set current playlist', async assert =>
 {
     await client.addPlaylist();
+    await client.setCurrentPlaylist(1);
 
     const playlists = await client.getPlaylists();
-    assert.equal(playlists.length, 2);
-
-    const playlist = playlists[1];
-    assert.ok(playlist.id);
-    delete playlist.id;
-
-    assert.deepEqual(playlist, {
-      index: 1,
-      title: 'New playlist',
-      isCurrent: false,
-      itemCount: 0,
-      totalTime: 0,
-    });
+    assert.equal(playlists[0].isCurrent, false);
+    assert.equal(playlists[1].isCurrent, true);
 });
 
 q.test('remove playlist', async assert =>

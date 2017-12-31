@@ -210,6 +210,11 @@ class ApiClient
         return this.handler.post(`api/playlists/${plref}`, { title });
     }
 
+    setCurrentPlaylist(plref)
+    {
+        return this.handler.post('api/playlists', { current: plref });
+    }
+
     async getPlaylistItems(plref, columns, offset = 0, count = 1000)
     {
         const url = `api/playlists/${plref}/items/${offset}:${count}`;
