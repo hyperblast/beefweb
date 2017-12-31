@@ -7,13 +7,18 @@ const ExpectationState = Object.freeze({
     done: 3,
 });
 
+const defaultOptions = Object.freeze({
+    useFirstEvent: false,
+    timeout: 3000
+});
+
 class EventExpectation
 {
     constructor(sourceFactory, condition, options)
     {
         this.sourceFactory = sourceFactory;
         this.condition = condition;
-        this.options = options || {};
+        this.options = Object.assign({}, defaultOptions, options);
         this.state = ExpectationState.initializing;
         this.ready = new Promise(this.runReadyPromise.bind(this));
     }
@@ -31,7 +36,9 @@ class EventExpectation
         this.rejectDone = reject;
 
         this.source = this.sourceFactory(this.handleEvent.bind(this));
-        this.timeout = setTimeout(this.handleTimeout.bind(this), 3000);
+
+        this.timeout = setTimeout(
+            this.handleTimeout.bind(this), this.options.timeout);
 
         if (this.options.useFirstEvent)
         {
