@@ -281,21 +281,6 @@ paths:
                 items:
                   $ref: '#/definitions/PlaylistItemInfo'
 
-  /playlists/{playlistId}/clear:
-    post:
-      operationId: clearPlaylist
-      summary: Clear playlist
-      tags: [ playlists ]
-      parameters:
-      - name: playlistId
-        description: Playlist id or index
-        in: path
-        required: true
-        type: string
-      responses:
-        204:
-          description: Success
-
   /playlists/{playlistId}:
     post:
       operationId: updatePlaylist
@@ -310,6 +295,21 @@ paths:
       - name: title
         description: New playlist title
         in: query
+        type: string
+      responses:
+        204:
+          description: Success
+
+  /playlists/{playlistId}/clear:
+    post:
+      operationId: clearPlaylist
+      summary: Clear playlist
+      tags: [ playlists ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
         type: string
       responses:
         204:
