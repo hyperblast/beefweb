@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const RequestHandler = require('./request_handler');
 const ApiClient = require('./api_client');
 const PlayerController = require('./player_controller');
 
@@ -15,6 +16,7 @@ class TestContext
 
         const buildType = API_TESTS_BUILD_TYPE  || 'debug';
         const port = parseInt(API_TESTS_PORT) || 8879;
+        const serverUrl = `http://localhost:${port}`;
 
         const toolsDir = path.join(rootDir, 'tools');
         const webRootDir = path.join(testsRootDir, 'webroot');
@@ -26,6 +28,7 @@ class TestContext
         this.config = Object.freeze({
             buildType,
             port,
+            serverUrl,
             rootDir,
             testsRootDir,
             toolsDir,
@@ -34,7 +37,7 @@ class TestContext
             pluginBuildDir,
         });
 
-        this.client = new ApiClient(`http://localhost:${port}`);
+        this.client = new ApiClient(new RequestHandler(serverUrl));
         this.player = new PlayerController(this.config);
 
         this.tracks = Object.freeze({
@@ -47,6 +50,7 @@ class TestContext
             before: this.beginModule.bind(this),
             after: this.endModule.bind(this),
             beforeEach: this.beginTest.bind(this),
+            afterEach: this.endTest.bind(this),
         });
     }
 
@@ -64,13 +68,17 @@ class TestContext
 
     async endModule()
     {
-        this.client.cancelRequests();
         await this.player.stop();
     }
 
     async beginTest()
     {
         await this.client.resetState();
+    }
+
+    endTest()
+    {
+        this.client.handler.reset();
     }
 }
 

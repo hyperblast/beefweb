@@ -14,14 +14,26 @@ class RequestHandler
     constructor(baseUrl)
     {
         this.baseUrl = baseUrl;
+        this.init();
+    }
+
+    init()
+    {
+        this.lastStatus = 0;
         this.cancelSource = axios.CancelToken.source();
 
         this.axios = axios.create({
-            baseURL: baseUrl,
+            baseURL: this.baseUrl,
             timeout: 5000,
             paramsSerializer: formatParams,
             cancelToken: this.cancelSource.token
         });
+    }
+
+    reset()
+    {
+        this.cancelSource.cancel('Abort');
+        this.init();
     }
 
     async get(url, params)
@@ -55,11 +67,6 @@ class RequestHandler
         });
 
         return source;
-    }
-
-    cancelRequests()
-    {
-        this.cancelSource.cancel('Abort');
     }
 }
 

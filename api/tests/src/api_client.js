@@ -1,26 +1,13 @@
 'use strict';
 
-const RequestHandler = require('./request_handler');
 const EventExpectation = require('./event_expectation');
 const { waitUntil } = require('./utils');
 
 class ApiClient
 {
-    constructor(serverUrl)
+    constructor(handler)
     {
-        this.serverUrl = serverUrl;
-        this.createHandler();
-    }
-
-    createHandler()
-    {
-        this.handler = new RequestHandler(this.serverUrl);
-    }
-
-    cancelRequests()
-    {
-        this.handler.cancelRequests();
-        this.createHandler();
+        this.handler = handler;
     }
 
     async resetState()
