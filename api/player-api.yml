@@ -286,6 +286,25 @@ paths:
         204:
           description: Success
 
+  /playlists/{playlistId}:
+    post:
+      operationId: updatePlaylist
+      summary: Update playlist
+      tags: [ playlists ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: title
+        description: New playlist title
+        is: query
+        type: string
+      responses:
+        204:
+          description: Success
+
   /playlists/{playlistId}/items/add:
     post:
       operationId: addPlaylistItems

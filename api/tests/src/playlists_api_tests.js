@@ -123,6 +123,13 @@ q.test('clear playlist', async assert =>
     assert.deepEqual(files, []);
 });
 
+q.test('rename playlist', async assert =>
+{
+    await client.renamePlaylist(0, 'My cool list');
+    const playlists = await client.getPlaylists();
+    assert.equal(playlists[0].title, 'My cool list');
+});
+
 q.test('add playlist items simple', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);

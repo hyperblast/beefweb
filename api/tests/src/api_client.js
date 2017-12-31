@@ -205,6 +205,11 @@ class ApiClient
         return this.handler.post(`api/playlists/${plref}/clear`)
     }
 
+    renamePlaylist(plref, title)
+    {
+        return this.handler.post(`api/playlists/${plref}`, { title });
+    }
+
     async getPlaylistItems(plref, columns, offset = 0, count = 1000)
     {
         const url = `api/playlists/${plref}/items/${offset}:${count}`;
