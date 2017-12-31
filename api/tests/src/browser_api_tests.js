@@ -5,9 +5,9 @@ const q = require('qunit');
 const omit = require('lodash/omit');
 const sortBy = require('lodash/sortBy');
 
-const { client, moduleHooks, musicDir, tracks } = require('./test_context');
+const { client, moduleHooks, config, tracks } = require('./test_context');
 
-const musicSubdir = path.join(musicDir, 'subdir');
+const musicSubdir = path.join(config.musicDir, 'subdir');
 
 function normalizeResult(result)
 {
@@ -24,15 +24,15 @@ q.test('get roots', async assert =>
     const result = normalizeResult(await client.getRoots());
 
     assert.deepEqual(result, [{
-        name: musicDir,
-        path: musicDir,
+        name: config.musicDir,
+        path: config.musicDir,
         type: 'D',
     }]);
 });
 
 q.test('get entries root', async assert =>
 {
-    const result = normalizeResult(await client.getEntries(musicDir));
+    const result = normalizeResult(await client.getEntries(config.musicDir));
 
     assert.deepEqual(result, [
         {

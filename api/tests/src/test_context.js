@@ -37,11 +37,10 @@ class TestContext
         this.client = new ApiClient(`http://localhost:${port}`);
         this.player = new PlayerController(this.config);
 
-        this.musicDir = musicDir;
         this.tracks = Object.freeze({
-            t1: path.join(this.musicDir, 'track1.flac'),
-            t2: path.join(this.musicDir, 'track2.flac'),
-            t3: path.join(this.musicDir, 'subdir/track3.flac'),
+            t1: path.join(musicDir, 'track1.flac'),
+            t2: path.join(musicDir, 'track2.flac'),
+            t3: path.join(musicDir, 'subdir/track3.flac'),
         });
 
         this.moduleHooks = Object.freeze({
