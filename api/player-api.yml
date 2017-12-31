@@ -299,7 +299,7 @@ paths:
         type: string
       - name: title
         description: New playlist title
-        is: query
+        in: query
         type: string
       responses:
         204:
