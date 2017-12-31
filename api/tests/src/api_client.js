@@ -359,21 +359,10 @@ class ApiClient
             `api/playlists/${plref}/items/add`, data);
     }
 
-    sortPlaylistItems(plref, by, desc)
-    {
-        const data = { by };
-
-        if (typeof desc !== 'undefined')
-            data.desc = desc;
-
-        return this.handler.post(
-            `api/playlists/${plref}/items/sort`, data);
-    }
-
-    sortPlaylistItemsRandom(plref)
+    sortPlaylistItems(plref, options)
     {
         return this.handler.post(
-            `api/playlists/${plref}/items/sort`, { random: true });
+            `api/playlists/${plref}/items/sort`, options);
     }
 
     removePlaylistItems(plref, items)
