@@ -3,10 +3,13 @@
 const { URL, URLSearchParams } = require('url');
 const axios = require('axios');
 const EventSource = require('eventsource');
+const pickBy = require('lodash/pickBy');
 
 function formatParams(params)
 {
-    return new URLSearchParams(params).toString();
+    const usefulParams = pickBy(params, value => typeof value !== 'undefined');
+
+    return new URLSearchParams(usefulParams).toString();
 }
 
 class TrackedEventSource extends EventSource

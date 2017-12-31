@@ -48,8 +48,7 @@ class ApiClient
 
     async getPlayerState(columns)
     {
-        const params = columns ? { columns } : undefined;
-        const response = await this.handler.get('api/player', params);
+        const response = await this.handler.get('api/player', { columns });
         return response.player;
     }
 
