@@ -43,6 +43,19 @@ function formatQueryOptions(arg)
         return arg;
 }
 
+function isTransferBetweenPlaylists(options)
+{
+    const { playlist, from, to } = options;
+
+    const hasPlaylist = typeof playlist !== 'undefined';
+    const hasFromTo = typeof from !== 'undefined' && typeof to !== 'undefined';
+
+    if (hasPlaylist === hasFromTo)
+        throw Error("Either 'playlist' or 'from' and 'to' options are required");
+
+    return hasFromTo;
+}
+
 class ApiClient
 {
     constructor(handler)
@@ -228,36 +241,42 @@ class ApiClient
             `api/playlists/${plref}/items/remove`, { items });
     }
 
-    copyPlaylistItems(plref, items, targetIndex)
+    copyPlaylistItems(options)
     {
-        const data = { items, targetIndex };
+        const data = {
+            items: options.items,
+            targetIndex: options.targetIndex
+        };
 
-        return this.handler.post(
-            `api/playlists/${plref}/items/copy`, data);
+        if (isTransferBetweenPlaylists(options))
+        {
+            return this.handler.post(
+                `api/playlists/${options.from}/${options.to}/items/copy`, data);
+        }
+        else
+        {
+            return this.handler.post(
+                `api/playlists/${options.playlist}/items/copy`, data);
+        }
     }
 
-    movePlaylistItems(plref, items, targetIndex)
+    movePlaylistItems(options)
     {
-        const data = { items, targetIndex };
+        const data = {
+            items: options.items,
+            targetIndex: options.targetIndex
+        };
 
-        return this.handler.post(
-            `api/playlists/${plref}/items/move`, data);
-    }
-
-    copyPlaylistItemsEx(source, target, items, targetIndex)
-    {
-        const data = { items, targetIndex };
-
-        return this.handler.post(
-            `api/playlists/${source}/${target}/items/copy`, data);
-    }
-
-    movePlaylistItemsEx(source, target, items, targetIndex)
-    {
-        const data = { items, targetIndex };
-
-        return this.handler.post(
-            `api/playlists/${source}/${target}/items/move`, data);
+        if (isTransferBetweenPlaylists(options))
+        {
+            return this.handler.post(
+                `api/playlists/${options.from}/${options.to}/items/move`, data);
+        }
+        else
+        {
+            return this.handler.post(
+                `api/playlists/${options.playlist}/items/move`, data);
+        }
     }
 
     async getRoots()
