@@ -14,7 +14,10 @@ function configCommon(cfg, opts)
 
     cfg.module.rules.push({
         test: /\.js$/,
-        include: opts.sourceDir,
+        include: [
+            opts.sourceDir,
+            path.join(opts.rootDir, 'api')
+        ],
         loader: 'babel-loader',
     });
 
@@ -123,13 +126,15 @@ function makeBuildOpts(env)
 
     var sourceDir = path.join(__dirname, 'src');
     var outputDir = path.join(__dirname, 'build', buildType);
+    var rootDir = path.dirname(__dirname);
 
     return {
         buildType: buildType,
         enableTests: enableTests,
+        rootDir: rootDir,
         sourceDir: sourceDir,
-        outputDir: outputDir
-    }
+        outputDir: outputDir,
+    };
 }
 
 function makeTarget(configTarget, opts)
