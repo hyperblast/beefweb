@@ -2,7 +2,7 @@
 
 const path = require('path');
 const RequestHandler = require('./request_handler');
-const ApiClient = require('./api_client');
+const TestApiClient = require('./test_api_client');
 const PlayerController = require('./player_controller');
 
 const testsRootDir = path.dirname(__dirname);
@@ -37,7 +37,7 @@ class TestContext
             pluginBuildDir,
         });
 
-        this.client = new ApiClient(new RequestHandler(serverUrl));
+        this.client = new TestApiClient(new RequestHandler(serverUrl));
         this.player = new PlayerController(this.config);
 
         this.tracks = Object.freeze({

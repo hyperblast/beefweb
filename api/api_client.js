@@ -1,8 +1,5 @@
 'use strict';
 
-const EventExpectation = require('./event_expectation');
-const { waitUntil } = require('./utils');
-
 function formatRange(range)
 {
     return `${range.offset}:${range.count}`;
@@ -63,64 +60,14 @@ class ApiClient
         this.handler = handler;
     }
 
-    async resetState()
+    getPlayerState(columns)
     {
-        await this.stop();
-        await this.waitForState(s => s.playbackState === 'stopped');
-
-        await this.setPlayerState({
-            order: 'linear',
-            loop: 'all',
-            isMuted: false,
-            volumeDb: 0.0,
-        });
-
-        const playlists = await this.getPlaylists();
-
-        for (let p of playlists)
-            await this.removePlaylist(p.id);
-    }
-
-    async waitUntilReady()
-    {
-        return waitUntil(() => this.checkIsReady(), 400);
-    }
-
-    async checkIsReady()
-    {
-        try
-        {
-            await this.getPlayerState();
-            return true;
-        }
-        catch(e)
-        {
-            return false;
-        }
-    }
-
-    async getPlayerState(columns)
-    {
-        const response = await this.handler.get('api/player', { columns });
-        return response.player;
+        return this.handler.get('api/player', { columns }).then(r => r.player);
     }
 
     setPlayerState(options)
     {
         return this.handler.post('api/player', options);
-    }
-
-    async waitForState(condition)
-    {
-        const expectation = this.expectUpdate(
-            { player: true },
-            e => e.player && condition(e.player),
-            { useFirstEvent: true });
-
-        await expectation.ready;
-        await expectation.done;
-
-        return expectation.lastEvent.player;
     }
 
     play(plref, item)
@@ -163,10 +110,9 @@ class ApiClient
         return this.handler.post('api/player/next');
     }
 
-    async getPlaylists()
+    getPlaylists()
     {
-        const response = await this.handler.get('api/playlists');
-        return response.playlists;
+        return this.handler.get('api/playlists').then(r => r.playlists);
     }
 
     addPlaylist(options)
@@ -204,18 +150,11 @@ class ApiClient
         return this.handler.post('api/playlists', { current: plref });
     }
 
-    async getPlaylistItems(plref, columns, range)
+    getPlaylistItems(plref, columns, range)
     {
         const { offset, count } = parseRange(range);
         const url = `api/playlists/${plref}/items/${offset}:${count}`;
-        const response = await this.handler.get(url, { columns });
-        return response.playlistItems;
-    }
-
-    async getPlaylistFiles(plref, range)
-    {
-        const items = await this.getPlaylistItems(plref, ['%path%'], range);
-        return items.map(i => i.columns[0]);
+        return this.handler.get(url, { columns }).then(r => r.playlistItems);
     }
 
     addPlaylistItems(plref, items, options)
@@ -279,16 +218,14 @@ class ApiClient
         }
     }
 
-    async getFileSystemRoots()
+    getFileSystemRoots()
     {
-        const response = await this.handler.get('api/browser/roots');
-        return response.roots;
+        return this.handler.get('api/browser/roots').then(r => r.roots);
     }
 
-    async getFileSystemEntries(path)
+    getFileSystemEntries(path)
     {
-        const response = await this.handler.get('api/browser/entries', { path });
-        return response.entries;
+        return this.handler.get('api/browser/entries', { path }).then(r => r.entries);
     }
 
     query(options)
@@ -306,22 +243,6 @@ class ApiClient
     {
         return this.handler.createEventSource(
             'api/query/updates', callback, formatQueryOptions(options));
-    }
-
-    expectEvent(options, condition, expectationOptions)
-    {
-        return new EventExpectation(
-            cb => this.queryEvents(options, cb),
-            condition,
-            expectationOptions);
-    }
-
-    expectUpdate(options, condition, expectationOptions)
-    {
-        return new EventExpectation(
-            cb => this.queryUpdates(options, cb),
-            condition,
-            expectationOptions);
     }
 }
 
