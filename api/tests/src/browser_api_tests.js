@@ -21,7 +21,7 @@ q.module('browser api', moduleHooks);
 
 q.test('get roots', async assert =>
 {
-    const result = normalizeResult(await client.getRoots());
+    const result = normalizeResult(await client.getFileSystemRoots());
 
     assert.deepEqual(result, [{
         name: config.musicDir,
@@ -32,7 +32,7 @@ q.test('get roots', async assert =>
 
 q.test('get entries root', async assert =>
 {
-    const result = normalizeResult(await client.getEntries(config.musicDir));
+    const result = normalizeResult(await client.getFileSystemEntries(config.musicDir));
 
     assert.deepEqual(result, [
         {
@@ -55,7 +55,7 @@ q.test('get entries root', async assert =>
 
 q.test('get entries subdir', async assert =>
 {
-    const result = normalizeResult(await client.getEntries(musicSubdir));
+    const result = normalizeResult(await client.getFileSystemEntries(musicSubdir));
 
     assert.deepEqual(result, [{
         name: path.basename(tracks.t3),

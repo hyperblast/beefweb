@@ -279,13 +279,13 @@ class ApiClient
         }
     }
 
-    async getRoots()
+    async getFileSystemRoots()
     {
         const response = await this.handler.get('api/browser/roots');
         return response.roots;
     }
 
-    async getEntries(path)
+    async getFileSystemEntries(path)
     {
         const response = await this.handler.get('api/browser/entries', { path });
         return response.entries;
