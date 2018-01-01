@@ -1,5 +1,38 @@
 'use strict';
 
+const ErrorType = Object.freeze({
+    none: 'none',
+    unknown: 'unknown',
+    internal: 'internal',
+    invalidParam: 'invalidParam',
+    invalidState: 'invalidState',
+    notFound: 'notFound',
+    accessDenied: 'accessDenied'
+});
+
+const SwitchParam = Object.freeze({
+    toggle: 'toggle'
+});
+
+const PlaybackState = Object.freeze({
+    stopped: 'stopped',
+    playing: 'playing',
+    paused: 'paused'
+});
+
+const LoopMode = Object.freeze({
+    none: 'none',
+    single: 'single',
+    all: 'all'
+});
+
+const PlaybackOrder = Object.freeze({
+    linear: 'linear',
+    random: 'random',
+    shuffleAlbums: 'shuffleAlbums',
+    shuffleTracks: 'shuffleTracks'
+});
+
 function skipUndefined(params)
 {
     const result = {};
@@ -101,6 +134,41 @@ class ApiClient
     setPlayerState(options)
     {
         return this.post('api/player', options);
+    }
+
+    setMuted(value)
+    {
+        return this.setPlayerState({ isMuted: value });
+    }
+
+    setVolumeDb(value)
+    {
+        return this.setPlayerState({ volumeDb: value });
+    }
+
+    setVolumeAmp(value)
+    {
+        return this.setPlayerState({ volumeAmp: value });
+    }
+
+    setPlaybackPosition(value)
+    {
+        return this.setPlayerState({ position: value });
+    }
+
+    movePlaybackPosition(value)
+    {
+        return this.setPlayerState({ relativePosition: value });
+    }
+
+    setLoopMode(value)
+    {
+        return this.setPlayerState({ loop: value });
+    }
+
+    setPlaybackOrder(value)
+    {
+        return this.setPlayerState({ order: value });
     }
 
     play(plref, item)
@@ -276,4 +344,11 @@ class ApiClient
     }
 }
 
-module.exports = ApiClient;
+module.exports = {
+    ErrorType,
+    SwitchParam,
+    PlaybackState,
+    LoopMode,
+    PlaybackOrder,
+    ApiClient,
+};

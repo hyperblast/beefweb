@@ -66,7 +66,7 @@ q.test('query current track', async assert =>
 
 q.test('set volume db', async assert =>
 {
-    await client.setPlayerState({ volumeDb: -5.0 });
+    await client.setVolumeDb(-5.0);
 
     const state = await client.getPlayerState();
     assert.equal(state.volume.db, -5.0);
@@ -74,7 +74,7 @@ q.test('set volume db', async assert =>
 
 q.test('set volume amp', async assert =>
 {
-    await client.setPlayerState({ volumeAmp: 0.5 });
+    await client.setVolumeAmp(0.5);
 
     const state = await client.getPlayerState();
     assert.equal(state.volume.amp, 0.5);
@@ -82,7 +82,7 @@ q.test('set volume amp', async assert =>
 
 q.test('set muted', async assert =>
 {
-    await client.setPlayerState({ isMuted: true });
+    await client.setMuted(true);
 
     const state = await client.getPlayerState();
     assert.equal(state.volume.isMuted, true);
@@ -90,7 +90,7 @@ q.test('set muted', async assert =>
 
 q.test('set loop mode', async assert =>
 {
-    await client.setPlayerState({ loop: 'single' });
+    await client.setLoopMode('single');
 
     const state = await client.getPlayerState();
     assert.equal(state.options.loop, 'single');
@@ -98,7 +98,7 @@ q.test('set loop mode', async assert =>
 
 q.test('set playback order', async assert =>
 {
-    await client.setPlayerState({ order: 'random' });
+    await client.setPlaybackOrder('random');
 
     const state = await client.getPlayerState();
     assert.equal(state.options.order, 'random');
@@ -240,7 +240,7 @@ q.test('previous', async assert =>
     assert.ok(true);
 });
 
-q.test('set position absolute', async assert =>
+q.test('set playback position', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t3]);
 
@@ -254,7 +254,7 @@ q.test('set position absolute', async assert =>
         return s.playbackState === 'paused';
     });
 
-    await client.setPlayerState({ position: 33.0 });
+    await client.setPlaybackPosition(33.0);
     await client.waitForState(s => {
         return s.activeItem.position === 33.0;
     });
@@ -262,7 +262,7 @@ q.test('set position absolute', async assert =>
     assert.ok(true);
 });
 
-q.test('set position relative', async assert =>
+q.test('move playback position', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t3]);
 
@@ -276,12 +276,12 @@ q.test('set position relative', async assert =>
         return s.playbackState === 'paused';
     });
 
-    await client.setPlayerState({ position: 33.0 });
+    await client.setPlaybackPosition(33.0);
     await client.waitForState(s => {
         return s.activeItem.position === 33.0;
     });
 
-    await client.setPlayerState({ relativePosition: 11.0 });
+    await client.movePlaybackPosition(11.0);
     await client.waitForState(s => {
         return s.activeItem.position === 44.0;
     });
