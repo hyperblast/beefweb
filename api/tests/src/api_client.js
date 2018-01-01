@@ -230,10 +230,7 @@ class ApiClient
 
     copyPlaylistItems(plref, items, targetIndex)
     {
-        const data = { items };
-
-        if (typeof targetIndex !== 'undefined')
-            data.targetIndex = targetIndex;
+        const data = { items, targetIndex };
 
         return this.handler.post(
             `api/playlists/${plref}/items/copy`, data);
@@ -241,10 +238,7 @@ class ApiClient
 
     movePlaylistItems(plref, items, targetIndex)
     {
-        const data = { items };
-
-        if (typeof targetIndex !== 'undefined')
-            data.targetIndex = targetIndex;
+        const data = { items, targetIndex };
 
         return this.handler.post(
             `api/playlists/${plref}/items/move`, data);
@@ -252,10 +246,7 @@ class ApiClient
 
     copyPlaylistItemsEx(source, target, items, targetIndex)
     {
-        const data = { items };
-
-        if (typeof targetIndex !== 'undefined')
-            data.targetIndex = targetIndex;
+        const data = { items, targetIndex };
 
         return this.handler.post(
             `api/playlists/${source}/${target}/items/copy`, data);
@@ -263,10 +254,7 @@ class ApiClient
 
     movePlaylistItemsEx(source, target, items, targetIndex)
     {
-        const data = { items };
-
-        if (typeof targetIndex !== 'undefined')
-            data.targetIndex = targetIndex;
+        const data = { items, targetIndex };
 
         return this.handler.post(
             `api/playlists/${source}/${target}/items/move`, data);

@@ -5,11 +5,14 @@ const axios = require('axios');
 const EventSource = require('eventsource');
 const pickBy = require('lodash/pickBy');
 
+function skipUndefined(values)
+{
+    return pickBy(values, value => typeof value !== 'undefined');
+}
+
 function formatParams(params)
 {
-    const usefulParams = pickBy(params, value => typeof value !== 'undefined');
-
-    return new URLSearchParams(usefulParams).toString();
+    return new URLSearchParams(params).toString();
 }
 
 class TrackedEventSource extends EventSource
@@ -64,7 +67,7 @@ class RequestHandler
     async get(url, params)
     {
         this.lastStatus = 0;
-        const config = params ? { params } : undefined;
+        const config = params ? { params: skipUndefined(params) } : undefined;
         const result = await this.axios.get(url, config);
         this.lastStatus = result.status;
         return result.data;
@@ -73,17 +76,18 @@ class RequestHandler
     async post(url, data)
     {
         this.lastStatus = 0;
-        const result = await this.axios.post(url, data);
+        const postData = data ? skipUndefined(data) : undefined;
+        const result = await this.axios.post(url, postData);
         this.lastStatus = result.status;
         return result.data;
     }
 
-    createEventSource(url, callback, options)
+    createEventSource(url, callback, params)
     {
         const urlObj = new URL(url, this.baseUrl);
 
-        if (options)
-            urlObj.search = formatParams(options);
+        if (params)
+            urlObj.search = formatParams(skipUndefined(params));
 
         const source = new TrackedEventSource(this, urlObj.toString());
 
