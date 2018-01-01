@@ -3,6 +3,46 @@
 const EventExpectation = require('./event_expectation');
 const { waitUntil } = require('./utils');
 
+function formatRange(range)
+{
+    return `${range.offset}:${range.count}`;
+}
+
+function parseRange(arg)
+{
+    switch (typeof arg)
+    {
+        case 'number':
+            return { offset: arg, count: 1000 };
+
+        case 'string':
+        {
+            const [ offset = 0, count = 1000 ] = arg.split(':', 2).map(parseInt);
+            return { offset, count };
+        }
+
+        case 'object':
+        {
+            const { offset = 0, count = 1000 } = arg;
+            return { offset, count };
+        }
+
+        default:
+            return { offset: 0, count: 1000 };
+    }
+}
+
+function formatQueryOptions(arg)
+{
+    if (arg.playlistItems)
+    {
+        const plrange = formatRange(parseRange(arg.plrange));
+        return Object.assign({}, arg, { plrange });
+    }
+    else
+        return arg;
+}
+
 class ApiClient
 {
     constructor(handler)
@@ -151,18 +191,17 @@ class ApiClient
         return this.handler.post('api/playlists', { current: plref });
     }
 
-    async getPlaylistItems(plref, columns, offset = 0, count = 1000)
+    async getPlaylistItems(plref, columns, range)
     {
+        const { offset, count } = parseRange(range);
         const url = `api/playlists/${plref}/items/${offset}:${count}`;
         const response = await this.handler.get(url, { columns });
         return response.playlistItems;
     }
 
-    async getPlaylistFiles(plref, offset, count)
+    async getPlaylistFiles(plref, range)
     {
-        const items = await this.getPlaylistItems(
-            plref, ['%path%'], offset, count);
-
+        const items = await this.getPlaylistItems(plref, ['%path%'], range);
         return items.map(i => i.columns[0]);
     }
 
@@ -247,7 +286,7 @@ class ApiClient
 
     query(options)
     {
-        return this.handler.get('api/query', options);
+        return this.handler.get('api/query', formatQueryOptions(options));
     }
 
     queryEvents(options, callback)
@@ -259,7 +298,7 @@ class ApiClient
     queryUpdates(options, callback)
     {
         return this.handler.createEventSource(
-            'api/query/updates', callback, options);
+            'api/query/updates', callback, formatQueryOptions(options));
     }
 
     expectEvent(options, condition, expectationOptions)

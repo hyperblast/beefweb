@@ -46,7 +46,6 @@ q.test('query playlist items', async assert =>
     const result = await client.query({
         playlistItems: true,
         plref: 0,
-        plrange: '0:100',
         plcolumns: columns,
     });
 
@@ -83,7 +82,6 @@ q.test('query all', async assert =>
         playlists: true,
         playlistItems: true,
         plref: 0,
-        plrange: '0:100',
         plcolumns: columns,
     });
 
@@ -169,7 +167,6 @@ q.test('expect playlist items updates', async assert =>
     const options = {
         playlistItems: true,
         plref: 0,
-        plrange: '0:100',
         plcolumns: columns,
     };
 
