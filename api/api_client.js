@@ -1,5 +1,20 @@
 'use strict';
 
+function skipUndefined(params)
+{
+    const result = {};
+
+    for (let key of Object.getOwnPropertyNames(params))
+    {
+        const value = params[key];
+
+        if (typeof value !== 'undefined')
+            result[key] = value;
+    }
+
+    return result;
+}
+
 function formatRange(range)
 {
     return `${range.offset}:${range.count}`;
@@ -60,101 +75,119 @@ class ApiClient
         this.handler = handler;
     }
 
+    get(url, params)
+    {
+        return this.handler.get(
+            url, params ? skipUndefined(params) : undefined);
+    }
+
+    post(url, data)
+    {
+        return this.handler.post(
+            url, data ? skipUndefined(data) : undefined);
+    }
+
+    createEventSource(url, callback, params)
+    {
+        return this.handler.createEventSource(
+            url, callback, params ? skipUndefined(params) : undefined);
+    }
+
     getPlayerState(columns)
     {
-        return this.handler.get('api/player', { columns }).then(r => r.player);
+        return this.get('api/player', { columns }).then(r => r.player);
     }
 
     setPlayerState(options)
     {
-        return this.handler.post('api/player', options);
+        return this.post('api/player', options);
     }
 
     play(plref, item)
     {
-        return this.handler.post(`api/player/play/${plref}/${item}`);
+        return this.post(`api/player/play/${plref}/${item}`);
     }
 
     playCurrent()
     {
-        return this.handler.post('api/player/play');
+        return this.post('api/player/play');
     }
 
     playRandom()
     {
-        return this.handler.post('api/player/play/random');
+        return this.post('api/player/play/random');
     }
 
     stop()
     {
-        return this.handler.post('api/player/stop');
+        return this.post('api/player/stop');
     }
 
     pause()
     {
-        return this.handler.post('api/player/pause');
+        return this.post('api/player/pause');
     }
 
     togglePause()
     {
-        return this.handler.post('api/player/pause/toggle');
+        return this.post('api/player/pause/toggle');
     }
 
     previous()
     {
-        return this.handler.post('api/player/previous');
+        return this.post('api/player/previous');
     }
 
     next()
     {
-        return this.handler.post('api/player/next');
+        return this.post('api/player/next');
     }
 
     getPlaylists()
     {
-        return this.handler.get('api/playlists').then(r => r.playlists);
+        return this.get('api/playlists').then(r => r.playlists);
     }
 
     addPlaylist(options)
     {
-        return this.handler.post('api/playlists/add', options);
+        return this.post('api/playlists/add', options);
     }
 
     removePlaylist(plref)
     {
-        return this.handler.post(`api/playlists/remove/${plref}`);
+        return this.post(`api/playlists/remove/${plref}`);
     }
 
     movePlaylist(plref, index)
     {
-        return this.handler.post(`api/playlists/move/${plref}/${index}`);
+        return this.post(`api/playlists/move/${plref}/${index}`);
     }
 
     removePlaylist(plref)
     {
-        return this.handler.post(`api/playlists/remove/${plref}`);
+        return this.post(`api/playlists/remove/${plref}`);
     }
 
     clearPlaylist(plref)
     {
-        return this.handler.post(`api/playlists/${plref}/clear`)
+        return this.post(`api/playlists/${plref}/clear`)
     }
 
     renamePlaylist(plref, title)
     {
-        return this.handler.post(`api/playlists/${plref}`, { title });
+        return this.post(`api/playlists/${plref}`, { title });
     }
 
     setCurrentPlaylist(plref)
     {
-        return this.handler.post('api/playlists', { current: plref });
+        return this.post('api/playlists', { current: plref });
     }
 
     getPlaylistItems(plref, columns, range)
     {
         const { offset, count } = parseRange(range);
         const url = `api/playlists/${plref}/items/${offset}:${count}`;
-        return this.handler.get(url, { columns }).then(r => r.playlistItems);
+        return this.get(url, { columns }).then(r => r.playlistItems);
     }
 
     addPlaylistItems(plref, items, options)
@@ -164,20 +197,17 @@ class ApiClient
         if (options)
             Object.assign(data, options);
 
-        return this.handler.post(
-            `api/playlists/${plref}/items/add`, data);
+        return this.post(`api/playlists/${plref}/items/add`, data);
     }
 
     sortPlaylistItems(plref, options)
     {
-        return this.handler.post(
-            `api/playlists/${plref}/items/sort`, options);
+        return this.post(`api/playlists/${plref}/items/sort`, options);
     }
 
     removePlaylistItems(plref, items)
     {
-        return this.handler.post(
-            `api/playlists/${plref}/items/remove`, { items });
+        return this.post(`api/playlists/${plref}/items/remove`, { items });
     }
 
     copyPlaylistItems(options)
@@ -189,12 +219,12 @@ class ApiClient
 
         if (isTransferBetweenPlaylists(options))
         {
-            return this.handler.post(
+            return this.post(
                 `api/playlists/${options.from}/${options.to}/items/copy`, data);
         }
         else
         {
-            return this.handler.post(
+            return this.post(
                 `api/playlists/${options.playlist}/items/copy`, data);
         }
     }
@@ -208,40 +238,40 @@ class ApiClient
 
         if (isTransferBetweenPlaylists(options))
         {
-            return this.handler.post(
+            return this.post(
                 `api/playlists/${options.from}/${options.to}/items/move`, data);
         }
         else
         {
-            return this.handler.post(
+            return this.post(
                 `api/playlists/${options.playlist}/items/move`, data);
         }
     }
 
     getFileSystemRoots()
     {
-        return this.handler.get('api/browser/roots').then(r => r.roots);
+        return this.get('api/browser/roots').then(r => r.roots);
     }
 
     getFileSystemEntries(path)
     {
-        return this.handler.get('api/browser/entries', { path }).then(r => r.entries);
+        return this.get('api/browser/entries', { path }).then(r => r.entries);
     }
 
     query(options)
     {
-        return this.handler.get('api/query', formatQueryOptions(options));
+        return this.get('api/query', formatQueryOptions(options));
     }
 
     queryEvents(options, callback)
     {
-        return this.handler.createEventSource(
+        return this.createEventSource(
             'api/query/events', callback, options);
     }
 
     queryUpdates(options, callback)
     {
-        return this.handler.createEventSource(
+        return this.createEventSource(
             'api/query/updates', callback, formatQueryOptions(options));
     }
 }
