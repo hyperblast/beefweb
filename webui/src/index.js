@@ -2,7 +2,8 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import Navigo from 'navigo'
 import App from './app'
-import Client from './client'
+import { ApiClient } from './api_client'
+import RequestHandler from './request_handler'
 import SettingsStore from './settings_store'
 import AppModel, { ViewId } from './app_model'
 import MediaSizeController from './media_size_controller'
@@ -11,7 +12,7 @@ import WindowController from './window_controller'
 import CssSettingsController from './css_settings_controller'
 import urls, { getPathFromUrl } from './urls'
 
-const client = new Client();
+const client = new ApiClient(new RequestHandler());
 const settingsStore = new SettingsStore();
 const appModel = new AppModel(client, settingsStore);
 

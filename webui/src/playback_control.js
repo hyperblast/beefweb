@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import mapValues from 'lodash/mapValues'
-import { PlaybackOrder, LoopMode } from './client'
+import { PlaybackOrder, LoopMode } from './api_client'
 import Component from './component'
 import PlayerModel from './player_model'
 import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'

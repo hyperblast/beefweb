@@ -5,7 +5,7 @@ export default class DataSource extends EventEmitter
     constructor(client)
     {
         super();
-        
+
         this.client = client;
         this.eventSource = null;
         this.isStarted = false;
@@ -22,11 +22,8 @@ export default class DataSource extends EventEmitter
         this.reinitEventSource();
     }
 
-    handleEvent(result, error)
+    handleEvent(result)
     {
-        if (error)
-            return;
-
         if (result.player)
             this.emit('player', result.player);
 
@@ -71,6 +68,6 @@ export default class DataSource extends EventEmitter
             }
         }
 
-        this.eventSource = this.client.subscribe(request, this.handleEvent);
+        this.eventSource = this.client.queryUpdates(request, this.handleEvent);
     }
 }

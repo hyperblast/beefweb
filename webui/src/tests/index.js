@@ -1,9 +1,7 @@
-import QUnit from 'qunit'
-import Client from '../client'
+import q from 'qunit'
 
-QUnit.test( "hello test", function( assert ) {
+q.test( "hello test", function( assert ) {
   assert.ok( 1 == "1", "Passed!" );
 });
 
-QUnit.start();
-
+q.start();

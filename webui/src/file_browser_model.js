@@ -41,19 +41,15 @@ export default class FileBrowserModel extends EventEmitter
     {
         if (path == rootPath)
         {
-            this.client.getRoots().then(result =>
-            {
-                if (result)
-                    this.endBrowse(path, result.roots);
-            });
+            this.client
+                .getFileSystemRoots()
+                .then(result => this.endBrowse(path, result));
         }
         else
         {
-            this.client.getDirectoryEntries(path).then(result =>
-            {
-                if (result)
-                    this.endBrowse(path, result.entries);
-            });
+            this.client
+                .getFileSystemEntries(path)
+                .then(result => this.endBrowse(path, result));
         }
     }
 

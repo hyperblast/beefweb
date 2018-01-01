@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Component from './component'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
-import { PlaybackState } from './client'
+import { PlaybackState } from './api_client'
 import { formatTime } from './utils'
 
 var stateToName = {

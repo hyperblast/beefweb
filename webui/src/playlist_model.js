@@ -107,7 +107,6 @@ export default class PlaylistModel extends EventEmitter
         var request = {
             playlistItems: true,
             plref: this.currentPlaylistId,
-            plrange: '0:1000',
             plcolumns: this.columns.expressions,
         };
 
@@ -178,7 +177,7 @@ export default class PlaylistModel extends EventEmitter
 
     addPlaylist()
     {
-        this.client.addPlaylist(this.getNewPlaylistTitle());
+        this.client.addPlaylist({ title: this.getNewPlaylistTitle() });
     }
 
     removePlaylist()

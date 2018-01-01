@@ -62,7 +62,7 @@ function parseRange(arg)
 
         case 'string':
         {
-            const [ offset = 0, count = 1000 ] = arg.split(':', 2).map(parseInt);
+            const [ offset = 0, count = 1000 ] = arg.split(':', 2).map(v => parseInt(v));
             return { offset, count };
         }
 

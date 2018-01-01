@@ -2,7 +2,7 @@ import iconPlay from 'open-iconic/png/media-play-4x.png'
 import iconPause from 'open-iconic/png/media-pause-4x.png'
 import iconStop from 'open-iconic/png/media-stop-4x.png'
 
-import { PlaybackState } from './client'
+import { PlaybackState } from './api_client'
 
 var stateToIcon = {
     [PlaybackState.playing]: iconPlay,

@@ -1,114 +1,125 @@
-import EventEmitter from 'wolfy87-eventemitter'
+import startsWith from 'lodash/startsWith'
 
-export class ClientError extends Error
+function formatParams(params)
+{
+    return Object
+        .getOwnPropertyNames(params)
+        .map(p => encodeURIComponent(p) + '=' + encodeURIComponent(params[p]))
+        .join('&');
+}
+
+function buildUrl(url, params)
+{
+    let result;
+
+    if (startsWith(url, '/'))
+        result = url;
+    else
+        result = '/' + url;
+
+    if (params)
+    {
+        const paramsString = formatParams(params);
+
+        if (paramsString)
+            result = result + '?' + paramsString;
+    }
+
+    return result;
+}
+
+function isSuccessStatus(code)
+{
+    return code >= 200 && code <= 299;
+}
+
+class ClientError extends Error
 {
 }
 
-function parseResponse(xhr)
+class Request
 {
-    if (xhr.getResponseHeader('Content-Type') != 'application/json')
-        return null;
-
-    return JSON.parse(xhr.responseText);
-}
-
-export default class RequestHandler extends EventEmitter
-{
-    constructor(baseUrl)
+    constructor(config)
     {
-        super();
-
-        this.baseUrl = baseUrl;
+        this.config = config;
+        this.promise = new Promise(this.execute.bind(this));
     }
 
-    get(req)
+    execute(resolve, reject)
     {
-        return this.send(Object.assign({ method: 'GET', wantResult: true }, req));
-    }
+        this.resolve = resolve;
+        this.reject = reject;
 
-    post(req)
-    {
-        return this.send(Object.assign({ method: 'POST', wantResult: false }, req));
-    }
+        this.httpRequest = new XMLHttpRequest();
+        this.httpRequest.addEventListener('loadend', this.complete.bind(this));
 
-    send(req)
-    {
-        var url = this.formatUrl(req);
+        const url = buildUrl(this.config.url, this.config.params);
+        this.httpRequest.open(this.config.method, url, true);
 
-        return new Promise((resolve, reject) =>
+        if (this.config.data)
         {
-            var xhr = new XMLHttpRequest();
-            xhr.onloadend = () => this.handleLoadEnd(req, xhr, resolve, reject);
-            xhr.open(req.method, url, true);
-
-            if (req.body)
-            {
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.send(JSON.stringify(req.body));
-            }
-            else
-            {
-                xhr.send();
-            }
-        });
-    }
-
-    subscribe(req)
-    {
-        var eventSource = new EventSource(this.formatUrl(req));
-
-        eventSource.onmessage = e => {
-            req.callback(JSON.parse(e.data), null);
-        };
-
-        eventSource.onerror = e => {
-            req.callback(null, e);
-            this.emit('error', e);
-        };
-
-        return eventSource;
-    }
-
-    handleLoadEnd(req, xhr, resolve, reject)
-    {
-        if (xhr.status >= 200 && xhr.status <= 299)
-        {
-            if (req.wantResult)
-                resolve(parseResponse(xhr) || true);
-            else
-                resolve(true);
+            this.httpRequest.setRequestHeader('Content-Type', 'application/json');
+            this.httpRequest.send(JSON.stringify(this.config.data));
         }
         else
         {
-            var error = new ClientError();
-            Object.assign(error, parseResponse(xhr) || {});
-            error.status = xhr.status;
-            error.statusText = xhr.statusText;
-            reject(error);
-            this.emit('error', error);
+            this.httpRequest.send();
         }
     }
 
-    formatUrl(req)
+    complete()
     {
-        var queryParts = [];
+        if (isSuccessStatus(this.httpRequest.status))
+            this.resolve(this.parseResponse());
+        else
+            this.reject(this.buildError());
+    }
 
-        if (req.params)
-        {
-            var params = req.params;
+    buildError()
+    {
+        const { status, statusText } = this.httpRequest;
 
-            for (var p in params)
-            {
-                if (params.hasOwnProperty(p) && params[p] !== undefined)
-                {
-                    var value = Array.isArray(value) ? params[p].join(',') : String(params[p]);
+        return Object.assign(
+            new ClientError(),
+            this.parseResponse(),
+            { status, statusText });
+    }
 
-                    queryParts.push(`${encodeURIComponent(p)}=${encodeURIComponent(value)}`);
-                }
-            }
-        }
+    parseResponse()
+    {
+        const contentType = this.httpRequest.getResponseHeader('Content-Type');
 
-        var query = queryParts.length > 0 ? '?' + queryParts.join('&') : '';
-        return `${this.baseUrl}/${req.path}${query}`;
+        return contentType === 'application/json'
+            ? JSON.parse(this.httpRequest.responseText)
+            : null;
+    }
+}
+
+export default class RequestHandler
+{
+    get(url, params)
+    {
+        return this.execute({ method: 'GET', url, params });
+    }
+
+    post(url, data)
+    {
+        return this.execute({ method: 'POST', url, data });
+    }
+
+    execute(config)
+    {
+        return new Request(config).promise;
+    }
+
+    createEventSource(url, callback, params)
+    {
+        const source = new EventSource(buildUrl(url, params));
+
+        source.addEventListener('message', e => {
+            callback(JSON.parse(e.data));
+        });
+
+        return source;
     }
 }
