@@ -96,6 +96,8 @@ function configRelease(cfg)
         'process.env.NODE_ENV': '"production"'
     }));
 
+    cfg.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
+
     var styleExtractor = new ExtractTextPlugin({
         filename: 'bundle.css'
     });
