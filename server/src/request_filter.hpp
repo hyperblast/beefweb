@@ -44,16 +44,6 @@ public:
     virtual void execute(Request* request) override;
 };
 
-class CacheSupportFilter : public RequestFilter
-{
-public:
-    CacheSupportFilter();
-    virtual ~CacheSupportFilter();
-
-protected:
-    virtual void endRequest(Request* request) override;
-};
-
 class RequestFilterChain
 {
 public:

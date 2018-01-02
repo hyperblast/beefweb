@@ -5,6 +5,7 @@
 #include "player_controller.hpp"
 #include "playlists_controller.hpp"
 #include "query_controller.hpp"
+#include "cache_support_filter.hpp"
 
 namespace msrv {
 

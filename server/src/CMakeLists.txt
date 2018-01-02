@@ -28,6 +28,7 @@ set(
     CORE_SOURCES
     artwork_controller.cpp artwork_controller.hpp
     browser_controller.cpp browser_controller.hpp
+    cache_support_filter.cpp cache_support_filter.hpp
     content_type_map.cpp content_type_map.hpp
     controller.hpp
     defines.hpp
