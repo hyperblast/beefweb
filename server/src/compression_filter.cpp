@@ -48,7 +48,7 @@ CompressionHandler::CompressionHandler(Request* request)
 
 void CompressionHandler::process()
 {
-    if (request_->response && canUseCompression())
+    if (request_->response)
         request_->response->process(this);
 }
 
@@ -91,11 +91,17 @@ void CompressionHandler::makeCompressedResponse(
 
 void CompressionHandler::handleResponse(DataResponse* response)
 {
+    if (!canUseCompression())
+        return;
+
     makeCompressedResponse(response->data.data(), response->data.size(), response->contentType);
 }
 
 void CompressionHandler::handleResponse(JsonResponse* response)
 {
+    if (!canUseCompression())
+        return;
+
     std::string data = response->value.dump();
     makeCompressedResponse(data.data(), data.length(), "application/json");
 }
@@ -103,6 +109,9 @@ void CompressionHandler::handleResponse(JsonResponse* response)
 void CompressionHandler::handleResponse(FileResponse* response)
 {
     if (response->info.size < static_cast<int64_t>(MIN_COMPRESSION_SIZE))
+        return;
+
+    if (!canUseCompression())
         return;
 
     auto data = readFileToBuffer(response->handle, response->info.size);
