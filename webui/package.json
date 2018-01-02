@@ -17,6 +17,8 @@
     "navigo": "^6.0.1",
     "normalize.css": "^5.0.0",
     "open-iconic": "^1.1.1",
+    "preact": "^8.2.7",
+    "preact-compat": "^3.17.0",
     "prop-types": "^15.5.10",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

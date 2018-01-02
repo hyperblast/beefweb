@@ -12,6 +12,9 @@ function configCommon(cfg, opts)
     cfg.entry.push('normalize.css');
     cfg.entry.push('event-source-polyfill');
 
+    cfg.resolve.alias['react'] = 'preact-compat';
+    cfg.resolve.alias['react-dom'] = 'preact-compat';
+
     cfg.module.rules.push({
         test: /\.js$/,
         include: [
@@ -146,7 +149,8 @@ function makeTarget(configTarget, opts)
         output: {},
         plugins: [],
         module: { rules: [] },
-        node: {}
+        resolve: { alias: {} },
+        node: {},
     };
 
     configCommon(cfg, opts);
