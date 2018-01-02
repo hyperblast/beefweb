@@ -12,8 +12,11 @@ function configCommon(cfg, opts)
     cfg.entry.push('normalize.css');
     cfg.entry.push('event-source-polyfill');
 
-    cfg.resolve.alias['react'] = 'preact-compat';
-    cfg.resolve.alias['react-dom'] = 'preact-compat';
+    if (!opts.useReact)
+    {
+        cfg.resolve.alias['react'] = 'preact-compat';
+        cfg.resolve.alias['react-dom'] = 'preact-compat';
+    }
 
     cfg.module.rules.push({
         test: /\.js$/,
@@ -128,6 +131,7 @@ function makeBuildOpts(env)
 {
     const buildType = env.release ? 'release' : 'debug';
     const enableTests = !!env.tests;
+    const useReact = !!env.react;
 
     const sourceDir = path.join(__dirname, 'src');
     const outputDir = path.join(__dirname, 'build', buildType);
@@ -136,6 +140,7 @@ function makeBuildOpts(env)
     return {
         buildType,
         enableTests,
+        useReact,
         rootDir,
         sourceDir,
         outputDir,
