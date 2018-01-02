@@ -1,7 +1,7 @@
-var path = require('path');
-var webpack = require('webpack');
-var HtmlPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 function configCommon(cfg, opts)
 {
@@ -98,7 +98,7 @@ function configRelease(cfg)
 
     cfg.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
 
-    var styleExtractor = new ExtractTextPlugin({
+    const styleExtractor = new ExtractTextPlugin({
         filename: 'bundle.css'
     });
 
@@ -141,7 +141,7 @@ function makeBuildOpts(env)
 
 function makeTarget(configTarget, opts)
 {
-    var cfg = {
+    const cfg = {
         entry: [],
         output: {},
         plugins: [],
@@ -159,8 +159,8 @@ function makeTarget(configTarget, opts)
 
 module.exports = function(env)
 {
-    var opts = makeBuildOpts(env || {});
-    var allTargets = [makeTarget(configApp, opts)];
+    const opts = makeBuildOpts(env || {});
+    const allTargets = [makeTarget(configApp, opts)];
 
     if (opts.enableTests)
         allTargets.push(makeTarget(configTests, opts));
