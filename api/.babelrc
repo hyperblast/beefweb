@@ -1,5 +1,0 @@
-{
-    "presets": [
-        ["../webui/node_modules/babel-preset-env", { "loose": true }],
-    ]
-}

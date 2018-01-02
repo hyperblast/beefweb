@@ -5,7 +5,7 @@ const {
     LoopMode,
     PlaybackOrder,
     ApiClient
-} = require('../../api/api_client');
+} = require('../../api/client/api_client');
 
 export {
     ErrorType,
