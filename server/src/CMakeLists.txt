@@ -18,10 +18,12 @@ add_linker_flag(-Wl,--as-needed)
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Nljson REQUIRED)
+find_package(ZLIB REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIRS}
 )
 
 set(
@@ -29,11 +31,13 @@ set(
     artwork_controller.cpp artwork_controller.hpp
     browser_controller.cpp browser_controller.hpp
     cache_support_filter.cpp cache_support_filter.hpp
+    compression_filter.cpp compression_filter.hpp
     content_type_map.cpp content_type_map.hpp
     controller.hpp
     defines.hpp
     file_system.cpp file_system.hpp
     fnv_hash.hpp
+    gzip.cpp gzip.hpp
     host.cpp host.hpp
     http.cpp http.hpp
     json.hpp
@@ -64,7 +68,7 @@ add_library(core OBJECT ${CORE_SOURCES})
 
 set_target_properties(
     core PROPERTIES
-    INTERFACE_LINK_LIBRARIES "dl;rt;m;${Boost_LIBRARIES}"
+    INTERFACE_LINK_LIBRARIES "dl;rt;m;${Boost_LIBRARIES};${ZLIB_LIBRARIES}"
 )
 
 add_dependencies(core extlibs)

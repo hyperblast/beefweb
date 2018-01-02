@@ -2,7 +2,9 @@
 
 #include "system.hpp"
 
+#include <stddef.h>
 #include <string>
+#include <vector>
 #include <boost/filesystem.hpp>
 
 namespace msrv {
@@ -33,5 +35,6 @@ Path getModulePath(void* symbol);
 FileHandle openFile(const Path& path);
 FileInfo queryFileInfo(FileHandle& handle);
 FileInfo queryFileInfo(const Path& path);
+std::vector<uint8_t> readFileToBuffer(FileHandle& handle, int64_t bytes = -1);
 
 }

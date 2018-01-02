@@ -36,6 +36,7 @@ public:
     static std::unique_ptr<SimpleResponse> custom(HttpStatus status);
     static std::unique_ptr<Response> file(Path path, std::string contentType);
     static std::unique_ptr<FileResponse> file(Path path, FileHandle handle, std::string contentType);
+    static std::unique_ptr<DataResponse> data(std::vector<uint8_t> data, std::string contentType);
     static std::unique_ptr<JsonResponse> json(Json value);
     static std::unique_ptr<EventStreamResponse> eventStream(EventStreamSource source);
     static std::unique_ptr<AsyncResponse> async(ResponseFuture response);
@@ -65,12 +66,12 @@ public:
 class DataResponse : public Response
 {
 public:
-    DataResponse(std::vector<char> dataVal, std::string contentTypeVal);
+    DataResponse(std::vector<uint8_t> dataVal, std::string contentTypeVal);
     virtual ~DataResponse();
 
-    virtual void process(ResponseHandler* handler) = 0;
+    virtual void process(ResponseHandler* handler) override;
 
-    std::vector<char> data;
+    std::vector<uint8_t> data;
     std::string contentType;
 };
 

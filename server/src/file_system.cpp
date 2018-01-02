@@ -75,5 +75,19 @@ FileInfo queryFileInfo(FileHandle& handle)
     return info;
 }
 
+std::vector<uint8_t> readFileToBuffer(FileHandle& handle, int64_t bytes)
+{
+    if (bytes < 0)
+        bytes = queryFileInfo(handle).size;
+
+    std::vector<uint8_t> buffer;
+    buffer.resize(static_cast<size_t>(bytes));
+
+    auto bytesRead = ::read(handle.get(), buffer.data(), static_cast<size_t>(bytes));
+    throwIfFailed("read", bytesRead >= 0);
+
+    buffer.resize(static_cast<size_t>(bytesRead));
+    return buffer;
+}
 
 }

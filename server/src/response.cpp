@@ -37,6 +37,11 @@ std::unique_ptr<FileResponse> Response::file(Path path, FileHandle handle, std::
         std::move(path), std::move(handle), std::move(contentType), std::move(info)));
 }
 
+std::unique_ptr<DataResponse> Response::data(std::vector<uint8_t> data, std::string contentType)
+{
+    return std::unique_ptr<DataResponse>(new DataResponse(std::move(data), std::move(contentType)));
+}
+
 std::unique_ptr<JsonResponse> Response::json(Json value)
 {
     return std::unique_ptr<JsonResponse>(new JsonResponse(std::move(value)));
@@ -76,7 +81,7 @@ void SimpleResponse::process(ResponseHandler* handler)
     handler->handleResponse(this);
 }
 
-DataResponse::DataResponse(std::vector<char> dataVal, std::string contentTypeVal)
+DataResponse::DataResponse(std::vector<uint8_t> dataVal, std::string contentTypeVal)
     : Response(HttpStatus::S_200_OK), data(std::move(dataVal)), contentType(std::move(contentTypeVal))
 {
 }

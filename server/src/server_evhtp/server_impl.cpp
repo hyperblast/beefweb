@@ -450,7 +450,11 @@ void ResponseFormatter::handleResponse(DataResponse* response)
     evreq_->outputHeaders()->set("Content-Length", toString(response->data.size()));
 
     if (response->data.size() > 0)
-        evreq_->outputBuffer()->write(response->data.data(), response->data.size());
+    {
+        evreq_->outputBuffer()->write(
+            reinterpret_cast<const char*>(response->data.data()),
+            response->data.size());
+    }
 }
 
 void ResponseFormatter::handleResponse(FileResponse* response)

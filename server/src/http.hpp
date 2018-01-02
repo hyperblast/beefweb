@@ -33,6 +33,8 @@ struct HttpHeader
     static const char IF_NONE_MATCH[];
     static const char ETAG[];
     static const char CACHE_CONTROL[];
+    static const char ACCEPT_ENCODING[];
+    static const char CONTENT_ENCODING[];
 };
 
 using HttpKeyValueMap = std::unordered_map<std::string, std::string>;

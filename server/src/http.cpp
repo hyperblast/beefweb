@@ -6,6 +6,8 @@ namespace msrv {
 const char HttpHeader::IF_NONE_MATCH[] = "If-None-Match";
 const char HttpHeader::ETAG[] = "ETag";
 const char HttpHeader::CACHE_CONTROL[] = "Cache-Control";
+const char HttpHeader::ACCEPT_ENCODING[] = "Accept-Encoding";
+const char HttpHeader::CONTENT_ENCODING[] = "Content-Encoding";
 
 std::string toString(HttpStatus status)
 {
