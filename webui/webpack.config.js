@@ -16,7 +16,7 @@ function configCommon(cfg, opts)
         test: /\.js$/,
         include: [
             opts.sourceDir,
-            path.join(opts.rootDir, 'api')
+            path.join(opts.rootDir, 'api', 'client')
         ],
         loader: 'babel-loader',
     });
@@ -121,19 +121,19 @@ function configRelease(cfg)
 
 function makeBuildOpts(env)
 {
-    var buildType = env.release ? 'release' : 'debug';
-    var enableTests = !!env.tests;
+    const buildType = env.release ? 'release' : 'debug';
+    const enableTests = !!env.tests;
 
-    var sourceDir = path.join(__dirname, 'src');
-    var outputDir = path.join(__dirname, 'build', buildType);
-    var rootDir = path.dirname(__dirname);
+    const sourceDir = path.join(__dirname, 'src');
+    const outputDir = path.join(__dirname, 'build', buildType);
+    const rootDir = path.dirname(__dirname);
 
     return {
-        buildType: buildType,
-        enableTests: enableTests,
-        rootDir: rootDir,
-        sourceDir: sourceDir,
-        outputDir: outputDir,
+        buildType,
+        enableTests,
+        rootDir,
+        sourceDir,
+        outputDir,
     };
 }
 
