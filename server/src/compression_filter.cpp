@@ -17,7 +17,7 @@ namespace {
 class CompressionHandler : private ResponseHandler
 {
 public:
-    CompressionHandler(Request* request);
+    CompressionHandler(Request* request, const std::unordered_set<std::string>& contentTypes);
     ~CompressionHandler() = default;
 
     void process();
@@ -25,7 +25,9 @@ public:
 private:
     static constexpr size_t MIN_COMPRESSION_SIZE = 860;
 
-    bool canUseCompression();
+    bool shouldUseCompression();
+    bool shouldUseCompression(const std::string& contentType);
+
     void makeCompressedResponse(const void* data, size_t size, const std::string& contentType);
 
     virtual void handleResponse(SimpleResponse*) override;
@@ -37,12 +39,13 @@ private:
     virtual void handleResponse(EventStreamResponse*) override;
 
     Request* request_;
+    const std::unordered_set<std::string>& contentTypes_;
 
     MSRV_NO_COPY_AND_ASSIGN(CompressionHandler);
 };
 
-CompressionHandler::CompressionHandler(Request* request)
-    : request_(request)
+CompressionHandler::CompressionHandler(Request* request, const std::unordered_set<std::string>& contentTypes)
+    : request_(request), contentTypes_(contentTypes)
 {
 }
 
@@ -52,7 +55,7 @@ void CompressionHandler::process()
         request_->response->process(this);
 }
 
-bool CompressionHandler::canUseCompression()
+bool CompressionHandler::shouldUseCompression()
 {
     auto acceptEncoding = request_->headers.find(HttpHeader::ACCEPT_ENCODING);
     if (acceptEncoding == request_->headers.end())
@@ -69,6 +72,12 @@ bool CompressionHandler::canUseCompression()
     }
 
     return false;
+}
+
+bool CompressionHandler::shouldUseCompression(const std::string& contentType)
+{
+    return shouldUseCompression()
+        && contentTypes_.find(contentType) != contentTypes_.end();
 }
 
 void CompressionHandler::makeCompressedResponse(
@@ -91,7 +100,7 @@ void CompressionHandler::makeCompressedResponse(
 
 void CompressionHandler::handleResponse(DataResponse* response)
 {
-    if (!canUseCompression())
+    if (!shouldUseCompression(response->contentType))
         return;
 
     makeCompressedResponse(response->data.data(), response->data.size(), response->contentType);
@@ -99,7 +108,7 @@ void CompressionHandler::handleResponse(DataResponse* response)
 
 void CompressionHandler::handleResponse(JsonResponse* response)
 {
-    if (!canUseCompression())
+    if (!shouldUseCompression())
         return;
 
     std::string data = response->value.dump();
@@ -111,7 +120,7 @@ void CompressionHandler::handleResponse(FileResponse* response)
     if (response->info.size < static_cast<int64_t>(MIN_COMPRESSION_SIZE))
         return;
 
-    if (!canUseCompression())
+    if (!shouldUseCompression(response->contentType))
         return;
 
     auto data = readFileToBuffer(response->handle, response->info.size);
@@ -136,12 +145,19 @@ void CompressionHandler::handleResponse(EventStreamResponse*)
 
 }
 
-CompressionFilter::CompressionFilter() = default;
+CompressionFilter::CompressionFilter()
+{
+    contentTypes_.emplace("text/html");
+    contentTypes_.emplace("image/svg+xml");
+    contentTypes_.emplace("application/javascript");
+    contentTypes_.emplace("text/css");
+}
+
 CompressionFilter::~CompressionFilter() = default;
 
 void CompressionFilter::endRequest(Request* request)
 {
-    CompressionHandler handler(request);
+    CompressionHandler handler(request, contentTypes_);
     handler.process();
 }
 
