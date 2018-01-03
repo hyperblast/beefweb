@@ -149,7 +149,7 @@ q.test('add playlist items async', async assert =>
     const files = await waitUntil(async () =>
     {
         const result = await client.getPlaylistFiles(0);
-        return result.length > 0 ? result : null;
+        return result.length === 3 ? result : null;
     });
 
     assert.deepEqual(files, [tracks.t1, tracks.t2, tracks.t3]);
