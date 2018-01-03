@@ -15,7 +15,7 @@
 #define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
 
 #define MSRV_LICENSE_TEXT \
-    "Copyright 2015-2017 Hyperblast\n" \
+    "Copyright 2015-2018 Hyperblast\n" \
     "\n" \
     "Permission is hereby granted, free of charge, to any person obtaining a copy\n" \
     "of this software and associated documentation files (the \"Software\"), to deal\n" \
