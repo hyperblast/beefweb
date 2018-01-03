@@ -79,7 +79,7 @@ void CompressionHandler::makeCompressedResponse(
 
     std::vector<uint8_t> compressedData;
 
-    if (!gzip::compress(data, size, &compressedData, size - 1))
+    if (!gzipCompress(data, size, &compressedData, size - 1))
         return;
 
     ResponsePtr compressedResponse = Response::data(std::move(compressedData), contentType);

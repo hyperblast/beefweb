@@ -5,8 +5,7 @@
 #include <vector>
 
 namespace msrv {
-namespace gzip {
 
-bool compress(const void* data, size_t size, std::vector<uint8_t>* output, size_t maxOutputSize = 0);
+bool gzipCompress(const void* data, size_t size, std::vector<uint8_t>* output, size_t maxOutputSize = 0);
 
-}}
+}

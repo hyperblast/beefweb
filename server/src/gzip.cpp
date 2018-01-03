@@ -6,7 +6,6 @@
 #include <memory>
 
 namespace msrv {
-namespace gzip {
 
 namespace {
 
@@ -27,7 +26,7 @@ public:
 
 }
 
-bool compress(const void* data, size_t size, std::vector<uint8_t>* output, size_t maxOutputSize)
+bool gzipCompress(const void* data, size_t size, std::vector<uint8_t>* output, size_t maxOutputSize)
 {
     ::z_stream stream;
     stream.zalloc = nullptr;
@@ -63,4 +62,4 @@ bool compress(const void* data, size_t size, std::vector<uint8_t>* output, size_
     }
 }
 
-}}
+}
