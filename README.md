@@ -17,7 +17,7 @@ Web interface and HTTP API plugin for [DeaDBeeF player](http://deadbeef.sourcefo
 
 ![Main web interface](https://user-images.githubusercontent.com/19171756/34213888-b205be72-e5b1-11e7-9f77-5657979d0587.png)
 
-![Configuration screen](https://user-images.githubusercontent.com/19171756/29487824-4670cb16-8508-11e7-984f-14707cbbd52d.png)
+![Configuration screen](https://user-images.githubusercontent.com/19171756/34526667-40ce832a-f0b4-11e7-8918-16180b6a66ad.png)
 
 ### How to build
 Beefweb has two distinctive parts: server plugin and web user interface.
