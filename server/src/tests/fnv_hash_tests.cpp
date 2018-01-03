@@ -1,14 +1,13 @@
 #include "../fnv_hash.hpp"
 
 #include <catch.hpp>
-#include <boost/thread/future.hpp>
 
 namespace msrv {
 namespace fnv_hash_tests {
 
-TEST_CASE("FnvHash works")
+TEST_CASE("FnvHash")
 {
-    SECTION("addBytes works")
+    SECTION("addBytes")
     {
         FnvHash hash;
         const char input[] = "Hello World";
@@ -16,7 +15,7 @@ TEST_CASE("FnvHash works")
         REQUIRE(hash.value() == UINT64_C(0x3d58dee72d4e0c27));
     }
 
-    SECTION("multiple addBytes works")
+    SECTION("multiple addBytes")
     {
         FnvHash hash;
         const char input1[] = "FNV ";
@@ -28,7 +27,7 @@ TEST_CASE("FnvHash works")
         REQUIRE(hash.value() == UINT64_C(0x738fbfb6ba6bdac6));
     }
 
-    SECTION("addValue works")
+    SECTION("addValue")
     {
         FnvHash hash;
         hash.addValue(UINT32_C(0x58585858));

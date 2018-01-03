@@ -29,6 +29,8 @@ include_directories(
 set(
     CORE_SOURCES
     artwork_controller.cpp artwork_controller.hpp
+    b64_cdecode.c b64_cdecode.h
+    base64.cpp base64.hpp
     browser_controller.cpp browser_controller.hpp
     cache_support_filter.cpp cache_support_filter.hpp
     compression_filter.cpp compression_filter.hpp

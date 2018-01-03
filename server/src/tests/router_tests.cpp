@@ -21,7 +21,7 @@ DEFINE_DUMMY_FACTORY(GetWithLongParam);
 DEFINE_DUMMY_FACTORY(GetHandler);
 DEFINE_DUMMY_FACTORY(PostHandler);
 
-TEST_CASE("router works")
+TEST_CASE("router")
 {
     Router router;
 

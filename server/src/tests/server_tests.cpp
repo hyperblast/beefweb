@@ -10,7 +10,7 @@
 namespace msrv {
 namespace server_tests {
 
-TEST_CASE("server works")
+TEST_CASE("server")
 {
     boost::promise<std::string> startedPromise;
     boost::unique_future<std::string> started = startedPromise.get_future();

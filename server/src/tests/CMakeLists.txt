@@ -4,6 +4,7 @@ include_directories(${CATCH_INCLUDE_DIR})
 set(
     TEST_SOURCES
     run_tests.cpp
+    base64_tests.cpp
     fnv_hash_tests.cpp
     router_tests.cpp
     server_tests.cpp
