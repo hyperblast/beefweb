@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stddef.h>
 #include <stdint.h>
 #include <type_traits>
@@ -27,7 +29,7 @@ public:
             // multiply by the 64 bit FNV magic prime mod 2^64
             value *= PRIME;
         }
-        
+
         value_ = value;
     }
 
@@ -43,7 +45,7 @@ public:
 private:
     const uint64_t INIT = UINT64_C(0xcbf29ce484222325);
     const uint64_t PRIME = UINT64_C(0x100000001b3);
-    
+
     uint64_t value_;
 };
 
