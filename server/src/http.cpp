@@ -3,6 +3,8 @@
 
 namespace msrv {
 
+const char HttpHeader::AUTHORIZATION[] = "Authorization";
+const char HttpHeader::WWW_AUTHENTICATE[] = "Www-Authenticate";
 const char HttpHeader::IF_NONE_MATCH[] = "If-None-Match";
 const char HttpHeader::ETAG[] = "ETag";
 const char HttpHeader::CACHE_CONTROL[] = "Cache-Control";
@@ -30,6 +32,9 @@ std::string toString(HttpStatus status)
 
     case HttpStatus::S_400_BAD_REQUEST:
         return "400 Bad request";
+
+    case HttpStatus::S_401_UNAUTHORIZED:
+        return "401 Unauthorized";
 
     case HttpStatus::S_403_FORBIDDEN:
         return "403 Forbidden";

@@ -16,7 +16,7 @@ bool isSubpath(const std::string& path, const std::string& childPath)
 }
 
 SettingsData::SettingsData()
-    : port(0), allowRemote(false)
+    : port(0), allowRemote(false), authRequired(false)
 {
 }
 

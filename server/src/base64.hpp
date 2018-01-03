@@ -1,3 +1,5 @@
+#pragma once
+
 #include "defines.hpp"
 #include <string>
 

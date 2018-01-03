@@ -31,6 +31,7 @@ set(
     artwork_controller.cpp artwork_controller.hpp
     b64_cdecode.c b64_cdecode.h
     base64.cpp base64.hpp
+    basic_auth_filter.cpp basic_auth_filter.hpp
     browser_controller.cpp browser_controller.hpp
     cache_support_filter.cpp cache_support_filter.hpp
     compression_filter.cpp compression_filter.hpp

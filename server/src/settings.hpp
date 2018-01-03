@@ -18,6 +18,10 @@ public:
     std::vector<std::string> musicDirs;
     std::string staticDir;
 
+    bool authRequired;
+    std::string authUser;
+    std::string authPassword;
+
     bool isAllowedPath(const std::string& path) const;
 };
 

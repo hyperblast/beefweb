@@ -4,6 +4,9 @@
 #define CONF_PORT           MSRV_PROJECT_ID ".port"
 #define CONF_ALLOW_REMOTE   MSRV_PROJECT_ID ".allow_remote"
 #define CONF_MUSIC_DIRS     MSRV_PROJECT_ID ".music_dirs"
+#define CONF_AUTH_REQUIRED  MSRV_PROJECT_ID ".auth.required"
+#define CONF_AUTH_USER      MSRV_PROJECT_ID ".auth.user"
+#define CONF_AUTH_PASSWORD  MSRV_PROJECT_ID ".auth.password"
 
 namespace msrv {
 namespace plugin_deadbeef {
@@ -13,10 +16,13 @@ namespace {
 DB_misc_t pluginDef;
 Plugin* pluginInstance;
 
-constexpr char pluginConfigDialog[] =
+const char PLUGIN_CONFIG_DIALOG[] =
     "property \"Network port\" entry " CONF_PORT " 8880;"
     "property \"Allow remote connections\" checkbox " CONF_ALLOW_REMOTE " 1;"
-    "property \"Music directories\" entry " CONF_MUSIC_DIRS " \"\";";
+    "property \"Music directories\" entry " CONF_MUSIC_DIRS " \"\";"
+    "property \"Require authentication\" checkbox " CONF_AUTH_REQUIRED " 0;"
+    "property \"User\" entry " CONF_AUTH_USER " \"\";"
+    "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";";
 
 }
 
@@ -42,20 +48,29 @@ bool Plugin::reloadConfig()
 
     int port = ddbApi->conf_get_int(CONF_PORT, 8880);
     bool allowRemote = ddbApi->conf_get_int(CONF_ALLOW_REMOTE, 1) != 0;
-    const char* musicDirs = ddbApi->conf_get_str_fast(CONF_MUSIC_DIRS, "");
+    const char* musicDirList = ddbApi->conf_get_str_fast(CONF_MUSIC_DIRS, "");
+    bool authRequired = ddbApi->conf_get_int(CONF_AUTH_REQUIRED, 0) != 0;
+    const char* authUser = ddbApi->conf_get_str_fast(CONF_AUTH_USER, "");
+    const char* authPassword = ddbApi->conf_get_str_fast(CONF_AUTH_PASSWORD, "");
 
     if (settings_.port == port &&
         settings_.allowRemote == allowRemote &&
-        musicDirs_ == musicDirs)
+        musicDirList_ == musicDirList &&
+        settings_.authRequired == authRequired &&
+        settings_.authUser == authUser &&
+        settings_.authPassword == authPassword)
     {
         return false;
     }
 
     settings_.port = port;
     settings_.allowRemote = allowRemote;
-    musicDirs_ = musicDirs;
+    musicDirList_ = musicDirList;
     settings_.musicDirs.clear();
-    settings_.musicDirs = parseValueList<std::string>(musicDirs_, ';');
+    settings_.musicDirs = parseValueList<std::string>(musicDirList_, ';');
+    settings_.authRequired = authRequired;
+    settings_.authUser = authUser;
+    settings_.authPassword = authPassword;
 
     if (!pluginDir.empty())
         settings_.staticDir = pathToUtf8(pluginDir / pathFromUtf8(MSRV_WEB_ROOT));
@@ -134,7 +149,7 @@ static void pluginInitDef()
     pluginDef.plugin.connect = pluginConnect;
     pluginDef.plugin.disconnect = pluginDisconnect;
     pluginDef.plugin.message = pluginMessage;
-    pluginDef.plugin.configdialog = pluginConfigDialog;
+    pluginDef.plugin.configdialog = PLUGIN_CONFIG_DIALOG;
 }
 
 extern "C" DB_plugin_t* MSRV_PREFIXED(load)(DB_functions_t* api)

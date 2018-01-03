@@ -25,7 +25,7 @@ private:
 
     SettingsData settings_;
     Path pluginDir;
-    std::string musicDirs_;
+    std::string musicDirList_;
 
     std::unique_ptr<PlayerImpl> player_;
     std::unique_ptr<Host> host_;

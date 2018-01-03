@@ -21,6 +21,7 @@ enum class HttpStatus
     S_204_NO_CONTENT = 204,
     S_304_NOT_MODIFIED = 304,
     S_400_BAD_REQUEST = 400,
+    S_401_UNAUTHORIZED = 401,
     S_403_FORBIDDEN = 403,
     S_404_NOT_FOUND = 404,
     S_405_METHOD_NOT_ALLOWED = 405,
@@ -30,6 +31,8 @@ enum class HttpStatus
 
 struct HttpHeader
 {
+    static const char AUTHORIZATION[];
+    static const char WWW_AUTHENTICATE[];
     static const char IF_NONE_MATCH[];
     static const char ETAG[];
     static const char CACHE_CONTROL[];

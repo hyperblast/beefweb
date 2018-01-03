@@ -7,12 +7,14 @@
 #include "query_controller.hpp"
 #include "cache_support_filter.hpp"
 #include "compression_filter.hpp"
+#include "basic_auth_filter.hpp"
 
 namespace msrv {
 
 Host::Host(Player* player)
     : player_(player)
 {
+    filters_.addFilter(RequestFilterPtr(new BasicAuthFilter(this)));
     filters_.addFilter(RequestFilterPtr(new CompressionFilter));
     filters_.addFilter(RequestFilterPtr(new CacheSupportFilter));
     filters_.addFilter(RequestFilterPtr(new ExecuteHandlerFilter));
