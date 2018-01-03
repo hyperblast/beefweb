@@ -20,7 +20,7 @@ const char FILE_SCHEME[] = "file://";
 std::string stripFileScheme(const std::string& url)
 {
     if (boost::starts_with(url, FILE_SCHEME))
-        return url.substr(sizeof(FILE_SCHEME));
+        return url.substr(sizeof(FILE_SCHEME) - 1);
 
     return url;
 }
