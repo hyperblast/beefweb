@@ -3,6 +3,7 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "settings.hpp"
+#include "project_info.hpp"
 
 #include <boost/algorithm/string.hpp>
 

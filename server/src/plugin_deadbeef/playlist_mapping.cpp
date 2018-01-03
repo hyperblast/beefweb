@@ -1,4 +1,5 @@
 #include "playlist_mapping.hpp"
+#include "../project_info.hpp"
 
 #include <inttypes.h>
 

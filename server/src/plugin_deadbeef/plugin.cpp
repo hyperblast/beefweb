@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 #include "../log.hpp"
+#include "../project_info.hpp"
 
 #define CONF_PORT           MSRV_PROJECT_ID ".port"
 #define CONF_ALLOW_REMOTE   MSRV_PROJECT_ID ".allow_remote"

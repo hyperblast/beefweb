@@ -1,4 +1,5 @@
 #include "../log.hpp"
+#include "../project_info.hpp"
 
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
