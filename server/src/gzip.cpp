@@ -32,7 +32,7 @@ bool gzipCompress(const void* data, size_t size, std::vector<uint8_t>* output, s
     stream.zalloc = nullptr;
     stream.zfree = nullptr;
 
-    int res = deflateInit2(&stream, Z_BEST_COMPRESSION, Z_DEFLATED, 15 + 16, 9, Z_DEFAULT_STRATEGY);
+    int res = deflateInit2(&stream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 15 + 16, 9, Z_DEFAULT_STRATEGY);
     throwIfZlibError(res);
 
     std::unique_ptr<z_stream, DeflateStreamDeleter> streamLifetime(&stream);
