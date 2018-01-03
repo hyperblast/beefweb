@@ -51,7 +51,7 @@ class RequestHandler
         }, config);
 
         this.axios = axios.create(fullConfig);
-        this.auth = fullConfig.auth || null;
+        this.axiosConfig = fullConfig;
     }
 
     shutdown()
@@ -71,7 +71,7 @@ class RequestHandler
         }
 
         this.axios = null;
-        this.auth = null;
+        this.axiosConfig = null;
     }
 
     async get(url, params)
@@ -116,11 +116,13 @@ class RequestHandler
 
     getEventSourceConfig()
     {
-        if (!this.auth)
+        if (!this.axiosConfig.auth)
             return null;
 
+        const { username, password } = this.axiosConfig.auth;
+
         const authData = Buffer
-            .from(`${this.auth.username}:${this.auth.password}`)
+            .from(`${username}:${password}`)
             .toString('base64');
 
         return {
