@@ -4,9 +4,9 @@
 #define CONF_PORT           MSRV_PROJECT_ID ".port"
 #define CONF_ALLOW_REMOTE   MSRV_PROJECT_ID ".allow_remote"
 #define CONF_MUSIC_DIRS     MSRV_PROJECT_ID ".music_dirs"
-#define CONF_AUTH_REQUIRED  MSRV_PROJECT_ID ".auth.required"
-#define CONF_AUTH_USER      MSRV_PROJECT_ID ".auth.user"
-#define CONF_AUTH_PASSWORD  MSRV_PROJECT_ID ".auth.password"
+#define CONF_AUTH_REQUIRED  MSRV_PROJECT_ID ".auth_required"
+#define CONF_AUTH_USER      MSRV_PROJECT_ID ".auth_user"
+#define CONF_AUTH_PASSWORD  MSRV_PROJECT_ID ".auth_password"
 
 namespace msrv {
 namespace plugin_deadbeef {

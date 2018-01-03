@@ -11,9 +11,10 @@ function formatParams(params)
 
 class TrackedEventSource extends EventSource
 {
-    constructor(owner, url)
+    constructor(owner, url, config)
     {
-        super(url);
+        super(url, config);
+
         this.owner = owner;
     }
 
@@ -31,31 +32,46 @@ class RequestHandler
     constructor(baseUrl)
     {
         this.baseUrl = baseUrl;
-        this.init();
     }
 
-    init()
+    init(config)
     {
+        if (this.axios)
+            this.shutdown();
+
         this.lastStatus = 0;
         this.cancelSource = axios.CancelToken.source();
         this.eventSources = new Set();
 
-        this.axios = axios.create({
+        const fullConfig = Object.assign({
             baseURL: this.baseUrl,
             timeout: 5000,
             paramsSerializer: formatParams,
             cancelToken: this.cancelSource.token
-        });
+        }, config);
+
+        this.axios = axios.create(fullConfig);
+        this.auth = fullConfig.auth || null;
     }
 
-    reset()
+    shutdown()
     {
-        this.cancelSource.cancel('Abort');
+        if (this.cancelSource)
+        {
+            this.cancelSource.cancel('Abort');
+            this.cancelSource = null;
+        }
 
-        for (let source of this.eventSources)
-            source.close(false);
+        if (this.eventSources)
+        {
+            for (let source of this.eventSources)
+                source.close(false);
 
-        this.init();
+            this.eventSources = null;
+        }
+
+        this.axios = null;
+        this.auth = null;
     }
 
     async get(url, params)
@@ -82,7 +98,8 @@ class RequestHandler
         if (params)
             urlObj.search = formatParams(params);
 
-        const source = new TrackedEventSource(this, urlObj.toString());
+        const source = new TrackedEventSource(
+            this, urlObj.toString(), this.getEventSourceConfig());
 
         source.addEventListener('message', event => {
             callback(JSON.parse(event.data));
@@ -95,6 +112,22 @@ class RequestHandler
     unregisterEventSource(source)
     {
         this.eventSources.delete(source);
+    }
+
+    getEventSourceConfig()
+    {
+        if (!this.auth)
+            return null;
+
+        const authData = Buffer
+            .from(`${this.auth.username}:${this.auth.password}`)
+            .toString('base64');
+
+        return {
+            headers: {
+                'Authorization': 'Basic ' + authData,
+            },
+        };
     }
 }
 

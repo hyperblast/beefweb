@@ -44,7 +44,7 @@ class TestContext
             pluginFiles,
         });
 
-        this.baseSettings = Object.freeze({
+        this.playerSettings = Object.freeze({
             'gui_plugin': 'dummy',
             'output_plugin': 'Null output plugin v2',
             'beefweb.allow_remote': 0,
@@ -64,21 +64,36 @@ class TestContext
         this.usePlayer = this.usePlayer.bind(this);
     }
 
-    usePlayer(settings)
+    usePlayer(options)
     {
-        const allSettings = Object.assign({}, this.baseSettings, settings);
+        let playerSettings = this.playerSettings;
+        let axiosConfig = null;
+
+        if (options)
+        {
+            if (options.playerSettings)
+            {
+                playerSettings = Object.assign(
+                    {}, this.playerSettings, options.playerSettings);
+            }
+
+            if (options.axiosConfig)
+                axiosConfig = options.axiosConfig;
+        }
 
         return {
-            before: () => this.beginModule(allSettings),
+            before: () => this.beginModule(playerSettings, axiosConfig),
             after: () => this.endModule(),
-            beforeEach: () => this.beginTest(),
+            beforeEach: () => this.beginTest(axiosConfig),
             afterEach: () => this.endTest(),
         };
     }
 
-    async beginModule(settings)
+    async beginModule(playerSettings, axiosConfig)
     {
-        await this.player.start(settings);
+        await this.player.start(playerSettings);
+
+        this.client.handler.init(axiosConfig);
 
         if (await this.client.waitUntilReady())
             return;
@@ -93,14 +108,15 @@ class TestContext
         await this.player.stop();
     }
 
-    async beginTest()
+    async beginTest(axiosConfig)
     {
+        this.client.handler.init(axiosConfig);
         await this.client.resetState();
     }
 
     endTest()
     {
-        this.client.handler.reset();
+        this.client.handler.shutdown();
     }
 }
 
