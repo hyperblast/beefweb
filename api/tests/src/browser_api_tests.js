@@ -5,7 +5,7 @@ const q = require('qunit');
 const omit = require('lodash/omit');
 const sortBy = require('lodash/sortBy');
 
-const { client, moduleHooks, config, tracks } = require('./test_context');
+const { client, usePlayer, config, tracks } = require('./test_context');
 
 const musicSubdir = path.join(config.musicDir, 'subdir');
 
@@ -17,7 +17,7 @@ function normalizeResult(result)
     );
 }
 
-q.module('browser api', moduleHooks);
+q.module('browser api', usePlayer());
 
 q.test('get roots', async assert =>
 {

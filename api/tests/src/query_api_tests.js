@@ -1,9 +1,9 @@
 'use strict';
 
 const q = require('qunit');
-const { client, moduleHooks, tracks } = require('./test_context');
+const { client, usePlayer, tracks } = require('./test_context');
 
-q.module('query api', moduleHooks);
+q.module('query api', usePlayer());
 
 q.test('query player', async assert =>
 {

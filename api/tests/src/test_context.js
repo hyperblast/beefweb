@@ -25,6 +25,12 @@ class TestContext
         const pluginBuildDir = path.join(
             rootDir, 'server/build', buildType, 'src/plugin_deadbeef');
 
+        const pluginFiles = [
+            'beefweb.so',
+            'ddb_gui_dummy.so',
+            'nullout2.so'
+        ];
+
         this.config = Object.freeze({
             buildType,
             port,
@@ -35,6 +41,15 @@ class TestContext
             webRootDir,
             musicDir,
             pluginBuildDir,
+            pluginFiles,
+        });
+
+        this.baseSettings = Object.freeze({
+            'gui_plugin': 'dummy',
+            'output_plugin': 'Null output plugin v2',
+            'beefweb.allow_remote': 0,
+            'beefweb.music_dirs': musicDir,
+            'beefweb.port': port,
         });
 
         this.client = new TestApiClient(new RequestHandler(serverUrl));
@@ -46,17 +61,24 @@ class TestContext
             t3: path.join(musicDir, 'subdir/track3.flac'),
         });
 
-        this.moduleHooks = Object.freeze({
-            before: this.beginModule.bind(this),
-            after: this.endModule.bind(this),
-            beforeEach: this.beginTest.bind(this),
-            afterEach: this.endTest.bind(this),
-        });
+        this.usePlayer = this.usePlayer.bind(this);
     }
 
-    async beginModule()
+    usePlayer(settings)
     {
-        await this.player.start();
+        const allSettings = Object.assign({}, this.baseSettings, settings);
+
+        return {
+            before: () => this.beginModule(allSettings),
+            after: () => this.endModule(),
+            beforeEach: () => this.beginTest(),
+            afterEach: () => this.endTest(),
+        };
+    }
+
+    async beginModule(settings)
+    {
+        await this.player.start(settings);
 
         if (await this.client.waitUntilReady())
             return;

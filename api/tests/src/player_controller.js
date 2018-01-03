@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 const childProcess = require('child_process');
 const { promisify } = require('util');
-const tmp = require('tmp');
 
 const accessCheck = promisify(fs.access);
 const readFile = promisify(fs.readFile);
@@ -18,8 +17,6 @@ const execFile = promisify(childProcess.execFile);
 const mkdirp = promisify(require('mkdirp'));
 const rimraf = promisify(require('rimraf'));
 const tmpdir = promisify(require('tmp').dir);
-
-const pluginFiles = ['beefweb.so', 'ddb_gui_dummy.so', 'nullout2.so'];
 
 async function getBinaryArch(path)
 {
@@ -38,12 +35,23 @@ class PlayerController
 {
     constructor(config)
     {
-        const { toolsDir, webRootDir, pluginBuildDir, musicDir } = config;
-        this.paths = { toolsDir, webRootDir, pluginBuildDir, musicDir };
-        this.config = config;
+        const {
+            toolsDir,
+            webRootDir,
+            pluginBuildDir,
+            pluginFiles,
+        } = config;
+
+        this.paths = {
+            toolsDir,
+            webRootDir,
+            pluginBuildDir,
+        };
+
+        this.pluginFiles = pluginFiles;
     }
 
-    async start()
+    async start(settings)
     {
         if (!this.pluginArch)
             await this.detectPluginArch();
@@ -54,7 +62,7 @@ class PlayerController
         if (!this.paths.profileDir)
             await this.initProfile();
 
-        await this.writePlayerConfig();
+        await this.writePlayerConfig(settings);
         await this.installPlugins();
         await this.startProcess();
     }
@@ -76,7 +84,7 @@ class PlayerController
     async detectPluginArch()
     {
         this.pluginArch = await getBinaryArch(
-            path.join(this.paths.pluginBuildDir, pluginFiles[0]));
+            path.join(this.paths.pluginBuildDir, this.pluginFiles[0]));
     }
 
     async findPlayerBinary()
@@ -127,33 +135,22 @@ class PlayerController
         });
     }
 
-    async writePlayerConfig()
+    async writePlayerConfig(settings = {})
     {
-        const settings = {
-            'gui_plugin': 'dummy',
-            'output_plugin': 'Null output plugin v2',
-            'beefweb.allow_remote': 0,
-            'beefweb.music_dirs': this.paths.musicDir,
-            'beefweb.port': this.config.port,
-        };
-
-        await mkdirp(this.paths.configDir);
-        await writeFile(this.paths.configFile, this.generatePlayerConfig(settings));
-    }
-
-    generatePlayerConfig(settings)
-    {
-        return Object
+        const data = Object
             .getOwnPropertyNames(settings)
             .map(key => `${key} ${settings[key]}\n`)
             .join('');
+
+        await mkdirp(this.paths.configDir);
+        await writeFile(this.paths.configFile, data);
     }
 
     async installPlugins()
     {
         await mkdirp(this.paths.libDir);
 
-        for (let name of pluginFiles)
+        for (let name of this.pluginFiles)
         {
             await symlink(
                 path.join(this.paths.pluginBuildDir, name),

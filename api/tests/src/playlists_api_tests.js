@@ -2,10 +2,10 @@
 
 const q = require('qunit');
 const isEqual = require('lodash/isEqual');
-const { client, moduleHooks, tracks } = require('./test_context');
+const { client, usePlayer, tracks } = require('./test_context');
 const { waitUntil } = require('./utils');
 
-q.module('playlists api', moduleHooks);
+q.module('playlists api', usePlayer());
 
 q.test('get playlists', async assert =>
 {

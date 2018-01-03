@@ -1,9 +1,9 @@
 'use strict';
 
 const q = require('qunit');
-const { client, moduleHooks } = require('./test_context');
+const { client, usePlayer } = require('./test_context');
 
-q.module('static files', moduleHooks);
+q.module('static files', usePlayer());
 
 function getFile(url, config)
 {
