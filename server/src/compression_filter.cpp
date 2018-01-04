@@ -57,21 +57,10 @@ void CompressionHandler::process()
 
 bool CompressionHandler::shouldUseCompression()
 {
-    auto acceptEncoding = request_->headers.find(HttpHeader::ACCEPT_ENCODING);
-    if (acceptEncoding == request_->headers.end())
-        return false;
+    auto acceptEncodingValue = request_->getHeader(HttpHeader::ACCEPT_ENCODING);
 
-    Tokenizer tokenizer(StringView(acceptEncoding->second), ',');
-
-    auto gzipString = StringView("gzip");
-
-    while (tokenizer.nextToken())
-    {
-        if (gzipString == tokenizer.token())
-            return true;
-    }
-
-    return false;
+    return !acceptEncodingValue.empty()
+        && Tokenizer::hasToken(acceptEncodingValue, "gzip", ',');
 }
 
 bool CompressionHandler::shouldUseCompression(const std::string& contentType)

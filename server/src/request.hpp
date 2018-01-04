@@ -51,6 +51,12 @@ public:
     bool isProcessed() const { return isProcessed_; }
     void setProcessed() { isProcessed_ = true; }
 
+    const std::string& getHeader(const std::string& key)
+    {
+        auto it = headers.find(key);
+        return it != headers.end() ? it->second : emptyHeader_;
+    }
+
     void executeHandler();
 
 private:
@@ -67,6 +73,7 @@ private:
 
     bool isProcessed_;
     bool isHandlerExecuted_;
+    std::string emptyHeader_;
 
     MSRV_NO_COPY_AND_ASSIGN(Request);
 };

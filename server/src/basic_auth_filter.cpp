@@ -35,11 +35,7 @@ void BasicAuthFilter::beginRequest(Request* request)
 
 bool BasicAuthFilter::verifyCredentials(Request* request, const SettingsData& settings)
 {
-    auto authHeader = request->headers.find(HttpHeader::AUTHORIZATION);
-    if (authHeader == request->headers.end())
-        return false;
-
-    const auto& authValue = authHeader->second;
+    const auto& authValue = request->getHeader(HttpHeader::AUTHORIZATION);
     if (!boost::starts_with(authValue, BASIC_AUTH_PREFIX))
         return false;
 

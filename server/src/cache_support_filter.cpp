@@ -16,10 +16,9 @@ void CacheSupportFilter::endRequest(Request* request)
         return;
 
     auto etagValue = calculateETag(fileResponse);
-    auto ifNoneMatchHeader = request->headers.find(HttpHeader::IF_NONE_MATCH);
 
-    if (ifNoneMatchHeader != request->headers.end() &&
-        ifNoneMatchHeader->second == etagValue)
+    auto ifNoneMatchValue = request->getHeader(HttpHeader::IF_NONE_MATCH);
+    if (ifNoneMatchValue == etagValue)
     {
         request->response = Response::custom(HttpStatus::S_304_NOT_MODIFIED);
         return;

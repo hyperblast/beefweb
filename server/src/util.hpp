@@ -62,6 +62,8 @@ public:
     Tokenizer(StringView str, char sep)
         : input_(str), sep_(sep) { }
 
+    static bool hasToken(StringView value, StringView token, char sep);
+
     const StringView& token() const { return token_; }
     const StringView& input() const { return input_; }
 

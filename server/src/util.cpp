@@ -128,4 +128,17 @@ std::string formatString(const char* fmt, ...)
     return std::string(buf);
 }
 
+bool Tokenizer::hasToken(StringView value, StringView token, char sep)
+{
+    Tokenizer tokenizer(value, sep);
+
+    while (tokenizer.nextToken())
+    {
+        if (tokenizer.token() == token)
+            return true;
+    }
+
+    return false;
+}
+
 }
