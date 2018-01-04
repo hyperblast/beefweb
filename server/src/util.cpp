@@ -63,6 +63,19 @@ bool Tokenizer::nextToken()
     return true;
 }
 
+bool Tokenizer::hasToken(StringView value, StringView token, char sep)
+{
+    Tokenizer tokenizer(value, sep);
+
+    while (tokenizer.nextToken())
+    {
+        if (trimWhitespace(tokenizer.token()) == token)
+            return true;
+    }
+
+    return false;
+}
+
 InvalidRequestException::~InvalidRequestException() = default;
 
 static int parseHexDigit(int ch)
@@ -126,19 +139,6 @@ std::string formatString(const char* fmt, ...)
     ::vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
     return std::string(buf);
-}
-
-bool Tokenizer::hasToken(StringView value, StringView token, char sep)
-{
-    Tokenizer tokenizer(value, sep);
-
-    while (tokenizer.nextToken())
-    {
-        if (tokenizer.token() == token)
-            return true;
-    }
-
-    return false;
 }
 
 }
