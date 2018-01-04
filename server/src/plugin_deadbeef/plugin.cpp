@@ -28,14 +28,12 @@ const char PLUGIN_CONFIG_DIALOG[] =
 }
 
 Plugin::Plugin()
+    : ready_(false)
 {
     pluginDir = getModulePath(&pluginDef).parent_path();
 
     player_.reset(new PlayerImpl());
     host_.reset(new Host(player_.get()));
-
-    reloadConfig();
-    host_->reconfigure(settings_);
 }
 
 Plugin::~Plugin()
@@ -93,8 +91,19 @@ void Plugin::disconnect()
 
 void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
 {
-    if (id == DB_EV_CONFIGCHANGED && reloadConfig())
+    switch (id)
+    {
+    case DB_EV_CONFIGCHANGED:
+        if (ready_ && reloadConfig())
+            host_->reconfigure(settings_);
+        break;
+
+    case DB_EV_PLUGINSLOADED:
+        ready_ = true;
+        reloadConfig();
         host_->reconfigure(settings_);
+        break;
+    }
 
     player_->handleMessage(id, ctx, p1, p2);
 }
