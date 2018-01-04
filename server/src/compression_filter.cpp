@@ -140,6 +140,7 @@ CompressionFilter::CompressionFilter()
     contentTypes_.emplace("image/svg+xml");
     contentTypes_.emplace("application/javascript");
     contentTypes_.emplace("text/css");
+    contentTypes_.emplace("text/plain");
 }
 
 CompressionFilter::~CompressionFilter() = default;

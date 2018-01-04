@@ -37,6 +37,7 @@ void ContentTypeMap::addDefaults()
     add("image/svg+xml", "svg");
     add("application/javascript", "js");
     add("text/css", "css");
+    add("text/plain", "txt");
 }
 
 }
