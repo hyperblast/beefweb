@@ -45,6 +45,7 @@ q.test('provide content type', async assert =>
         'file.png': 'image/png',
         'file.jpeg': 'image/jpeg',
         'file.jpg': 'image/jpeg',
+        'file.txt': 'text/plain',
     };
 
     for (let file of Object.getOwnPropertyNames(contentTypes))
