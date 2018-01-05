@@ -1,3 +1,4 @@
+import startsWith from 'lodash/startsWith'
 import isFunction from 'lodash/isFunction'
 
 function formatTimePart(value)
@@ -31,15 +32,13 @@ export function bindHandlers(obj)
 {
     const proto = Object.getPrototypeOf(obj);
 
-    for (let prop in proto)
+    for (let prop of Object.getOwnPropertyNames(proto))
     {
-        if (!proto.hasOwnProperty(prop))
-            continue;
-
-        if (prop.indexOf('handle') !== 0)
+        if (!startsWith(prop, 'handle'))
             continue;
 
         const handler = proto[prop];
+
         if (!isFunction(handler))
             continue;
 

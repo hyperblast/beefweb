@@ -46,6 +46,19 @@ export default class DataSource extends EventEmitter
         this.reinitEventSource();
     }
 
+    createRequest()
+    {
+        const request = {};
+
+        for (let prop of Object.getOwnPropertyNames(this.subscriptions))
+        {
+            request[prop] = true;
+            Object.assign(request, this.subscriptions[prop]);
+        }
+
+        return request;
+    }
+
     reinitEventSource()
     {
         if (!this.isStarted)
@@ -57,17 +70,7 @@ export default class DataSource extends EventEmitter
             this.eventSource = null;
         }
 
-        let request = {};
-
-        for (let prop in this.subscriptions)
-        {
-            if (this.subscriptions.hasOwnProperty(prop))
-            {
-                request[prop] = true;
-                Object.assign(request, this.subscriptions[prop]);
-            }
-        }
-
+        const request = this.createRequest();
         this.eventSource = this.client.queryUpdates(request, this.handleEvent);
     }
 }

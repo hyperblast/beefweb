@@ -1,3 +1,4 @@
+import startsWith from 'lodash/startsWith'
 import SettingsModel from './settings_model'
 
 const settingClassPrefix = 'setting-';
@@ -19,35 +20,33 @@ function makeSettingClass(name, value)
 
 export default class CssSettingsController
 {
-    constructor(model)
+    constructor(settingsModel)
     {
-        this.model = model;
+        this.settingsModel = settingsModel;
     }
 
     start()
     {
-        this.model.on('change', this.handleUpdate.bind(this));
+        this.settingsModel.on('change', this.handleUpdate.bind(this));
         this.handleUpdate();
     }
 
     handleUpdate()
     {
-        var rootElement = document.documentElement;
+        const rootElement = document.documentElement;
 
-        var classNames = rootElement.className
+        const classNames = rootElement.className
             .split(' ')
-            .filter(i => i != '' && i.indexOf(settingClassPrefix) != 0);
+            .filter(i => i !== '' && !startsWith(i, settingClassPrefix));
 
-        var values = this.model.values;
+        const values = this.settingsModel.values;
 
-        for (let key in values)
+        for (let prop of Object.getOwnPropertyNames(values))
         {
-            let value = values[key];
+            let value = values[prop];
 
-            if (values.hasOwnProperty(key) && value !== undefined)
-            {
-                classNames.push(makeSettingClass(key, value));
-            }
+            if (value !== undefined)
+                classNames.push(makeSettingClass(prop, value));
         }
 
         rootElement.className = classNames.join(' ');
