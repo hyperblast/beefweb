@@ -10,14 +10,10 @@ q.test('query player', async assert =>
     await client.addPlaylistItems(0, [tracks.t3]);
 
     await client.play(0, 0);
-    await client.waitForState(s => {
-        return s.playbackState === 'playing';
-    });
+    await client.waitForState('playing');
 
     await client.pause();
-    await client.waitForState(s => {
-        return s.playbackState === 'paused';
-    });
+    await client.waitForState('paused');
 
     const columns = ['%title%'];
     const player = await client.getPlayerState(columns);
@@ -57,14 +53,10 @@ q.test('query all', async assert =>
     await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
 
     await client.play(0, 0);
-    await client.waitForState(s => {
-        return s.playbackState === 'playing';
-    });
+    await client.waitForState('playing');
 
     await client.pause();
-    await client.waitForState(s => {
-        return s.playbackState === 'paused';
-    });
+    await client.waitForState('paused');
 
     await client.addPlaylist({ title: 'My playlist' });
 

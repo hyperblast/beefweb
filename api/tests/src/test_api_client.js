@@ -4,6 +4,25 @@ const { ApiClient } = require('../../client/api_client');
 const EventExpectation = require('./event_expectation');
 const { waitUntil } = require('./utils');
 
+function createStateMatcher(condition)
+{
+    switch (typeof condition)
+    {
+        case 'function':
+            return s => (
+                s.player && condition(s.player)
+            );
+
+        case 'string':
+            return s => (
+                s.player && s.player.playbackState === condition
+            );
+
+        default:
+            throw new TypeError('Invalid player state condition');
+    }
+}
+
 class TestApiClient extends ApiClient
 {
     constructor(handler)
@@ -14,7 +33,7 @@ class TestApiClient extends ApiClient
     async resetState()
     {
         await this.stop();
-        await this.waitForState(s => s.playbackState === 'stopped');
+        await this.waitForState('stopped');
 
         await this.setPlayerState({
             order: 'linear',
@@ -51,7 +70,7 @@ class TestApiClient extends ApiClient
     {
         const expectation = this.expectUpdate(
             { player: true },
-            e => e.player && condition(e.player),
+            createStateMatcher(condition),
             { useFirstEvent: true });
 
         await expectation.ready;
