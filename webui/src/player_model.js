@@ -1,6 +1,7 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import debounce from 'lodash/debounce'
 import clamp from 'lodash/clamp'
+import Timer from './timer'
 import { SwitchParam, PlaybackState, PlaybackOrder, LoopMode } from './api_client'
 
 const initialPlayerInfo = Object.freeze({
@@ -29,12 +30,11 @@ export default class PlayerModel extends EventEmitter
 
         this.client = client;
         this.dataSource = dataSource;
+        this.positionTimer = new Timer(this.updatePosition.bind(this), 500);
 
         Object.assign(this, initialPlayerInfo);
 
-        this.updatePosition = this.updatePosition.bind(this);
         this.defineEvent('change');
-
         this.setVolumeRemote = debounce(value => this.client.setVolumeDb(value), 50);
     }
 
@@ -106,35 +106,26 @@ export default class PlayerModel extends EventEmitter
     {
         Object.assign(this, playerInfo);
 
-        clearInterval(this.positionUpdaterId);
-
-        if (this.playbackState == PlaybackState.playing)
-        {
-            this.lastPositionUpdate = Date.now();
-            this.positionUpdaterId = setInterval(this.updatePosition, 500);
-        }
+        if (this.playbackState === PlaybackState.playing)
+            this.positionTimer.restart();
+        else
+            this.positionTimer.stop();
 
         this.emit('change');
     }
 
-    updatePosition()
+    updatePosition(delta)
     {
-        var now = Date.now();
-        var delta = (now - this.lastPositionUpdate) / 1000;
+        const { position, duration } = this.activeItem;
 
-        this.lastPositionUpdate = now;
+        if (position < 0 || duration < 0)
+            return;
 
-        const position = this.activeItem.position;
-        const duration = this.activeItem.duration;
+        const newPosition = clamp(position + delta, 0, duration);
 
-        if (position >= 0 && duration >= 0)
-        {
-            const newPosition = clamp(position + delta, 0, duration);
+        this.activeItem = Object.assign(
+            {}, this.activeItem, { position: newPosition });
 
-            this.activeItem = Object.assign(
-                {}, this.activeItem, { position: newPosition });
-
-            this.emit('change');
-        }
+        this.emit('change');
     }
 }
