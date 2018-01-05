@@ -5,7 +5,7 @@
 namespace msrv {
 namespace fnv_hash_tests {
 
-TEST_CASE("FnvHash")
+TEST_CASE("fnv_hash")
 {
     SECTION("addBytes")
     {

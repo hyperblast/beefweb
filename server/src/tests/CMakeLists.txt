@@ -3,7 +3,7 @@ include_directories(${CATCH_INCLUDE_DIR})
 
 set(
     TEST_SOURCES
-    run_tests.cpp
+    main.cpp
     base64_tests.cpp
     fnv_hash_tests.cpp
     router_tests.cpp
@@ -11,14 +11,14 @@ set(
 )
 
 add_executable(
-    run_tests
+    server_tests
     ${TEST_SOURCES}
     $<TARGET_OBJECTS:core>
     $<TARGET_OBJECTS:server>
 )
 
 target_link_libraries(
-    run_tests
+    server_tests
     $<TARGET_PROPERTY:core,INTERFACE_LINK_LIBRARIES>
     $<TARGET_PROPERTY:server,INTERFACE_LINK_LIBRARIES>
 )
