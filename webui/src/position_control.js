@@ -11,7 +11,7 @@ export default class PositionControl extends Component
     {
         super(props);
 
-        this.bindEvents({ playerModel: 'change' });
+        this.updateOn({ playerModel: 'change' });
         this.state = this.getStateFromModel();
         this.handleClick = this.handleClick.bind(this);
     }

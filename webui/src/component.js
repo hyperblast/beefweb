@@ -31,10 +31,10 @@ export default class Component extends React.PureComponent
         this.handleModelUpdate = this.handleModelUpdate.bind(this);
     }
 
-    bindEvents(bindings)
+    updateOn(bindings)
     {
         if (this[eventBindings])
-            throw Error('Events are already bound');
+            throw Error('Event bindings are already specified');
 
         this[eventBindings] = Object.freeze(bindings);
     }

@@ -16,7 +16,7 @@ class VolumeControlPanel extends Component
     {
         super(props);
 
-        this.bindEvents({ playerModel: 'change' });
+        this.updateOn({ playerModel: 'change' });
         this.state = this.getStateFromModel();
         bindHandlers(this);
     }
@@ -85,7 +85,7 @@ export default class VolumeControl extends Component
     {
         super(props);
 
-        this.bindEvents({ playerModel: 'change' });
+        this.updateOn({ playerModel: 'change' });
 
         this.state = Object.assign(this.getStateFromModel(), {
            panelOpen: false

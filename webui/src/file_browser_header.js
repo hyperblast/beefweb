@@ -12,7 +12,7 @@ export default class FileBrowserHeader extends Component
     {
         super(props);
 
-        this.bindEvents({ fileBrowserModel: 'change' });
+        this.updateOn({ fileBrowserModel: 'change' });
         this.state = this.getStateFromModel();
         this.handleAddClick = this.handleAddClick.bind(this);
     }

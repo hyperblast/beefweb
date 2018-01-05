@@ -11,7 +11,7 @@ export default class ViewSwitcher extends Component
     {
         super(props);
 
-        this.bindEvents({ appModel: 'currentViewChange' });
+        this.updateOn({ appModel: 'currentViewChange' });
         this.state = this.getStateFromModel();
     }
 

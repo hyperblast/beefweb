@@ -17,7 +17,7 @@ export default class PlaybackControl extends Component
             audioMenuOpen: false
         });
 
-        this.bindEvents({ playerModel: 'change' });
+        this.updateOn({ playerModel: 'change' });
 
         bindHandlers(this);
 

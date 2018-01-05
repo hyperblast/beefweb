@@ -17,7 +17,7 @@ export default class FileBrowser extends Component
     {
         super(props);
 
-        this.bindEvents({ fileBrowserModel: 'change' });
+        this.updateOn({ fileBrowserModel: 'change' });
         this.state = this.getStateFromModel();
         this.handleClick = this.handleClick.bind(this);
     }

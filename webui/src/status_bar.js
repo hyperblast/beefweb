@@ -18,7 +18,7 @@ export default class StatusBar extends Component
     {
         super(props);
 
-        this.bindEvents({
+        this.updateOn({
             playerModel: 'change',
             playlistModel: 'playlistsChange',
         });

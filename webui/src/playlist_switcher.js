@@ -52,7 +52,7 @@ export default class PlaylistSwitcher extends Component
     {
         super(props);
 
-        this.bindEvents({
+        this.updateOn({
             playlistModel: 'playlistsChange',
             settingsModel: 'touchModeChange',
         });

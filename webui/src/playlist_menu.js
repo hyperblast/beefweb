@@ -12,7 +12,7 @@ export default class PlaylistMenu extends Component
     {
         super(props);
 
-        this.bindEvents({ playlistModel: 'playlistsChange' });
+        this.updateOn({ playlistModel: 'playlistsChange' });
 
         this.state = Object.assign(this.getStateFromModel(), {
             menuOpen: false,

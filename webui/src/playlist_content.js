@@ -10,7 +10,7 @@ export default class PlaylistContent extends Component
     {
         super(props);
 
-        this.bindEvents({ playlistModel: 'itemsChange' });
+        this.updateOn({ playlistModel: 'itemsChange' });
         this.state = this.getStateFromModel();
         this.handleClick = index => this.props.playlistModel.activateItem(index);
     }
