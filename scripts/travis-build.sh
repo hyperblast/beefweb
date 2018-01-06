@@ -4,9 +4,27 @@ set -e
 
 cd "$(dirname $0)/.."
 
+case "$TARGET_ARCH" in
+    x86)
+        export CFLAGS=-m32
+        export CXXFLAGS=-m32
+        ;;
+
+    x86_64)
+        export CFLAGS=
+        export CXXFLAGS=
+        ;;
+
+    *)
+        echo "Unsupported target arch: $TARGET_ARCH"
+        exit 1
+        ;;
+esac
+
+
 upload_artifacts=
 
-if [ "$CC" = "gcc" ]; then
+if [ "$CC" = gcc ]; then
     export CC=gcc-6
     export CXX=g++-6
     upload_artifacts=1
