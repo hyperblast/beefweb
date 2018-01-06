@@ -16,6 +16,10 @@ endif()
 add_linker_flag(-Wl,--no-undefined)
 add_linker_flag(-Wl,--as-needed)
 
+if(ENABLE_STATIC_STDLIB)
+    add_linker_flag(-static-libstdc++)
+endif()
+
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Nljson REQUIRED)
 find_package(ZLIB REQUIRED)

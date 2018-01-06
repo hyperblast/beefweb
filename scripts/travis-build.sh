@@ -29,7 +29,7 @@ echo
 echo '=== Building everything ==='
 echo
 
-scripts/build.sh --all --release --tests --verbose --werror
+scripts/build.sh --all --release --tests --verbose --werror --static-stdlib
 
 echo
 echo '=== Running server tests ==='

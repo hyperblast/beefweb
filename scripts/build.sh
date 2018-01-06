@@ -6,15 +6,16 @@ source "$(dirname $0)/config.sh"
 
 usage="Usage: $(basename $0) options
 Options:
-  --debug     build in debug mode
-  --release   build in release mode
-  --server    build server
-  --webui     build webui
-  --pkg       build binary package
-  --all       build server, webui and binary package
-  --tests     also build corresponding tests
-  --verbose   generate more debug messages
-  --werror    treat warnings as errors
+  --debug           build in debug mode
+  --release         build in release mode
+  --server          build server
+  --webui           build webui
+  --pkg             build binary package
+  --all             build server, webui and binary package
+  --tests           also build corresponding tests
+  --verbose         generate more debug messages
+  --werror          treat warnings as errors
+  --static-stdlib   build server with static libstdc++
 
 Build mode option (--debug or --release) is required.
 At least one build target (--server, --ui, --pkg or --all) is required.
@@ -28,6 +29,7 @@ enable_server=
 enable_webui=
 enable_pkg=
 enable_werror=
+enable_static_stdlib=
 
 for arg in "$@"; do
     case "$arg" in
@@ -71,6 +73,10 @@ for arg in "$@"; do
 
         --werror)
             enable_werror=1
+            ;;
+
+        --static-stdlib)
+            enable_static_stdlib=1
             ;;
 
         --help)
@@ -148,6 +154,12 @@ function build_server()
         server_enable_werror=OFF
     fi
 
+    if [ -n "$enable_static_stdlib" ]; then
+        server_enable_static_stdlib=ON
+    else
+        server_enable_static_stdlib=OFF
+    fi
+
     rm -rf $server_build_dir
     mkdir -p $server_build_dir
     cd $server_build_dir
@@ -156,6 +168,7 @@ function build_server()
         -DCMAKE_BUILD_TYPE=$server_build_type \
         -DENABLE_TESTS=$server_enable_tests \
         -DENABLE_WERROR=$server_enable_werror \
+        -DENABLE_STATIC_STDLIB=$server_enable_static_stdlib \
         $server_src_dir
 
     if ! cmake --build . ; then
