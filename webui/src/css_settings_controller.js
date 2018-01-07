@@ -41,7 +41,7 @@ export default class CssSettingsController
 
         const values = this.settingsModel.values;
 
-        for (let prop of Object.getOwnPropertyNames(values))
+        for (let prop of Object.keys(values))
         {
             let value = values[prop];
 

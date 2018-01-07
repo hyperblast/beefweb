@@ -57,7 +57,7 @@ q.test('provide content type', async assert =>
         'file.txt': 'text/plain',
     };
 
-    for (let file of Object.getOwnPropertyNames(contentTypes))
+    for (let file of Object.keys(contentTypes))
     {
         const result = await getFile(file);
         assert.equal(result.headers['content-type'], contentTypes[file]);

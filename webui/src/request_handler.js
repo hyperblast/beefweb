@@ -3,7 +3,7 @@ import startsWith from 'lodash/startsWith'
 function formatParams(params)
 {
     return Object
-        .getOwnPropertyNames(params)
+        .keys(params)
         .map(p => encodeURIComponent(p) + '=' + encodeURIComponent(params[p]))
         .join('&');
 }

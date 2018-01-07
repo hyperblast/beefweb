@@ -152,7 +152,7 @@ export default class SettingsModel extends EventEmitter
         const newValues = JSON.parse(data);
         const pendingEvents = [];
 
-        for (let key of Object.getOwnPropertyNames(newValues))
+        for (let key of Object.keys(newValues))
         {
             const metadata = this.metadata[key];
 

@@ -6,7 +6,7 @@ function forEachEvent(component, callback)
 {
     const bindings = component[eventBindings];
 
-    for (let modelKey of Object.getOwnPropertyNames(bindings))
+    for (let modelKey of Object.keys(bindings))
     {
         const event = bindings[modelKey];
 

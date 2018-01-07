@@ -37,7 +37,7 @@ function skipUndefined(params)
 {
     const result = {};
 
-    for (let key of Object.getOwnPropertyNames(params))
+    for (let key of Object.keys(params))
     {
         const value = params[key];
 

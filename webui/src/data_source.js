@@ -50,7 +50,7 @@ export default class DataSource extends EventEmitter
     {
         const request = {};
 
-        for (let prop of Object.getOwnPropertyNames(this.subscriptions))
+        for (let prop of Object.keys(this.subscriptions))
         {
             request[prop] = true;
             Object.assign(request, this.subscriptions[prop]);

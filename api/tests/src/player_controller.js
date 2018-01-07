@@ -138,7 +138,7 @@ class PlayerController
     async writePlayerConfig(settings = {})
     {
         const data = Object
-            .getOwnPropertyNames(settings)
+            .keys(settings)
             .map(key => `${key} ${settings[key]}\n`)
             .join('');
 
