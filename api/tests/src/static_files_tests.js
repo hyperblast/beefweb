@@ -80,6 +80,8 @@ q.test('etag support', async assert =>
     });
 
     assert.equal(cachedResult.status, 304);
+    assert.equal(cachedResult.headers['etag'], etag);
+    assert.equal(cachedResult.headers['cache-control'], cacheControl);
 });
 
 q.test('enable compression', async assert =>

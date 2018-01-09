@@ -5,6 +5,7 @@
 
 namespace msrv {
 
+class Response;
 class FileResponse;
 
 class CacheSupportFilter : public RequestFilter
@@ -17,7 +18,9 @@ protected:
     virtual void endRequest(Request* request) override;
 
 private:
-    std::string calculateETag(FileResponse* response);
+    static std::string calculateETag(FileResponse* response);
+
+    void setCacheHeaders(Response* reponse, const std::string& etag);
 };
 
 }

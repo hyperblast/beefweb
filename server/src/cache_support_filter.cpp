@@ -20,12 +20,20 @@ void CacheSupportFilter::endRequest(Request* request)
     auto ifNoneMatchValue = request->getHeader(HttpHeader::IF_NONE_MATCH);
     if (ifNoneMatchValue == etagValue)
     {
-        request->response = Response::custom(HttpStatus::S_304_NOT_MODIFIED);
-        return;
+        auto notModifiedResponse = Response::custom(HttpStatus::S_304_NOT_MODIFIED);
+        setCacheHeaders(notModifiedResponse.get(), etagValue);
+        request->response = std::move(notModifiedResponse);
     }
+    else
+    {
+        setCacheHeaders(fileResponse, etagValue);
+    }
+}
 
-    fileResponse->headers[HttpHeader::CACHE_CONTROL] = "max-age=0, must-revalidate";
-    fileResponse->headers[HttpHeader::ETAG] = etagValue;
+void CacheSupportFilter::setCacheHeaders(Response* reponse, const std::string& etag)
+{
+    reponse->headers[HttpHeader::CACHE_CONTROL] = "max-age=0, must-revalidate";
+    reponse->headers[HttpHeader::ETAG] = etag;
 }
 
 std::string CacheSupportFilter::calculateETag(FileResponse* response)
