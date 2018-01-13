@@ -47,7 +47,8 @@ echo
 echo '=== Building everything ==='
 echo
 
-scripts/build.sh --all --release --tests --verbose --werror --static-stdlib
+scripts/build.sh --all --release --tests --verbose \
+    -DENABLE_WERROR=ON -DENABLE_STATIC_STDLIB=ON
 
 echo
 echo '=== Running server tests ==='

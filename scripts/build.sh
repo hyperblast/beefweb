@@ -14,8 +14,7 @@ Options:
   --all             build server, webui and binary package
   --tests           also build corresponding tests
   --verbose         generate more debug messages
-  --werror          treat warnings as errors
-  --static-stdlib   build server with static libstdc++
+  -DKEY=VALUE       set cmake option when building server
 
 Build mode option (--debug or --release) is required.
 At least one build target (--server, --ui, --pkg or --all) is required.
@@ -29,8 +28,7 @@ enable_server=OFF
 enable_webui=OFF
 enable_pkg=OFF
 enable_tests=OFF
-enable_werror=OFF
-enable_static_stdlib=OFF
+cmake_options=
 
 for arg in "$@"; do
     case "$arg" in
@@ -74,12 +72,8 @@ for arg in "$@"; do
             verbose=ON
             ;;
 
-        --werror)
-            enable_werror=ON
-            ;;
-
-        --static-stdlib)
-            enable_static_stdlib=ON
+        -D*)
+            cmake_options="$cmake_options $arg"
             ;;
 
         --help)
@@ -146,8 +140,7 @@ function build_server()
     cmake \
         -DCMAKE_BUILD_TYPE=$build_type_cmake \
         -DENABLE_TESTS=$enable_tests \
-        -DENABLE_WERROR=$enable_werror \
-        -DENABLE_STATIC_STDLIB=$enable_static_stdlib \
+        $cmake_options \
         $server_src_dir
 
     if ! cmake --build . ; then
