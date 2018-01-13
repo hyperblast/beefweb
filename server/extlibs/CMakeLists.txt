@@ -1,3 +1,5 @@
+include(Utils)
+
 set(EXTLIB_CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cache)
 set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply-patches.sh)
 
@@ -9,15 +11,29 @@ foreach(BUILD_TYPE DEBUG RELEASE MINSIZEREL RELWITHDEBINFO)
     set(EXTLIB_CXX_FLAGS "${EXTLIB_CXX_FLAGS} $<$<CONFIG:${BUILD_TYPE}>:${CMAKE_CXX_FLAGS_${BUILD_TYPE}}>")
 endforeach()
 
-add_subdirectory(boost)
-add_subdirectory(libevent)
-add_subdirectory(libevhtp)
-add_subdirectory(nljson)
+option_dependency_check(ENABLE_STATIC_STDLIB ENABLE_LOCAL_BOOST)
+option_dependency_check(ENABLE_LOCAL_LIBEVENT ENABLE_LOCAL_LIBEVHTP)
 
-if(ENABLE_PLUGIN_DEADBEEF)
+if(ENABLE_LOCAL_BOOST)
+    add_subdirectory(boost)
+endif()
+
+if(ENABLE_LOCAL_LIBEVENT)
+    add_subdirectory(libevent)
+endif()
+
+if(ENABLE_LOCAL_LIBEVHTP)
+    add_subdirectory(libevhtp)
+endif()
+
+if(ENABLE_LOCAL_NLJSON)
+    add_subdirectory(nljson)
+endif()
+
+if(ENABLE_LOCAL_DEADBEEF)
     add_subdirectory(deadbeef)
 endif()
 
-if(ENABLE_TESTS)
+if(ENABLE_LOCAL_CATCH)
     add_subdirectory(catch)
 endif()

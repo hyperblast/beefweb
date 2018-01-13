@@ -1,4 +1,5 @@
 include(CheckCXXCompilerFlag)
+include(CMakeDependentOption)
 
 function(add_cxx_compiler_flag FLAG)
     string(MD5 CHECK_VAR "${FLAG}")
@@ -21,3 +22,41 @@ macro(add_linker_flag FLAG)
     set(CMAKE_SHARED_LINKER_FLAGS   "${CMAKE_SHARED_LINKER_FLAGS} ${FLAG}")
     set(CMAKE_MODULE_LINKER_FLAGS   "${CMAKE_MODULE_LINKER_FLAGS} ${FLAG}")
 endmacro()
+
+function(local_library_option NAME OPT COND)
+    set(DESC "Build with local ${NAME}")
+
+    if(COND)
+        cmake_dependent_option(${OPT} "${DESC}" ${ENABLE_LOCAL_LIBS} "${COND}" OFF)
+    else()
+        option(${OPT} "${DESC}" ${ENABLE_LOCAL_LIBS})
+    endif()
+
+    if(${OPT})
+        set(MODULE_DIR "${CUSTOM_MODULE_DIR}/${NAME}/local")
+    else()
+        set(MODULE_DIR "${CUSTOM_MODULE_DIR}/${NAME}/system")
+    endif()
+
+    if(EXISTS "${MODULE_DIR}")
+        set(CMAKE_MODULE_PATH "${MODULE_DIR};${CMAKE_MODULE_PATH}" PARENT_SCOPE)
+    endif()
+endfunction()
+
+function(option_dependency_check OPT1 OPT2)
+    if(${OPT1})
+        if(NOT ${OPT2})
+            message(SEND_ERROR "Option ${OPT1} requires option ${OPT2}")
+        endif()
+    endif()
+endfunction()
+
+function(print_options)
+    get_cmake_property(NAMES VARIABLES)
+
+    foreach(NAME ${NAMES})
+        if(NAME MATCHES "^ENABLE_")
+            message(STATUS "Option ${NAME} is ${${NAME}}")
+        endif()
+    endforeach()
+endfunction()

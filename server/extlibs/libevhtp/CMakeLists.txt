@@ -1,11 +1,17 @@
 include(ExternalProject)
 
+set(DEPENDS "")
+
+if(ENABLE_LOCAL_LIBEVENT)
+    set(DEPENDS "ext_libevent")
+endif()
+
 ExternalProject_Add(
     ext_libevhtp
     PREFIX
         ${EXTLIB_INSTALL_DIR}
     DEPENDS
-        ext_libevent
+        ${DEPENDS}
     URL
         https://github.com/criticalstack/libevhtp/archive/1.2.11n.tar.gz
     URL_HASH
