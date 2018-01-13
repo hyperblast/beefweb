@@ -2,7 +2,7 @@
 
 #include "http.hpp"
 #include "json.hpp"
-#include "util.hpp"
+#include "core_types.hpp"
 #include "parsing.hpp"
 
 #include <memory>

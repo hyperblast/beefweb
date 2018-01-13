@@ -2,59 +2,14 @@
 
 #include "defines.hpp"
 
-#include <stdint.h>
-#include <string.h>
-
-#include <stdexcept>
-#include <vector>
 #include <string>
 #include <sstream>
-#include <memory>
 
 #include <boost/utility/string_view.hpp>
 
 namespace msrv {
 
 using StringView = boost::string_view;
-
-enum class Switch
-{
-    FALSE,
-    TRUE,
-    TOGGLE
-};
-
-struct Range
-{
-    Range() = default;
-
-    Range(int32_t offsetVal, int32_t countVal = 1)
-        : offset(offsetVal), count(countVal) { }
-
-    int32_t offset;
-    int32_t count;
-};
-
-class InvalidRequestException : public std::runtime_error
-{
-public:
-    InvalidRequestException()
-        : std::runtime_error("invalid request") { }
-
-    InvalidRequestException(const std::string& str)
-        : std::runtime_error(str) { }
-
-    ~InvalidRequestException();
-};
-
-template<typename T>
-struct MallocDeleter
-{
-    void operator()(T* ptr) { ::free(ptr); }
-};
-
-template<typename T>
-using MallocPtr = std::unique_ptr<T, MallocDeleter<T>>;
 
 class Tokenizer
 {
@@ -78,7 +33,7 @@ private:
 template<typename T>
 std::string toString(const T& value)
 {
-    std::stringstream stream;
+    std::ostringstream stream;
     stream << value;
     return stream.str();
 }

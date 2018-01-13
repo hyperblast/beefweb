@@ -9,7 +9,6 @@
 #include "../settings.hpp"
 #include "../system.hpp"
 #include "../file_system.hpp"
-#include "../util.hpp"
 
 #include <assert.h>
 #include <stdio.h>

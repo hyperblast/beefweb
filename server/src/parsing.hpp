@@ -1,7 +1,8 @@
 #pragma once
 
-#include "util.hpp"
+#include "string_utils.hpp"
 
+#include <vector>
 #include <boost/lexical_cast/try_lexical_convert.hpp>
 
 namespace msrv {

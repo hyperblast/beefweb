@@ -2,7 +2,6 @@
 
 #include "../defines.hpp"
 #include "../system.hpp"
-#include "../util.hpp"
 #include "../work_queue.hpp"
 
 #include <functional>

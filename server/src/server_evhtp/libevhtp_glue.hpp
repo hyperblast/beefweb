@@ -3,7 +3,7 @@
 #include "libevent_glue.hpp"
 
 #include "../log.hpp"
-#include "../util.hpp"
+#include "../string_utils.hpp"
 
 #include <stdint.h>
 

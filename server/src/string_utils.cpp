@@ -1,4 +1,4 @@
-#include "util.hpp"
+#include "string_utils.hpp"
 
 #include <stdarg.h>
 
@@ -75,8 +75,6 @@ bool Tokenizer::hasToken(StringView value, StringView token, char sep)
 
     return false;
 }
-
-InvalidRequestException::~InvalidRequestException() = default;
 
 static int parseHexDigit(int ch)
 {

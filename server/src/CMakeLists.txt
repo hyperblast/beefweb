@@ -40,6 +40,9 @@ set(
     cache_support_filter.cpp cache_support_filter.hpp
     compression_filter.cpp compression_filter.hpp
     content_type_map.cpp content_type_map.hpp
+    core_types.cpp core_types.hpp
+    core_types_json.cpp core_types_json.hpp
+    core_types_parsers.cpp core_types_parsers.hpp
     controller.hpp
     defines.hpp
     file_system.cpp file_system.hpp
@@ -65,10 +68,8 @@ set(
     server.cpp server.hpp
     settings.cpp settings.hpp
     static_controller.cpp static_controller.hpp
+    string_utils.cpp string_utils.hpp
     system.cpp system.hpp
-    util.cpp util.hpp
-    util_json.cpp util_json.hpp
-    util_parsers.cpp util_parsers.hpp
     work_queue.cpp work_queue.hpp
 )
 

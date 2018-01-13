@@ -1,7 +1,7 @@
 #include "compression_filter.hpp"
 #include "request.hpp"
 #include "response.hpp"
-#include "util.hpp"
+#include "core_types.hpp"
 #include "gzip.hpp"
 
 #include <stddef.h>
