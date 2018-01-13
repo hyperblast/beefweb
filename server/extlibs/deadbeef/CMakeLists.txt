@@ -23,8 +23,8 @@ ExternalProject_Add(
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
             <SOURCE_DIR>/plugins/artwork/artwork.h
-            <INSTALL_DIR>/include/deadbeef/artwork.h        
+            <INSTALL_DIR>/include/deadbeef/artwork.h
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 0 LOG_BUILD 0 LOG_INSTALL 1
 )
 
-add_dependencies(extlibs ext_deadbeef)
+add_dependencies(ext_all ext_deadbeef)

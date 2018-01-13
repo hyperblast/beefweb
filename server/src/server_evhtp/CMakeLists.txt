@@ -21,4 +21,4 @@ set_target_properties(
     "${LIBEVHTP_LIBRARIES};${LIBEVENT_PTHREADS_LIBRARIES};${LIBEVENT_LIBRARIES}"
 )
 
-add_dependencies(server extlibs)
+add_dependencies(server ext_all)

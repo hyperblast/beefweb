@@ -30,7 +30,7 @@ set(COMMON_CXX_FLAGS  "${COMMON_C_FLAGS}")
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_CXX_FLAGS}")
 
-add_custom_target(extlibs)
+add_custom_target(ext_all)
 
 add_subdirectory(extlibs)
 add_subdirectory(src)

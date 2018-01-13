@@ -21,4 +21,4 @@ ExternalProject_Add(
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
 )
 
-add_dependencies(extlibs ext_libevent)
+add_dependencies(ext_all ext_libevent)

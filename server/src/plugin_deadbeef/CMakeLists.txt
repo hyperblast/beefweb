@@ -37,7 +37,7 @@ set_target_properties(
     LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_SOURCE_DIR}/symbols"
 )
 
-add_dependencies(plugin_deadbeef extlibs)
+add_dependencies(plugin_deadbeef ext_all)
 
 if(ENABLE_TESTS)
     add_library(
@@ -51,7 +51,7 @@ if(ENABLE_TESTS)
         OUTPUT_NAME "ddb_gui_dummy"
     )
 
-    add_dependencies(plugin_deadbeef_dummy_gui extlibs)
+    add_dependencies(plugin_deadbeef_dummy_gui ext_all)
 
     add_library(
         plugin_deadbeef_nullout2 MODULE
@@ -64,5 +64,5 @@ if(ENABLE_TESTS)
         OUTPUT_NAME "nullout2"
     )
 
-    add_dependencies(plugin_deadbeef_nullout2 extlibs)
+    add_dependencies(plugin_deadbeef_nullout2 ext_all)
 endif()
