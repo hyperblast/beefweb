@@ -33,9 +33,9 @@ function(local_library_option NAME OPT COND)
     endif()
 
     if(${OPT})
-        set(MODULE_DIR "${CUSTOM_MODULE_DIR}/${NAME}/local")
+        set(MODULE_DIR "${EXTLIB_SOURCE_DIR}/${NAME}/local")
     else()
-        set(MODULE_DIR "${CUSTOM_MODULE_DIR}/${NAME}/system")
+        set(MODULE_DIR "${EXTLIB_SOURCE_DIR}/${NAME}/system")
     endif()
 
     if(EXISTS "${MODULE_DIR}")
