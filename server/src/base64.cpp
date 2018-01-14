@@ -1,7 +1,7 @@
 #include "base64.hpp"
 
 extern "C" {
-#include "b64_cdecode.h"
+#include <b64/cdecode.h>
 }
 
 namespace msrv {

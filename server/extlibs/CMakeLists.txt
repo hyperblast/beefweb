@@ -18,6 +18,10 @@ if(ENABLE_LOCAL_BOOST)
     add_subdirectory(boost)
 endif()
 
+if(ENABLE_LOCAL_LIBB64)
+    add_subdirectory(libb64)
+endif()
+
 if(ENABLE_LOCAL_LIBEVENT)
     add_subdirectory(libevent)
 endif()

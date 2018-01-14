@@ -21,11 +21,13 @@ if(ENABLE_STATIC_STDLIB)
 endif()
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
+find_package(Libb64 REQUIRED)
 find_package(Nljson REQUIRED)
 find_package(ZLIB REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
+    ${LIBB64_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
 )
@@ -33,7 +35,6 @@ include_directories(
 set(
     CORE_SOURCES
     artwork_controller.cpp artwork_controller.hpp
-    b64_cdecode.c b64_cdecode.h
     base64.cpp base64.hpp
     basic_auth_filter.cpp basic_auth_filter.hpp
     browser_controller.cpp browser_controller.hpp
@@ -77,7 +78,8 @@ add_library(core OBJECT ${CORE_SOURCES})
 
 set_target_properties(
     core PROPERTIES
-    INTERFACE_LINK_LIBRARIES "dl;rt;m;${Boost_LIBRARIES};${ZLIB_LIBRARIES}"
+    INTERFACE_LINK_LIBRARIES
+    "dl;rt;m;${Boost_LIBRARIES};${LIBB64_LIBRARIES};${ZLIB_LIBRARIES}"
 )
 
 add_dependencies(core ext_all)

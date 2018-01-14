@@ -1,0 +1,15 @@
+Author: William McCall
+Description: Launchpad bug #1501176 reported by William McCall on 2015-09-30
+Index: libb64-1.2/src/cdecode.c
+===================================================================
+--- libb64-1.2.orig/src/cdecode.c	2017-09-07 14:43:43.489227609 +0200
++++ libb64-1.2/src/cdecode.c	2017-09-07 14:43:43.481227249 +0200
+@@ -13,7 +13,7 @@
+ 	static const char decoding_size = sizeof(decoding);
+ 	if (value_in < 43) return -1;
+ 	value_in -= 43;
+-	if (value_in > decoding_size) return -1;
++	if (value_in >= decoding_size) return -1;
+ 	return decoding[(int)value_in];
+ }
+ 
