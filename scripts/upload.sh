@@ -18,5 +18,5 @@ curl_args="--http1.1 --anyauth --user $UPLOAD_CREDS -o /dev/null"
 echo "Creating artifacts directory: $upload_url"
 curl -X MKCOL "$upload_url" $curl_args || true
 
-echo "Uploading artifacts: $pkg_file"
+echo "Uploading artifact: $pkg_file"
 curl -T "$pkg_file" "$upload_url" $curl_args
