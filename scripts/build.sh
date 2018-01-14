@@ -191,6 +191,11 @@ function build_pkg()
     cp -v -t . $server_plugin_file
     cp -v -t $webui_root $webui_build_dir/*.*
 
+    if [ "$build_type" = release ]; then
+        echo "Stripping release binary: $plugin_file"
+        strip -s $plugin_file
+    fi
+
     tar czf $pkg_build_dir/$pkg_name-$pkg_version-$git_rev-$server_arch.tar.gz *
 
     rm -rf $pkg_tmp_dir
