@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.6)
 
 project(beefweb)
 
-set(PROJECT_ID beefweb)
 set(CMAKE_MODULE_PATH   "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(EXTLIB_SOURCE_DIR   "${CMAKE_CURRENT_SOURCE_DIR}/extlibs")
 set(EXTLIB_INSTALL_DIR  "${CMAKE_CURRENT_BINARY_DIR}/extlibs/root")

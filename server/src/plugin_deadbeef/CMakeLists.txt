@@ -1,3 +1,5 @@
+include(ProjectInfo)
+
 find_package(Deadbeef REQUIRED)
 
 include_directories(
@@ -33,7 +35,7 @@ target_link_libraries(
 set_target_properties(
     plugin_deadbeef PROPERTIES
     PREFIX ""
-    OUTPUT_NAME "${PROJECT_ID}"
+    OUTPUT_NAME "${PLUGIN_DEADBEEF_FILE}"
     LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_SOURCE_DIR}/symbols"
 )
 
