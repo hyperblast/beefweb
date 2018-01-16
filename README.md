@@ -13,6 +13,23 @@ Web interface and HTTP API plugin for [DeaDBeeF player](http://deadbeef.sourcefo
 - Responsive layouts with support for screen sizes down to 320px
 - The same HTTP/JSON API is available for controlling player from your application
 
+### Downloads
+
+There are no official releases yet.
+However development builds should be stable enought for general use. You could [download them here](https://hyperblast.org/beefweb/builds).
+Choose latest available date and pick the file specific to your CPU architecture.
+
+### How to install
+Unpack `beefweb-*.tar.gz` to `$HOME/.local/lib/deadbeef`.
+
+### How to use
+Point your browser to `http://localhost:8880` and enjoy your web interface.
+
+If you've enabled remote connections on plugin configuration screen you'll be able to connect from remote machines as well.
+
+To allow browsing and adding files via web interface
+specify music directories in plugin configuration screen (multiple entries are separated with `;`).
+
 ### Screenshots
 
 ![Main web interface](https://user-images.githubusercontent.com/19171756/34213888-b205be72-e5b1-11e7-9f77-5657979d0587.png)
@@ -31,21 +48,6 @@ The following command will build server, ui and `.tar.gz` package:
 Get `beefweb-*.tar.gz` from `build/release` directory.
 
 You could also build debug version by switching `--release` to `--debug`.
-
-### How to install
-Unpack `beefweb-*.tar.gz` to `$HOME/.local/lib/deadbeef`.
-
-### How to use
-Point your browser to `http://localhost:8880` and enjoy your web interface.
-
-If you've enabled remote connections on plugin configuration screen you'll be able to connect from remote machines as well.
-
-To allow browsing and adding files via web interface
-specify music directories in plugin configuration screen (multiple entries are separated with `;`).
-
-### Development builds
-
-Development builds are [available](https://hyperblast.org/beefweb/builds).
 
 ### HTTP API
 
