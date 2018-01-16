@@ -15,9 +15,7 @@ patches_dir="$src_dir/patches"
 files_dir="$src_dir/files"
 
 if [ -d "$patches_dir" ]; then
-    patch_files="$patches_dir/*.patch"
-
-    for patch_file in $patch_files; do
+    for patch_file in $patches_dir/*.patch; do
         echo "applying $(basename $patch_file)"
         patch -p1 < "$patch_file"
     done
