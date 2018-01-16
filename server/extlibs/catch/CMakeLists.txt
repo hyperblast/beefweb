@@ -11,10 +11,8 @@ ExternalProject_Add(
     DOWNLOAD_DIR
         ${EXTLIB_CACHE_DIR}/catch
     DOWNLOAD_NO_EXTRACT 1
-    CONFIGURE_COMMAND
-        ${CMAKE_COMMAND} -E echo "No configure required"
-    BUILD_COMMAND
-        ${CMAKE_COMMAND} -E echo "No build required"
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
     INSTALL_COMMAND
         ${CMAKE_COMMAND} -E copy_if_different <DOWNLOADED_FILE> <INSTALL_DIR>/include/catch.hpp
     LOG_DOWNLOAD 0 LOG_UPDATE 0 LOG_CONFIGURE 0 LOG_BUILD 0 LOG_INSTALL 1

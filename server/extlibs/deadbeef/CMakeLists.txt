@@ -12,10 +12,8 @@ ExternalProject_Add(
         ${EXTLIB_CACHE_DIR}/deadbeef
     PATCH_COMMAND
         ${EXTLIB_PATCHER} deadbeef
-    CONFIGURE_COMMAND
-        ${CMAKE_COMMAND} -E echo "No configure required"
-    BUILD_COMMAND
-        ${CMAKE_COMMAND} -E echo "No build required"
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
     INSTALL_COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
             <SOURCE_DIR>/deadbeef.h
