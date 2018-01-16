@@ -141,25 +141,27 @@ static int pluginMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
 
 static void pluginInitDef()
 {
-    if (pluginDef.plugin.api_vmajor)
+    auto& p = pluginDef.plugin;
+
+    if (p.api_vmajor)
         return;
 
-    pluginDef.plugin.api_vmajor = 1;
-    pluginDef.plugin.api_vminor = DDB_API_LEVEL;
-    pluginDef.plugin.version_major = 0;
-    pluginDef.plugin.version_minor = 1;
-    pluginDef.plugin.type = DB_PLUGIN_MISC;
-    pluginDef.plugin.id = MSRV_PROJECT_ID;
-    pluginDef.plugin.name = MSRV_PROJECT_NAME;
-    pluginDef.plugin.descr = MSRV_PROJECT_DESC;
-    pluginDef.plugin.copyright = MSRV_LICENSE_TEXT;
-    pluginDef.plugin.website = MSRV_PROJECT_URL;
-    pluginDef.plugin.start = pluginStart;
-    pluginDef.plugin.stop = pluginStop;
-    pluginDef.plugin.connect = pluginConnect;
-    pluginDef.plugin.disconnect = pluginDisconnect;
-    pluginDef.plugin.message = pluginMessage;
-    pluginDef.plugin.configdialog = PLUGIN_CONFIG_DIALOG;
+    p.api_vmajor = 1;
+    p.api_vminor = DDB_API_LEVEL;
+    p.version_major = MSRV_VERSION_MAJOR;
+    p.version_minor = MSRV_VERSION_MINOR;
+    p.type = DB_PLUGIN_MISC;
+    p.id = MSRV_PROJECT_ID;
+    p.name = MSRV_PROJECT_NAME;
+    p.descr = MSRV_PROJECT_DESC;
+    p.copyright = MSRV_LICENSE_TEXT;
+    p.website = MSRV_PROJECT_URL;
+    p.start = pluginStart;
+    p.stop = pluginStop;
+    p.connect = pluginConnect;
+    p.disconnect = pluginDisconnect;
+    p.message = pluginMessage;
+    p.configdialog = PLUGIN_CONFIG_DIALOG;
 }
 
 extern "C" DB_plugin_t* MSRV_PREFIXED(load)(DB_functions_t* api)
