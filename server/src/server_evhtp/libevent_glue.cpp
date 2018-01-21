@@ -76,9 +76,12 @@ void Event::setPriority(int prio)
     throwIfFailed("event_priority_set", ret >= 0);
 }
 
-void Event::schedule(uint32_t sec, uint32_t usec)
+void Event::schedule(DurationMs timeout)
 {
+    auto sec = timeout.count() / 1000;
+    auto usec = (timeout.count() % 1000) * 1000;
     timeval tv = { static_cast<time_t>(sec), static_cast<suseconds_t>(usec) };
+
     auto ret = ::event_add(ptr(), &tv);
     throwIfFailed("event_add", ret >= 0);
 }

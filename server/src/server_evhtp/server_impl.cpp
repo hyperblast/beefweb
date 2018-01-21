@@ -58,12 +58,12 @@ ServerImpl::ServerImpl(
 
     pollEventSourcesEvent_ = eventBase_->createEvent([this] (Event*, int) { doPollEventSources(); });
     pollEventSourcesEvent_->setPriority(1);
-    pollEventSourcesEvent_->schedule(0, 0);
+    pollEventSourcesEvent_->schedule();
     pollEventSourcesRequested_.store(true);
 
     keepEventLoopEvent_ = eventBase_->createEvent(SocketHandle(), EV_PERSIST);
     keepEventLoopEvent_->setPriority(2);
-    keepEventLoopEvent_->schedule(60);
+    keepEventLoopEvent_->schedule(std::chrono::minutes(1));
 
     thread_ = std::thread([this]
     {
@@ -85,7 +85,7 @@ void ServerImpl::pollEventSources()
     bool expected = false;
 
     if (pollEventSourcesRequested_.compare_exchange_strong(expected, true))
-        pollEventSourcesEvent_->schedule(0, EVENT_DELAY_MICROSECONDS);
+        pollEventSourcesEvent_->schedule(eventDispatchDelay());
 }
 
 void ServerImpl::restart(const SettingsData& settings)
@@ -261,7 +261,7 @@ void ServerImpl::processEventStreamResponse(EvhtpRequest* evreq, EventStreamResp
 
 void ServerImpl::doPollEventSources()
 {
-    pollEventSourcesEvent_->schedule(PING_PERIOD_SECONDS, 0);
+    pollEventSourcesEvent_->schedule(pingEventPeriod());
     pollEventSourcesRequested_.store(false);
 
     for (auto id : eventStreamResponses_)

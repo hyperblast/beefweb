@@ -1,6 +1,7 @@
 #pragma once
 
 #include "defines.hpp"
+#include "chrono.hpp"
 
 #include <functional>
 #include <memory>
@@ -19,14 +20,17 @@ using ServerRestartCallback = std::function<void(const SettingsData&)>;
 class Server
 {
 public:
-    Server() = default;
-    virtual ~Server();
+    static DurationMs pingEventPeriod() { return std::chrono::seconds(15); }
+    static DurationMs eventDispatchDelay() { return DurationMs(20); }
 
     static ServerPtr create(
         const Router* router,
         const RequestFilterChain* filters,
         WorkQueue* defaultWorkQueue,
         ServerRestartCallback restartCallback);
+
+    Server() = default;
+    virtual ~Server();
 
     virtual void restart(const SettingsData& settings) = 0;
     virtual void pollEventSources() = 0;

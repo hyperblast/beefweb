@@ -2,6 +2,7 @@
 
 #include "../defines.hpp"
 #include "../system.hpp"
+#include "../chrono.hpp"
 #include "../work_queue.hpp"
 
 #include <utility>
@@ -43,7 +44,7 @@ public:
 
     void setCallback(EventCallback callback) { callback_ = std::move(callback); }
     void setPriority(int prio);
-    void schedule(uint32_t sec = 0, uint32_t usec = 0);
+    void schedule(DurationMs timeout = DurationMs::zero());
 
 private:
     static void runCallback(evutil_socket_t, short, void*);
