@@ -1,14 +1,9 @@
 #include "player.hpp"
 #include "../log.hpp"
+#include "artwork_request.hpp"
 
 namespace msrv {
 namespace plugin_deadbeef {
-
-struct ArtworkCallbackState
-{
-    Path cachePath;
-    boost::promise<ArtworkResult> resultPromise;
-};
 
 PlayerImpl::PlayerImpl()
     : artworkPlugin_(nullptr)
@@ -40,48 +35,7 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
     if (!artworkPlugin_)
         return boost::make_future(ArtworkResult());
 
-    logDebug("artwork query: file = %s; artist = %s; album = %s",
-             query.file.c_str(), query.artist.c_str(), query.album.c_str());
-
-    std::unique_ptr<ArtworkCallbackState> state(new ArtworkCallbackState());
-    auto future = state->resultPromise.get_future();
-
-    Path sourcePath = pathFromUtf8(query.file);
-    auto sourcePathStr = !sourcePath.empty() ? sourcePath.c_str() : nullptr;
-    auto artist = !query.artist.empty() ? query.artist.c_str() : nullptr;
-    auto album = !query.album.empty() ? query.album.c_str() : nullptr;
-
-    char cachePath[PATH_MAX];
-    artworkPlugin_->make_cache_path2(
-        cachePath, sizeof(cachePath), sourcePathStr, album, artist, -1);
-    logDebug("artwork cached path: %s", cachePath);
-    state->cachePath = Path(cachePath);
-
-    ArtworkCallbackState* statePtr = state.release();
-
-    MallocPtr<char> artworkPath(
-        artworkPlugin_->get_album_art(sourcePathStr, artist, album, -1, artworkCallback, statePtr));
-
-    if (artworkPath)
-    {
-        state.reset(statePtr);
-        logDebug("artwork found in cache: %s", artworkPath.get());
-        return boost::make_future(ArtworkResult(std::string(artworkPath.get())));
-    }
-
-    return future;
-}
-
-void PlayerImpl::artworkCallback(const char*, const char*, const char*, void* data)
-{
-    auto state = reinterpret_cast<ArtworkCallbackState*>(data);
-
-    tryCatchLog([&]
-    {
-        state->resultPromise.set_value(pathToUtf8(state->cachePath));
-    });
-
-    tryCatchLog([&] { delete state; });
+    return ArtworkRequest::create(artworkPlugin_)->execute(query);
 }
 
 void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)

@@ -1,6 +1,10 @@
 'use strict';
 
 const path = require('path');
+const { promisify } = require('util');
+const fs = require('fs')
+const readdir = promisify(fs.readdir);
+const stat = promisify(fs.stat);
 const q = require('qunit');
 const omit = require('lodash/omit');
 const sortBy = require('lodash/sortBy');
@@ -15,6 +19,31 @@ function normalizeResult(result)
         result.map(r => omit(r, ['timestamp', 'size'])),
         ['type', 'path']
     );
+}
+
+async function getFileSystemEntriesDirect(dirPath)
+{
+    const names = await readdir(dirPath);
+    const items = [];
+
+    for (const name of names)
+    {
+        const itemPath = path.join(dirPath, name);
+        const stats = await stat(itemPath);
+
+        let type;
+
+        if (stats.isDirectory())
+            type = 'D'
+        else if (stats.isFile())
+            type = 'F'
+        else
+            continue;
+
+        items.push({ path: itemPath, name, type });
+    }
+
+    return sortBy(items, ['type', 'path']);
 }
 
 q.module('browser api', usePlayer());
@@ -32,34 +61,20 @@ q.test('get roots', async assert =>
 
 q.test('get entries root', async assert =>
 {
-    const result = normalizeResult(await client.getFileSystemEntries(config.musicDir));
+    const expected = await getFileSystemEntriesDirect(config.musicDir);
 
-    assert.deepEqual(result, [
-        {
-            name: path.basename(musicSubdir),
-            path: musicSubdir,
-            type: 'D',
-        },
-        {
-            name: path.basename(tracks.t1),
-            path: tracks.t1,
-            type: 'F',
-        },
-        {
-            name: path.basename(tracks.t2),
-            path: tracks.t2,
-            type: 'F',
-        },
-    ]);
+    const actual = normalizeResult(
+        await client.getFileSystemEntries(config.musicDir));
+
+    assert.deepEqual(actual, expected);
 });
 
 q.test('get entries subdir', async assert =>
 {
-    const result = normalizeResult(await client.getFileSystemEntries(musicSubdir));
+    const expected = await getFileSystemEntriesDirect(musicSubdir);
 
-    assert.deepEqual(result, [{
-        name: path.basename(tracks.t3),
-        path: tracks.t3,
-        type: 'F',
-    }]);
+    const actual = normalizeResult(
+        await client.getFileSystemEntries(musicSubdir));
+
+    assert.deepEqual(actual, expected);
 });

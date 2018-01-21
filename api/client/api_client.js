@@ -326,6 +326,11 @@ class ApiClient
         return this.get('api/browser/entries', { path }).then(r => r.entries);
     }
 
+    getArtwork(query)
+    {
+        return this.get('api/artwork', query);
+    }
+
     query(options)
     {
         return this.get('api/query', formatQueryOptions(options));

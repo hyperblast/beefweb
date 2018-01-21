@@ -92,8 +92,6 @@ private:
     void queryVolume(VolumeInfo* info);
     void endModifyPlaylist(ddb_playlist_t* playlist);
 
-    static void artworkCallback(const char*, const char*, const char* , void* data);
-
     PlaylistMutex playlistMutex_;
     PlaylistMapping playlists_;
     PlaybackOrderOption orderOption_;

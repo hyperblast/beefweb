@@ -32,7 +32,8 @@ function makeRequest(config)
 
 q.module('authentication', usePlayer({ playerSettings, axiosConfig }));
 
-q.test('require auth', async assert => {
+q.test('require auth', async assert =>
+{
     const response = await makeRequest();
 
     assert.equal(response.status, 401);
@@ -40,7 +41,8 @@ q.test('require auth', async assert => {
     assert.ok(startsWith(response.headers['www-authenticate'], 'Basic'));
 });
 
-q.test('invalid auth', async assert => {
+q.test('invalid auth', async assert =>
+{
     const response = await makeRequest({
         auth: { username: authUser, password: 'wrong' }
     });
@@ -50,7 +52,8 @@ q.test('invalid auth', async assert => {
     assert.ok(startsWith(response.headers['www-authenticate'], 'Basic'));
 });
 
-q.test('valid auth', async assert => {
+q.test('valid auth', async assert =>
+{
     const response = await makeRequest({
         auth: { username: authUser, password: authPassword }
     });
