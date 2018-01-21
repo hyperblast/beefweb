@@ -30,7 +30,7 @@ public:
     EventBase* base() { return base_; }
     ::evhtp_s* ptr() { return ptr_; }
 
-    void onNewRequest(EvhtpRequestCallback callback) { newRequestCallback_ = std::move(callback); }
+    void setRequestCallback(EvhtpRequestCallback callback) { requestCallback_ = std::move(callback); }
     void bind(const char* address, int port, int backlog);
     void unbind();
 
@@ -39,7 +39,7 @@ private:
 
     EventBase* base_;
     ::evhtp_s* ptr_;
-    EvhtpRequestCallback newRequestCallback_;
+    EvhtpRequestCallback requestCallback_;
     bool isBound_;
 
     MSRV_NO_COPY_AND_ASSIGN(EvhtpHost);

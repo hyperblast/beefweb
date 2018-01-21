@@ -56,10 +56,10 @@ void EventBase::breakLoop()
     throwIfFailed("event_base_loopbreak", ret >= 0);
 }
 
-Event::Event(EventBase* base, SocketHandle socket, int events)
-    : base_(base), ptr_(nullptr)
+Event::Event(EventBase* base, SocketHandle socket, int events, EventCallback callback)
+    : base_(base), ptr_(nullptr), callback_(std::move(callback))
 {
-    ptr_ = ::event_new(base->ptr(), socket.get(), events, runCallback, this);
+    ptr_ = ::event_new(base->ptr(), socket.get(), static_cast<short>(events), runCallback, this);
     throwIfFailed("event_new", ptr_ != nullptr);
     socket.release();
 }
@@ -126,9 +126,9 @@ void Evbuffer::write(const char* data, size_t size)
 }
 
 EventBaseWorkQueue::EventBaseWorkQueue(EventBase *base, int prio)
-    : notifyEvent_(base, SocketHandle(), 0)
+    : notifyEvent_(base)
 {
-    notifyEvent_.onEvent([this] (Event*, int) { execute(); });
+    notifyEvent_.setCallback([this] (Event*, int) { execute(); });
 
     if (prio >= 0)
         notifyEvent_.setPriority(prio);

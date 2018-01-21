@@ -49,16 +49,20 @@ ServerImpl::ServerImpl(
 
     eventBase_.reset(new EventBase());
     eventBase_->makeNotifiable();
-    eventBase_->initPriorities(2);
+    eventBase_->initPriorities(3);
 
     ioQueue_.reset(new EventBaseWorkQueue(eventBase_.get(), 1));
 
-    commandEvent_ = createEvent([this] (Event*, int) { processCommand(); }, 0);
-    pollEventSourcesEvent_ = createEvent([this] (Event*, int) { doPollEventSources(); });
+    commandEvent_= eventBase_->createEvent([this] (Event*, int) { processCommand(); });
+    commandEvent_->setPriority(0);
+
+    pollEventSourcesEvent_ = eventBase_->createEvent([this] (Event*, int) { doPollEventSources(); });
+    pollEventSourcesEvent_->setPriority(1);
     pollEventSourcesEvent_->schedule(0, 0);
     pollEventSourcesRequested_.store(true);
 
-    keepEventLoopEvent_ = createEvent(EventCallback(), 1, EV_PERSIST);
+    keepEventLoopEvent_ = eventBase_->createEvent(SocketHandle(), EV_PERSIST);
+    keepEventLoopEvent_->setPriority(2);
     keepEventLoopEvent_->schedule(60);
 
     thread_ = std::thread([this]
@@ -105,18 +109,10 @@ void ServerImpl::restart(const SettingsData& settings)
 EvhtpHostPtr ServerImpl::createHost(const char* address, int port)
 {
     EvhtpHostPtr host(new EvhtpHost(eventBase_.get()));
-    host->onNewRequest([this] (EvhtpRequest* req) { processRequest(req); });
+    host->setRequestCallback([this] (EvhtpRequest* req) { processRequest(req); });
     host->bind(address, port, 64);
     logInfo("listening on [%s]:%d", address, port);
     return host;
-}
-
-EventPtr ServerImpl::createEvent(EventCallback cb, int prio, int events)
-{
-    EventPtr event(new Event(eventBase_.get(), SocketHandle(), events));
-    event->onEvent(std::move(cb));
-    event->setPriority(prio);
-    return event;
 }
 
 void ServerImpl::doStart(const SettingsData& settings)

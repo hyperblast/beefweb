@@ -4,6 +4,7 @@
 #include "../system.hpp"
 #include "../work_queue.hpp"
 
+#include <utility>
 #include <functional>
 #include <memory>
 
@@ -22,6 +23,38 @@ using EventPtr = std::unique_ptr<Event>;
 
 using EventCallback = std::function<void(Event*, int)>;
 
+
+class Event
+{
+public:
+    Event(
+        EventBase* base,
+        SocketHandle socket = SocketHandle(),
+        int events = 0,
+        EventCallback callback = EventCallback());
+
+    Event(EventBase* base, EventCallback callback)
+        : Event(base, SocketHandle(), 0, callback) { }
+
+    ~Event();
+
+    EventBase* base() { return base_; }
+    ::event* ptr() { return ptr_; }
+
+    void setCallback(EventCallback callback) { callback_ = std::move(callback); }
+    void setPriority(int prio);
+    void schedule(uint32_t sec = 0, uint32_t usec = 0);
+
+private:
+    static void runCallback(evutil_socket_t, short, void*);
+
+    EventBase* base_;
+    ::event* ptr_;
+    EventCallback callback_;
+
+    MSRV_NO_COPY_AND_ASSIGN(Event);
+};
+
 class EventBase
 {
 public:
@@ -37,33 +70,16 @@ public:
     bool runLoop(int flags = 0);
     void breakLoop();
 
+    template<typename ...Args>
+    EventPtr createEvent(Args ...args)
+    {
+        return EventPtr(new Event(this, std::forward<Args>(args)...));
+    }
+
 private:
     ::event_base* ptr_;
 
     MSRV_NO_COPY_AND_ASSIGN(EventBase);
-};
-
-class Event
-{
-public:
-    Event(EventBase* base, SocketHandle socket, int events);
-    ~Event();
-
-    EventBase* base() { return base_; }
-    ::event* ptr() { return ptr_; }
-
-    void onEvent(EventCallback callback) { callback_ = std::move(callback); }
-    void setPriority(int prio);
-    void schedule(uint32_t sec = 0, uint32_t usec = 0);
-
-private:
-    static void runCallback(evutil_socket_t, short, void*);
-
-    EventBase* base_;
-    ::event* ptr_;
-    EventCallback callback_;
-
-    MSRV_NO_COPY_AND_ASSIGN(Event);
 };
 
 class Evbuffer

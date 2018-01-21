@@ -55,8 +55,8 @@ void EvhtpHost::handleNewRequest(evhtp_request_t* req, void* thisPtr)
 {
     auto thisObj = reinterpret_cast<EvhtpHost*>(thisPtr);
 
-    if (thisObj->newRequestCallback_)
-        tryCatchLog([&]{ thisObj->newRequestCallback_(new EvhtpRequest(thisObj, req)); });
+    if (thisObj->requestCallback_)
+        tryCatchLog([&]{ thisObj->requestCallback_(new EvhtpRequest(thisObj, req)); });
 }
 
 void EvhtpKeyValueMap::set(const std::string& key, const std::string& value)
