@@ -39,6 +39,7 @@ set(
     basic_auth_filter.cpp basic_auth_filter.hpp
     browser_controller.cpp browser_controller.hpp
     cache_support_filter.cpp cache_support_filter.hpp
+    chrono.hpp
     compression_filter.cpp compression_filter.hpp
     content_type_map.cpp content_type_map.hpp
     core_types.cpp core_types.hpp
@@ -71,6 +72,7 @@ set(
     static_controller.cpp static_controller.hpp
     string_utils.cpp string_utils.hpp
     system.cpp system.hpp
+    timers.cpp timers.hpp
     work_queue.cpp work_queue.hpp
 )
 

@@ -8,6 +8,7 @@ set(
     fnv_hash_tests.cpp
     router_tests.cpp
     server_tests.cpp
+    timers_tests.cpp
 )
 
 add_executable(
