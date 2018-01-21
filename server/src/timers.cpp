@@ -8,7 +8,7 @@ namespace msrv {
 TimeSource::~TimeSource() = default;
 
 Timer::Timer(TimerQueue* queue, TimerCallback callback)
-    : queue_(queue), callback_(callback), state_(TimerState::STOPPED)
+    : queue_(queue), callback_(std::move(callback)), state_(TimerState::STOPPED)
 {
 }
 

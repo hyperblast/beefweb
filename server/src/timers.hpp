@@ -40,7 +40,7 @@ enum class TimerState
 class Timer
 {
 public:
-    Timer(TimerQueue* queue, TimerCallback callback);
+    Timer(TimerQueue* queue, TimerCallback callback = TimerCallback());
     ~Timer();
 
     TimerState state() const { return state_; }
@@ -50,6 +50,7 @@ public:
     bool isActive() const { return state_ != TimerState::STOPPED; }
     bool isPeriodic() const { return period_ > DurationMs::zero(); }
 
+    void setCallback(TimerCallback callback) { callback_ = std::move(callback); }
     void runOnce() { runOnce(DurationMs::zero()); }
     void runOnce(DurationMs period);
     void runPeriodic(DurationMs period);

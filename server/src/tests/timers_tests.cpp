@@ -34,9 +34,9 @@ TEST_CASE("timers")
 
     SECTION("calculate next timeout")
     {
-        Timer timer1(&timerQueue, TimerCallback());
-        Timer timer2(&timerQueue, TimerCallback());
-        Timer timer3(&timerQueue, TimerCallback());
+        Timer timer1(&timerQueue);
+        Timer timer2(&timerQueue);
+        Timer timer3(&timerQueue);
 
         auto now = timeSource.currentTime();
 
