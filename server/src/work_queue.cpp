@@ -67,4 +67,42 @@ void ThreadWorkQueue::run()
     }
 }
 
+
+ExternalWorkQueue::ExternalWorkQueue()
+    : scheduled_(false)
+{
+}
+
+ExternalWorkQueue::~ExternalWorkQueue() = default;
+
+void ExternalWorkQueue::enqueue(WorkCallback callback)
+{
+    bool wasScheduled;
+
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        enqueued_.emplace_back(std::move(callback));
+        wasScheduled = scheduled_;
+        scheduled_ = true;
+    }
+
+    if (!wasScheduled)
+        schedule();
+}
+
+void ExternalWorkQueue::execute()
+{
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        std::swap(executing_, enqueued_);
+        scheduled_ = false;
+    }
+
+    for (auto& item : executing_)
+        tryCatchLog([&]{ item(); });
+
+    executing_.clear();
+}
+
 }

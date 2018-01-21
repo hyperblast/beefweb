@@ -126,39 +126,19 @@ void Evbuffer::write(const char* data, size_t size)
 }
 
 EventBaseWorkQueue::EventBaseWorkQueue(EventBase *base, int prio)
+    : notifyEvent_(base, SocketHandle(), 0)
 {
-    notifyEvent_.reset(new Event(base, SocketHandle(), 0));
-    notifyEvent_->onEvent([this] (Event*, int) { executeAll(); });
+    notifyEvent_.onEvent([this] (Event*, int) { execute(); });
 
     if (prio >= 0)
-        notifyEvent_->setPriority(prio);
+        notifyEvent_.setPriority(prio);
 }
 
-EventBaseWorkQueue::~EventBaseWorkQueue()
+EventBaseWorkQueue::~EventBaseWorkQueue() = default;
+
+void EventBaseWorkQueue::schedule()
 {
+    notifyEvent_.schedule();
 }
 
-void EventBaseWorkQueue::enqueue(WorkCallback callback)
-{
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        enqueued_.emplace_back(std::move(callback));
-    }
-
-    notifyEvent_->schedule();
-}
-
-void EventBaseWorkQueue::executeAll()
-{
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-        std::swap(executing_, enqueued_);
-    }
-
-    for (auto& item : executing_)
-        tryCatchLog([&]{ item(); });
-
-    executing_.clear();
-}
-
-} }
+}}

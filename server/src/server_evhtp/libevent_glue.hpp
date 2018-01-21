@@ -100,21 +100,17 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(Evbuffer);
 };
 
-class EventBaseWorkQueue : public WorkQueue
+class EventBaseWorkQueue : public ExternalWorkQueue
 {
 public:
     EventBaseWorkQueue(EventBase* base, int prio = -1);
     ~EventBaseWorkQueue();
 
-    virtual void enqueue(WorkCallback callback) override;
+protected:
+    virtual void schedule() override;
 
 private:
-    void executeAll();
-
-    EventPtr notifyEvent_;
-    std::mutex mutex_;
-    std::deque<WorkCallback> enqueued_;
-    std::deque<WorkCallback> executing_;
+    Event notifyEvent_;
 };
 
 }}

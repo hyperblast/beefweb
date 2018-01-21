@@ -52,4 +52,23 @@ private:
     bool isShutdown_;
 };
 
+class ExternalWorkQueue : public WorkQueue
+{
+public:
+    ExternalWorkQueue();
+    ~ExternalWorkQueue();
+
+    virtual void enqueue(WorkCallback callback) override;
+
+protected:
+    void execute();
+    virtual void schedule() = 0;
+
+private:
+    std::mutex mutex_;
+    std::deque<WorkCallback> enqueued_;
+    std::deque<WorkCallback> executing_;
+    bool scheduled_;
+};
+
 }
