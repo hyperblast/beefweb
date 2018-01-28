@@ -48,3 +48,7 @@ endif()
 if(ENABLE_LOCAL_CATCH)
     add_subdirectory(catch)
 endif()
+
+if(ENABLE_LOCAL_ZLIB)
+    add_subdirectory(zlib)
+endif()

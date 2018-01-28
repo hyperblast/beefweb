@@ -1,16 +1,24 @@
-#include "../server.hpp"
+#include "server_impl.hpp"
 
 namespace msrv {
+
+ServerPtr Server::create(
+    const Router*,
+    const RequestFilterChain*,
+    WorkQueue*,
+    ServerRestartCallback)
+{
+    return ServerPtr(new server_windows::ServerImpl());
+}
+
 namespace server_windows {
 
-class ServerImpl : public Server
-{
-public:
-    ServerImpl();
+ServerImpl::ServerImpl() = default;
 
-    virtual ~ServerImpl();
-    virtual void restart(const SettingsData& settings) override;
-    virtual void pollEventSources() override;
-};
+ServerImpl::~ServerImpl() = default;
+void ServerImpl::restart(const SettingsData&) { };
+void ServerImpl::pollEventSources() { };
 
-}}
+}
+
+}

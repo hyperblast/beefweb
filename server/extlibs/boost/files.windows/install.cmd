@@ -9,7 +9,7 @@ xcopy /I /Y stage\lib\*.lib "%~f1\lib"
 @goto :end
 
 :usage
-@echo usage: %~nx0 target
+@echo usage: %~nx0 target-dir
 @echo.
 @cmd /c exit 1
 

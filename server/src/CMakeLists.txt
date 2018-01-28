@@ -33,7 +33,7 @@ endif()
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Libb64 REQUIRED)
 find_package(Nljson REQUIRED)
-find_package(ZLIB)
+find_package(ZLIB REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
@@ -41,6 +41,8 @@ include_directories(
     ${NLJSON_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
 )
+
+link_directories(${EXTLIB_INSTALL_DIR}/lib)
 
 set(
     CORE_SOURCES
@@ -86,6 +88,8 @@ set(
     work_queue.cpp work_queue.hpp
 )
 
+set(SYSTEM_LIBRARIES "")
+
 if(POSIX)
     set(
         CORE_SOURCES
@@ -93,6 +97,8 @@ if(POSIX)
         file_system_posix.cpp
         system_posix.cpp
     )
+
+    set(SYSTEM_LIBRARIES "dl;rt;m")
 endif()
 
 if(WIN32)
@@ -105,14 +111,6 @@ if(WIN32)
 endif()
 
 add_library(core OBJECT ${CORE_SOURCES})
-
-if(POSIX)
-    set(SYSTEM_LIBRARIES "dl;rt;m")
-endif()
-
-if(WIN32)
-    set(SYSTEM_LIBRARIES "")
-endif()
 
 set_target_properties(
     core PROPERTIES
