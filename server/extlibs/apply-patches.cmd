@@ -1,27 +1,33 @@
-@if "%1" == "" goto :usage
+@if "%1" == "" @goto :usage
 
 @set src_dir=%~dp0%1
-@set patches_dir=%src_dir%\patches
-@set files_dir=%src_dir%\files
 
-@if exist "%patches_dir%\." call :apply_patches
-@if exist "%files_dir%\." call :copy_files
+@call :apply_patches "%src_dir%\patches"
+@call :apply_patches "%src_dir%\patches.windows"
+@call :copy_files "%src_dir%\files"
+@call :copy_files "%src_dir%\files.windows"
+
 @goto :end
 
 :apply_patches
-@for %%f in (%patches_dir%\*.patch) do @(
+@if not exist "%1\." @goto :end
+
+@for %%f in (%1\*.patch) do @(
     @echo applying %%~nxf
-    @patch -p1 --binary < "%%f"
+    @patch -p1 --batch --binary < "%%f"
+    @if errorlevel 1 goto :end
 )
+
 @goto :end
 
 :copy_files
-@xcopy /E /F /Y "%files_dir%\*" .
+@if not exist "%1\." @goto :end
+@xcopy /E /F /Y "%1\*" .
 @goto :end
 
 :usage
 @echo usage: %~nx0 target
 @echo.
-@cmd.exe /c exit 1
+@cmd /c exit 1
 
 :end
