@@ -26,6 +26,8 @@ public:
     explicit Handle(Type value) noexcept
         : value_(value) { }
 
+    Handle(const Handle<Traits>&) = delete;
+
     Handle(Handle<Traits>&& other) noexcept
         : value_(Traits::INVALID_VALUE)
     {
@@ -37,6 +39,8 @@ public:
         if (Traits::isValid(value_))
             Traits::destroy(value_);
     }
+
+    Handle<Traits>& operator=(const Handle<Traits>&) = delete;
 
     Handle<Traits>& operator=(Handle<Traits>&& other) noexcept
     {
@@ -67,9 +71,9 @@ public:
 
 private:
     Type value_;
-
-    MSRV_NO_COPY_AND_ASSIGN(Handle<Traits>);
 };
+
+#if MSRV_OS_POSIX
 
 struct PosixHandleTraits
 {
@@ -84,6 +88,25 @@ struct PosixHandleTraits
 using SocketHandle = Handle<PosixHandleTraits>;
 using FileHandle = Handle<PosixHandleTraits>;
 using ErrorCode = int;
+
+#endif
+
+#if MSRV_OS_WINDOWS
+
+struct WindowsHandleTraits
+{
+    typedef void* Type;
+
+    static constexpr Type INVALID_VALUE = reinterpret_cast<void*>(static_cast<intptr_t>(-1));
+
+    static bool isValid(Type value) { return value != nullptr && value != INVALID_VALUE; }
+    static void destroy(Type value);
+};
+
+using FileHandle = Handle<WindowsHandleTraits>;
+using ErrorCode = uint32_t;
+
+#endif
 
 std::string formatError(ErrorCode errorCode);
 std::string formatErrorFor(const char* func, ErrorCode errorCode);

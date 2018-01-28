@@ -13,13 +13,13 @@ ContentTypeMap::~ContentTypeMap()
 
 const std::string& ContentTypeMap::get(const Path& path) const
 {
-    auto iter = mapping_.find(path.extension().string());
+    auto iter = mapping_.find(path.extension().native());
     return iter != mapping_.end() ? iter->second : defaultType_;
 }
 
 void ContentTypeMap::add(const std::string& contentType, const std::string& ext)
 {
-    mapping_.emplace(pathFromUtf8("." + ext).string(), contentType);
+    mapping_.emplace(pathFromUtf8("." + ext).native(), contentType);
 }
 
 void ContentTypeMap::add(const std::string& contentType, const std::string& ext, const std::string& ext2)

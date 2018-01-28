@@ -91,7 +91,7 @@ private:
 
     struct TimerComparer
     {
-        bool operator()(Timer* left, Timer* right)
+        bool operator()(Timer* left, Timer* right) const noexcept
         {
             if (left->runAt_ < right->runAt_)
                 return true;

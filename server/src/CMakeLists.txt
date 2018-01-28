@@ -106,10 +106,18 @@ endif()
 
 add_library(core OBJECT ${CORE_SOURCES})
 
+if(POSIX)
+    set(SYSTEM_LIBRARIES "dl;rt;m")
+endif()
+
+if(WIN32)
+    set(SYSTEM_LIBRARIES "")
+endif()
+
 set_target_properties(
     core PROPERTIES
     INTERFACE_LINK_LIBRARIES
-    "dl;rt;m;${Boost_LIBRARIES};${LIBB64_LIBRARIES};${ZLIB_LIBRARIES}"
+    "${SYSTEM_LIBRARIES};${Boost_LIBRARIES};${LIBB64_LIBRARIES};${ZLIB_LIBRARIES}"
 )
 
 add_dependencies(core ext_all)
