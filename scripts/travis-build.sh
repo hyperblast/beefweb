@@ -22,12 +22,12 @@ case "$TARGET_ARCH" in
 esac
 
 
-upload_artifacts=
+is_gcc=
 
 if [ "$CC" = gcc ]; then
     export CC=gcc-6
     export CXX=g++-6
-    upload_artifacts=1
+    is_gcc=1
 fi
 
 echo
@@ -62,7 +62,7 @@ echo
 
 (cd api/tests; yarn install; API_TESTS_BUILD_TYPE=release yarn run test)
 
-if [ -n "$upload_artifacts" ]; then
+if [ -n $is_gcc ] && [ "$TRAVIS_BRANCH" = master ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
     echo
     echo '=== Uploading artifacts ==='
     echo
