@@ -85,7 +85,7 @@ if(WIN32)
             --with-thread
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND
-            <SOURCE_DIR>/install.cmd
+            <SOURCE_DIR>/install.cmd <INSTALL_DIR>
         LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
     )
 endif()

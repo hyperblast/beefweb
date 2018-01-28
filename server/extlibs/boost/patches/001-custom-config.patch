@@ -1,8 +1,0 @@
-diff -ru a/boost/config/user.hpp b/boost/config/user.hpp
---- a/boost/config/user.hpp	2017-04-17 05:22:19.000000000 +0300
-+++ b/boost/config/user.hpp	2017-05-13 19:56:22.206450389 +0300
-@@ -131,3 +131,4 @@
- // to ensure the correct libraries are selected at link time.
- // #define BOOST_LIB_BUILDID amd64
- 
-+#define BOOST_THREAD_PROVIDES_FUTURE_CONTINUATION 1

@@ -1,11 +1,13 @@
 include(Utils)
 
-add_cxx_compiler_flag(-std=c++11)
-add_cxx_compiler_flag(-Wall)
-add_cxx_compiler_flag(-Wextra)
+if(NOT MSVC)
+    add_cxx_compiler_flag(-std=c++11)
+    add_cxx_compiler_flag(-Wall)
+    add_cxx_compiler_flag(-Wextra)
 
-if(ENABLE_WERROR)
-    add_cxx_compiler_flag(-Werror)
+    if(ENABLE_WERROR)
+        add_cxx_compiler_flag(-Werror)
+    endif()
 endif()
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
@@ -13,17 +15,19 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
     add_cxx_compiler_flag(-Wno-extern-c-compat)
 endif()
 
-add_linker_flag(-Wl,--no-undefined)
-add_linker_flag(-Wl,--as-needed)
+if(POSIX)
+    add_linker_flag(-Wl,--no-undefined)
+    add_linker_flag(-Wl,--as-needed)
 
-if(ENABLE_STATIC_STDLIB)
-    add_linker_flag(-static-libstdc++)
+    if(ENABLE_STATIC_STDLIB)
+        add_linker_flag(-static-libstdc++)
+    endif()
 endif()
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Libb64 REQUIRED)
 find_package(Nljson REQUIRED)
-find_package(ZLIB REQUIRED)
+find_package(ZLIB)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
@@ -86,7 +90,13 @@ set_target_properties(
 
 add_dependencies(core ext_all)
 
-add_subdirectory(server_evhtp)
+if(POSIX)
+    add_subdirectory(server_evhtp)
+endif()
+
+if(WIN32)
+    add_subdirectory(server_windows)
+endif()
 
 if(ENABLE_PLUGIN_DEADBEEF)
     add_subdirectory(plugin_deadbeef)

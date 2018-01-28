@@ -1,7 +1,14 @@
 include(Utils)
 
 set(EXTLIB_CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cache)
-set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply-patches.sh)
+
+if(POSIX)
+    set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply-patches.sh)
+endif()
+
+if(WIN32)
+    set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply-patches.cmd)
+endif()
 
 set(EXTLIB_C_FLAGS   "${CMAKE_C_FLAGS}")
 set(EXTLIB_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
