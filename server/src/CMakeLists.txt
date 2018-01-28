@@ -16,12 +16,18 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
 endif()
 
 if(POSIX)
+    add_definitions(-DMSRV_OS_POSIX=1)
+
     add_linker_flag(-Wl,--no-undefined)
     add_linker_flag(-Wl,--as-needed)
 
     if(ENABLE_STATIC_STDLIB)
         add_linker_flag(-static-libstdc++)
     endif()
+endif()
+
+if(WIN32)
+    add_definitions(-DMSRV_OS_WINDOWS=1)
 endif()
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
@@ -51,7 +57,7 @@ set(
     core_types_parsers.cpp core_types_parsers.hpp
     controller.hpp
     defines.hpp
-    file_system.cpp file_system.hpp
+    file_system.hpp
     fnv_hash.hpp
     gzip.cpp gzip.hpp
     host.cpp host.hpp
@@ -75,10 +81,28 @@ set(
     settings.cpp settings.hpp
     static_controller.cpp static_controller.hpp
     string_utils.cpp string_utils.hpp
-    system.cpp system.hpp
+    system.hpp
     timers.cpp timers.hpp
     work_queue.cpp work_queue.hpp
 )
+
+if(POSIX)
+    set(
+        CORE_SOURCES
+        ${CORE_SOURCES}
+        file_system_posix.cpp
+        system_posix.cpp
+    )
+endif()
+
+if(WIN32)
+    set(
+        CORE_SOURCES
+        ${CORE_SOURCES}
+        file_system_windows.cpp
+        system_windows.cpp
+    )
+endif()
 
 add_library(core OBJECT ${CORE_SOURCES})
 
