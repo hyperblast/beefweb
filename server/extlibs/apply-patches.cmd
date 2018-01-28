@@ -22,5 +22,6 @@
 :usage
 @echo usage: %~nx0 target
 @echo.
+@cmd.exe /c exit 1
 
 :end
