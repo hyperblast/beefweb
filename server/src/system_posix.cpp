@@ -1,6 +1,7 @@
 #include "system.hpp"
 
 #include <unistd.h>
+#include <string.h>
 
 namespace msrv {
 
