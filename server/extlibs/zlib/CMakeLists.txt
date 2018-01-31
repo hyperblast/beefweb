@@ -1,6 +1,6 @@
 include(ExternalProject)
 
-if(NOT WIN32)
+if(NOT OS_WINDOWS)
     message(SEND_ERROR "Building zlib requires Windows target, use system provided zlib with other OSes" )
 endif()
 

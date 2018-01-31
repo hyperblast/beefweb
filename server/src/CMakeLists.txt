@@ -1,6 +1,6 @@
 include(Utils)
 
-if(NOT MSVC)
+if(CXX_GCC OR CXX_CLANG)
     add_cxx_compiler_flag(-std=c++11)
     add_cxx_compiler_flag(-Wall)
     add_cxx_compiler_flag(-Wextra)
@@ -8,25 +8,25 @@ if(NOT MSVC)
     if(ENABLE_WERROR)
         add_cxx_compiler_flag(-Werror)
     endif()
-endif()
-
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
-    add_cxx_compiler_flag(-Wno-potentially-evaluated-expression)
-    add_cxx_compiler_flag(-Wno-extern-c-compat)
-endif()
-
-if(POSIX)
-    add_definitions(-DMSRV_OS_POSIX=1)
-
-    add_linker_flag(-Wl,--no-undefined)
-    add_linker_flag(-Wl,--as-needed)
 
     if(ENABLE_STATIC_STDLIB)
         add_linker_flag(-static-libstdc++)
     endif()
 endif()
 
-if(WIN32)
+if(CXX_CLANG)
+    add_cxx_compiler_flag(-Wno-potentially-evaluated-expression)
+    add_cxx_compiler_flag(-Wno-extern-c-compat)
+endif()
+
+if(OS_POSIX)
+    add_definitions(-DMSRV_OS_POSIX=1)
+
+    add_linker_flag(-Wl,--no-undefined)
+    add_linker_flag(-Wl,--as-needed)
+endif()
+
+if(OS_WINDOWS)
     add_definitions(-DMSRV_OS_WINDOWS=1)
 endif()
 
@@ -88,9 +88,7 @@ set(
     work_queue.cpp work_queue.hpp
 )
 
-set(SYSTEM_LIBRARIES "")
-
-if(POSIX)
+if(OS_POSIX)
     set(
         CORE_SOURCES
         ${CORE_SOURCES}
@@ -101,13 +99,15 @@ if(POSIX)
     set(SYSTEM_LIBRARIES "dl;rt;m")
 endif()
 
-if(WIN32)
+if(OS_WINDOWS)
     set(
         CORE_SOURCES
         ${CORE_SOURCES}
         file_system_windows.cpp
         system_windows.cpp
     )
+
+    set(SYSTEM_LIBRARIES "")
 endif()
 
 add_library(core OBJECT ${CORE_SOURCES})
@@ -120,11 +120,11 @@ set_target_properties(
 
 add_dependencies(core ext_all)
 
-if(POSIX)
+if(OS_POSIX)
     add_subdirectory(server_evhtp)
 endif()
 
-if(WIN32)
+if(OS_WINDOWS)
     add_subdirectory(server_windows)
 endif()
 

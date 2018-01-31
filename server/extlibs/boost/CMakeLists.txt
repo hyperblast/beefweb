@@ -4,11 +4,11 @@ set(BOOST_LINK      "static")
 set(BOOST_THREADING "multi")
 set(BOOST_VARIANT   "$<$<CONFIG:Debug>:debug>$<$<NOT:$<CONFIG:Debug>>:release>")
 
-if(${CMAKE_CXX_COMPILER_ID} STREQUAL GNU)
+if(CXX_GCC)
     set(BOOST_TOOLSET "gcc")
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL Clang)
+elseif(CXX_CLANG)
     set(BOOST_TOOLSET "clang")
-elseif(MSVC)
+elseif(CXX_MSVC)
     set(BOOST_TOOLSET "msvc")
     if(${CMAKE_SIZEOF_VOID_P} STREQUAL 4)
         set(BOOST_ADDRESS_MODEL "32")
@@ -21,7 +21,7 @@ else()
     message(SEND_ERROR "Unknown compiler, unable to provide boost toolset" )
 endif()
 
-if(POSIX)
+if(OS_POSIX)
     ExternalProject_Add(
         ext_boost
         PREFIX
@@ -57,7 +57,7 @@ if(POSIX)
     )
 endif()
 
-if(WIN32)
+if(OS_WINDOWS)
     ExternalProject_Add(
         ext_boost
         PREFIX

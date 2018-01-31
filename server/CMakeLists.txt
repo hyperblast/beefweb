@@ -6,12 +6,7 @@ set(CMAKE_MODULE_PATH   "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}"
 set(EXTLIB_SOURCE_DIR   "${CMAKE_CURRENT_SOURCE_DIR}/extlibs")
 set(EXTLIB_INSTALL_DIR  "${CMAKE_CURRENT_BINARY_DIR}/extlibs/root")
 
-if(WIN32)
-    set(POSIX OFF)
-else()
-    set(POSIX ON)
-endif()
-
+include(EnvInfo)
 include(Utils)
 
 option(ENABLE_TESTS             "Build tests" OFF)
@@ -24,7 +19,7 @@ local_library_option(libb64 ENABLE_LOCAL_LIBB64 "")
 local_library_option(nljson ENABLE_LOCAL_NLJSON "")
 local_library_option(catch  ENABLE_LOCAL_CATCH "ENABLE_TESTS")
 
-if(POSIX)
+if(OS_POSIX)
     option(ENABLE_PLUGIN_DEADBEEF   "Build deadbeef plugin" ON)
 
     local_library_option(libevent   ENABLE_LOCAL_LIBEVENT "")
@@ -32,7 +27,7 @@ if(POSIX)
     local_library_option(deadbeef   ENABLE_LOCAL_DEADBEEF "ENABLE_PLUGIN_DEADBEEF")
 endif()
 
-if(WIN32)
+if(OS_WINDOWS)
     local_library_option(zlib   ENABLE_LOCAL_ZLIB "")
 endif()
 
@@ -41,7 +36,7 @@ print_options()
 set(COMMON_C_FLAGS    "")
 set(COMMON_CXX_FLAGS  "")
 
-if(POSIX)
+if(OS_POSIX)
     set(COMMON_C_FLAGS "${COMMON_C_FLAGS} -fPIC -pthread -D_GNU_SOURCE=1 -D_FILE_OFFSET_BITS=64")
 endif()
 
