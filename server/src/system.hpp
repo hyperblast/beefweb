@@ -81,13 +81,15 @@ struct PosixHandleTraits
 
     static constexpr Type INVALID_VALUE = -1;
 
-    static bool isValid(Type value) { return value >= 0; }
-    static void destroy(Type value);
+    static bool isValid(Type value) noexcept { return value >= 0; }
+    static void destroy(Type value) noexcept;
 };
 
 using SocketHandle = Handle<PosixHandleTraits>;
 using FileHandle = Handle<PosixHandleTraits>;
 using ErrorCode = int;
+
+inline ErrorCode lastSystemError() noexcept { return errno; }
 
 #endif
 
@@ -99,27 +101,24 @@ struct WindowsHandleTraits
 
     static constexpr Type INVALID_VALUE = reinterpret_cast<void*>(static_cast<intptr_t>(-1));
 
-    static bool isValid(Type value) { return value != nullptr && value != INVALID_VALUE; }
-    static void destroy(Type value);
+    static bool isValid(Type value) noexcept { return value != nullptr && value != INVALID_VALUE; }
+    static void destroy(Type value) noexcept;
 };
 
 using FileHandle = Handle<WindowsHandleTraits>;
 using ErrorCode = uint32_t;
 
+ErrorCode lastSystemError() noexcept;
+
 #endif
 
+const char* formatError(ErrorCode errorCode, char* buffer, size_t size) noexcept;
 std::string formatError(ErrorCode errorCode);
 std::string formatErrorFor(const char* func, ErrorCode errorCode);
 
 void throwSystemError(const char* func, ErrorCode errorCode);
 
-inline void throwIfFailed(const char* func, bool cond)
-{
-    if (!cond)
-        throwSystemError(func, errno);
-}
-
-inline void throwIfFailed(const char *func, bool cond, ErrorCode errorCode)
+inline void throwIfFailed(const char *func, bool cond, ErrorCode errorCode = lastSystemError())
 {
     if (!cond)
         throwSystemError(func, errorCode);

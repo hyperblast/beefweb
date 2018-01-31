@@ -1,23 +1,35 @@
 #include "file_system.hpp"
 
+#include <windows.h>
+#include <string.h>
+
 namespace msrv {
 
-std::string formatError(ErrorCode)
+const char* formatError(ErrorCode errorCode, char* buffer, size_t size) noexcept
 {
-    return std::string();
+    auto ret = ::FormatMessageA(
+        FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr,
+        errorCode,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        buffer,
+        size,
+        nullptr);
+
+    if (ret == 0)
+        return "Unknown error (failed to obtain error message)";
+
+    return buffer;
 }
 
-std::string formatErrorFor(const char*, ErrorCode)
+void WindowsHandleTraits::destroy(Type handle) noexcept
 {
-    return std::string();
+    ::CloseHandle(handle);
 }
 
-void throwSystemError(const char*, ErrorCode)
+ErrorCode lastSystemError() noexcept
 {
-}
-
-void WindowsHandleTraits::destroy(Type)
-{
+    return ::GetLastError();
 }
 
 }

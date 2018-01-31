@@ -27,7 +27,8 @@ if(OS_POSIX)
 endif()
 
 if(OS_WINDOWS)
-    add_definitions(-DMSRV_OS_WINDOWS=1)
+    set(WINVER 0x0601) # Windows 7
+    add_definitions(-DMSRV_OS_WINDOWS=1 -DSTRICT -DWINVER=${WINVER} -D_WIN32_WINNT=${WINVER})
 endif()
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
@@ -83,7 +84,7 @@ set(
     settings.cpp settings.hpp
     static_controller.cpp static_controller.hpp
     string_utils.cpp string_utils.hpp
-    system.hpp
+    system.cpp system.hpp
     timers.cpp timers.hpp
     work_queue.cpp work_queue.hpp
 )
