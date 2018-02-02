@@ -44,9 +44,16 @@ Path getModulePath(void* symbol)
     return Path(std::move(path));
 }
 
-FileHandle openFile(const Path&)
+FileHandle openFile(const Path& path)
 {
-    return FileHandle();
+    return FileHandle(::CreateFileW(
+        path.c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        nullptr,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        nullptr));
 }
 
 FileInfo queryFileInfo(FileHandle::Type handle)
