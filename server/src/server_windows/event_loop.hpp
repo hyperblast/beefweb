@@ -2,13 +2,12 @@
 
 #include "../defines.hpp"
 #include "../timers.hpp"
+#include "iocp.hpp"
 
 #include <memory>
 
 namespace msrv {
 namespace server_windows {
-
-class IoCompletionPort;
 
 class EventLoop final : public TimeSource
 {
@@ -17,7 +16,7 @@ public:
     ~EventLoop();
 
     void run();
-    void exit() { exited_ = true; }
+    void exit() { ioPort_->post(exitTask_); }
 
     virtual TimePointMs currentTime() override { return now_; }
 
@@ -33,6 +32,7 @@ private:
     IoCompletionPort* ioPort_;
     std::unique_ptr<TimerQueue> timerQueue_;
     TimePointMs now_;
+    TaskPtr<CallbackTask> exitTask_;
     bool exited_;
 
     MSRV_NO_COPY_AND_ASSIGN(EventLoop);

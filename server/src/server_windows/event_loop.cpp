@@ -1,5 +1,4 @@
 #include "event_loop.hpp"
-#include "iocp.hpp"
 #include "../log.hpp"
 
 namespace msrv {
@@ -9,6 +8,7 @@ EventLoop::EventLoop(IoCompletionPort* ioPort)
     : ioPort_(ioPort), timerQueue_(), now_(steadyTime()), exited_(false)
 {
     timerQueue_ = std::make_unique<TimerQueue>(this);
+    exitTask_ = createTask<CallbackTask>([this] { exited_ = true; });
 }
 
 EventLoop::~EventLoop() = default;
