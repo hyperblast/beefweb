@@ -1,6 +1,7 @@
 #pragma once
 
 #include "system.hpp"
+#include "charset.hpp"
 
 #include <stddef.h>
 #include <string>
@@ -28,8 +29,28 @@ struct FileInfo
     int64_t inode;
 };
 
-std::string pathToUtf8(const Path& path);
-Path pathFromUtf8(const std::string& path);
+inline std::string pathToUtf8(const Path& path)
+{
+#ifdef MSRV_OS_POSIX
+    return localeToUtf8(path.native());
+#endif
+
+#ifdef MSRV_OS_WINDOWS
+    return utf16To8(path.native());
+#endif
+}
+
+inline Path pathFromUtf8(const std::string& path)
+{
+#ifdef MSRV_OS_POSIX
+    return Path(utf8ToLocale(path));
+#endif
+
+#ifdef MSRV_OS_WINDOWS
+    return Path(utf8To16(path));
+#endif
+}
+
 Path getModulePath(void* symbol);
 
 FileHandle openFile(const Path& path);

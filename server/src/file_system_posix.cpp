@@ -26,16 +26,6 @@ void statToFileInfo(const struct ::stat& st, FileInfo& info)
 
 }
 
-std::string pathToUtf8(const Path& path)
-{
-    return path.string();
-}
-
-Path pathFromUtf8(const std::string& path)
-{
-    return Path(path);
-}
-
 Path getModulePath(void* symbol)
 {
     ::Dl_info info;

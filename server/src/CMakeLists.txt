@@ -52,6 +52,7 @@ set(
     basic_auth_filter.cpp basic_auth_filter.hpp
     browser_controller.cpp browser_controller.hpp
     cache_support_filter.cpp cache_support_filter.hpp
+    charset.hpp
     chrono.hpp
     compression_filter.cpp compression_filter.hpp
     content_type_map.cpp content_type_map.hpp
@@ -93,6 +94,7 @@ if(OS_POSIX)
     set(
         CORE_SOURCES
         ${CORE_SOURCES}
+        charset_posix.cpp
         file_system_posix.cpp
         system_posix.cpp
     )
@@ -104,6 +106,7 @@ if(OS_WINDOWS)
     set(
         CORE_SOURCES
         ${CORE_SOURCES}
+        charset_windows.cpp
         file_system_windows.cpp
         system_windows.cpp
     )

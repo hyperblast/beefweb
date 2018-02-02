@@ -24,16 +24,6 @@ inline int64_t getUnixTimestamp(FILETIME time)
 
 }
 
-std::string pathToUtf8(const Path&)
-{
-    return std::string();
-}
-
-Path pathFromUtf8(const std::string&)
-{
-    return Path();
-}
-
 Path getModulePath(void*)
 {
     return Path();
@@ -48,7 +38,7 @@ FileInfo queryFileInfo(FileHandle::Type handle)
 {
     ::BY_HANDLE_FILE_INFORMATION data;
     auto ret = ::GetFileInformationByHandle(handle, &data);
-    throwIfFailed("GetFileInformationByHandle", ret);
+    throwIfFailed("GetFileInformationByHandle", ret != 0);
 
     FileInfo info;
     info.inode = -1;
@@ -62,7 +52,7 @@ FileInfo queryFileInfo(const Path& path)
 {
     ::WIN32_FILE_ATTRIBUTE_DATA data;
     auto ret = ::GetFileAttributesExW(path.native().c_str(), GetFileExInfoStandard, &data);
-    throwIfFailed("GetFileAttributesExW", ret);
+    throwIfFailed("GetFileAttributesExW", ret != 0);
 
     FileInfo info;
     info.inode = -1;
@@ -76,7 +66,7 @@ size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes)
 {
     DWORD bytesRead;
     auto ret = ::ReadFile(handle, buffer, static_cast<DWORD>(bytes), &bytesRead, nullptr);
-    throwIfFailed("ReadFile", ret);
+    throwIfFailed("ReadFile", ret != 0);
     return bytesRead;
 }
 
