@@ -24,9 +24,24 @@ inline int64_t getUnixTimestamp(FILETIME time)
 
 }
 
-Path getModulePath(void*)
+Path getModulePath(void* symbol)
 {
-    return Path();
+    ::HMODULE module;
+
+    auto ret = ::GetModuleHandleExW(
+        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        reinterpret_cast<wchar_t*>(symbol),
+        &module);
+
+    throwIfFailed("GetModuleHandleExW", ret != 0);
+
+    Path::string_type path;
+    path.resize(1024);
+    auto size = ::GetModuleFileNameW(module, &path[0], path.length());
+    throwIfFailed("GetModuleFileNameW", size > 0 && size < path.length());
+
+    path.resize(static_cast<size_t>(size));
+    return Path(std::move(path));
 }
 
 FileHandle openFile(const Path&)
