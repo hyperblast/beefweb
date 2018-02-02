@@ -32,7 +32,7 @@ std::unique_ptr<Response> Response::file(Path path, std::string contentType)
 
 std::unique_ptr<FileResponse> Response::file(Path path, FileHandle handle, std::string contentType)
 {
-    auto info = queryFileInfo(handle);
+    auto info = queryFileInfo(handle.get());
     return std::unique_ptr<FileResponse>(new FileResponse(
         std::move(path), std::move(handle), std::move(contentType), std::move(info)));
 }

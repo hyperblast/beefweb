@@ -60,7 +60,7 @@ set(
     core_types_parsers.cpp core_types_parsers.hpp
     controller.hpp
     defines.hpp
-    file_system.hpp
+    file_system.cpp file_system.hpp
     fnv_hash.hpp
     gzip.cpp gzip.hpp
     host.cpp host.hpp

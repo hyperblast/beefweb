@@ -62,12 +62,12 @@ FileInfo queryFileInfo(const Path& path)
     return info;
 }
 
-FileInfo queryFileInfo(FileHandle& handle)
+FileInfo queryFileInfo(FileHandle::Type handle)
 {
     assert(handle);
 
     struct ::stat st;
-    int ret = ::fstat(handle.get(), &st);
+    int ret = ::fstat(handle, &st);
     throwIfFailed("fstat", ret >= 0);
 
     FileInfo info;
@@ -75,19 +75,11 @@ FileInfo queryFileInfo(FileHandle& handle)
     return info;
 }
 
-std::vector<uint8_t> readFileToBuffer(FileHandle& handle, int64_t bytes)
+size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes)
 {
-    if (bytes < 0)
-        bytes = queryFileInfo(handle).size;
-
-    std::vector<uint8_t> buffer;
-    buffer.resize(static_cast<size_t>(bytes));
-
-    auto bytesRead = ::read(handle.get(), buffer.data(), static_cast<size_t>(bytes));
+    auto bytesRead = ::read(handle, buffer, bytes);
     throwIfFailed("read", bytesRead >= 0);
-
-    buffer.resize(static_cast<size_t>(bytesRead));
-    return buffer;
+    return bytesRead;
 }
 
 }
