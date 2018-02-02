@@ -108,6 +108,7 @@ if(OS_WINDOWS)
         ${CORE_SOURCES}
         charset_windows.cpp
         file_system_windows.cpp
+        safe_windows.h
         system_windows.cpp
     )
 

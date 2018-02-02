@@ -1,5 +1,5 @@
 #include "file_system.hpp"
-#include <windows.h>
+#include "safe_windows.h"
 
 namespace msrv {
 

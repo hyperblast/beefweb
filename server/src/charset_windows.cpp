@@ -1,7 +1,6 @@
 #include "charset.hpp" 
 #include "system.hpp"
-
-#include <windows.h>
+#include "safe_windows.h"
 
 namespace msrv {
 

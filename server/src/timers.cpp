@@ -83,11 +83,11 @@ TimerQueue::TimerQueue(TimeSource* source)
 
 TimerQueue::~TimerQueue() = default;
 
-void TimerQueue::execute()
+void TimerQueue::execute(const bool* exited)
 {
     auto now = source_->currentTime();
 
-    while (!timers_.empty())
+    while (!timers_.empty() && !*exited)
     {
         auto first = timers_.begin();
         auto timer = *first;

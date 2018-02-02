@@ -16,6 +16,7 @@ template<typename Traits>
 class Handle
 {
 public:
+    using TraitsType = typename Traits;
     using Type = typename Traits::Type;
 
     static_assert(std::is_trivial<Type>::value, "Handle type should be trivial");
@@ -48,7 +49,7 @@ public:
         return *this;
     }
 
-    explicit operator bool() const noexcept { return Traits::isValid(value_); }
+    operator bool() const noexcept { return Traits::isValid(value_); }
 
     Type get() const noexcept { return value_; }
 
@@ -105,7 +106,8 @@ struct WindowsHandleTraits
     static void destroy(Type value) noexcept;
 };
 
-using FileHandle = Handle<WindowsHandleTraits>;
+using WindowsHandle = Handle<WindowsHandleTraits>;
+using FileHandle = WindowsHandle;
 using ErrorCode = uint32_t;
 
 ErrorCode lastSystemError() noexcept;

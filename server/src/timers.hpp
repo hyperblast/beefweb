@@ -84,7 +84,13 @@ public:
         return (*timers_.begin())->runAt_;
     }
 
-    void execute();
+    void execute()
+    {
+        bool exited = false;
+        execute(&exited);
+    }
+
+    void execute(const bool* exited);
 
 private:
     friend class Timer;
