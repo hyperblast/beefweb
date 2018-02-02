@@ -59,7 +59,7 @@ bool IoCompletionPort::waitResultImpl(OverlappedResult* result, ::DWORD timeout)
     }
 
     auto error = lastSystemError();
-    if (error == ERROR_TIMEOUT)
+    if (error == WAIT_TIMEOUT)
         return false;
 
     throwSystemError("GetQueuedCompletionStatus", error);
