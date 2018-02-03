@@ -1,7 +1,7 @@
 include(Utils)
 
 if(CXX_GCC OR CXX_CLANG)
-    add_cxx_compiler_flag(-std=c++11)
+    add_cxx_compiler_flag(-std=c++14)
     add_cxx_compiler_flag(-Wall)
     add_cxx_compiler_flag(-Wextra)
 
