@@ -83,6 +83,7 @@ private:
     ServerPtr server_;
     Command command_;
     ServerConfig nextConfig_;
+    bool stopPending_;
     ServerReadyCallback readyCallback_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerThread);

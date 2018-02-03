@@ -8,7 +8,9 @@ namespace msrv {
 Server::~Server() = default;
 
 ServerThread::ServerThread(ServerReadyCallback readyCallback)
-    : command_(Command::NONE), readyCallback_(std::move(readyCallback))
+    : command_(Command::NONE),
+      stopPending_(false),
+      readyCallback_(std::move(readyCallback))
 {
     thread_ = std::thread([this] { run(); });
 }
@@ -26,7 +28,7 @@ void ServerThread::dispatchEvents()
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
-    if (server_)
+    if (server_ && !stopPending_)
         server_->dispatchEvents();
 }
 
@@ -55,6 +57,8 @@ void ServerThread::run()
 
 void ServerThread::runOnce(UniqueLock& lock)
 {
+    stopPending_ = false;
+
     tryCatchLog([this]
     {
         server_ = Server::create(&nextConfig_);
@@ -87,8 +91,11 @@ void ServerThread::sendCommand(Command command, const ServerConfig* nextConfig)
     if (nextConfig)
         nextConfig_ = *nextConfig;
 
-    if (server_)
+    if (server_ && !stopPending_)
+    {
         server_->exit();
+        stopPending_ = true;
+    }
 
     commandNotify_.notify_all();
 }
