@@ -16,7 +16,7 @@ template<typename Traits>
 class Handle
 {
 public:
-    using TraitsType = typename Traits;
+    using TraitsType = Traits;
     using Type = typename Traits::Type;
 
     static_assert(std::is_trivial<Type>::value, "Handle type should be trivial");
