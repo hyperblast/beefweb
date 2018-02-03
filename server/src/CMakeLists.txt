@@ -50,6 +50,7 @@ set(
     artwork_controller.cpp artwork_controller.hpp
     base64.cpp base64.hpp
     basic_auth_filter.cpp basic_auth_filter.hpp
+    boost_locks_compat.hpp
     browser_controller.cpp browser_controller.hpp
     cache_support_filter.cpp cache_support_filter.hpp
     charset.hpp

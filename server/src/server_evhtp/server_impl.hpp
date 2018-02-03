@@ -15,39 +15,22 @@
 namespace msrv {
 namespace server_evhtp {
 
-enum class ServerCommand
-{
-    NONE,
-    RESTART,
-    SHUTDOWN,
-    SHUTDOWN_COMPLETE,
-};
-
 class ServerImpl : public Server
 {
 public:
-    ServerImpl(
-        const Router* router,
-        const RequestFilterChain* filters,
-        WorkQueue* defaultWorkQueue,
-        ServerRestartCallback restartCallback);
+    ServerImpl(const ServerConfig* config);
 
     virtual ~ServerImpl();
-
-    virtual void restart(const SettingsData& settings) override;
-    virtual void pollEventSources() override;
+    virtual void run() override;
+    virtual void exit() override;
+    virtual void dispatchEvents() override;
 
 private:
     EvhtpHostPtr createHost(const char* address, int port);
     RequestSharedPtr createRequest(EvhtpRequest* evreq);
 
-    void runThread();
-    void doStart(const SettingsData& settings);
-    void doStop();
-    void shutdown();
     void processRequest(EvhtpRequest* evreq);
-    void processCommand();
-    void doPollEventSources();
+    void doDispatchEvents();
     void sendEvent(EvhtpRequest* evreq, EventStreamResponse* response);
     void trackRequest(EvhtpRequest* evreq, RequestSharedPtr request);
     void processResponse(EvhtpRequest* evreq, RequestSharedPtr request);
@@ -57,30 +40,21 @@ private:
     WorkQueue* getWorkQueue(RequestHandler* handler)
     {
         auto* queue = handler->workQueue();
-        return queue ? queue : defaultWorkQueue_;
+        return queue ? queue : config_.defaultWorkQueue;
     }
 
-    const Router* router_;
-    const RequestFilterChain* filters_;
-    WorkQueue* defaultWorkQueue_;
-    int64_t lastRequestId_;
-
-    ServerRestartCallback restartCallback_;
     EventBasePtr eventBase_;
     std::unique_ptr<EventBaseWorkQueue> ioQueue_;
     EvhtpHostPtr hostV4_;
     EvhtpHostPtr hostV6_;
-    std::mutex commandMutex_;
-    EventPtr commandEvent_;
-    ServerCommand pendingCommand_;
-    std::unique_ptr<SettingsData> pendingSettings_;
-    std::unique_ptr<Event> pollEventSourcesEvent_;
-    std::atomic_bool pollEventSourcesRequested_;
+    std::unique_ptr<Event> dispatchEventsRequest_;
+    std::atomic_bool dispatchEventsRequested_;
     EventPtr keepEventLoopEvent_;
     std::unordered_map<int64_t, EvhtpRequest*> evreqMap_;
     std::unordered_map<int64_t, RequestSharedPtr> requestMap_;
     std::unordered_set<int64_t> eventStreamResponses_;
-    std::thread thread_;
+    ServerConfig config_;
+    int64_t lastRequestId_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerImpl);
 };

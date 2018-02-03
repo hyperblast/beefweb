@@ -21,117 +21,48 @@
 
 namespace msrv {
 
-ServerPtr Server::create(
-    const Router *router,
-    const RequestFilterChain* filters,
-    WorkQueue* defaultWorkQueue,
-    ServerRestartCallback restartCallback)
+ServerPtr Server::create(const ServerConfig* config)
 {
-    return ServerPtr(new server_evhtp::ServerImpl(
-        router, filters, defaultWorkQueue, std::move(restartCallback)));
+    return std::make_shared<server_evhtp::ServerImpl>(config);
 }
 
 namespace server_evhtp {
 
-ServerImpl::ServerImpl(
-    const Router* router,
-    const RequestFilterChain* filters,
-    WorkQueue* defaultWorkQueue,
-    ServerRestartCallback restartCallback)
-    : router_(router),
-      filters_(filters),
-      defaultWorkQueue_(defaultWorkQueue),
-      lastRequestId_(0),
-      restartCallback_(std::move(restartCallback)),
-      pendingCommand_(ServerCommand::NONE)
+ServerImpl::ServerImpl(const ServerConfig* config)
+    : config_(*config), lastRequestId_(0)
 {
     EventBase::initThreads();
 
     eventBase_.reset(new EventBase());
     eventBase_->makeNotifiable();
-    eventBase_->initPriorities(3);
+    ioQueue_ = std::make_unique<EventBaseWorkQueue>(eventBase_.get());
 
-    ioQueue_.reset(new EventBaseWorkQueue(eventBase_.get(), 1));
-
-    commandEvent_= eventBase_->createEvent([this] (Event*, int) { processCommand(); });
-    commandEvent_->setPriority(0);
-
-    pollEventSourcesEvent_ = eventBase_->createEvent([this] (Event*, int) { doPollEventSources(); });
-    pollEventSourcesEvent_->setPriority(1);
-    pollEventSourcesEvent_->schedule();
-    pollEventSourcesRequested_.store(true);
+    dispatchEventsRequest_ = eventBase_->createEvent([this] (Event*, int) { doDispatchEvents(); });
+    dispatchEventsRequest_->schedule();
+    dispatchEventsRequested_.store(true);
 
     keepEventLoopEvent_ = eventBase_->createEvent(SocketHandle(), EV_PERSIST);
-    keepEventLoopEvent_->setPriority(2);
     keepEventLoopEvent_->schedule(std::chrono::minutes(1));
 
-    thread_ = std::thread([this]
+    tryCatchLog([this]
     {
-        tryCatchLog([this]{ eventBase_->runLoop(); });
+        hostV4_ = createHost(
+            config_.allowRemote ? "ipv4:0.0.0.0" : "ipv4:127.0.0.1",
+            config_.port);
     });
+
+    tryCatchLog([this]
+    {
+        hostV6_ = createHost(
+            config_.allowRemote ? "ipv6:::0" : "ipv6:::1",
+            config_.port);
+    });
+
+    if (!hostV4_ && !hostV6_)
+        throw std::runtime_error("failed to bind to any address");
 }
 
 ServerImpl::~ServerImpl()
-{
-    if (thread_.joinable())
-    {
-        shutdown();
-        thread_.join();
-    }
-}
-
-void ServerImpl::pollEventSources()
-{
-    bool expected = false;
-
-    if (pollEventSourcesRequested_.compare_exchange_strong(expected, true))
-        pollEventSourcesEvent_->schedule(eventDispatchDelay());
-}
-
-void ServerImpl::restart(const SettingsData& settings)
-{
-    {
-        std::lock_guard<std::mutex> lock(commandMutex_);
-
-        if (pendingCommand_ == ServerCommand::SHUTDOWN ||
-            pendingCommand_ == ServerCommand::SHUTDOWN_COMPLETE)
-            return;
-
-        std::unique_ptr<SettingsData> settingsCopy(new SettingsData(settings));
-
-        pendingCommand_ = ServerCommand::RESTART;
-        pendingSettings_ = std::move(settingsCopy);
-    }
-
-    commandEvent_->schedule();
-}
-
-EvhtpHostPtr ServerImpl::createHost(const char* address, int port)
-{
-    EvhtpHostPtr host(new EvhtpHost(eventBase_.get()));
-    host->setRequestCallback([this] (EvhtpRequest* req) { processRequest(req); });
-    host->bind(address, port, 64);
-    logInfo("listening on [%s]:%d", address, port);
-    return host;
-}
-
-void ServerImpl::doStart(const SettingsData& settings)
-{
-    tryCatchLog([&]
-    {
-        hostV4_ = createHost(settings.allowRemote ? "ipv4:0.0.0.0" : "ipv4:127.0.0.1", settings.port);
-    });
-
-    tryCatchLog([&]
-    {
-        hostV6_ = createHost(settings.allowRemote ? "ipv6:::0" : "ipv6:::1", settings.port);
-    });
-
-    if ((hostV4_ || hostV6_) && restartCallback_)
-        tryCatchLog([&]{ restartCallback_(settings); });
-}
-
-void ServerImpl::doStop()
 {
     std::vector<EvhtpRequest*> requests;
 
@@ -144,23 +75,33 @@ void ServerImpl::doStop()
     assert(evreqMap_.empty());
     assert(requestMap_.empty());
     assert(eventStreamResponses_.empty());
-
-    hostV4_.reset();
-    hostV6_.reset();
 }
 
-void ServerImpl::shutdown()
+void ServerImpl::dispatchEvents()
 {
-    {
-        std::lock_guard<std::mutex> lock(commandMutex_);
+    bool expected = false;
 
-        assert(pendingCommand_ != ServerCommand::SHUTDOWN
-            && pendingCommand_ != ServerCommand::SHUTDOWN_COMPLETE);
+    if (dispatchEventsRequested_.compare_exchange_strong(expected, true))
+        dispatchEventsRequest_->schedule(eventDispatchDelay());
+}
 
-        pendingCommand_ = ServerCommand::SHUTDOWN;
-    }
+EvhtpHostPtr ServerImpl::createHost(const char* address, int port)
+{
+    EvhtpHostPtr host(new EvhtpHost(eventBase_.get()));
+    host->setRequestCallback([this] (EvhtpRequest* req) { processRequest(req); });
+    host->bind(address, port, 64);
+    logInfo("listening on [%s]:%d", address, port);
+    return host;
+}
 
-    commandEvent_->schedule();
+void ServerImpl::run()
+{
+    eventBase_->runLoop();
+}
+
+void ServerImpl::exit()
+{
+    eventBase_->breakLoop();
 }
 
 void ServerImpl::processRequest(EvhtpRequest* evreq)
@@ -185,7 +126,7 @@ void ServerImpl::processRequest(EvhtpRequest* evreq)
         if (!request1)
             return;
 
-        filters_->execute(request1.get());
+        config_.filters->execute(request1.get());
 
         ioQueue_->enqueue([this, requestWeak]
         {
@@ -259,10 +200,10 @@ void ServerImpl::processEventStreamResponse(EvhtpRequest* evreq, EventStreamResp
     sendEvent(evreq, streamResponse);
 }
 
-void ServerImpl::doPollEventSources()
+void ServerImpl::doDispatchEvents()
 {
-    pollEventSourcesEvent_->schedule(pingEventPeriod());
-    pollEventSourcesRequested_.store(false);
+    dispatchEventsRequest_->schedule(pingEventPeriod());
+    dispatchEventsRequested_.store(false);
 
     for (auto id : eventStreamResponses_)
     {
@@ -274,51 +215,6 @@ void ServerImpl::doPollEventSources()
         if (eventStreamResponse)
             sendEvent(evreq, eventStreamResponse);
     }
-}
-
-void ServerImpl::processCommand()
-{
-    bool wantStart = false;
-    bool wantStop = false;
-    bool wantExit = false;
-
-    std::unique_ptr<SettingsData> settings;
-
-    {
-        std::lock_guard<std::mutex> lock(commandMutex_);
-
-        switch (pendingCommand_)
-        {
-        case ServerCommand::RESTART:
-            wantStart = true;
-            wantStop = true;
-            pendingCommand_ = ServerCommand::NONE;
-            settings = std::move(pendingSettings_);
-            break;
-
-        case ServerCommand::SHUTDOWN:
-            wantStop = true;
-            wantExit = true;
-            pendingCommand_ = ServerCommand::SHUTDOWN_COMPLETE;
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    if (wantStop)
-        doStop();
-
-    if (wantStart)
-    {
-        assert(settings);
-
-        doStart(*settings);
-    }
-
-    if (wantExit)
-        eventBase_->breakLoop();
 }
 
 RequestSharedPtr ServerImpl::createRequest(EvhtpRequest* evreq)
@@ -363,7 +259,7 @@ RequestSharedPtr ServerImpl::createRequest(EvhtpRequest* evreq)
         }
     }
 
-    auto routeResult = router_->dispatch(req.get());
+    auto routeResult = config_.router->dispatch(req.get());
 
     if (routeResult->factory)
     {

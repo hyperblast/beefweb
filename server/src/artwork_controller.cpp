@@ -24,8 +24,9 @@ ResponsePtr ArtworkController::getArtwork()
     if (auto path = optionalParam<std::string>("file"))
     {
         auto normalizedPath = pathToUtf8(pathFromUtf8(*path).lexically_normal());
+        auto settings = store_->settings();
 
-        if (!store_->settings().isAllowedPath(normalizedPath))
+        if (!settings->isAllowedPath(normalizedPath))
             return Response::error(HttpStatus::S_403_FORBIDDEN);
 
         query.file = std::move(normalizedPath);

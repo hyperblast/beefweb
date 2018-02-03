@@ -97,13 +97,13 @@ ResponsePtr PlaylistsController::addItems()
     std::vector<std::string> normalizedItems;
     auto targetIndex = optionalParam<int32_t>("index", -1);
 
-    const auto& settings = store_->settings();
+    auto settings = store_->settings();
 
     for (auto& item : items)
     {
         auto normalizedPath = pathToUtf8(pathFromUtf8(stripFileScheme(item)).lexically_normal());
 
-        if (!settings.isAllowedPath(normalizedPath))
+        if (!settings->isAllowedPath(normalizedPath))
             return Response::error(HttpStatus::S_403_FORBIDDEN, "item is not under allowed path: " + item);
 
         normalizedItems.emplace_back(std::move(normalizedPath));

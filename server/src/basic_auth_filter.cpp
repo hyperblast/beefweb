@@ -25,9 +25,9 @@ BasicAuthFilter::~BasicAuthFilter() = default;
 
 void BasicAuthFilter::beginRequest(Request* request)
 {
-    const auto& settings = store_->settings();
+    auto settings = store_->settings();
 
-    if (!settings.authRequired || verifyCredentials(request, settings))
+    if (!settings->authRequired || verifyCredentials(request, *settings))
         return;
 
     setUnauthorizedResponse(request);

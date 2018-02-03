@@ -18,7 +18,9 @@ StaticController::~StaticController()
 
 ResponsePtr StaticController::getFile()
 {
-    const auto& staticDir = store_->settings().staticDir;
+    auto settings = store_->settings();
+    const auto& staticDir = settings->staticDir;
+
     if (staticDir.empty())
         return Response::error(HttpStatus::S_404_NOT_FOUND);
 

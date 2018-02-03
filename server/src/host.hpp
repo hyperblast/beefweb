@@ -10,6 +10,8 @@
 #include "work_queue.hpp"
 #include "request_filter.hpp"
 
+#include <memory>
+
 namespace msrv {
 
 class Host : SettingsStore
@@ -21,19 +23,21 @@ public:
     void reconfigure(const SettingsData& settings);
 
 private:
-    virtual const SettingsData& settings() const override;
+    virtual SettingsDataPtr settings() override;
 
     void handlePlayerEvent(PlayerEvent);
-    void handleServerRestart(const SettingsData&);
+    void handleServerReady();
 
     Player* player_;
     EventDispatcher dispatcher_;
     Router router_;
     RequestFilterChain filters_;
     ImmediateWorkQueue workQueue_;
-    ServerPtr server_;
-    SettingsData settings_;
+    SettingsDataPtr currentSettings_;
+    SettingsDataPtr nextSettings_;
+    std::mutex settingsMutex_;
     ContentTypeMap ctmap_;
+    std::unique_ptr<ServerThread> serverThread_;
 
     MSRV_NO_COPY_AND_ASSIGN(Host);
 };

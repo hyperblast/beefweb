@@ -28,13 +28,9 @@ Host::Host(Player* player)
     PlaylistsController::defineRoutes(&router_, player_, this);
     QueryController::defineRoutes(&router_, player_, &dispatcher_);
 
-    server_ = Server::create(
-        &router_,
-        &filters_,
-        &workQueue_,
-        [this] (const SettingsData& settings) { handleServerRestart(settings); });
-
     player_->onEvent([this] (PlayerEvent event) { handlePlayerEvent(event); });
+
+    serverThread_ = std::make_unique<ServerThread>([this] { handleServerReady(); });
 }
 
 Host::~Host()
@@ -42,25 +38,40 @@ Host::~Host()
     player_->onEvent(PlayerEventCallback());
 }
 
-const SettingsData& Host::settings() const
+SettingsDataPtr Host::settings()
 {
-    return settings_;
+    std::lock_guard<std::mutex> lock(settingsMutex_);
+    return currentSettings_;
 }
 
 void Host::handlePlayerEvent(PlayerEvent event)
 {
     dispatcher_.dispatch(event);
-    server_->pollEventSources();
-}
-
-void Host::handleServerRestart(const SettingsData& settings)
-{
-    settings_ = settings;
+    serverThread_->dispatchEvents();
 }
 
 void Host::reconfigure(const SettingsData& settings)
 {
-    server_->restart(settings);
+    {
+        std::lock_guard<std::mutex> lock(settingsMutex_);
+        nextSettings_ = std::make_shared<SettingsData>(settings);
+    }
+
+    ServerConfig config;
+
+    config.allowRemote = settings.allowRemote;
+    config.port = settings.port;
+    config.defaultWorkQueue = &workQueue_;
+    config.filters = &filters_;
+    config.router = &router_;
+
+    serverThread_->restart(&config);
+}
+
+void Host::handleServerReady()
+{
+    std::lock_guard<std::mutex> lock(settingsMutex_);
+    currentSettings_ = std::move(nextSettings_);
 }
 
 }

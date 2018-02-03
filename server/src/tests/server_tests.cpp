@@ -12,32 +12,29 @@ namespace server_tests {
 
 TEST_CASE("server")
 {
-    boost::promise<std::string> startedPromise;
-    boost::unique_future<std::string> started = startedPromise.get_future();
+    boost::promise<void> startedPromise;
+    boost::unique_future<void> started = startedPromise.get_future();
 
     Router router;
     ImmediateWorkQueue workQueue;
     RequestFilterChain filters;
     filters.addFilter(RequestFilterPtr(new ExecuteHandlerFilter()));
 
-    ServerPtr server = Server::create(
-        &router, &filters, &workQueue, [&startedPromise] (const SettingsData& s) {
-            startedPromise.set_value(s.musicDirs.front());
-        });
+    ServerConfig config;
+    config.allowRemote = false;
+    config.port = 8882;
+    config.router = &router;
+    config.filters = &filters;
+    config.defaultWorkQueue = &workQueue;
 
-    SettingsData settings;
-    settings.port = 8882;
-    settings.musicDirs.push_back("hello");
-    server->restart(settings);
+    ServerThread server([&] { startedPromise.set_value(); });
+    server.restart(&config);
 
     for (int i = 0; i < 10 && !started.is_ready(); i++)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     REQUIRE(started.is_ready());
-
-    std::string startedResult = started.get();
-
-    REQUIRE(startedResult == "hello");
+    started.get();
 }
 
 }}
