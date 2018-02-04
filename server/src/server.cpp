@@ -51,6 +51,7 @@ void ServerThread::run()
 
         case Command::RESTART:
             command_ = Command::NONE;
+            stopPending_ = false;
             runOnce(lock);
             break;
 
@@ -62,8 +63,6 @@ void ServerThread::run()
 
 void ServerThread::runOnce(UniqueLock& lock)
 {
-    stopPending_ = false;
-
     tryCatchLog([this]
     {
         server_ = Server::create(&nextConfig_);
@@ -90,7 +89,11 @@ void ServerThread::runOnce(UniqueLock& lock)
     // This is required to prevent creating new instance while old one
     // might still be bound to ports which new instance is going to use.
 
-    destroyed.wait();
+    if (!destroyed.is_ready())
+    {
+        boost::reverse_lock<UniqueLock> unlock(lock);
+        destroyed.wait();
+    }
 }
 
 void ServerThread::sendCommand(Command command, const ServerConfig* nextConfig)
