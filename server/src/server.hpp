@@ -10,6 +10,8 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <boost/thread/future.hpp>
+
 namespace msrv {
 
 class WorkQueue;
@@ -37,14 +39,18 @@ public:
 
     static ServerPtr create(const ServerConfig* config);
 
-    Server() = default;
+    Server();
     virtual ~Server();
 
     virtual void run() = 0;
     virtual void exit() = 0;
     virtual void dispatchEvents() = 0;
 
+    boost::unique_future<void> destroyed() { return destroyed_.get_future(); }
+
 private:
+    boost::promise<void> destroyed_;
+
     MSRV_NO_COPY_AND_ASSIGN(Server);
 };
 

@@ -5,7 +5,12 @@
 
 namespace msrv {
 
-Server::~Server() = default;
+Server::Server() = default;
+
+Server::~Server()
+{
+    destroyed_.set_value();
+}
 
 ServerThread::ServerThread(ServerReadyCallback readyCallback)
     : command_(Command::NONE),
@@ -76,7 +81,16 @@ void ServerThread::runOnce(UniqueLock& lock)
         tryCatchLog([this] { server_->run(); });
     }
 
+    auto destroyed = server_->destroyed();
     server_.reset();
+
+    // In the case server is still doing some async work
+    // and is not destroyed by the statement above wait for actual destruction.
+
+    // This is required to prevent creating new instance while old one
+    // might still be bound to ports which new instance is going to use.
+
+    destroyed.wait();
 }
 
 void ServerThread::sendCommand(Command command, const ServerConfig* nextConfig)
