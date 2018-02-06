@@ -11,20 +11,18 @@ namespace server_windows {
 class ServerImpl final : public Server
 {
 public:
-    ServerImpl();
+    ServerImpl(const ServerConfig* config);
 
     virtual ~ServerImpl();
-    virtual void restart(const SettingsData& settings) override;
-    virtual void pollEventSources() override;
+    virtual void run() override;
+    virtual void exit() override;
+    virtual void dispatchEvents() override;
 
 private:
-    void run();
-
     IoCompletionPort ioPort_;
     IoWorkQueue ioWorkQueue_;
     EventLoop eventLoop_;
-
-    std::thread thread_;
+    ServerConfig config_;
 };
 
 }}
