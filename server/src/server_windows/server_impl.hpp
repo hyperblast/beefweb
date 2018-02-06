@@ -1,6 +1,7 @@
 #include "../server.hpp"
 #include "iocp.hpp"
 #include "event_loop.hpp"
+#include "http_server.hpp"
 
 #include <memory>
 #include <thread>
@@ -19,9 +20,14 @@ public:
     virtual void dispatchEvents() override;
 
 private:
+    static std::wstring getUrlPrefix(const ServerConfig* config);
+
     IoCompletionPort ioPort_;
     IoWorkQueue ioWorkQueue_;
     EventLoop eventLoop_;
+    HttpApiInit httpApiInit_;
+    HttpServer http_;
+    HttpUrlBinding httpUrlBinding_;
     ServerConfig config_;
 };
 
