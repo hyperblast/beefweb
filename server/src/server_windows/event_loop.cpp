@@ -50,7 +50,7 @@ void EventLoop::executeTasks()
 
     while (hasResult && !exited_)
     {
-        tryCatchLog([&] { result.task->execute(&result); });
+        tryCatchLog([&] { result.task->complete(&result); });
         hasResult = ioPort_->getResult(&result);
     }
 }

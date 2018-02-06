@@ -12,9 +12,23 @@ OverlappedTask::OverlappedTask()
 
 OverlappedTask::~OverlappedTask() = default;
 
+void OverlappedTask::throwIfAsyncIoFailed(const char* func, ::DWORD errorCode)
+{
+    switch (errorCode)
+    {
+    case ERROR_IO_PENDING:
+        break;
+
+    default:
+        intrusive_ptr_release(this);
+        throwSystemError(func, errorCode);
+        break;
+    }
+}
+
 CallbackTask::~CallbackTask() = default;
 
-void CallbackTask::execute(OverlappedResult*)
+void CallbackTask::complete(OverlappedResult*)
 {
     if (callback_)
         tryCatchLog([this] { callback_(); });
@@ -28,9 +42,9 @@ IoCompletionPort::IoCompletionPort(int concurrency)
 
 IoCompletionPort::~IoCompletionPort() = default;
 
-void IoCompletionPort::bindHandle(WindowsHandle::Type handle, void* userData)
+void IoCompletionPort::bindHandle(WindowsHandle::Type handle)
 {
-    auto ret = ::CreateIoCompletionPort(handle, handle_.get(), reinterpret_cast<ULONG_PTR>(userData), 0);
+    auto ret = ::CreateIoCompletionPort(handle, handle_.get(), 0, 0);
     throwIfFailed("CreateIoCompletionPort", WindowsHandle::TraitsType::isValid(ret));
 }
 
@@ -48,17 +62,32 @@ bool IoCompletionPort::waitResultImpl(OverlappedResult* result, ::DWORD timeout)
 {
     ::DWORD bytes;
     ::ULONG_PTR userData;
-    ::OVERLAPPED* overlapped;
+    ::OVERLAPPED* overlapped = nullptr;
 
     if (::GetQueuedCompletionStatus(handle_.get(), &bytes, &userData, &overlapped, timeout) != 0)
     {
+        // Operation completed successfully
+
         result->task = OverlappedTask::fromOverlapped(overlapped);
         result->bytesCount = bytes;
-        result->userData = reinterpret_cast<void*>(userData);
+        result->ioError = NO_ERROR;
         return true;
     }
 
-    auto error = lastSystemError();
+    auto error = ::GetLastError();
+
+    if (overlapped != nullptr)
+    {
+        // Operation completed with error
+
+        result->task = OverlappedTask::fromOverlapped(overlapped);
+        result->bytesCount = bytes;
+        result->ioError = error;
+        return true;
+    }
+
+    // Failed to dequeue operation
+
     if (error == WAIT_TIMEOUT)
         return false;
 

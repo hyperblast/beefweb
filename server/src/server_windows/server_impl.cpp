@@ -1,6 +1,5 @@
 #include "server_impl.hpp"
 #include "../log.hpp"
-#include <http.h>
 
 namespace msrv {
 
@@ -47,6 +46,4 @@ void ServerImpl::dispatchEvents()
 {
 }
 
-}
-
-}
+}}

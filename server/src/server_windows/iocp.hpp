@@ -20,6 +20,9 @@ namespace server_windows {
 template<typename T>
 using TaskPtr = boost::intrusive_ptr<T>;
 
+template<typename T>
+using TaskCallback = std::function<void(T*, ErrorCode)>;
+
 template<typename T, typename ... Args>
 inline TaskPtr<T> createTask(Args&& ... args)
 {
@@ -40,13 +43,16 @@ public:
 
     OverlappedTask();
     virtual ~OverlappedTask();
-    virtual void execute(OverlappedResult* result) = 0;
+    virtual void complete(OverlappedResult* result) = 0;
 
     ::OVERLAPPED* toOverlapped()
     {
         intrusive_ptr_add_ref(this);
         return &wrapper_.overlapped;
     }
+
+protected:
+    void throwIfAsyncIoFailed(const char* func, ::DWORD errorCode);
 
 private:
     struct Wrapper
@@ -67,7 +73,7 @@ public:
         : callback_(std::move(callback)) { }
 
     virtual ~CallbackTask();
-    virtual void execute(OverlappedResult* result) override;
+    virtual void complete(OverlappedResult* result) override;
 
     void setCallback(WorkCallback callback) { callback_ = std::move(callback); }
 
@@ -78,8 +84,8 @@ private:
 struct OverlappedResult
 {
     TaskPtr<OverlappedTask> task;
-    int32_t bytesCount;
-    void* userData;
+    uint32_t bytesCount;
+    ErrorCode ioError;
 };
 
 class IoCompletionPort
@@ -88,7 +94,7 @@ public:
     IoCompletionPort(int concurrency = 0);
     ~IoCompletionPort();
 
-    void bindHandle(WindowsHandle::Type handle, void* userData = nullptr);
+    void bindHandle(WindowsHandle::Type handle);
 
     void post(WorkCallback callback = WorkCallback())
     {
