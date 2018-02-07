@@ -50,7 +50,7 @@ private:
     void beginSendEventStream(RequestContextPtr context);
     void produceAndSendEvent(RequestContextPtr context);
 
-    void assertInServerThread()
+    void assertIsServerThread()
     {
         assert(threadId_ == std::this_thread::get_id());
     }

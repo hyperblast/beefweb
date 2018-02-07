@@ -162,7 +162,7 @@ void ServerImpl::produceEvent(RequestContext* context)
 
 void ServerImpl::sendEvent(RequestContextPtr context)
 {
-    assertInServerThread();
+    assertIsServerThread();
 
     if (!context->isAlive())
         return;
@@ -187,7 +187,7 @@ void ServerImpl::sendEvent(RequestContextPtr context)
 
 void ServerImpl::sendResponse(RequestContextPtr context)
 {
-    assertInServerThread();
+    assertIsServerThread();
 
     if (!context->isAlive())
         return;
@@ -236,7 +236,7 @@ void ServerImpl::processResponse(RequestContextPtr context)
 
 void ServerImpl::beginSendEventStream(RequestContextPtr context)
 {
-    assertInServerThread();
+    assertIsServerThread();
 
     if (!context->isAlive())
         return;
