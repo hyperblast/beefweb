@@ -2,6 +2,7 @@
 
 #include "libevent_glue.hpp"
 #include "libevhtp_glue.hpp"
+#include "response_formatter.hpp"
 
 #include "../server.hpp"
 #include "../http.hpp"
@@ -31,11 +32,12 @@ public:
 
 private:
     static void produceEvent(RequestContext* context);
-    static void sendEvent(RequestContext* context);
-    static void sendResponse(RequestContext* context);
 
     EvhtpHostPtr createHost(const char* address, int port);
     RequestContextPtr createContext(EvhtpRequest* evreq);
+
+    void sendEvent(RequestContextPtr context);
+    void sendResponse(RequestContextPtr context);
 
     void registerContext(RequestContextPtr context);
     void unregisterContext(EvhtpRequest* evreq);
@@ -48,6 +50,11 @@ private:
     void beginSendEventStream(RequestContextPtr context);
     void produceAndSendEvent(RequestContextPtr context);
 
+    void assertInServerThread()
+    {
+        assert(threadId_ == std::this_thread::get_id());
+    }
+
     EventBasePtr eventBase_;
     std::unique_ptr<EventBaseWorkQueue> ioQueue_;
     EvhtpHostPtr hostV4_;
@@ -58,6 +65,7 @@ private:
     std::unordered_map<EvhtpRequest*, RequestContextPtr> contexts_;
     std::unordered_map<EvhtpRequest*, RequestContextPtr> eventStreamContexts_;
     ServerConfig config_;
+    std::thread::id threadId_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerImpl);
 };
@@ -76,28 +84,6 @@ struct RequestContext
 
     bool isAlive() const { return evreq != nullptr; }
     Response* response() { return request.response.get(); }
-};
-
-class ResponseFormatter : private ResponseHandler
-{
-public:
-    explicit ResponseFormatter(EvhtpRequest*);
-    ~ResponseFormatter();
-
-    void format(Response* response);
-
-private:
-    virtual void handleResponse(SimpleResponse*) override;
-    virtual void handleResponse(DataResponse*) override;
-    virtual void handleResponse(FileResponse*) override;
-    virtual void handleResponse(JsonResponse*) override;
-    virtual void handleResponse(ErrorResponse*) override;
-    virtual void handleResponse(EventStreamResponse*) override;
-    virtual void handleResponse(AsyncResponse*) override;
-
-    void writeJson(const Json&);
-
-    EvhtpRequest* evreq_;
 };
 
 }}

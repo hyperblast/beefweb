@@ -80,6 +80,7 @@ ServerImpl::~ServerImpl()
 
 void ServerImpl::run()
 {
+    threadId_ = std::this_thread::get_id();
     eventBase_->runLoop();
 }
 
@@ -111,7 +112,7 @@ void ServerImpl::processRequest(EvhtpRequest* evreq)
 
     if (context->request.isProcessed())
     {
-        sendResponse(context.get());
+        sendResponse(context);
         return;
     }
 
@@ -137,11 +138,12 @@ void ServerImpl::produceAndSendEvent(RequestContextPtr context)
     {
         produceEvent(context.get());
 
-        if (auto server = context->server.lock())
+        if (auto server1 = context->server.lock())
         {
-            server->ioQueue_->enqueue([context]
+            server1->ioQueue_->enqueue([context]
             {
-                sendEvent(context.get());
+                if (auto server2 = context->server.lock())
+                    server2->sendEvent(context);
             });
         }
     });
@@ -158,8 +160,10 @@ void ServerImpl::produceEvent(RequestContext* context)
         context->lastEvent = Json();
 }
 
-void ServerImpl::sendEvent(RequestContext* context)
+void ServerImpl::sendEvent(RequestContextPtr context)
 {
+    assertInServerThread();
+
     if (!context->isAlive())
         return;
 
@@ -181,8 +185,10 @@ void ServerImpl::sendEvent(RequestContext* context)
     context->evreq->sendResponseBody(&buffer);
 }
 
-void ServerImpl::sendResponse(RequestContext* context)
+void ServerImpl::sendResponse(RequestContextPtr context)
 {
+    assertInServerThread();
+
     if (!context->isAlive())
         return;
 
@@ -224,12 +230,14 @@ void ServerImpl::processResponse(RequestContextPtr context)
      ioQueue_->enqueue([context]
      {
          if (auto server = context->server.lock())
-             server->sendResponse(context.get());
+            server->sendResponse(context);
      });
 }
 
 void ServerImpl::beginSendEventStream(RequestContextPtr context)
 {
+    assertInServerThread();
+
     if (!context->isAlive())
         return;
 
@@ -239,7 +247,7 @@ void ServerImpl::beginSendEventStream(RequestContextPtr context)
     evreq->outputHeaders()->set("Content-Type", "text/event-stream");
     evreq->sendResponseBegin(static_cast<int>(HttpStatus::S_200_OK));
 
-    sendEvent(context.get());
+    sendEvent(context);
 }
 
 void ServerImpl::doDispatchEvents()
@@ -335,82 +343,6 @@ void ServerImpl::unregisterContext(EvhtpRequest* evreq)
         it->second->evreq = nullptr;
         contexts_.erase(it);
     }
-}
-
-ResponseFormatter::ResponseFormatter(EvhtpRequest* evreq)
-    : evreq_(evreq)
-{
-}
-
-ResponseFormatter::~ResponseFormatter()
-{
-}
-
-void ResponseFormatter::format(Response* response)
-{
-    for (auto& header : response->headers)
-        evreq_->outputHeaders()->set(header.first, header.second);
-
-    response->process(this);
-
-    evreq_->sendResponse(static_cast<int>(response->status));
-}
-
-void ResponseFormatter::handleResponse(SimpleResponse*)
-{
-    evreq_->outputHeaders()->set("Content-Type", "text/plain");
-    evreq_->outputHeaders()->set("Content-Length", "0");
-}
-
-void ResponseFormatter::handleResponse(DataResponse* response)
-{
-    evreq_->outputHeaders()->set("Content-Type", response->contentType);
-    evreq_->outputHeaders()->set("Content-Length", toString(response->data.size()));
-
-    if (response->data.size() > 0)
-    {
-        evreq_->outputBuffer()->write(
-            reinterpret_cast<const char*>(response->data.data()),
-            response->data.size());
-    }
-}
-
-void ResponseFormatter::handleResponse(FileResponse* response)
-{
-    evreq_->outputHeaders()->set("Content-Type", response->contentType);
-    evreq_->outputHeaders()->set("Content-Length", toString(response->info.size));
-
-    if (response->info.size > 0)
-        evreq_->outputBuffer()->writeFile(std::move(response->handle), 0, response->info.size);
-}
-
-void ResponseFormatter::handleResponse(JsonResponse* response)
-{
-    writeJson(response->value);
-}
-
-void ResponseFormatter::handleResponse(ErrorResponse* response)
-{
-    writeJson(Json(*response));
-}
-
-void ResponseFormatter::handleResponse(EventStreamResponse*)
-{
-    throw std::logic_error("EventStreamResponse should not be handled by this object");
-}
-
-void ResponseFormatter::handleResponse(AsyncResponse*)
-{
-    throw std::logic_error("AsyncResponse should not be handled by this object");
-}
-
-void ResponseFormatter::writeJson(const Json& json)
-{
-    auto jsonString = json.dump();
-
-    evreq_->outputHeaders()->set("Content-Type", "application/json");
-    evreq_->outputHeaders()->set("Content-Length", toString(jsonString.length()));
-    evreq_->outputBuffer()->write(jsonString);
 }
 
 }}
