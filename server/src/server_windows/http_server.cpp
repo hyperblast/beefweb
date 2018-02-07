@@ -1,4 +1,6 @@
 #include "http_server.hpp"
+#include "header_map.hpp"
+
 #include "../log.hpp"
 
 namespace msrv {
@@ -48,6 +50,121 @@ private:
 
 }
 
+HttpServer::HttpServer()
+    : apiInit_(HTTP_INITIALIZE_SERVER), isRunning_(false)
+{
+    HANDLE handle;
+    auto ret = ::HttpCreateHttpHandle(&handle, 0);
+    throwIfFailed("HttpCreateHttpHandle", ret == NO_ERROR, ret);
+    handle_.reset(handle);
+}
+
+HttpServer::~HttpServer()
+{
+    isRunning_ = false;
+}
+
+void HttpServer::bindPrefix(std::wstring prefix)
+{
+    boundPrefixes_.emplace_back(std::make_unique<HttpUrlBinding>(this, std::move(prefix)));
+}
+
+void HttpServer::start()
+{
+    requests_.reserve(MAX_REQUESTS);
+
+    for (auto i = 0; i < MAX_REQUESTS; i++)
+        requests_.emplace_back(std::make_unique<HttpRequest>(this));
+
+    isRunning_ = true;
+
+    for (auto& request : requests_)
+        request->receive();
+}
+
+void HttpServer::notifyReceive(HttpRequest* request)
+{
+    if (receiveCallback_)
+        tryCatchLog([this, request] { receiveCallback_(request); });
+}
+
+void HttpServer::notifyDone(HttpRequest* request)
+{
+    if (doneCallback_)
+        tryCatchLog([this, request] { doneCallback_(request); });
+}
+
+HttpRequest::HttpRequest(HttpServer* server)
+    : server_(server)
+{
+    receiveTask_ = createTask<ReceiveRequestTask>(this);
+    sendTask_ = createTask<SendResponseTask>(this);
+}
+
+HttpRequest::~HttpRequest() = default;
+
+std::string HttpRequest::getPath()
+{
+    return std::string();
+}
+
+HttpKeyValueMap HttpRequest::getQueryString()
+{
+    return HttpKeyValueMap();
+}
+
+HttpKeyValueMap HttpRequest::getHeaders()
+{
+    HttpKeyValueMap result;
+    mapRequestHeaders(&data()->Headers, result);
+    return result;
+}
+
+StringView HttpRequest::getBody()
+{
+    return StringView();
+}
+
+void HttpRequest::sendResponse(std::unique_ptr<HttpResponse> response)
+{
+    sendTask_->run(data()->RequestId, std::move(response));
+}
+
+void HttpRequest::receive()
+{
+    if (server_->isRunning())
+        receiveTask_->run();
+}
+
+void HttpRequest::notifyReceiveCompleted(OverlappedResult* result)
+{
+    if (result->ioError == NO_ERROR)
+    {
+        server_->notifyReceive(this);
+    }
+    else
+    {
+        logError("failed to receive request: %s", formatError(result->ioError).c_str());
+        receive();
+    }
+}
+
+void HttpRequest::notifySendCompleted(OverlappedResult* result)
+{
+    if (result->ioError != NO_ERROR)
+        logError("failed to send response: %s", formatError(result->ioError).c_str());
+
+    server_->notifyDone(this);
+    receive();
+}
+
+HttpResponse::HttpResponse()
+    : status(HttpStatus::UNDEFINED)
+{
+}
+
+HttpResponse::~HttpResponse() = default;
+
 HttpApiInit::HttpApiInit(::ULONG flags)
     : flags_(0)
 {
@@ -63,16 +180,6 @@ HttpApiInit::~HttpApiInit()
         ::HttpTerminate(flags_, nullptr);
 }
 
-HttpServer::HttpServer()
-{
-    HANDLE handle;
-    auto ret = ::HttpCreateHttpHandle(&handle, 0);
-    throwIfFailed("HttpCreateHttpHandle", ret == NO_ERROR, ret);
-    handle_.reset(handle);
-}
-
-HttpServer::~HttpServer() = default;
-
 HttpUrlBinding::HttpUrlBinding(HttpServer* server, std::wstring prefix)
     : server_(nullptr), prefix_(std::move(prefix))
 {
@@ -87,18 +194,18 @@ HttpUrlBinding::~HttpUrlBinding()
         ::HttpRemoveUrl(server_->handle(), prefix_.c_str());
 }
 
-ReceiveRequestTask::ReceiveRequestTask(HttpServer* server, TaskCallback<ReceiveRequestTask> callback)
-    : server_(server), callback_(std::move(callback))
+ReceiveRequestTask::ReceiveRequestTask(HttpRequest* request)
+    : request_(request)
 {
     buffer_.resize(INIT_BUFFER_SIZE);
 }
 
 ReceiveRequestTask::~ReceiveRequestTask() = default;
 
-void ReceiveRequestTask::execute()
+void ReceiveRequestTask::run()
 {
     auto ret = ::HttpReceiveHttpRequest(
-        server_->handle(),
+        request_->server()->handle(),
         HTTP_NULL_ID,
         HTTP_RECEIVE_REQUEST_FLAG_FLUSH_BODY,
         request(),
@@ -111,24 +218,27 @@ void ReceiveRequestTask::execute()
 
 void ReceiveRequestTask::complete(OverlappedResult* result)
 {
-    if (callback_)
-        tryCatchLog([this, result] { callback_(this, result->ioError); });
+    request_->notifyReceiveCompleted(result);
 }
 
-SendResponseTask::SendResponseTask(HttpServer* server, TaskCallback<SendResponseTask> callback)
-    : server_(server), callback_(std::move(callback))
+SendResponseTask::SendResponseTask(HttpRequest* request)
+    : request_(request)
 {
+    reset();
 }
 
 SendResponseTask::~SendResponseTask() = default;
 
-void SendResponseTask::execute()
+void SendResponseTask::run(HTTP_REQUEST_ID requestId, std::unique_ptr<HttpResponse> response)
 {
+    response_ = std::move(response);
+    prepare();
+
     auto ret = ::HttpSendHttpResponse(
-        server_->handle(),
-        requestId_,
+        request_->server()->handle(),
+        requestId,
         0,
-        &response_,
+        &responseData_,
         nullptr,
         nullptr,
         nullptr,
@@ -141,25 +251,36 @@ void SendResponseTask::execute()
 
 void SendResponseTask::complete(OverlappedResult* result)
 {
-    setRequestId(HTTP_NULL_ID);
-    setBody(false);
-
-    if (callback_)
-        tryCatchLog([this, result] { callback_(this, result->ioError); });
+    reset();
+    request_->notifySendCompleted(result);
 }
 
 void SendResponseTask::prepare()
 {
-    if (boost::apply_visitor(BodyToChunk(&bodyChunk_), body_))
+    assert(response_);
+
+    responseData_.StatusCode = static_cast<::USHORT>(response_->status);
+    mapResponseHeaders(response_->headers, &responseData_.Headers, unknownHeaders_);
+
+    if (boost::apply_visitor(BodyToChunk(&bodyChunk_), response_->body))
     {
-        response_.EntityChunkCount = 1;
-        response_.pEntityChunks = &bodyChunk_;
+        responseData_.EntityChunkCount = 1;
+        responseData_.pEntityChunks = &bodyChunk_;
     }
     else
     {
-        response_.EntityChunkCount = 0;
-        response_.pEntityChunks = nullptr;
+        responseData_.EntityChunkCount = 0;
+        responseData_.pEntityChunks = nullptr;
     }
+}
+
+void SendResponseTask::reset()
+{
+    ::memset(&response_, 0, sizeof(response_));
+    ::memset(&bodyChunk_, 0, sizeof(bodyChunk_));
+
+    response_.reset();
+    unknownHeaders_.clear();
 }
 
 }}

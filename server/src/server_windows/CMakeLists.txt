@@ -1,6 +1,7 @@
 set(
     SERVER_SOURCES
     event_loop.cpp event_loop.hpp
+    header_map.cpp header_map.hpp
     http_server.cpp http_server.hpp
     iocp.cpp iocp.hpp
     server_impl.cpp server_impl.hpp

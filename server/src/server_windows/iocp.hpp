@@ -20,9 +20,6 @@ namespace server_windows {
 template<typename T>
 using TaskPtr = boost::intrusive_ptr<T>;
 
-template<typename T>
-using TaskCallback = std::function<void(T*, ErrorCode)>;
-
 template<typename T, typename ... Args>
 inline TaskPtr<T> createTask(Args&& ... args)
 {

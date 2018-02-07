@@ -25,9 +25,7 @@ private:
     IoCompletionPort ioPort_;
     IoWorkQueue ioWorkQueue_;
     EventLoop eventLoop_;
-    HttpApiInit httpApiInit_;
     HttpServer http_;
-    HttpUrlBinding httpUrlBinding_;
     ServerConfig config_;
 };
 

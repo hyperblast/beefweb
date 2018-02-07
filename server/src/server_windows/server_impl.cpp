@@ -14,11 +14,10 @@ ServerImpl::ServerImpl(const ServerConfig* config)
     : ioPort_(1),
       ioWorkQueue_(&ioPort_),
       eventLoop_(&ioPort_),
-      httpApiInit_(HTTP_INITIALIZE_SERVER),
       http_(),
-      httpUrlBinding_(&http_, getUrlPrefix(config)),
       config_(*config)
 {
+    http_.bindPrefix(getUrlPrefix(config));
 }
 
 ServerImpl::~ServerImpl()
@@ -34,6 +33,7 @@ std::wstring ServerImpl::getUrlPrefix(const ServerConfig* config)
 
 void ServerImpl::run()
 {
+    http_.start();
     eventLoop_.run();
 }
 
