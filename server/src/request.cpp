@@ -5,16 +5,14 @@
 namespace msrv {
 
 Request::Request()
-    : id(0),
-      method(HttpMethod::GET),
+    : method(HttpMethod::GET),
       isProcessed_(false),
       isHandlerExecuted_(false)
 {
 }
 
 Request::Request(HttpMethod methodVal, std::string pathVal)
-    : id(0),
-      method(methodVal),
+    : method(methodVal),
       path(std::move(pathVal)),
       isProcessed_(false),
       isHandlerExecuted_(false)

@@ -115,15 +115,13 @@ public:
     Evbuffer* inputBuffer() { return &inputBuffer_; }
     Evbuffer* outputBuffer() { return &outputBuffer_; }
 
-    void onDestroy(EvhtpRequestCallback callback) { destroyCallback_ = std::move(callback); }
+    void setDestroyCallback(EvhtpRequestCallback callback) { destroyCallback_ = std::move(callback); }
     void abort();
 
     void sendResponse(int status) { ::evhtp_send_reply(ptr(), status); }
     void sendResponseBegin(int status) { ::evhtp_send_reply_start(ptr(), status); }
     void sendResponseBody(Evbuffer* buffer) { ::evhtp_send_reply_body(ptr(), buffer->ptr()); }
     void sendResponseEnd() { ::evhtp_send_reply_end(ptr()); }
-
-    int64_t id;
 
 private:
     ~EvhtpRequest();

@@ -18,10 +18,6 @@ class RequestHandler;
 class RequestHandlerFactory;
 class Response;
 
-using RequestPtr = std::unique_ptr<Request>;
-using RequestSharedPtr = std::shared_ptr<Request>;
-using RequestWeakPtr = std::weak_ptr<Request>;
-
 using RequestHandlerPtr = std::unique_ptr<RequestHandler>;
 using RequestHandlerFactoryPtr = std::unique_ptr<RequestHandlerFactory>;
 
@@ -32,7 +28,6 @@ public:
     Request(HttpMethod methodVal, std::string pathVal);
     ~Request();
 
-    int64_t id;
     HttpMethod method;
     std::string path;
     HttpKeyValueMap headers;

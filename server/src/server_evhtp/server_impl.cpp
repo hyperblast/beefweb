@@ -29,7 +29,7 @@ ServerPtr Server::create(const ServerConfig* config)
 namespace server_evhtp {
 
 ServerImpl::ServerImpl(const ServerConfig* config)
-    : config_(*config), lastRequestId_(0)
+    : config_(*config)
 {
     EventBase::initThreads();
 
@@ -66,15 +66,26 @@ ServerImpl::~ServerImpl()
 {
     std::vector<EvhtpRequest*> requests;
 
-    for (auto& it : evreqMap_)
-        requests.push_back(it.second);
+    requests.reserve(contexts_.size());
+
+    for (auto& pair : contexts_)
+        requests.push_back(pair.first);
 
     for (auto evreq : requests)
         evreq->abort();
 
-    assert(evreqMap_.empty());
-    assert(requestMap_.empty());
-    assert(eventStreamResponses_.empty());
+    assert(contexts_.empty());
+    assert(eventStreamContexts_.empty());
+}
+
+void ServerImpl::run()
+{
+    eventBase_->runLoop();
+}
+
+void ServerImpl::exit()
+{
+    eventBase_->breakLoop();
 }
 
 void ServerImpl::dispatchEvents()
@@ -94,110 +105,141 @@ EvhtpHostPtr ServerImpl::createHost(const char* address, int port)
     return host;
 }
 
-void ServerImpl::run()
-{
-    eventBase_->runLoop();
-}
-
-void ServerImpl::exit()
-{
-    eventBase_->breakLoop();
-}
-
 void ServerImpl::processRequest(EvhtpRequest* evreq)
 {
-    evreq->id = ++lastRequestId_;
+    RequestContextPtr context = createContext(evreq);
 
-    RequestSharedPtr request = createRequest(evreq);
-
-    if (request->isProcessed())
+    if (context->request.isProcessed())
     {
-        processResponse(evreq, std::move(request));
+        sendResponse(context.get());
         return;
     }
 
-    WorkQueue* workQueue = getWorkQueue(request->handler.get());
-    RequestWeakPtr requestWeak(request);
-    trackRequest(evreq, request);
+    registerContext(context);
 
-    workQueue->enqueue([this, requestWeak]
+    context->workQueue->enqueue([context]
     {
-        RequestSharedPtr request1 = requestWeak.lock();
-        if (!request1)
-            return;
-
-        config_.filters->execute(request1.get());
-
-        ioQueue_->enqueue([this, requestWeak]
-        {
-            RequestSharedPtr request2 = requestWeak.lock();
-            if (!request2)
-                return;
-
-            auto evreqEntry = evreqMap_.find(request2->id);
-            if (evreqEntry == evreqMap_.end())
-                return;
-
-            processResponse(evreqEntry->second, request2);
-        });
+        if (auto server = context->server.lock())
+            server->runHandlerAndProcessResponse(context);
     });
 }
 
-void ServerImpl::processResponse(EvhtpRequest* evreq, RequestSharedPtr request)
+void ServerImpl::runHandlerAndProcessResponse(RequestContextPtr context)
 {
-    Response* response = request->response.get();
+    config_.filters->execute(&context->request);
+
+    processResponse(context);
+}
+
+void ServerImpl::produceAndSendEvent(RequestContextPtr context)
+{
+    context->workQueue->enqueue([context]
+    {
+        produceEvent(context.get());
+
+        if (auto server = context->server.lock())
+        {
+            server->ioQueue_->enqueue([context]
+            {
+                sendEvent(context.get());
+            });
+        }
+    });
+}
+
+void ServerImpl::produceEvent(RequestContext* context)
+{
+    bool produced = tryCatchLog([context]
+    {
+        context->lastEvent = context->eventStreamResponse->source();
+    });
+
+    if (!produced)
+        context->lastEvent = Json();
+}
+
+void ServerImpl::sendEvent(RequestContext* context)
+{
+    if (!context->isAlive())
+        return;
+
+    Evbuffer buffer;
+
+    if (context->lastEvent.is_null())
+    {
+        buffer.write(": ping\n\n");
+    }
+    else
+    {
+        buffer.write("data: ");
+        buffer.write(context->lastEvent.dump());
+        buffer.write("\n\n");
+
+        context->lastEvent = Json();
+    }
+
+    context->evreq->sendResponseBody(&buffer);
+}
+
+void ServerImpl::sendResponse(RequestContext* context)
+{
+    if (!context->isAlive())
+        return;
+
+    ResponseFormatter(context->evreq).format(context->response());
+}
+
+void ServerImpl::processResponse(RequestContextPtr context)
+{
+    Response* response = context->response();
 
     if (auto eventStreamResponse = dynamic_cast<EventStreamResponse*>(response))
     {
-        processEventStreamResponse(evreq, eventStreamResponse);
-        return;
-    }
+        context->eventStreamResponse = eventStreamResponse;
+        produceEvent(context.get());
 
-    if (auto asyncResponse = dynamic_cast<AsyncResponse*>(response))
-    {
-        processAsyncResponse(evreq, request, asyncResponse);
-        return;
-    }
-
-    ResponseFormatter(evreq).format(response);
-}
-
-void ServerImpl::processAsyncResponse(EvhtpRequest*, RequestSharedPtr request, AsyncResponse* asyncResponse)
-{
-    RequestWeakPtr requestWeak(request);
-
-    asyncResponse->responseFuture.then(
-        boost::launch::sync, [this, requestWeak] (ResponseFuture resp)
-    {
-        ResponsePtr response = AsyncResponse::unpack(std::move(resp));
-
-        RequestSharedPtr request1 = requestWeak.lock();
-        if (!request1)
-            return;
-
-        request1->response = std::move(response);
-
-        ioQueue_->enqueue([this, requestWeak]
+        ioQueue_->enqueue([context]
         {
-            RequestSharedPtr request2 = requestWeak.lock();
-            if (!request2)
-                return;
-
-            auto evreqEntry = evreqMap_.find(request2->id);
-            if (evreqEntry == evreqMap_.end())
-                return;
-
-            processResponse(evreqEntry->second, std::move(request2));
+            if (auto server = context->server.lock())
+                server->beginSendEventStream(context);
         });
-    });
+
+        return;
+    }
+
+     if (auto asyncResponse = dynamic_cast<AsyncResponse*>(response))
+     {
+         asyncResponse->responseFuture.then(
+            boost::launch::sync, [context] (ResponseFuture resp)
+         {
+             context->request.response = AsyncResponse::unpack(std::move(resp));
+
+             if (auto server = context->server.lock())
+                 server->processResponse(context);
+         });
+
+         return;
+     }
+
+     ioQueue_->enqueue([context]
+     {
+         if (auto server = context->server.lock())
+             server->sendResponse(context.get());
+     });
 }
 
-void ServerImpl::processEventStreamResponse(EvhtpRequest* evreq, EventStreamResponse* streamResponse)
+void ServerImpl::beginSendEventStream(RequestContextPtr context)
 {
-    eventStreamResponses_.emplace(evreq->id);
+    if (!context->isAlive())
+        return;
+
+    auto evreq = context->evreq;
+    eventStreamContexts_.emplace(evreq, context);
+
     evreq->outputHeaders()->set("Content-Type", "text/event-stream");
     evreq->sendResponseBegin(static_cast<int>(HttpStatus::S_200_OK));
-    sendEvent(evreq, streamResponse);
+
+    sendEvent(context.get());
 }
 
 void ServerImpl::doDispatchEvents()
@@ -205,43 +247,37 @@ void ServerImpl::doDispatchEvents()
     dispatchEventsRequest_->schedule(pingEventPeriod());
     dispatchEventsRequested_.store(false);
 
-    for (auto id : eventStreamResponses_)
-    {
-        auto* evreq = evreqMap_[id];
-        RequestSharedPtr request = requestMap_[id];
-        auto* response = request->response.get();
-        auto* eventStreamResponse = dynamic_cast<EventStreamResponse*>(response);
-
-        if (eventStreamResponse)
-            sendEvent(evreq, eventStreamResponse);
-    }
+    for (auto& pair : eventStreamContexts_)
+        produceAndSendEvent(pair.second);
 }
 
-RequestSharedPtr ServerImpl::createRequest(EvhtpRequest* evreq)
+RequestContextPtr ServerImpl::createContext(EvhtpRequest* evreq)
 {
-    RequestSharedPtr req = std::make_shared<Request>();
+    auto context = std::make_shared<RequestContext>();
+    context->evreq = evreq;
+    context->server = shared_from_this();
 
-    req->id = evreq->id;
+    auto* request = &context->request;
 
     switch (evreq->method())
     {
     case htp_method_GET:
-        req->method = HttpMethod::GET;
+        request->method = HttpMethod::GET;
         break;
 
     case htp_method_POST:
-        req->method = HttpMethod::POST;
+        request->method = HttpMethod::POST;
         break;
 
     default:
-        req->response = Response::error(HttpStatus::S_405_METHOD_NOT_ALLOWED);
-        req->setProcessed();
-        return req;
+        request->response = Response::error(HttpStatus::S_405_METHOD_NOT_ALLOWED);
+        request->setProcessed();
+        return context;
     }
 
-    req->path = evreq->path();
-    req->headers = evreq->inputHeaders()->toMap<HttpKeyValueMap>();
-    req->queryParams = evreq->queryParams()->toMap<HttpKeyValueMap>();
+    request->path = evreq->path();
+    request->headers = evreq->inputHeaders()->toMap<HttpKeyValueMap>();
+    request->queryParams = evreq->queryParams()->toMap<HttpKeyValueMap>();
 
     if (evreq->inputBuffer()->length() > 0)
     {
@@ -249,65 +285,56 @@ RequestSharedPtr ServerImpl::createRequest(EvhtpRequest* evreq)
 
         try
         {
-            req->postData = Json::parse(postDataBuf);
+            request->postData = Json::parse(postDataBuf);
         }
         catch (std::exception& ex)
         {
-            req->response = Response::error(HttpStatus::S_400_BAD_REQUEST, ex.what());
-            req->setProcessed();
-            return req;
+            request->response = Response::error(HttpStatus::S_400_BAD_REQUEST, ex.what());
+            request->setProcessed();
+            return context;
         }
     }
 
-    auto routeResult = config_.router->dispatch(req.get());
+    auto routeResult = config_.router->dispatch(request);
 
     if (routeResult->factory)
     {
-        req->handler = routeResult->factory->createHandler(req.get());
-        req->routeParams = std::move(routeResult->params);
+        request->handler = routeResult->factory->createHandler(request);
+        request->routeParams = std::move(routeResult->params);
+
+        context->workQueue = request->handler->workQueue();
+
+        if (context->workQueue == nullptr)
+            context->workQueue = config_.defaultWorkQueue;
     }
     else
     {
-        req->response = std::move(routeResult->errorResponse);
-        req->setProcessed();
+        request->response = std::move(routeResult->errorResponse);
+        request->setProcessed();
     }
 
-    return req;
+    return context;
 }
 
-void ServerImpl::trackRequest(EvhtpRequest* evreq, RequestSharedPtr req)
+void ServerImpl::registerContext(RequestContextPtr context)
 {
-    assert(evreq->id == req->id);
+    context->evreq->setDestroyCallback(
+        [this] (EvhtpRequest* r) { unregisterContext(r); });
 
-    evreq->onDestroy([this] (EvhtpRequest* r)
-    {
-        eventStreamResponses_.erase(r->id);
-        evreqMap_.erase(r->id);
-        requestMap_.erase(r->id);
-    });
-
-    evreqMap_.emplace(evreq->id, evreq);
-    requestMap_.emplace(evreq->id, std::move(req));
+    auto evreq = context->evreq;
+    contexts_.emplace(evreq, std::move(context));
 }
 
-void ServerImpl::sendEvent(EvhtpRequest* evreq, EventStreamResponse* response)
+void ServerImpl::unregisterContext(EvhtpRequest* evreq)
 {
-    Json eventData;
-    tryCatchLog([&]{ eventData = response->source(); });
+    eventStreamContexts_.erase(evreq);
 
-    Evbuffer buffer;
-    if (eventData.is_null())
+    auto it = contexts_.find(evreq);
+    if (it != contexts_.end())
     {
-        buffer.write(": ping\n\n");
+        it->second->evreq = nullptr;
+        contexts_.erase(it);
     }
-    else
-    {
-        buffer.write("data: ");
-        buffer.write(eventData.dump());
-        buffer.write("\n\n");
-    }
-
-    evreq->sendResponseBody(&buffer);
 }
 
 ResponseFormatter::ResponseFormatter(EvhtpRequest* evreq)

@@ -74,8 +74,7 @@ void EvhtpKeyValueMap::set(const std::string& key, const std::string& value)
 }
 
 EvhtpRequest::EvhtpRequest(EvhtpHost* host, evhtp_request_s* req)
-    : id(0),
-      host_(host),
+    : host_(host),
       ptr_(req),
       queryParams_(req->uri->query),
       inputHeaders_(req->headers_in),
