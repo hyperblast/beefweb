@@ -10,37 +10,32 @@ namespace server_evhtp {
 
 namespace { std::once_flag initThreadsOnce; }
 
-EventBase::EventBase()
+EventBase::EventBase(bool threadSafe)
     : ptr_(nullptr)
 {
+    if (threadSafe)
+    {
+        std::call_once(initThreadsOnce, []
+        {
+            auto ret = ::evthread_use_pthreads();
+            throwIfFailed("evthread_use_pthreads", ret >= 0);
+        });
+    }
+
     ptr_ = ::event_base_new();
     throwIfFailed("event_base_new", ptr_ != nullptr);
+
+    if (threadSafe)
+    {
+        auto ret = ::evthread_make_base_notifiable(ptr());
+        throwIfFailed("evthread_make_base_notifiable", ret >= 0);
+    }
 }
 
 EventBase::~EventBase()
 {
     if (ptr_)
         ::event_base_free(ptr_);
-}
-
-void EventBase::initThreads()
-{
-    std::call_once(initThreadsOnce, [] {
-        auto ret = ::evthread_use_pthreads();
-        throwIfFailed("evthread_use_pthreads", ret >= 0);
-    });
-}
-
-void EventBase::makeNotifiable()
-{
-    auto ret = ::evthread_make_base_notifiable(ptr());
-    throwIfFailed("evthread_make_base_notifiable", ret >= 0);
-}
-
-void EventBase::initPriorities(int prioCount)
-{
-    auto ret = ::event_base_priority_init(ptr(), prioCount);
-    throwIfFailed("event_base_priority_init",  ret >= 0);
 }
 
 bool EventBase::runLoop(int flags)
@@ -68,12 +63,6 @@ Event::~Event()
 {
     if (ptr_)
         ::event_free(ptr_);
-}
-
-void Event::setPriority(int prio)
-{
-    auto ret = ::event_priority_set(ptr(), prio);
-    throwIfFailed("event_priority_set", ret >= 0);
 }
 
 void Event::schedule(DurationMs timeout)
@@ -128,13 +117,10 @@ void Evbuffer::write(const char* data, size_t size)
     throwIfFailed("evbuffer_add", ret >= 0);
 }
 
-EventBaseWorkQueue::EventBaseWorkQueue(EventBase *base, int prio)
+EventBaseWorkQueue::EventBaseWorkQueue(EventBase *base)
     : notifyEvent_(base)
 {
     notifyEvent_.setCallback([this] (Event*, int) { execute(); });
-
-    if (prio >= 0)
-        notifyEvent_.setPriority(prio);
 }
 
 EventBaseWorkQueue::~EventBaseWorkQueue() = default;

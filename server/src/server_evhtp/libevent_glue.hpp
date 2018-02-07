@@ -19,11 +19,8 @@ namespace server_evhtp {
 class Event;
 class EventBase;
 
-using EventBasePtr = std::unique_ptr<EventBase>;
 using EventPtr = std::unique_ptr<Event>;
-
 using EventCallback = std::function<void(Event*, int)>;
-
 
 class Event
 {
@@ -43,7 +40,6 @@ public:
     ::event* ptr() { return ptr_; }
 
     void setCallback(EventCallback callback) { callback_ = std::move(callback); }
-    void setPriority(int prio);
     void schedule(DurationMs timeout = DurationMs::zero());
 
 private:
@@ -59,23 +55,13 @@ private:
 class EventBase
 {
 public:
-    EventBase();
+    explicit EventBase(bool threadSafe = true);
     ~EventBase();
-
-    static void initThreads();
 
     ::event_base* ptr() { return ptr_; }
 
-    void makeNotifiable();
-    void initPriorities(int prioCount);
     bool runLoop(int flags = 0);
     void breakLoop();
-
-    template<typename ...Args>
-    EventPtr createEvent(Args ...args)
-    {
-        return EventPtr(new Event(this, std::forward<Args>(args)...));
-    }
 
 private:
     ::event_base* ptr_;
@@ -120,7 +106,7 @@ private:
 class EventBaseWorkQueue : public ExternalWorkQueue
 {
 public:
-    EventBaseWorkQueue(EventBase* base, int prio = -1);
+    explicit EventBaseWorkQueue(EventBase* base);
     ~EventBaseWorkQueue();
 
 protected:

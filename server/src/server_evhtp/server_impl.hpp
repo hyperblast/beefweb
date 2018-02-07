@@ -33,7 +33,7 @@ public:
 private:
     static void produceEvent(RequestContext* context);
 
-    EvhtpHostPtr createHost(const char* address, int port);
+    void setupHost(EvhtpHost* host, const char* address, int port);
     RequestContextPtr createContext(EvhtpRequest* evreq);
 
     void sendEvent(RequestContextPtr context);
@@ -55,13 +55,13 @@ private:
         assert(threadId_ == std::this_thread::get_id());
     }
 
-    EventBasePtr eventBase_;
-    std::unique_ptr<EventBaseWorkQueue> ioQueue_;
-    EvhtpHostPtr hostV4_;
-    EvhtpHostPtr hostV6_;
-    std::unique_ptr<Event> dispatchEventsRequest_;
+    EventBase eventBase_;
+    EventBaseWorkQueue ioQueue_;
+    Event keepEventLoopEvent_;
+    Event dispatchEventsRequest_;
     std::atomic_bool dispatchEventsRequested_;
-    EventPtr keepEventLoopEvent_;
+    EvhtpHost hostV4_;
+    EvhtpHost hostV6_;
     std::unordered_map<EvhtpRequest*, RequestContextPtr> contexts_;
     std::unordered_map<EvhtpRequest*, RequestContextPtr> eventStreamContexts_;
     ServerConfig config_;

@@ -29,36 +29,31 @@ ServerPtr Server::create(const ServerConfig* config)
 namespace server_evhtp {
 
 ServerImpl::ServerImpl(const ServerConfig* config)
-    : config_(*config)
+    : eventBase_(),
+      ioQueue_(&eventBase_),
+      keepEventLoopEvent_(&eventBase_, SocketHandle(), EV_PERSIST),
+      dispatchEventsRequest_(&eventBase_),
+      dispatchEventsRequested_(true),
+      hostV4_(&eventBase_),
+      hostV6_(&eventBase_),
+      config_(*config)
 {
-    EventBase::initThreads();
+    dispatchEventsRequest_.setCallback([this] (Event*, int) { doDispatchEvents(); });
+    dispatchEventsRequest_.schedule();
 
-    eventBase_.reset(new EventBase());
-    eventBase_->makeNotifiable();
-    ioQueue_ = std::make_unique<EventBaseWorkQueue>(eventBase_.get());
+    keepEventLoopEvent_.schedule(std::chrono::minutes(1));
 
-    dispatchEventsRequest_ = eventBase_->createEvent([this] (Event*, int) { doDispatchEvents(); });
-    dispatchEventsRequest_->schedule();
-    dispatchEventsRequested_.store(true);
+    setupHost(
+        &hostV4_,
+        config_.allowRemote ? "ipv4:0.0.0.0" : "ipv4:127.0.0.1",
+        config_.port);
 
-    keepEventLoopEvent_ = eventBase_->createEvent(SocketHandle(), EV_PERSIST);
-    keepEventLoopEvent_->schedule(std::chrono::minutes(1));
+    setupHost(
+        &hostV6_,
+        config_.allowRemote ? "ipv6:::0" : "ipv6:::1",
+        config_.port);
 
-    tryCatchLog([this]
-    {
-        hostV4_ = createHost(
-            config_.allowRemote ? "ipv4:0.0.0.0" : "ipv4:127.0.0.1",
-            config_.port);
-    });
-
-    tryCatchLog([this]
-    {
-        hostV6_ = createHost(
-            config_.allowRemote ? "ipv6:::0" : "ipv6:::1",
-            config_.port);
-    });
-
-    if (!hostV4_ && !hostV6_)
+    if (!hostV4_.isBound() && !hostV6_.isBound())
         throw std::runtime_error("failed to bind to any address");
 }
 
@@ -81,12 +76,12 @@ ServerImpl::~ServerImpl()
 void ServerImpl::run()
 {
     threadId_ = std::this_thread::get_id();
-    eventBase_->runLoop();
+    eventBase_.runLoop();
 }
 
 void ServerImpl::exit()
 {
-    eventBase_->breakLoop();
+    eventBase_.breakLoop();
 }
 
 void ServerImpl::dispatchEvents()
@@ -94,16 +89,13 @@ void ServerImpl::dispatchEvents()
     bool expected = false;
 
     if (dispatchEventsRequested_.compare_exchange_strong(expected, true))
-        dispatchEventsRequest_->schedule(eventDispatchDelay());
+        dispatchEventsRequest_.schedule(eventDispatchDelay());
 }
 
-EvhtpHostPtr ServerImpl::createHost(const char* address, int port)
+void ServerImpl::setupHost(EvhtpHost* host, const char* address, int port)
 {
-    EvhtpHostPtr host(new EvhtpHost(eventBase_.get()));
     host->setRequestCallback([this] (EvhtpRequest* req) { processRequest(req); });
     host->bind(address, port, 64);
-    logInfo("listening on [%s]:%d", address, port);
-    return host;
 }
 
 void ServerImpl::processRequest(EvhtpRequest* evreq)
@@ -140,7 +132,7 @@ void ServerImpl::produceAndSendEvent(RequestContextPtr context)
 
         if (auto server1 = context->server.lock())
         {
-            server1->ioQueue_->enqueue([context]
+            server1->ioQueue_.enqueue([context]
             {
                 if (auto server2 = context->server.lock())
                     server2->sendEvent(context);
@@ -204,7 +196,7 @@ void ServerImpl::processResponse(RequestContextPtr context)
         context->eventStreamResponse = eventStreamResponse;
         produceEvent(context.get());
 
-        ioQueue_->enqueue([context]
+        ioQueue_.enqueue([context]
         {
             if (auto server = context->server.lock())
                 server->beginSendEventStream(context);
@@ -227,7 +219,7 @@ void ServerImpl::processResponse(RequestContextPtr context)
          return;
      }
 
-     ioQueue_->enqueue([context]
+     ioQueue_.enqueue([context]
      {
          if (auto server = context->server.lock())
             server->sendResponse(context);
@@ -252,7 +244,7 @@ void ServerImpl::beginSendEventStream(RequestContextPtr context)
 
 void ServerImpl::doDispatchEvents()
 {
-    dispatchEventsRequest_->schedule(pingEventPeriod());
+    dispatchEventsRequest_.schedule(pingEventPeriod());
     dispatchEventsRequested_.store(false);
 
     for (auto& pair : eventStreamContexts_)

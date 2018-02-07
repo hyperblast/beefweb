@@ -18,7 +18,6 @@ namespace server_evhtp {
 class EvhtpHost;
 class EvhtpRequest;
 
-using EvhtpHostPtr = std::unique_ptr<EvhtpHost>;
 using EvhtpRequestCallback = std::function<void(EvhtpRequest*)>;
 
 class EvhtpHost
@@ -29,9 +28,10 @@ public:
 
     EventBase* base() { return base_; }
     ::evhtp_s* ptr() { return ptr_; }
+    bool isBound() const { return isBound_; }
 
     void setRequestCallback(EvhtpRequestCallback callback) { requestCallback_ = std::move(callback); }
-    void bind(const char* address, int port, int backlog);
+    bool bind(const char* address, int port, int backlog);
     void unbind();
 
 private:

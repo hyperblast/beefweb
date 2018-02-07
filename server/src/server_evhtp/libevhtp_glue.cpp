@@ -24,22 +24,26 @@ EvhtpHost::~EvhtpHost()
         ::evhtp_free(ptr_);
 }
 
-void EvhtpHost::bind(const char* address, int port, int backlog)
+bool EvhtpHost::bind(const char* address, int port, int backlog)
 {
     unbind();
 
-    auto ret = ::evhtp_bind_socket(ptr(), address, port, backlog);
+    isBound_ = ::evhtp_bind_socket(ptr(), address, port, backlog) == 0;
 
-    if (ret < 0)
+    if (isBound_)
     {
-        throw std::runtime_error(formatString(
+        logInfo("listening on [%s]:%d", address, port);
+    }
+    else
+    {
+        logError(
             "failed to bind to address [%s]:%d: %s",
             address,
             port,
-            formatError(errno).c_str()));
+            formatError(errno).c_str());
     }
 
-    isBound_ = true;
+    return isBound_;
 }
 
 void EvhtpHost::unbind()
