@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "../log.hpp"
 #include "../project_info.hpp"
+#include "../charset.hpp"
 
 #define CONF_PORT           MSRV_PROJECT_ID ".port"
 #define CONF_ALLOW_REMOTE   MSRV_PROJECT_ID ".allow_remote"
@@ -110,7 +111,13 @@ void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
 
 static int pluginStart()
 {
-    return tryCatchLog([] { pluginInstance = new Plugin(); }) ? 0 : -1;
+    auto ok = tryCatchLog([]
+    {
+        setLocaleCharset();
+        pluginInstance = new Plugin();
+    });
+
+    return ok ? 0 : -1;
 }
 
 static int pluginStop()

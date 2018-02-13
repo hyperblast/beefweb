@@ -6,7 +6,7 @@ namespace msrv {
 
 #ifdef MSRV_OS_POSIX
 
-void initLocaleCharset(const char* charset = nullptr);
+void setLocaleCharset(const char* charset = nullptr);
 std::string utf8ToLocale(const std::string& str);
 std::string localeToUtf8(const std::string& str);
 
