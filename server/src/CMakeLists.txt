@@ -83,6 +83,7 @@ set(
     response.cpp response.hpp
     router.cpp router.hpp
     server.cpp server.hpp
+    server_thread.cpp server_thread.hpp
     settings.cpp settings.hpp
     static_controller.cpp static_controller.hpp
     string_utils.cpp string_utils.hpp

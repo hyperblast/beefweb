@@ -4,7 +4,7 @@
 #include "content_type_map.hpp"
 #include "player_api.hpp"
 #include "player_events.hpp"
-#include "server.hpp"
+#include "server_thread.hpp"
 #include "router.hpp"
 #include "settings.hpp"
 #include "work_queue.hpp"
