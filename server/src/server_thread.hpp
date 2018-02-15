@@ -2,8 +2,6 @@
 
 #include "server.hpp"
 
-#include "boost_locks_compat.hpp"
-
 #include <functional>
 #include <memory>
 #include <thread>
@@ -20,16 +18,14 @@ public:
     ServerThread(ServerReadyCallback readyCallback = ServerReadyCallback());
     ~ServerThread();
 
-    void restart(const ServerConfig* config)
+    void restart(ServerConfigPtr config)
     {
-        sendCommand(Command::RESTART, config);
+        sendCommand(Command::RESTART, std::move(config));
     }
 
     void dispatchEvents();
 
 private:
-    using UniqueLock = BoostAwareUniqueLock<std::mutex>;
-
     enum class Command
     {
         NONE,
@@ -37,17 +33,17 @@ private:
         EXIT,
     };
 
+    Command readCommand(ServerConfigPtr* config);
     void run();
-    void runOnce(UniqueLock& lock);
-    void sendCommand(Command command, const ServerConfig* nextConfig = nullptr);
+    void runOnce(ServerConfigPtr config);
+    void sendCommand(Command command, ServerConfigPtr nextConfig = ServerConfigPtr());
 
     std::thread thread_;
     std::mutex mutex_;
     std::condition_variable commandNotify_;
     ServerPtr server_;
     Command command_;
-    ServerConfig nextConfig_;
-    bool stopPending_;
+    ServerConfigPtr nextConfig_;
     ServerReadyCallback readyCallback_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerThread);

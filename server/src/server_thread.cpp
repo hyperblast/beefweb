@@ -7,7 +7,6 @@ namespace msrv {
 
 ServerThread::ServerThread(ServerReadyCallback readyCallback)
     : command_(Command::NONE),
-      stopPending_(false),
       readyCallback_(std::move(readyCallback))
 {
     thread_ = std::thread([this] { run(); });
@@ -24,28 +23,43 @@ ServerThread::~ServerThread()
 
 void ServerThread::dispatchEvents()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    ServerPtr server;
 
-    if (server_ && !stopPending_)
-        server_->dispatchEvents();
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        server = server_;
+    }
+
+    if (server)
+        server->dispatchEvents();
+}
+
+ServerThread::Command ServerThread::readCommand(ServerConfigPtr* config)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+
+    while (command_ == Command::NONE)
+        commandNotify_.wait(lock);
+
+    auto command = command_;
+    command_ = Command::NONE;
+    *config = std::move(nextConfig_);
+    return command;
 }
 
 void ServerThread::run()
 {
-    UniqueLock lock(mutex_);
+    ServerConfigPtr config;
 
     while (true)
     {
-        switch (command_)
+        switch (readCommand(&config))
         {
         case Command::NONE:
-            commandNotify_.wait(lock);
-            break;
+            continue;
 
         case Command::RESTART:
-            command_ = Command::NONE;
-            stopPending_ = false;
-            runOnce(lock);
+            runOnce(std::move(config));
             break;
 
         case Command::EXIT:
@@ -54,27 +68,35 @@ void ServerThread::run()
     }
 }
 
-void ServerThread::runOnce(UniqueLock& lock)
+void ServerThread::runOnce(ServerConfigPtr config)
 {
-    tryCatchLog([this]
+    ServerPtr server;
+
+    tryCatchLog([&config, &server]
     {
-        server_ = Server::create(&nextConfig_);
+        server = Server::create(std::move(config));
     });
 
-    if (!server_)
+    if (!server)
         return;
 
     {
-        boost::reverse_lock<UniqueLock> unlock(lock);
-
-        if (readyCallback_)
-            tryCatchLog([this] { readyCallback_(); });
-
-        tryCatchLog([this] { server_->run(); });
+        std::lock_guard<std::mutex> lock(mutex_);
+        server_ = server;
     }
 
-    auto destroyed = server_->destroyed();
-    server_.reset();
+    if (readyCallback_)
+        tryCatchLog([this] { readyCallback_(); });
+
+    tryCatchLog([&server] { server->run(); });
+
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        server_.reset();
+    }
+
+    auto destroyed = server->destroyed();
+    server.reset();
 
     // In the case server is still doing some async work
     // and is not destroyed by the statement above wait for actual destruction.
@@ -82,33 +104,28 @@ void ServerThread::runOnce(UniqueLock& lock)
     // This is required to prevent creating new instance while old one
     // might still be bound to ports which new instance is going to use.
 
-    if (!destroyed.is_ready())
-    {
-        boost::reverse_lock<UniqueLock> unlock(lock);
-        destroyed.wait();
-    }
+    destroyed.wait();
 }
 
-void ServerThread::sendCommand(Command command, const ServerConfig* nextConfig)
+void ServerThread::sendCommand(Command command, ServerConfigPtr nextConfig)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
+    ServerPtr server;
 
-    if (command < command_)
-        return;
-
-    command_ = command;
-
-    if (nextConfig)
-        nextConfig_ = *nextConfig;
-
-    if (server_ && !stopPending_)
     {
-        server_->exit();
-        stopPending_ = true;
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        if (command < command_)
+            return;
+
+        command_ = command;
+        nextConfig_ = std::move(nextConfig);
+
+        server = std::move(server_);
+        commandNotify_.notify_all();
     }
 
-    commandNotify_.notify_all();
+    if (server)
+        server->exit();
 }
-
 
 }

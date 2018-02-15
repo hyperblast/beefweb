@@ -21,22 +21,22 @@
 
 namespace msrv {
 
-ServerPtr Server::create(const ServerConfig* config)
+ServerPtr Server::create(ServerConfigPtr config)
 {
-    return std::make_shared<server_evhtp::ServerImpl>(config);
+    return std::make_shared<server_evhtp::ServerImpl>(std::move(config));
 }
 
 namespace server_evhtp {
 
-ServerImpl::ServerImpl(const ServerConfig* config)
-    : eventBase_(),
+ServerImpl::ServerImpl(ServerConfigPtr config)
+    : config_(std::move(config)),
+      eventBase_(),
       ioQueue_(&eventBase_),
       keepEventLoopEvent_(&eventBase_, SocketHandle(), EV_PERSIST),
       dispatchEventsRequest_(&eventBase_),
       dispatchEventsRequested_(true),
       hostV4_(&eventBase_),
-      hostV6_(&eventBase_),
-      config_(*config)
+      hostV6_(&eventBase_)
 {
     dispatchEventsRequest_.setCallback([this] (Event*, int) { doDispatchEvents(); });
     dispatchEventsRequest_.schedule();
@@ -45,13 +45,13 @@ ServerImpl::ServerImpl(const ServerConfig* config)
 
     setupHost(
         &hostV4_,
-        config_.allowRemote ? "ipv4:0.0.0.0" : "ipv4:127.0.0.1",
-        config_.port);
+        config_->allowRemote ? "ipv4:0.0.0.0" : "ipv4:127.0.0.1",
+        config_->port);
 
     setupHost(
         &hostV6_,
-        config_.allowRemote ? "ipv6:::0" : "ipv6:::1",
-        config_.port);
+        config_->allowRemote ? "ipv6:::0" : "ipv6:::1",
+        config_->port);
 
     if (!hostV4_.isBound() && !hostV6_.isBound())
         throw std::runtime_error("failed to bind to any address");
@@ -119,7 +119,7 @@ void ServerImpl::processRequest(EvhtpRequest* evreq)
 
 void ServerImpl::runHandlerAndProcessResponse(RequestContextPtr context)
 {
-    config_.filters->execute(&context->request);
+    config_->filters->execute(&context->request);
 
     processResponse(context);
 }
@@ -295,7 +295,7 @@ RequestContextPtr ServerImpl::createContext(EvhtpRequest* evreq)
         }
     }
 
-    auto routeResult = config_.router->dispatch(request);
+    auto routeResult = config_->router->dispatch(request);
 
     if (routeResult->factory)
     {
@@ -305,7 +305,7 @@ RequestContextPtr ServerImpl::createContext(EvhtpRequest* evreq)
         context->workQueue = request->handler->workQueue();
 
         if (context->workQueue == nullptr)
-            context->workQueue = config_.defaultWorkQueue;
+            context->workQueue = config_->defaultWorkQueue;
     }
     else
     {

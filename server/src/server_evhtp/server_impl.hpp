@@ -23,7 +23,7 @@ using RequestContextPtr = std::shared_ptr<RequestContext>;
 class ServerImpl : public Server, public std::enable_shared_from_this<ServerImpl>
 {
 public:
-    ServerImpl(const ServerConfig* config);
+    ServerImpl(ServerConfigPtr config);
 
     virtual ~ServerImpl();
     virtual void run() override;
@@ -55,6 +55,7 @@ private:
         assert(threadId_ == std::this_thread::get_id());
     }
 
+    ServerConfigPtr config_;
     EventBase eventBase_;
     EventBaseWorkQueue ioQueue_;
     Event keepEventLoopEvent_;
@@ -64,7 +65,6 @@ private:
     EvhtpHost hostV6_;
     std::unordered_map<EvhtpRequest*, RequestContextPtr> contexts_;
     std::unordered_map<EvhtpRequest*, RequestContextPtr> eventStreamContexts_;
-    ServerConfig config_;
     std::thread::id threadId_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerImpl);

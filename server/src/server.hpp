@@ -15,8 +15,6 @@ class Router;
 class SettingsData;
 class RequestFilterChain;
 
-using ServerPtr = std::shared_ptr<Server>;
-
 struct ServerConfig
 {
     bool allowRemote;
@@ -26,13 +24,15 @@ struct ServerConfig
     WorkQueue* defaultWorkQueue;
 };
 
+using ServerPtr = std::shared_ptr<Server>;
+using ServerConfigPtr = std::unique_ptr<ServerConfig>;
+
 class Server
 {
 public:
     static DurationMs pingEventPeriod() { return std::chrono::seconds(15); }
     static DurationMs eventDispatchDelay() { return DurationMs(20); }
-
-    static ServerPtr create(const ServerConfig* config);
+    static ServerPtr create(ServerConfigPtr config);
 
     Server();
     virtual ~Server();

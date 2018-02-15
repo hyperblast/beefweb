@@ -20,15 +20,15 @@ TEST_CASE("server")
     RequestFilterChain filters;
     filters.addFilter(RequestFilterPtr(new ExecuteHandlerFilter()));
 
-    ServerConfig config;
-    config.allowRemote = false;
-    config.port = 8882;
-    config.router = &router;
-    config.filters = &filters;
-    config.defaultWorkQueue = &workQueue;
+    auto config = std::make_unique<ServerConfig>();
+    config->allowRemote = false;
+    config->port = 8882;
+    config->router = &router;
+    config->filters = &filters;
+    config->defaultWorkQueue = &workQueue;
 
     ServerThread server([&] { startedPromise.set_value(); });
-    server.restart(&config);
+    server.restart(std::move(config));
 
     for (int i = 0; i < 10 && !started.is_ready(); i++)
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

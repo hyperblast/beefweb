@@ -57,15 +57,15 @@ void Host::reconfigure(const SettingsData& settings)
         nextSettings_ = std::make_shared<SettingsData>(settings);
     }
 
-    ServerConfig config;
+    auto config = std::make_unique<ServerConfig>();
 
-    config.allowRemote = settings.allowRemote;
-    config.port = settings.port;
-    config.defaultWorkQueue = &workQueue_;
-    config.filters = &filters_;
-    config.router = &router_;
+    config->allowRemote = settings.allowRemote;
+    config->port = settings.port;
+    config->defaultWorkQueue = &workQueue_;
+    config->filters = &filters_;
+    config->router = &router_;
 
-    serverThread_->restart(&config);
+    serverThread_->restart(std::move(config));
 }
 
 void Host::handleServerReady()
