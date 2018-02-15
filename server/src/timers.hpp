@@ -77,7 +77,7 @@ class SimpleTimer final : public Timer
 {
 public:
     SimpleTimer(SimpleTimerQueue* queue, TimerCallback callback = TimerCallback());
-    ~SimpleTimer();
+    virtual ~SimpleTimer();
 
     virtual TimerState state() const override { return state_; }
     virtual DurationMs period() const override { return period_; }
