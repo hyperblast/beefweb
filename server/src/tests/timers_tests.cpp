@@ -64,8 +64,8 @@ TEST_CASE("timers")
     SECTION("one time")
     {
         int runCount = 0;
-        SimpleTimer timer(&timerQueue, [&] (Timer*) { runCount++; });
-
+        SimpleTimer timer(&timerQueue);
+        timer.setCallback([&] (Timer*) { runCount++; });
         timer.runOnce(DurationMs(100));
 
         SECTION("no run")
@@ -90,7 +90,8 @@ TEST_CASE("timers")
     SECTION("periodic timer")
     {
         int runCount = 0;
-        SimpleTimer timer(&timerQueue, [&] (Timer*) { runCount++; });
+        SimpleTimer timer(&timerQueue);
+        timer.setCallback([&] (Timer*) { runCount++; });
 
         timer.runPeriodic(DurationMs(100));
 
@@ -132,8 +133,11 @@ TEST_CASE("timers")
         int runCount1 = 0;
         int runCount2 = 0;
 
-        SimpleTimer timer1(&timerQueue, [&] (Timer*) { runCount1++; });
-        SimpleTimer timer2(&timerQueue, [&] (Timer*) { runCount2++; });
+        SimpleTimer timer1(&timerQueue);
+        timer1.setCallback([&] (Timer*) { runCount1++; });
+
+        SimpleTimer timer2(&timerQueue);
+        timer2.setCallback([&] (Timer*) { runCount2++; });
 
         SECTION("same time")
         {
@@ -174,7 +178,8 @@ TEST_CASE("timers")
         {
             int callCount = 0;
 
-            SimpleTimer timer(&timerQueue,  [&] (Timer* t)
+            SimpleTimer timer(&timerQueue);
+            timer.setCallback([&] (Timer* t)
             {
                 t->stop();
                 callCount++;
@@ -198,7 +203,9 @@ TEST_CASE("timers")
         {
             int callCount = 0;
 
-            SimpleTimer timer(&timerQueue, [&] (Timer* t)
+            SimpleTimer timer(&timerQueue);
+
+            timer.setCallback([&] (Timer* t)
             {
                 t->runOnce(DurationMs(100));
                 callCount++;
@@ -226,7 +233,8 @@ TEST_CASE("timers")
             int callCount = 0;
             bool willUpdatePeriod = true;
 
-            SimpleTimer timer(&timerQueue, [&] (Timer* t)
+            SimpleTimer timer(&timerQueue);
+            timer.setCallback([&] (Timer* t)
             {
                 if (willUpdatePeriod)
                 {
@@ -263,7 +271,8 @@ TEST_CASE("timers")
             int callCount = 0;
             bool willRunOnce = true;
 
-            SimpleTimer timer(&timerQueue, [&] (Timer* t)
+            SimpleTimer timer(&timerQueue);
+            timer.setCallback([&] (Timer* t)
             {
                 if (willRunOnce)
                 {

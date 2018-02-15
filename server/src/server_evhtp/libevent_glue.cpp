@@ -131,10 +131,8 @@ EventBaseWorkQueue::EventBaseWorkQueue(EventBase *base)
 
 EventBaseWorkQueue::~EventBaseWorkQueue() = default;
 
-EventTimer::EventTimer(EventBase* eventBase, TimerCallback callback)
-    : event_(eventBase),
-      state_(TimerState::STOPPED),
-      callback_(std::move(callback))
+EventTimer::EventTimer(EventBase* eventBase)
+    : event_(eventBase), state_(TimerState::STOPPED)
 {
     event_.setCallback([this] (Event*, int) { run(); });
 }

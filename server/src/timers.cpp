@@ -9,11 +9,6 @@ Timer::~Timer() = default;
 TimerFactory::~TimerFactory() = default;
 TimeSource::~TimeSource() = default;
 
-SimpleTimer::SimpleTimer(SimpleTimerQueue* queue, TimerCallback callback)
-    : queue_(queue), callback_(std::move(callback)), state_(TimerState::STOPPED)
-{
-}
-
 SimpleTimer::~SimpleTimer()
 {
     stop();

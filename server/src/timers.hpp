@@ -56,7 +56,7 @@ class TimerFactory
 public:
     TimerFactory() = default;
     virtual ~TimerFactory();
-    virtual TimerPtr createTimer(TimerCallback callback = TimerCallback()) = 0;
+    virtual TimerPtr createTimer() = 0;
 
 private:
     MSRV_NO_COPY_AND_ASSIGN(TimerFactory);
@@ -76,7 +76,11 @@ private:
 class SimpleTimer final : public Timer
 {
 public:
-    SimpleTimer(SimpleTimerQueue* queue, TimerCallback callback = TimerCallback());
+    SimpleTimer(SimpleTimerQueue* queue)
+        : queue_(queue), state_(TimerState::STOPPED)
+    {
+    }
+
     virtual ~SimpleTimer();
 
     virtual TimerState state() const override { return state_; }
@@ -109,9 +113,9 @@ public:
     SimpleTimerQueue(TimeSource* source);
     virtual ~SimpleTimerQueue();
 
-    virtual TimerPtr createTimer(TimerCallback callback) override
+    virtual TimerPtr createTimer() override
     {
-        return std::make_unique<SimpleTimer>(this, std::move(callback));
+        return std::make_unique<SimpleTimer>(this);
     }
 
     boost::optional<TimePointMs> nextTimeout() const

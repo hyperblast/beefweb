@@ -121,7 +121,7 @@ private:
 class EventTimer final : public Timer
 {
 public:
-    EventTimer(EventBase* eventBase, TimerCallback callback = TimerCallback());
+    EventTimer(EventBase* eventBase);
     virtual ~EventTimer();
 
     virtual TimerState state() const override { return state_; }
@@ -151,9 +151,9 @@ public:
 
     virtual ~EventTimerFactory();
 
-    virtual TimerPtr createTimer(TimerCallback callback) override
+    virtual TimerPtr createTimer() override
     {
-        return std::make_unique<EventTimer>(eventBase_, std::move(callback));
+        return std::make_unique<EventTimer>(eventBase_);
     }
 
 private:
