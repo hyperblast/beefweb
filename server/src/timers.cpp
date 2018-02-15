@@ -5,19 +5,21 @@
 
 namespace msrv {
 
+Timer::~Timer() = default;
+TimerFactory::~TimerFactory() = default;
 TimeSource::~TimeSource() = default;
 
-Timer::Timer(TimerQueue* queue, TimerCallback callback)
+SimpleTimer::SimpleTimer(SimpleTimerQueue* queue, TimerCallback callback)
     : queue_(queue), callback_(std::move(callback)), state_(TimerState::STOPPED)
 {
 }
 
-Timer::~Timer()
+SimpleTimer::~SimpleTimer()
 {
     stop();
 }
 
-void Timer::runOnce(DurationMs period)
+void SimpleTimer::runOnce(DurationMs period)
 {
     stop();
 
@@ -29,7 +31,7 @@ void Timer::runOnce(DurationMs period)
     state_ = TimerState::RUNNING;
 }
 
-void Timer::runPeriodic(DurationMs period)
+void SimpleTimer::runPeriodic(DurationMs period)
 {
     assert(period > DurationMs::zero());
 
@@ -43,7 +45,7 @@ void Timer::runPeriodic(DurationMs period)
     state_ = TimerState::RUNNING;
 }
 
-void Timer::stop()
+void SimpleTimer::stop()
 {
     switch (state_)
     {
@@ -61,7 +63,7 @@ void Timer::stop()
     }
 }
 
-void Timer::run(TimePointMs now)
+void SimpleTimer::run(TimePointMs now)
 {
     state_ = isPeriodic() ? TimerState::WILL_RESTART : TimerState::STOPPED;
 
@@ -76,14 +78,14 @@ void Timer::run(TimePointMs now)
     }
 }
 
-TimerQueue::TimerQueue(TimeSource* source)
+SimpleTimerQueue::SimpleTimerQueue(TimeSource* source)
     : source_(source)
 {
 }
 
-TimerQueue::~TimerQueue() = default;
+SimpleTimerQueue::~SimpleTimerQueue() = default;
 
-void TimerQueue::execute(const bool* exited)
+void SimpleTimerQueue::execute(const bool* exited)
 {
     auto now = source_->currentTime();
 

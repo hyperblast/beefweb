@@ -8,16 +8,59 @@
 #include <utility>
 #include <functional>
 #include <set>
+#include <memory>
 
 #include <boost/optional.hpp>
 
 namespace msrv {
 
-class TimeSource;
 class Timer;
-class TimerQueue;
+class TimerFactory;
+class TimeSource;
+class SimpleTimer;
+class SimpleTimerQueue;
 
+using TimerPtr = std::unique_ptr<Timer>;
 using TimerCallback = std::function<void(Timer*)>;
+
+enum class TimerState
+{
+    STOPPED,
+    WILL_RESTART,
+    RUNNING
+};
+
+class Timer
+{
+public:
+    Timer() = default;
+    virtual ~Timer();
+
+    virtual TimerState state() const = 0;
+    virtual DurationMs period() const = 0;
+
+    virtual void setCallback(TimerCallback callback) = 0;
+    virtual void runOnce(DurationMs period = DurationMs::zero()) = 0;
+    virtual void runPeriodic(DurationMs period) = 0;
+    virtual void stop() = 0;
+
+    bool isActive() const { return state() != TimerState::STOPPED; }
+    bool isPeriodic() const { return period() > DurationMs::zero(); }
+
+private:
+    MSRV_NO_COPY_AND_ASSIGN(Timer);
+};
+
+class TimerFactory
+{
+public:
+    TimerFactory() = default;
+    virtual ~TimerFactory();
+    virtual TimerPtr createTimer(TimerCallback callback = TimerCallback()) = 0;
+
+private:
+    MSRV_NO_COPY_AND_ASSIGN(TimerFactory);
+};
 
 class TimeSource
 {
@@ -30,51 +73,46 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(TimeSource);
 };
 
-enum class TimerState
-{
-    STOPPED,
-    WILL_RESTART,
-    RUNNING
-};
-
-class Timer
+class SimpleTimer final : public Timer
 {
 public:
-    Timer(TimerQueue* queue, TimerCallback callback = TimerCallback());
-    ~Timer();
+    SimpleTimer(SimpleTimerQueue* queue, TimerCallback callback = TimerCallback());
+    ~SimpleTimer();
 
-    TimerState state() const { return state_; }
+    virtual TimerState state() const override { return state_; }
+    virtual DurationMs period() const override { return period_; }
+
+    virtual void setCallback(TimerCallback callback) override { callback_ = std::move(callback); }
+    virtual void runOnce(DurationMs period) override;
+    virtual void runPeriodic(DurationMs period) override;
+    virtual void stop() override;
+
     TimePointMs runAt() const { return runAt_; }
-    DurationMs period() const { return period_; }
-
-    bool isActive() const { return state_ != TimerState::STOPPED; }
-    bool isPeriodic() const { return period_ > DurationMs::zero(); }
-
-    void setCallback(TimerCallback callback) { callback_ = std::move(callback); }
-    void runOnce() { runOnce(DurationMs::zero()); }
-    void runOnce(DurationMs period);
-    void runPeriodic(DurationMs period);
-    void stop();
 
 private:
-    friend class TimerQueue;
+    friend class SimpleTimerQueue;
 
     void run(TimePointMs now);
 
-    TimerQueue* queue_;
+    SimpleTimerQueue* queue_;
     TimerCallback callback_;
     TimerState state_;
-    TimePointMs runAt_;
     DurationMs period_;
+    TimePointMs runAt_;
 
-    MSRV_NO_COPY_AND_ASSIGN(Timer);
+    MSRV_NO_COPY_AND_ASSIGN(SimpleTimer);
 };
 
-class TimerQueue
+class SimpleTimerQueue final : public TimerFactory
 {
 public:
-    TimerQueue(TimeSource* source);
-    ~TimerQueue();
+    SimpleTimerQueue(TimeSource* source);
+    virtual ~SimpleTimerQueue();
+
+    virtual TimerPtr createTimer(TimerCallback callback) override
+    {
+        return std::make_unique<SimpleTimer>(this, std::move(callback));
+    }
 
     boost::optional<TimePointMs> nextTimeout() const
     {
@@ -93,11 +131,11 @@ public:
     void execute(const bool* exited);
 
 private:
-    friend class Timer;
+    friend class SimpleTimer;
 
     struct TimerComparer
     {
-        bool operator()(Timer* left, Timer* right) const noexcept
+        bool operator()(SimpleTimer* left, SimpleTimer* right) const noexcept
         {
             if (left->runAt_ < right->runAt_)
                 return true;
@@ -110,21 +148,21 @@ private:
     };
 
     TimeSource* source_;
-    std::set<Timer*, TimerComparer> timers_;
+    std::set<SimpleTimer*, TimerComparer> timers_;
 
-    void add(Timer* timer)
+    void add(SimpleTimer* timer)
     {
         timers_.insert(timer);
     }
 
-    void remove(Timer* timer)
+    void remove(SimpleTimer* timer)
     {
         auto it = timers_.find(timer);
         assert(it != timers_.end());
         timers_.erase(it);
     }
 
-    MSRV_NO_COPY_AND_ASSIGN(TimerQueue);
+    MSRV_NO_COPY_AND_ASSIGN(SimpleTimerQueue);
 };
 
 }
