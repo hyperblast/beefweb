@@ -81,7 +81,7 @@ void ServerImpl::run()
 
 void ServerImpl::exit()
 {
-    eventBase_.breakLoop();
+    eventBase_.exitLoop();
 }
 
 void ServerImpl::dispatchEvents()

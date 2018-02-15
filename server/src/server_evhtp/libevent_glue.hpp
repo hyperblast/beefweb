@@ -61,7 +61,7 @@ public:
     ::event_base* ptr() { return ptr_; }
 
     bool runLoop(int flags = 0);
-    void breakLoop();
+    void exitLoop();
 
 private:
     ::event_base* ptr_;

@@ -45,9 +45,9 @@ bool EventBase::runLoop(int flags)
     return ret == 0;
 }
 
-void EventBase::breakLoop()
+void EventBase::exitLoop()
 {
-    auto ret = ::event_base_loopbreak(ptr());
+    auto ret = ::event_base_loopexit(ptr(), nullptr);
     throwIfFailed("event_base_loopbreak", ret >= 0);
 }
 
