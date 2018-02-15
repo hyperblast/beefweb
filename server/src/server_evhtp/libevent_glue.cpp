@@ -75,6 +75,12 @@ void Event::schedule(DurationMs timeout)
     throwIfFailed("event_add", ret >= 0);
 }
 
+void Event::unschedule()
+{
+    auto ret = ::event_del(ptr());
+    throwIfFailed("event_del", ret >= 0);
+}
+
 void Event::runCallback(evutil_socket_t, short events, void* thisPtr)
 {
     auto thisObj = reinterpret_cast<Event*>(thisPtr);
@@ -125,9 +131,62 @@ EventBaseWorkQueue::EventBaseWorkQueue(EventBase *base)
 
 EventBaseWorkQueue::~EventBaseWorkQueue() = default;
 
-void EventBaseWorkQueue::schedule()
+EventTimer::EventTimer(EventBase* eventBase, TimerCallback callback)
+    : event_(eventBase),
+      state_(TimerState::STOPPED),
+      callback_(std::move(callback))
 {
-    notifyEvent_.schedule();
+    event_.setCallback([this] (Event*, int) { run(); });
 }
+
+EventTimer::~EventTimer()
+{
+    stop();
+}
+
+void EventTimer::runOnce(DurationMs delay)
+{
+    event_.schedule(delay);
+    state_ = TimerState::RUNNING;
+    period_ = DurationMs::zero();
+}
+
+void EventTimer::runPeriodic(DurationMs period)
+{
+    event_.schedule(period);
+    state_ = TimerState::RUNNING;
+    period_ = period;
+}
+
+void EventTimer::stop()
+{
+    switch (state_)
+    {
+    case TimerState::STOPPED:
+        break;
+
+    case TimerState::WILL_RESTART:
+        state_ = TimerState::STOPPED;
+        break;
+
+    case TimerState::RUNNING:
+        state_ = TimerState::STOPPED;
+        event_.unschedule();
+        break;
+    }
+}
+
+void EventTimer::run()
+{
+    state_ = isPeriodic() ? TimerState::WILL_RESTART : TimerState::STOPPED;
+
+    if (callback_)
+        tryCatchLog([this] { callback_(this); });
+
+    if (state_ == TimerState::WILL_RESTART)
+        event_.schedule(period_);
+}
+
+EventTimerFactory::~EventTimerFactory() = default;
 
 }}

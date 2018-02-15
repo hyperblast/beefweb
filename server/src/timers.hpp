@@ -40,7 +40,7 @@ public:
     virtual DurationMs period() const = 0;
 
     virtual void setCallback(TimerCallback callback) = 0;
-    virtual void runOnce(DurationMs period = DurationMs::zero()) = 0;
+    virtual void runOnce(DurationMs delay = DurationMs::zero()) = 0;
     virtual void runPeriodic(DurationMs period) = 0;
     virtual void stop() = 0;
 
@@ -83,7 +83,7 @@ public:
     virtual DurationMs period() const override { return period_; }
 
     virtual void setCallback(TimerCallback callback) override { callback_ = std::move(callback); }
-    virtual void runOnce(DurationMs period) override;
+    virtual void runOnce(DurationMs delay) override;
     virtual void runPeriodic(DurationMs period) override;
     virtual void stop() override;
 

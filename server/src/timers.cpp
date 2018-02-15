@@ -19,11 +19,11 @@ SimpleTimer::~SimpleTimer()
     stop();
 }
 
-void SimpleTimer::runOnce(DurationMs period)
+void SimpleTimer::runOnce(DurationMs delay)
 {
     stop();
 
-    runAt_ = queue_->source_->currentTime() + period;
+    runAt_ = queue_->source_->currentTime() + delay;
     period_ = DurationMs::zero();
 
     queue_->add(this);

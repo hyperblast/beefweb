@@ -4,6 +4,7 @@
 #include "../system.hpp"
 #include "../chrono.hpp"
 #include "../work_queue.hpp"
+#include "../timers.hpp"
 
 #include <utility>
 #include <functional>
@@ -41,6 +42,7 @@ public:
 
     void setCallback(EventCallback callback) { callback_ = std::move(callback); }
     void schedule(DurationMs timeout = DurationMs::zero());
+    void unschedule();
 
 private:
     static void runCallback(evutil_socket_t, short, void*);
@@ -103,17 +105,59 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(Evbuffer);
 };
 
-class EventBaseWorkQueue : public ExternalWorkQueue
+class EventBaseWorkQueue final : public ExternalWorkQueue
 {
 public:
     explicit EventBaseWorkQueue(EventBase* base);
     ~EventBaseWorkQueue();
 
 protected:
-    virtual void schedule() override;
+    virtual void schedule() override { notifyEvent_.schedule(); }
 
 private:
     Event notifyEvent_;
+};
+
+class EventTimer final : public Timer
+{
+public:
+    EventTimer(EventBase* eventBase, TimerCallback callback = TimerCallback());
+    virtual ~EventTimer();
+
+    virtual TimerState state() const override { return state_; }
+    virtual DurationMs period() const override { return period_; }
+
+    virtual void setCallback(TimerCallback callback) override { callback_ = std::move(callback); }
+    virtual void runOnce(DurationMs delay) override;
+    virtual void runPeriodic(DurationMs period) override;
+    virtual void stop() override;
+
+private:
+    void run();
+
+    Event event_;
+    TimerState state_;
+    DurationMs period_;
+    TimerCallback callback_;
+};
+
+class EventTimerFactory final : public TimerFactory
+{
+public:
+    EventTimerFactory(EventBase* eventBase)
+        : eventBase_(eventBase)
+    {
+    }
+
+    virtual ~EventTimerFactory();
+
+    virtual TimerPtr createTimer(TimerCallback callback) override
+    {
+        return std::make_unique<EventTimer>(eventBase_, std::move(callback));
+    }
+
+private:
+    EventBase* eventBase_;
 };
 
 }}
