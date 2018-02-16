@@ -10,17 +10,19 @@
 #include "../log.hpp"
 #include "../project_info.hpp"
 
-int testMain(int argc, char* argv[]);
+namespace msrv { int testMain(int argc, char** argv); }
 
 int main(int argc, char* argv[])
 {
-    msrv::StderrLogger logger(MSRV_PROJECT_ID);
-    msrv::Logger::setCurrent(&logger);
+    using namespace msrv;
+
+    StderrLogger logger(MSRV_PROJECT_ID);
+    Logger::setCurrent(&logger);
 
 #ifdef MSRV_OS_POSIX
     ::setlocale(LC_ALL, "");
     ::setlocale(LC_NUMERIC, "C");
-    msrv::setLocaleCharset();
+    setLocaleCharset();
 #endif
 
     return testMain(argc, argv);

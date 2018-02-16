@@ -3,8 +3,12 @@
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
 
-int testMain(int argc, char* argv[])
+namespace msrv {
+
+int testMain(int argc, char** argv)
 {
     auto result = Catch::Session().run(argc, argv);
     return result ? EXIT_FAILURE : EXIT_SUCCESS;
+}
+
 }
