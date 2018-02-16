@@ -11,8 +11,6 @@ set(
     evhtp_server.cpp evhtp_server.hpp
     libevent_glue.cpp libevent_glue.hpp
     libevhtp_glue.cpp libevhtp_glue.hpp
-    response_formatter.cpp response_formatter.hpp
-    server_impl.cpp server_impl.hpp
 )
 
 add_library(server OBJECT ${SERVER_SOURCES})

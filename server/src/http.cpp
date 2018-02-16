@@ -3,6 +3,8 @@
 
 namespace msrv {
 
+const char HttpHeader::CONTENT_TYPE[] = "Content-Type";
+const char HttpHeader::CONTENT_LENGTH[] = "Content-Length";
 const char HttpHeader::AUTHORIZATION[] = "Authorization";
 const char HttpHeader::WWW_AUTHENTICATE[] = "Www-Authenticate";
 const char HttpHeader::IF_NONE_MATCH[] = "If-None-Match";

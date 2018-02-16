@@ -24,6 +24,7 @@ public:
 
 private:
     EventBase eventBase_;
+    Event keepEventLoop_;
     EventBaseWorkQueue workQueue_;
     EventTimerFactory timerFactory_;
     EvhtpHost host4_;

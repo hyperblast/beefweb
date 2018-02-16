@@ -8,6 +8,7 @@ namespace msrv {
 
 enum class HttpMethod
 {
+    UNDEFINED,
     GET,
     POST,
     COUNT,
@@ -31,6 +32,8 @@ enum class HttpStatus
 
 struct HttpHeader
 {
+    static const char CONTENT_TYPE[];
+    static const char CONTENT_LENGTH[];
     static const char AUTHORIZATION[];
     static const char WWW_AUTHENTICATE[];
     static const char IF_NONE_MATCH[];

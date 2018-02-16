@@ -4,11 +4,14 @@
 
 #include "../log.hpp"
 #include "../string_utils.hpp"
+#include "../server_core.hpp"
 
 #include <stdint.h>
 
 #include <functional>
 #include <memory>
+
+#include <boost/optional.hpp>
 
 #include <evhtp.h>
 
@@ -18,9 +21,7 @@ namespace server_evhtp {
 class EvhtpHost;
 class EvhtpRequest;
 
-using EvhtpRequestCallback = std::function<void(EvhtpRequest*)>;
-
-class EvhtpHost
+class EvhtpHost final
 {
 public:
     explicit EvhtpHost(EventBase* base);
@@ -30,22 +31,26 @@ public:
     ::evhtp_s* ptr() { return ptr_; }
     bool isBound() const { return isBound_; }
 
-    void setRequestCallback(EvhtpRequestCallback callback) { requestCallback_ = std::move(callback); }
+    void setEventListener(RequestEventListener* listener) { listener_ = listener; }
     bool bind(const char* address, int port, int backlog);
     void unbind();
 
 private:
-    static void handleNewRequest(evhtp_request_s*, void*);
+    friend class EvhtpRequest;
+
+    static void handleRequestReady(evhtp_request_s*, void*) noexcept;
+
+    void notifyDone(EvhtpRequest* request);
 
     EventBase* base_;
     ::evhtp_s* ptr_;
-    EvhtpRequestCallback requestCallback_;
+    RequestEventListener* listener_;
     bool isBound_;
 
     MSRV_NO_COPY_AND_ASSIGN(EvhtpHost);
 };
 
-class EvhtpKeyValueMap
+class EvhtpKeyValueMap final
 {
 public:
     explicit EvhtpKeyValueMap(evhtp_kvs_t* ptr)
@@ -74,6 +79,13 @@ public:
 
     void set(const std::string& key, const std::string& value);
 
+    template<typename T>
+    void fromMap(T& map)
+    {
+        for (auto& pair : map)
+            set(pair.first, pair.second);
+    }
+
 private:
     template<typename Func>
     static int callbackFor(evhtp_kv_t* kv, void* funcPtr) noexcept
@@ -98,7 +110,7 @@ private:
     evhtp_kvs_t* ptr_;
 };
 
-class EvhtpRequest
+class EvhtpRequest final : public RequestCore
 {
 public:
     EvhtpRequest(EvhtpHost* host, evhtp_request_s* req);
@@ -106,28 +118,25 @@ public:
     EvhtpHost* host() { return host_; }
     ::evhtp_request_s* ptr() { return ptr_; }
 
-    htp_method method() { return ptr()->method; }
-    std::string path() { return ptr()->uri->path->full; }
+    virtual HttpMethod method() override;
+    virtual std::string path() override;
+    virtual HttpKeyValueMap headers() override;
+    virtual HttpKeyValueMap queryParams() override;
+    virtual StringView body() override;
+    virtual void releaseResources() override;
 
-    EvhtpKeyValueMap* queryParams() { return &queryParams_; }
-    EvhtpKeyValueMap* inputHeaders() { return &inputHeaders_; }
-    EvhtpKeyValueMap* outputHeaders() { return &outputHeaders_; }
-
-    Evbuffer* inputBuffer() { return &inputBuffer_; }
-    Evbuffer* outputBuffer() { return &outputBuffer_; }
-
-    void setDestroyCallback(EvhtpRequestCallback callback) { destroyCallback_ = std::move(callback); }
-    void abort();
-
-    void sendResponse(int status) { ::evhtp_send_reply(ptr(), status); }
-    void sendResponseBegin(int status) { ::evhtp_send_reply_start(ptr(), status); }
-    void sendResponseBody(Evbuffer* buffer) { ::evhtp_send_reply_body(ptr(), buffer->ptr()); }
-    void sendResponseEnd() { ::evhtp_send_reply_end(ptr()); }
+    virtual void abort() override;
+    virtual void sendResponse(ResponseCorePtr response) override;
+    virtual void sendResponseBegin(ResponseCorePtr response) override;
+    virtual void sendResponseEnd() override;
+    virtual void sendResponseBody(ResponseCore::Body body) override;
 
 private:
+    static uint16_t handleDestroy(evhtp_request_s*, void*) noexcept;
+
     ~EvhtpRequest();
 
-    static uint16_t handleDestroy(evhtp_request_s*, void*) noexcept;
+    bool writeBody(ResponseCore::Body body, Evbuffer* buffer);
 
     EvhtpHost* host_;
     ::evhtp_request_s* ptr_;
@@ -138,8 +147,9 @@ private:
 
     Evbuffer inputBuffer_;
     Evbuffer outputBuffer_;
+    Evbuffer tempBuffer_;
 
-    EvhtpRequestCallback destroyCallback_;
+    boost::optional<std::vector<char>> body_;
 };
 
 }}

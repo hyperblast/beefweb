@@ -27,7 +27,7 @@ EventBase::EventBase(bool threadSafe)
 
     if (threadSafe)
     {
-        auto ret = ::evthread_make_base_notifiable(ptr());
+        auto ret = ::evthread_make_base_notifiable(ptr_);
         throwIfFailed("evthread_make_base_notifiable", ret >= 0);
     }
 }
@@ -40,14 +40,14 @@ EventBase::~EventBase()
 
 bool EventBase::runLoop(int flags)
 {
-    auto ret = ::event_base_loop(ptr(), flags);
+    auto ret = ::event_base_loop(ptr_, flags);
     throwIfFailed("event_base_loop", ret >= 0);
     return ret == 0;
 }
 
 void EventBase::exitLoop()
 {
-    auto ret = ::event_base_loopexit(ptr(), nullptr);
+    auto ret = ::event_base_loopexit(ptr_, nullptr);
     throwIfFailed("event_base_loopbreak", ret >= 0);
 }
 

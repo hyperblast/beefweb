@@ -11,17 +11,21 @@ namespace server_evhtp {
 
 EvhtpServer::EvhtpServer()
     : eventBase_(),
+      keepEventLoop_(&eventBase_, SocketHandle(), EV_PERSIST),
       workQueue_(&eventBase_),
       timerFactory_(&eventBase_),
       host4_(&eventBase_),
       host6_(&eventBase_)
 {
+    keepEventLoop_.schedule(std::chrono::minutes(1));
 }
 
 EvhtpServer::~EvhtpServer() = default;
 
-void EvhtpServer::setEventListener(RequestEventListener*)
+void EvhtpServer::setEventListener(RequestEventListener* listener)
 {
+    host4_.setEventListener(listener);
+    host6_.setEventListener(listener);
 }
 
 void EvhtpServer::bind(int port, bool allowRemote)

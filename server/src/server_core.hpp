@@ -3,6 +3,7 @@
 #include "defines.hpp"
 #include "http.hpp"
 #include "system.hpp"
+#include "string_utils.hpp"
 
 #include <string>
 #include <vector>
@@ -44,9 +45,29 @@ private:
 class ResponseCore
 {
 public:
-    using Body = boost::variant<bool, std::string, std::vector<uint8_t>, FileHandle>;
+    struct File
+    {
+        File()
+            : handle(), size(0) { }
 
-    ResponseCore() = default;
+        File(FileHandle handleVal, int64_t sizeVal)
+            : handle(std::move(handleVal)), size(sizeVal) { }
+
+        File(const File&) = delete;
+        File(File&&) = default;
+
+        File& operator=(const File&) = delete;
+        File& operator=(File&&) = default;
+
+        FileHandle handle;
+        int64_t size;
+    };
+
+    using Body = boost::variant<bool, std::string, std::vector<uint8_t>, File>;
+
+    ResponseCore()
+        : status(HttpStatus::UNDEFINED), headers(), body(false) { }
+
     ~ResponseCore() = default;
 
     HttpStatus status;
@@ -63,12 +84,16 @@ public:
     virtual HttpMethod method() = 0;
     virtual std::string path() = 0;
     virtual HttpKeyValueMap headers() = 0;
-    virtual HttpKeyValueMap queryString() = 0;
+    virtual HttpKeyValueMap queryParams() = 0;
+    virtual StringView body() = 0;
+    virtual void releaseResources() = 0;
+
+    virtual void abort() = 0;
 
     virtual void sendResponse(ResponseCorePtr response) = 0;
-    virtual void beginSendResponse(ResponseCorePtr response) = 0;
+    virtual void sendResponseBegin(ResponseCorePtr response) = 0;
     virtual void sendResponseBody(ResponseCore::Body body) = 0;
-    virtual void endSendResponse() = 0;
+    virtual void sendResponseEnd() = 0;
 
 protected:
     RequestCore() = default;
