@@ -18,7 +18,7 @@ TEST_CASE("server")
     Router router;
     ImmediateWorkQueue workQueue;
     RequestFilterChain filters;
-    filters.addFilter(RequestFilterPtr(new ExecuteHandlerFilter()));
+    filters.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
     auto config = std::make_unique<ServerConfig>();
     config->allowRemote = false;

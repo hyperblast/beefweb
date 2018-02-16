@@ -80,8 +80,8 @@ public:
 
     RequestHandlerPtr createHandler(Request* request) override
     {
-        return RequestHandlerPtr(
-            new DelegateRequestHandler<T>(std::unique_ptr<T>(factory_(request)), action_, workQueue_));
+        return std::make_unique<DelegateRequestHandler<T>>(
+            std::unique_ptr<T>(factory_(request)), action_, workQueue_);
     }
 
 private:

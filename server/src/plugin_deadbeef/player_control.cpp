@@ -15,12 +15,12 @@ public:
 std::unique_ptr<TrackQuery> PlayerImpl::createTrackQuery(
     const std::vector<std::string>& columns)
 {
-    return TrackQueryPtr(new TrackQueryImpl(columns));
+    return std::make_unique<TrackQueryImpl>(columns);
 }
 
 std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(TrackQuery* activeItemQuery)
 {
-    PlayerStatePtr state(new PlayerState());
+    auto state = std::make_unique<PlayerState>();
 
     PlaylistLockGuard lock(playlistMutex_);
 

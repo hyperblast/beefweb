@@ -25,12 +25,12 @@ TEST_CASE("router")
 {
     Router router;
 
-    router.defineRoute(HttpMethod::GET, "", RequestHandlerFactoryPtr(new GetRoot));
-    router.defineRoute(HttpMethod::GET, "simple", RequestHandlerFactoryPtr(new GetSimple));
-    router.defineRoute(HttpMethod::GET, "param/:param", RequestHandlerFactoryPtr(new GetWithParam));
-    router.defineRoute(HttpMethod::GET, "lparam/:param*", RequestHandlerFactoryPtr(new GetWithLongParam));
-    router.defineRoute(HttpMethod::GET, "data", RequestHandlerFactoryPtr(new GetHandler));
-    router.defineRoute(HttpMethod::POST, "data", RequestHandlerFactoryPtr(new PostHandler));
+    router.defineRoute(HttpMethod::GET, "", std::make_unique<GetRoot>());
+    router.defineRoute(HttpMethod::GET, "simple", std::make_unique<GetSimple>());
+    router.defineRoute(HttpMethod::GET, "param/:param", std::make_unique<GetWithParam>());
+    router.defineRoute(HttpMethod::GET, "lparam/:param*", std::make_unique<GetWithLongParam>());
+    router.defineRoute(HttpMethod::GET, "data", std::make_unique<GetHandler>());
+    router.defineRoute(HttpMethod::POST, "data", std::make_unique<PostHandler>());
 
     SECTION("GET root")
     {

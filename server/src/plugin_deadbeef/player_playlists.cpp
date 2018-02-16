@@ -54,7 +54,7 @@ std::unique_ptr<PlaylistQuery> PlayerImpl::createPlaylistQuery(
     const Range& range,
     const std::vector<std::string>& columns)
 {
-    return PlaylistQueryPtr(new PlaylistQueryImpl(plref, range, columns));
+    return std::make_unique<PlaylistQueryImpl>(plref, range, columns);
 }
 
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()

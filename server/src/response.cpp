@@ -13,12 +13,12 @@ Response::~Response()
 
 std::unique_ptr<SimpleResponse> Response::ok()
 {
-    return std::unique_ptr<SimpleResponse>(new SimpleResponse(HttpStatus::S_204_NO_CONTENT));
+    return std::make_unique<SimpleResponse>(HttpStatus::S_204_NO_CONTENT);
 }
 
 std::unique_ptr<SimpleResponse> Response::custom(HttpStatus status)
 {
-    return std::unique_ptr<SimpleResponse>(new SimpleResponse(status));
+    return std::make_unique<SimpleResponse>(status);
 }
 
 std::unique_ptr<Response> Response::file(Path path, std::string contentType)
@@ -33,28 +33,29 @@ std::unique_ptr<Response> Response::file(Path path, std::string contentType)
 std::unique_ptr<FileResponse> Response::file(Path path, FileHandle handle, std::string contentType)
 {
     auto info = queryFileInfo(handle.get());
-    return std::unique_ptr<FileResponse>(new FileResponse(
-        std::move(path), std::move(handle), std::move(contentType), std::move(info)));
+
+    return std::make_unique<FileResponse>(
+        std::move(path), std::move(handle), std::move(contentType), std::move(info));
 }
 
 std::unique_ptr<DataResponse> Response::data(std::vector<uint8_t> data, std::string contentType)
 {
-    return std::unique_ptr<DataResponse>(new DataResponse(std::move(data), std::move(contentType)));
+    return std::make_unique<DataResponse>(std::move(data), std::move(contentType));
 }
 
 std::unique_ptr<JsonResponse> Response::json(Json value)
 {
-    return std::unique_ptr<JsonResponse>(new JsonResponse(std::move(value)));
+    return std::make_unique<JsonResponse>(std::move(value));
 }
 
 std::unique_ptr<EventStreamResponse> Response::eventStream(EventStreamSource source)
 {
-    return std::unique_ptr<EventStreamResponse>(new EventStreamResponse(std::move(source)));
+    return std::make_unique<EventStreamResponse>(std::move(source));
 }
 
 std::unique_ptr<AsyncResponse> Response::async(ResponseFuture response)
 {
-    return std::unique_ptr<AsyncResponse>(new AsyncResponse(std::move(response)));
+    return std::make_unique<AsyncResponse>(std::move(response));
 }
 
 std::unique_ptr<ErrorResponse> Response::error(
@@ -63,8 +64,8 @@ std::unique_ptr<ErrorResponse> Response::error(
     if (message.empty())
         message = toString(status);
 
-    return std::unique_ptr<ErrorResponse>(
-        new ErrorResponse(status, std::move(message), std::move(parameter)));
+    return std::make_unique<ErrorResponse>(
+        status, std::move(message), std::move(parameter));
 }
 
 SimpleResponse::SimpleResponse(HttpStatus statusVal)
@@ -82,7 +83,9 @@ void SimpleResponse::process(ResponseHandler* handler)
 }
 
 DataResponse::DataResponse(std::vector<uint8_t> dataVal, std::string contentTypeVal)
-    : Response(HttpStatus::S_200_OK), data(std::move(dataVal)), contentType(std::move(contentTypeVal))
+    : Response(HttpStatus::S_200_OK),
+      data(std::move(dataVal)),
+      contentType(std::move(contentTypeVal))
 {
 }
 

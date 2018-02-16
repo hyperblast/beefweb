@@ -115,7 +115,7 @@ RouteResult::~RouteResult()
 
 Router::Router()
 {
-    rootNode_ = std::unique_ptr<Node>(new Node(NodeType::STRING, std::string()));
+    rootNode_ = std::make_unique<Node>(NodeType::STRING, std::string());
 }
 
 Router::~Router()
@@ -137,7 +137,7 @@ Node* Router::allocateNode(Node* parent, Tokenizer* urlTokenizer)
             return allocateNode(node.get(), urlTokenizer);
     }
 
-    parent->children().emplace_back(new Node(type, std::move(value)));
+    parent->children().emplace_back(std::make_unique<Node>(type, std::move(value)));
     return allocateNode(parent->children().back().get(), urlTokenizer);
 }
 
@@ -215,10 +215,10 @@ std::unique_ptr<RouteResult> Router::dispatch(const Request* request) const
             ? HttpStatus::S_405_METHOD_NOT_ALLOWED
             : HttpStatus::S_404_NOT_FOUND;
 
-        return std::unique_ptr<RouteResult>(new RouteResult(Response::error(status)));
+        return std::make_unique<RouteResult>(Response::error(status));
     }
 
-    return std::unique_ptr<RouteResult>(new RouteResult(factory, std::move(params)));
+    return std::make_unique<RouteResult>(factory, std::move(params));
 }
 
 }

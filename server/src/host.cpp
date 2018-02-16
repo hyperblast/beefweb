@@ -14,10 +14,10 @@ namespace msrv {
 Host::Host(Player* player)
     : player_(player)
 {
-    filters_.addFilter(RequestFilterPtr(new BasicAuthFilter(this)));
-    filters_.addFilter(RequestFilterPtr(new CompressionFilter));
-    filters_.addFilter(RequestFilterPtr(new CacheSupportFilter));
-    filters_.addFilter(RequestFilterPtr(new ExecuteHandlerFilter));
+    filters_.addFilter(std::make_unique<BasicAuthFilter>(static_cast<SettingsStore*>(this)));
+    filters_.addFilter(std::make_unique<CompressionFilter>());
+    filters_.addFilter(std::make_unique<CacheSupportFilter>());
+    filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
     ctmap_.addDefaults();
 

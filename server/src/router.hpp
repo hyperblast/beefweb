@@ -81,8 +81,8 @@ public:
         router_->defineRoute(
             method,
             prefix_ + path,
-            RequestHandlerFactoryPtr(
-                new DelegateRequestHandlerFactory<T>(factory_, std::move(action), workQueue_)));
+            std::make_unique<DelegateRequestHandlerFactory<T>>(
+                factory_, std::move(action), workQueue_));
     }
 
     void get(const std::string& path, ControllerAction<T> action)
