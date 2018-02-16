@@ -18,16 +18,19 @@ class RequestCore;
 class ResponseCore;
 class RequestEventListener;
 
+using ServerCorePtr = std::unique_ptr<ServerCore>;
 using ResponseCorePtr = std::unique_ptr<ResponseCore>;
 
 class ServerCore
 {
 public:
+    static ServerCorePtr create();
+
     ServerCore() = default;
     virtual ~ServerCore();
 
     virtual WorkQueue* workQueue() = 0;
-    virtual TimerFactory timerFactory() = 0;
+    virtual TimerFactory* timerFactory() = 0;
 
     virtual void setEventListener(RequestEventListener* listener) = 0;
     virtual void bind(int port, bool allowRemote) = 0;

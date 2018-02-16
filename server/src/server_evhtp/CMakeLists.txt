@@ -8,6 +8,7 @@ include_directories(
 
 set(
     SERVER_SOURCES
+    evhtp_server.cpp evhtp_server.hpp
     libevent_glue.cpp libevent_glue.hpp
     libevhtp_glue.cpp libevhtp_glue.hpp
     response_formatter.cpp response_formatter.hpp
