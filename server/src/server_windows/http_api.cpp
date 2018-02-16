@@ -61,7 +61,7 @@ private:
 
 }
 
-HttpApiInit::HttpApiInit(::ULONG flags)
+HttpApiInit::HttpApiInit(ULONG flags)
     : flags_(0)
 {
     ::HTTPAPI_VERSION version = HTTPAPI_VERSION_1;
@@ -71,7 +71,7 @@ HttpApiInit::HttpApiInit(::ULONG flags)
 }
 
 HttpRequestQueue::HttpRequestQueue(IoCompletionPort* ioPort)
-    : apiInit_(HTTP_INITIALIZE_SERVER), isRunning_(false)
+    : apiInit_(HTTP_INITIALIZE_SERVER)
 {
     HANDLE handle;
     auto ret = ::HttpCreateHttpHandle(&handle, 0);
@@ -83,7 +83,6 @@ HttpRequestQueue::HttpRequestQueue(IoCompletionPort* ioPort)
 
 HttpRequestQueue::~HttpRequestQueue()
 {
-    isRunning_ = false;
 }
 
 void HttpRequestQueue::bindPrefix(std::wstring prefix)
@@ -98,8 +97,6 @@ void HttpRequestQueue::start()
     for (auto i = 0; i < MAX_REQUESTS; i++)
         requests_.emplace_back(std::make_unique<HttpRequest>(this));
 
-    isRunning_ = true;
-
     for (auto& request : requests_)
         request->receive();
 }
@@ -110,15 +107,19 @@ void HttpRequestQueue::notifyReady(HttpRequest* request)
         tryCatchLog([this, request] { listener_->onRequestReady(request); });
 }
 
-void HttpRequestQueue::notifyDone(HttpRequest* request)
+void HttpRequestQueue::notifyDone(HttpRequest* request, bool wasReady)
 {
-    if (listener_)
+    if (wasReady && listener_)
         tryCatchLog([this, request] { listener_->onRequestDone(request); });
+
+    request->receive();
 }
 
 HttpRequest::HttpRequest(HttpRequestQueue* queue)
     : queue_(queue)
 {
+    reset();
+
     receiveTask_ = createTask<ReceiveRequestTask>(this);
     sendTask_ = createTask<SendResponseTask>(this);
 }
@@ -159,7 +160,18 @@ HttpKeyValueMap HttpRequest::queryParams()
 
 StringView HttpRequest::body()
 {
-    return StringView();
+    switch (data()->EntityChunkCount)
+    {
+    case 0:
+        return StringView();
+
+    case 1:
+        auto& chunk = data()->pEntityChunks[0].FromMemory;
+        return StringView(reinterpret_cast<const char*>(chunk.pBuffer), chunk.BufferLength);
+
+    default:
+        return StringView("TODO");
+    }
 }
 
 void HttpRequest::releaseResources()
@@ -172,66 +184,95 @@ void HttpRequest::abort()
 
 void HttpRequest::sendResponse(ResponseCorePtr response)
 {
+    endAfterSendingAllChunks_ = true;
+    sendTask_->run(requestId_, std::move(response), 0);
 }
 
 void HttpRequest::sendResponseBegin(ResponseCorePtr response)
 {
+    sendTask_->run(requestId_, std::move(response), HTTP_SEND_RESPONSE_FLAG_MORE_DATA);
 }
 
 void HttpRequest::sendResponseBody(ResponseCore::Body body)
 {
+    if (sendTask_->isBusy())
+        pending_.emplace_back(std::move(body));
+    else
+        sendTask_->run(requestId_, std::move(body), HTTP_SEND_RESPONSE_FLAG_MORE_DATA);
 }
 
 void HttpRequest::sendResponseEnd()
 {
+    endAfterSendingAllChunks_ = true;
+    sendTask_->run(requestId_, ResponseCore::Body(false), 0);
 }
 
 void HttpRequest::receive()
 {
-    if (queue_->isRunning())
-        receiveTask_->run();
+    receiveTask_->run();
+}
+
+void HttpRequest::reset()
+{
+    HTTP_SET_NULL_ID(&requestId_);
+    endAfterSendingAllChunks_ = false;
+    pending_.clear();
 }
 
 void HttpRequest::notifyReceiveCompleted(OverlappedResult* result)
 {
-    if (result->ioError == NO_ERROR)
-    {
-        queue_->notifyReady(this);
-    }
-    else
+    if (result->ioError != NO_ERROR)
     {
         logError("failed to receive request: %s", formatError(result->ioError).c_str());
-        receive();
+        queue_->notifyDone(this, false);
+        return;
     }
+
+    requestId_ = data()->RequestId;
+    queue_->notifyReady(this);
 }
 
 void HttpRequest::notifySendCompleted(OverlappedResult* result)
 {
     if (result->ioError != NO_ERROR)
+    {
         logError("failed to send response: %s", formatError(result->ioError).c_str());
+        queue_->notifyDone(this, true);
+    }
 
-    queue_->notifyDone(this);
-    receive();
+    if (!pending_.empty())
+    {
+        auto body = std::move(pending_.front());
+        pending_.pop_front();
+        sendTask_->run(requestId_, body, HTTP_SEND_RESPONSE_FLAG_MORE_DATA);
+        return;
+    }
+
+    if (endAfterSendingAllChunks_)
+        queue_->notifyDone(this, true);
 }
 
 HttpUrlBinding::HttpUrlBinding(HttpRequestQueue* server, std::wstring prefix)
-    : server_(nullptr), prefix_(std::move(prefix))
+    : queue_(nullptr), prefix_(std::move(prefix))
 {
     auto ret = ::HttpAddUrl(server->handle(), prefix_.c_str(), nullptr);
     throwIfFailed("HttpAddUrl", ret == NO_ERROR, ret);
-    server_ = server;
+    queue_ = server;
 }
 
 HttpUrlBinding::~HttpUrlBinding()
 {
-    if (server_)
-        ::HttpRemoveUrl(server_->handle(), prefix_.c_str());
+    if (queue_)
+        ::HttpRemoveUrl(queue_->handle(), prefix_.c_str());
 }
 
 ReceiveRequestTask::ReceiveRequestTask(HttpRequest* request)
     : request_(request)
 {
-    buffer_.resize(INIT_BUFFER_SIZE);
+    buffer_.reset(reinterpret_cast<char*>(::malloc(BUFFER_SIZE)));
+
+    if (!buffer_)
+        throw std::bad_alloc();
 }
 
 ReceiveRequestTask::~ReceiveRequestTask() = default;
@@ -243,7 +284,7 @@ void ReceiveRequestTask::run()
         HTTP_NULL_ID,
         HTTP_RECEIVE_REQUEST_FLAG_FLUSH_BODY,
         request(),
-        buffer_.size(),
+        BUFFER_SIZE,
         nullptr,
         toOverlapped());
 
@@ -263,15 +304,14 @@ SendResponseTask::SendResponseTask(HttpRequest* request)
 
 SendResponseTask::~SendResponseTask() = default;
 
-void SendResponseTask::run(HTTP_REQUEST_ID requestId, ResponseCorePtr response)
+void SendResponseTask::run(HTTP_REQUEST_ID requestId, ResponseCorePtr response, ULONG flags)
 {
-    response_ = std::move(response);
-    prepare();
+    setResponse(std::move(response));
 
     auto ret = ::HttpSendHttpResponse(
         request_->queue()->handle(),
         requestId,
-        0,
+        flags,
         &responseData_,
         nullptr,
         nullptr,
@@ -281,22 +321,49 @@ void SendResponseTask::run(HTTP_REQUEST_ID requestId, ResponseCorePtr response)
         nullptr);
 
     throwIfAsyncIoFailed("HttpSendHttpResponse", ret);
+    isBusy_ = true;
+}
+
+void SendResponseTask::run(HTTP_REQUEST_ID requestId, ResponseCore::Body body, ULONG flags)
+{
+    setBody(std::move(body));
+
+    auto ret = ::HttpSendResponseEntityBody(
+        request_->queue()->handle(),
+        requestId,
+        flags,
+        responseData_.EntityChunkCount,
+        responseData_.pEntityChunks,
+        nullptr,
+        nullptr,
+        0,
+        toOverlapped(),
+        nullptr);
+
+    throwIfAsyncIoFailed("HttpSendHttpResponse", ret);
+    isBusy_ = true;
 }
 
 void SendResponseTask::complete(OverlappedResult* result)
 {
+    isBusy_ = false;
     reset();
     request_->notifySendCompleted(result);
 }
 
-void SendResponseTask::prepare()
+void SendResponseTask::setResponse(ResponseCorePtr response)
 {
-    assert(response_);
-
-    responseData_.StatusCode = static_cast<::USHORT>(response_->status);
+    response_ = std::move(response);
+    responseData_.StatusCode = static_cast<USHORT>(response_->status);
     mapResponseHeaders(response_->headers, &responseData_.Headers, unknownHeaders_);
+    setBody(std::move(response_->body));
+}
 
-    if (boost::apply_visitor(BodyFormatter(&bodyChunk_), response_->body))
+void SendResponseTask::setBody(ResponseCore::Body body)
+{
+    body_ = std::move(body);
+
+    if (boost::apply_visitor(BodyFormatter(&bodyChunk_), body_))
     {
         responseData_.EntityChunkCount = 1;
         responseData_.pEntityChunks = &bodyChunk_;
@@ -314,6 +381,7 @@ void SendResponseTask::reset()
     ::memset(&bodyChunk_, 0, sizeof(bodyChunk_));
 
     response_.reset();
+    body_ = false;
     unknownHeaders_.clear();
 }
 

@@ -3,6 +3,7 @@
 #include "iocp.hpp"
 #include "../server_core.hpp"
 #include "../string_utils.hpp"
+#include "../core_types.hpp"
 
 #include <http.h>
 
@@ -21,7 +22,7 @@ class HttpRequest;
 class HttpApiInit
 {
 public:
-    explicit HttpApiInit(::ULONG flags);
+    explicit HttpApiInit(ULONG flags);
 
     ~HttpApiInit()
     {
@@ -30,7 +31,7 @@ public:
     }
 
 private:
-    ::ULONG flags_;
+    ULONG flags_;
 
     MSRV_NO_COPY_AND_ASSIGN(HttpApiInit);
 };
@@ -41,8 +42,7 @@ public:
     HttpRequestQueue(IoCompletionPort* ioPort);
     ~HttpRequestQueue();
 
-    ::HANDLE handle() { return handle_.get(); }
-    bool isRunning() const { return isRunning_; }
+    HANDLE handle() { return handle_.get(); }
     void setListener(RequestEventListener* listener) { listener_ = listener; }
 
     void bindPrefix(std::wstring prefix);
@@ -54,7 +54,7 @@ private:
     static constexpr size_t MAX_REQUESTS = 64;
 
     void notifyReady(HttpRequest* request);
-    void notifyDone(HttpRequest* request);
+    void notifyDone(HttpRequest* request, bool wasReady);
 
     HttpApiInit apiInit_;
     WindowsHandle handle_;
@@ -63,7 +63,6 @@ private:
     std::vector<std::unique_ptr<HttpRequest>> requests_;
 
     RequestEventListener* listener_;
-    bool isRunning_;
 
     MSRV_NO_COPY_AND_ASSIGN(HttpRequestQueue);
 };
@@ -71,11 +70,11 @@ private:
 class HttpUrlBinding
 {
 public:
-    HttpUrlBinding(HttpRequestQueue* server, std::wstring prefix);
+    HttpUrlBinding(HttpRequestQueue* queue, std::wstring prefix);
     ~HttpUrlBinding();
 
 private:
-    HttpRequestQueue* server_;
+    HttpRequestQueue* queue_;
     std::wstring prefix_;
 
     MSRV_NO_COPY_AND_ASSIGN(HttpUrlBinding);
@@ -90,15 +89,14 @@ public:
     void run();
     virtual void complete(OverlappedResult* result) override;
 
-    HTTP_REQUEST* request() { return reinterpret_cast<HTTP_REQUEST*>(buffer_.data()); }
+    HTTP_REQUEST* request() { return reinterpret_cast<HTTP_REQUEST*>(buffer_.get()); }
 
 private:
-    static constexpr size_t INIT_BUFFER_SIZE = 16 * 1024;
-    static constexpr size_t MAX_BUFFER_SIZE = 256 * 1024;
+    // Should be enought for everyone :-)
+    static constexpr size_t BUFFER_SIZE = 256 * 1024;
 
     HttpRequest* request_;
-    std::vector<char> buffer_;
-    HTTP_REQUEST_ID requestId_;
+    MallocPtr<char> buffer_;
 };
 
 class SendResponseTask : public OverlappedTask
@@ -107,24 +105,31 @@ public:
     explicit SendResponseTask(HttpRequest* request);
     virtual ~SendResponseTask();
 
-    void run(HTTP_REQUEST_ID requestId, ResponseCorePtr response);
+    bool isBusy() { return isBusy_; }
+
+    void run(HTTP_REQUEST_ID requestId, ResponseCorePtr response, ULONG flags);
+    void run(HTTP_REQUEST_ID requestId, ResponseCore::Body body, ULONG flags);
+
     virtual void complete(OverlappedResult* result) override;
 
 private:
-    void prepare();
+    void setResponse(ResponseCorePtr response);
+    void setBody(ResponseCore::Body body);
     void reset();
 
     HttpRequest* request_;
     ResponseCorePtr response_;
     ::HTTP_RESPONSE responseData_;
+    ResponseCore::Body body_;
     ::HTTP_DATA_CHUNK bodyChunk_;
     std::vector<::HTTP_UNKNOWN_HEADER> unknownHeaders_;
+    bool isBusy_;
 };
 
 class HttpRequest : public RequestCore
 {
 public:
-    explicit HttpRequest(HttpRequestQueue* server);
+    explicit HttpRequest(HttpRequestQueue* queue);
     ~HttpRequest();
 
     HttpRequestQueue* queue() const { return queue_; }
@@ -151,12 +156,17 @@ private:
     HTTP_REQUEST* data() { return receiveTask_->request(); }
 
     void receive();
+    void reset();
+
     void notifyReceiveCompleted(OverlappedResult* result);
     void notifySendCompleted(OverlappedResult* result);
 
     HttpRequestQueue* queue_;
+    HTTP_REQUEST_ID requestId_;
     TaskPtr<ReceiveRequestTask> receiveTask_;
     TaskPtr<SendResponseTask> sendTask_;
+    std::deque<ResponseCore::Body> pending_;
+    bool endAfterSendingAllChunks_;
 
     MSRV_NO_COPY_AND_ASSIGN(HttpRequest);
 };
