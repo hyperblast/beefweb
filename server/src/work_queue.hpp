@@ -8,7 +8,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <functional>
-#include <deque>
+#include <vector>
 
 namespace msrv {
 
@@ -18,7 +18,7 @@ class WorkQueue
 {
 public:
     WorkQueue() { }
-    virtual ~WorkQueue() { }
+    virtual ~WorkQueue();
     virtual void enqueue(WorkCallback callback) = 0;
 
     MSRV_NO_COPY_AND_ASSIGN(WorkQueue);
@@ -47,9 +47,9 @@ private:
     std::thread thread_;
     std::mutex mutex_;
     std::condition_variable ready_;
-    std::deque<WorkCallback> enqueued_;
-    std::deque<WorkCallback> executing_;
-    bool isShutdown_;
+    std::vector<WorkCallback> enqueued_;
+    std::vector<WorkCallback> executing_;
+    bool shutdown_;
 };
 
 class ExternalWorkQueue : public WorkQueue
@@ -66,9 +66,8 @@ protected:
 
 private:
     std::mutex mutex_;
-    std::deque<WorkCallback> enqueued_;
-    std::deque<WorkCallback> executing_;
-    bool scheduled_;
+    std::vector<WorkCallback> enqueued_;
+    std::vector<WorkCallback> executing_;
 };
 
 }

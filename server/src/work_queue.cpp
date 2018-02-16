@@ -5,6 +5,8 @@
 
 namespace msrv {
 
+WorkQueue::~WorkQueue() = default;
+
 ImmediateWorkQueue::ImmediateWorkQueue()
 {
 }
@@ -19,6 +21,7 @@ void ImmediateWorkQueue::enqueue(WorkCallback callback)
 }
 
 ThreadWorkQueue::ThreadWorkQueue()
+    : shutdown_(false)
 {
     thread_ = std::thread([this] { run(); });
 }
@@ -29,7 +32,7 @@ ThreadWorkQueue::~ThreadWorkQueue()
     {
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            isShutdown_ = true;
+            shutdown_ = true;
             ready_.notify_one();
         }
 
@@ -51,10 +54,10 @@ void ThreadWorkQueue::run()
         {
             std::unique_lock<std::mutex> lock(mutex_);
 
-            while (enqueued_.empty() && !isShutdown_)
+            while (enqueued_.empty() && !shutdown_)
                 ready_.wait(lock);
 
-            if (isShutdown_)
+            if (shutdown_)
                 return;
 
             std::swap(executing_, enqueued_);
@@ -69,7 +72,6 @@ void ThreadWorkQueue::run()
 
 
 ExternalWorkQueue::ExternalWorkQueue()
-    : scheduled_(false)
 {
 }
 
@@ -77,17 +79,15 @@ ExternalWorkQueue::~ExternalWorkQueue() = default;
 
 void ExternalWorkQueue::enqueue(WorkCallback callback)
 {
-    bool wasScheduled;
+    bool willSchedule;
 
     {
         std::lock_guard<std::mutex> lock(mutex_);
-
+        willSchedule = enqueued_.empty();
         enqueued_.emplace_back(std::move(callback));
-        wasScheduled = scheduled_;
-        scheduled_ = true;
     }
 
-    if (!wasScheduled)
+    if (willSchedule)
         schedule();
 }
 
@@ -96,7 +96,6 @@ void ExternalWorkQueue::execute()
     {
         std::unique_lock<std::mutex> lock(mutex_);
         std::swap(executing_, enqueued_);
-        scheduled_ = false;
     }
 
     for (auto& item : executing_)

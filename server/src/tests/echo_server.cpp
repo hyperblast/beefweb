@@ -66,7 +66,7 @@ public:
 private:
     Router router_;
     RequestFilterChain filters_;
-    ImmediateWorkQueue workQueue_;
+    ThreadWorkQueue workQueue_;
     ServerThread thread_;
 
     MSRV_NO_COPY_AND_ASSIGN(EchoServer);
