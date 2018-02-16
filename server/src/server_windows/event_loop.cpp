@@ -7,16 +7,17 @@ namespace server_windows {
 EventLoop::EventLoop(IoCompletionPort* ioPort)
     : ioPort_(ioPort), timerQueue_(), now_(steadyTime()), exited_(false)
 {
-    timerQueue_ = std::make_unique<TimerQueue>(this);
+    timerQueue_ = std::make_unique<SimpleTimerQueue>(this);
     exitTask_ = createTask<CallbackTask>([this] { exited_ = true; });
 }
 
-EventLoop::~EventLoop() = default;
+EventLoop::~EventLoop()
+{
+    discardTasks();
+}
 
 void EventLoop::run()
 {
-    exited_ = false;
-
     while (!exited_)
     {
         executeTasks();
@@ -24,6 +25,7 @@ void EventLoop::run()
     }
 
     discardTasks();
+    exited_ = false;
 }
 
 void EventLoop::executeTasks()

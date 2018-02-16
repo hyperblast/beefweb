@@ -15,22 +15,17 @@ public:
     EventLoop(IoCompletionPort* ioPort);
     ~EventLoop();
 
+    TimerFactory* timerFactory() { return timerQueue_.get(); }
+    virtual TimePointMs currentTime() override { return now_; }
     void run();
     void exit() { ioPort_->post(exitTask_); }
-
-    virtual TimePointMs currentTime() override { return now_; }
-
-    std::unique_ptr<Timer> createTimer(TimerCallback callback = TimerCallback())
-    {
-        return std::make_unique<Timer>(timerQueue_.get(), std::move(callback));
-    }
 
 private:
     void executeTasks();
     void discardTasks();
 
     IoCompletionPort* ioPort_;
-    std::unique_ptr<TimerQueue> timerQueue_;
+    std::unique_ptr<SimpleTimerQueue> timerQueue_;
     TimePointMs now_;
     TaskPtr<CallbackTask> exitTask_;
     bool exited_;
