@@ -24,7 +24,7 @@ inline size_t convert16To8(const wchar_t* inBuffer, size_t inSize, char* outBuff
 {
     auto ret = ::WideCharToMultiByte(
         CP_UTF8,
-        MB_ERR_INVALID_CHARS,
+        WC_ERR_INVALID_CHARS,
         inBuffer,
         static_cast<int>(inSize),
         outBuffer,

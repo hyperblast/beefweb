@@ -86,7 +86,15 @@ public:
     explicit ReceiveRequestTask(HttpRequest* request);
     virtual ~ReceiveRequestTask();
 
+    void reset()
+    {
+#ifndef NDEBUG
+        ::memset(buffer_.get(), 0x13, BUFFER_SIZE);
+#endif
+    }
+
     void run();
+
     virtual void complete(OverlappedResult* result) override;
 
     HTTP_REQUEST* request() { return reinterpret_cast<HTTP_REQUEST*>(buffer_.get()); }

@@ -112,16 +112,17 @@ void HttpRequestQueue::notifyDone(HttpRequest* request, bool wasReady)
     if (wasReady && listener_)
         tryCatchLog([this, request] { listener_->onRequestDone(request); });
 
+    request->reset();
     request->receive();
 }
 
 HttpRequest::HttpRequest(HttpRequestQueue* queue)
     : queue_(queue)
 {
-    reset();
-
     receiveTask_ = createTask<ReceiveRequestTask>(this);
     sendTask_ = createTask<SendResponseTask>(this);
+
+    reset();
 }
 
 HttpRequest::~HttpRequest() = default;
@@ -162,15 +163,17 @@ StringView HttpRequest::body()
 {
     switch (data()->EntityChunkCount)
     {
-    case 0:
-        return StringView();
+        case 0:
+            return StringView();
 
-    case 1:
-        auto& chunk = data()->pEntityChunks[0].FromMemory;
-        return StringView(reinterpret_cast<const char*>(chunk.pBuffer), chunk.BufferLength);
+        case 1:
+        {
+            auto& chunk = data()->pEntityChunks[0].FromMemory;
+            return StringView(reinterpret_cast<const char*>(chunk.pBuffer), chunk.BufferLength);
+        }
 
-    default:
-        return StringView("TODO");
+        default:
+            return StringView("TODO");
     }
 }
 
@@ -217,6 +220,7 @@ void HttpRequest::reset()
     HTTP_SET_NULL_ID(&requestId_);
     endAfterSendingAllChunks_ = false;
     pending_.clear();
+    receiveTask_->reset();
 }
 
 void HttpRequest::notifyReceiveCompleted(OverlappedResult* result)
@@ -227,6 +231,8 @@ void HttpRequest::notifyReceiveCompleted(OverlappedResult* result)
         queue_->notifyDone(this, false);
         return;
     }
+
+    logDebug("got request");
 
     requestId_ = data()->RequestId;
     queue_->notifyReady(this);
@@ -244,7 +250,7 @@ void HttpRequest::notifySendCompleted(OverlappedResult* result)
     {
         auto body = std::move(pending_.front());
         pending_.pop_front();
-        sendTask_->run(requestId_, body, HTTP_SEND_RESPONSE_FLAG_MORE_DATA);
+        sendTask_->run(requestId_, std::move(body), HTTP_SEND_RESPONSE_FLAG_MORE_DATA);
         return;
     }
 
@@ -377,7 +383,7 @@ void SendResponseTask::setBody(ResponseCore::Body body)
 
 void SendResponseTask::reset()
 {
-    ::memset(&response_, 0, sizeof(response_));
+    ::memset(&responseData_, 0, sizeof(responseData_));
     ::memset(&bodyChunk_, 0, sizeof(bodyChunk_));
 
     response_.reset();

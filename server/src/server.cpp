@@ -35,6 +35,7 @@ Server::~Server()
     assert(contexts_.empty());
     assert(eventStreamContexts_.empty());
 
+    dispatchEventsTimer_.reset();
     core_.reset();
     destroyed_.set_value();
 }
