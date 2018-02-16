@@ -2,6 +2,8 @@
 #include "header_map.hpp"
 
 #include "../log.hpp"
+#include "../charset.hpp"
+#include "../string_utils.hpp"
 
 namespace msrv {
 namespace server_windows {
@@ -125,12 +127,21 @@ HttpRequest::~HttpRequest() = default;
 
 HttpMethod HttpRequest::method()
 {
-    return HttpMethod::UNDEFINED;
+    switch (data()->Verb)
+    {
+    case HttpVerbGET:
+        return HttpMethod::GET;
+    case HttpVerbPOST:
+        return HttpMethod::POST;
+    default:
+        return HttpMethod::UNDEFINED;
+    }
 }
 
 std::string HttpRequest::path()
 {
-    return std::string();
+    auto& url = data()->CookedUrl;
+    return utf16To8(url.pAbsPath, url.AbsPathLength);
 }
 
 HttpKeyValueMap HttpRequest::headers()
@@ -142,7 +153,8 @@ HttpKeyValueMap HttpRequest::headers()
 
 HttpKeyValueMap HttpRequest::queryParams()
 {
-    return HttpKeyValueMap();
+    auto& url = data()->CookedUrl;
+    return parseQueryString(utf16To8(url.pQueryString, url.QueryStringLength));
 }
 
 StringView HttpRequest::body()

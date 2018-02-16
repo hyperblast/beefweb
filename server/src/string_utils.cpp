@@ -76,58 +76,6 @@ bool Tokenizer::hasToken(StringView value, StringView token, char sep)
     return false;
 }
 
-static int parseHexDigit(int ch)
-{
-    if (ch >= '0' && ch <= '9')
-        return ch - '0';
-    if (ch >= 'a' && ch <= 'f')
-        return ch - 'a' + 10;
-    if (ch >= 'A' && ch <= 'F')
-        return ch - 'A' + 10;
-    return -1;
-}
-
-bool tryUnescapeUrl(StringView str, std::string& outVal)
-{
-    int state = 0;
-    int first = 0;
-    int second = 0;
-
-    std::string result;
-
-    for (size_t i = 0; i < str.length(); i++)
-    {
-        switch (state)
-        {
-        case 0:
-            if (str[i] == '%')
-                state = 1;
-            else
-                result.push_back(str[i]);
-            continue;
-
-        case 1:
-            first = parseHexDigit(str[i]);
-            if (first < 0)
-                return false;
-            state = 2;
-            continue;
-
-        case 2:
-            second = parseHexDigit(str[i]);
-            if (second < 0)
-                return false;
-            result.push_back((char)((first << 4) | second));
-            state = 0;
-            continue;
-        }
-    }
-
-    outVal = std::move(result);
-
-    return true;
-}
-
 std::string formatString(const char* fmt, ...)
 {
     char buf[1024];

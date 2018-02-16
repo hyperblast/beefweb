@@ -1,6 +1,7 @@
 #pragma once
 
 #include "defines.hpp"
+#include "string_utils.hpp"
 
 #include <unordered_map>
 
@@ -52,5 +53,9 @@ inline bool isSuccessStatus(HttpStatus status)
     int code = static_cast<int>(status);
     return code >= 200 && code <= 299;
 }
+
+bool tryUnescapeUrl(StringView str, std::string& outVal);
+
+HttpKeyValueMap parseQueryString(StringView str);
 
 }
