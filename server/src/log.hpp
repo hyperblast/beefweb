@@ -52,7 +52,7 @@ void logInfo(const char* fmt, ...) MSRV_FORMAT_FUNC(1, 2);
 void logError(const char* fmt, ...) MSRV_FORMAT_FUNC(1, 2);
 
 template<typename Func>
-bool tryCatchLog(Func func)
+bool tryCatchLog(Func&& func)
 {
     try
     {

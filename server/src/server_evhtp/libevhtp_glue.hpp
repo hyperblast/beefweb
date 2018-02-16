@@ -58,7 +58,8 @@ public:
     {
         T map;
 
-        forEach([&map] (std::string key, std::string value) {
+        forEach([&map] (std::string key, std::string value)
+        {
             map.emplace(std::move(key), std::move(value));
         });
 
@@ -66,7 +67,7 @@ public:
     }
 
     template<typename Func>
-    void forEach(Func func)
+    void forEach(Func&& func)
     {
         evhtp_kvs_for_each(ptr(), callbackFor<Func>, &func);
     }
@@ -79,7 +80,7 @@ private:
     {
         auto func = reinterpret_cast<Func*>(funcPtr);
 
-        tryCatchLog([&]
+        tryCatchLog([kv, func]
         {
             std::string key;
             std::string value;

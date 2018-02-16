@@ -18,7 +18,7 @@ inline bool hasInternalErrorResponse(Request* request)
 }
 
 template<typename Func>
-void guardedCall(Request* request, Func func)
+void guardedCall(Request* request, Func&& func)
 {
     try
     {
@@ -60,19 +60,19 @@ RequestFilter::~RequestFilter() = default;
 
 void RequestFilter::execute(Request* request)
 {
-    guardedCall(request, [=] { beginRequest(request); });
+    guardedCall(request, [this, request] { beginRequest(request); });
 
     if (request->isProcessed())
         return;
 
     callNext(request);
-    guardedCall(request, [=] { endRequest(request); });
+    guardedCall(request, [this, request] { endRequest(request); });
 }
 
 void RequestFilter::callNext(Request* request)
 {
     assert(next_);
-    guardedCall(request, [&] { next_->execute(request); });
+    guardedCall(request, [this, request] { next_->execute(request); });
 }
 
 void RequestFilter::beginRequest(Request*) { }
@@ -105,7 +105,7 @@ void RequestFilterChain::addFilter(RequestFilterPtr filter)
 void RequestFilterChain::execute(Request* request) const
 {
     assert(!filters_.empty());
-    guardedCall(request, [&] { filters_.front()->execute(request); });
+    guardedCall(request, [this, request] { filters_.front()->execute(request); });
     request->setProcessed();
 }
 
