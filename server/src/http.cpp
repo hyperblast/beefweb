@@ -27,6 +27,21 @@ const char HttpHeader::CACHE_CONTROL[] = "Cache-Control";
 const char HttpHeader::ACCEPT_ENCODING[] = "Accept-Encoding";
 const char HttpHeader::CONTENT_ENCODING[] = "Content-Encoding";
 
+std::string toString(HttpMethod method)
+{
+    switch (method)
+    {
+    case HttpMethod::UNDEFINED:
+        return "undefined";
+    case HttpMethod::GET:
+        return "GET";
+    case HttpMethod::POST:
+        return "POST";
+    default:
+        return "invalid";
+    }
+}
+
 std::string toString(HttpStatus status)
 {
     switch (status)

@@ -46,6 +46,7 @@ struct HttpHeader
 
 using HttpKeyValueMap = std::unordered_map<std::string, std::string>;
 
+std::string toString(HttpMethod method);
 std::string toString(HttpStatus status);
 
 inline bool isSuccessStatus(HttpStatus status)

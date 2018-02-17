@@ -31,6 +31,7 @@ public:
     {
         Json response;
 
+        response["method"] = toString(request()->method);
         response["path"] = request()->path;
         response["headers"] = request()->headers;
         response["queryParams"] = request()->queryParams;
