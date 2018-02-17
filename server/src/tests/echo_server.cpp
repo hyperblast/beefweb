@@ -1,9 +1,14 @@
 #include "test_main.hpp"
+
+#include "../chrono.hpp"
 #include "../server_thread.hpp"
 #include "../request_filter.hpp"
 #include "../router.hpp"
 #include "../work_queue.hpp"
+
 #include <stdio.h>
+
+#include <boost/thread/future.hpp>
 
 namespace msrv {
 
@@ -29,6 +34,27 @@ public:
 
     ResponsePtr handle()
     {
+        if (optionalParam<bool>("eventstream", false))
+        {
+            return Response::eventStream([this] { return buildResponse(); });
+        }
+        else if (auto delay = optionalParam<int32_t>("delay"))
+        {
+            if (delay <= 0)
+                throw InvalidRequestException("delay should greater than 0");
+
+            return Response::async(boost::async([this, delay]
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(*delay));
+                return ResponsePtr(Response::json(buildResponse()));
+            }));
+        }
+
+        return Response::json(buildResponse());
+    }
+
+    Json buildResponse()
+    {
         Json response;
 
         response["method"] = toString(request()->method);
@@ -36,8 +62,9 @@ public:
         response["headers"] = request()->headers;
         response["queryParams"] = request()->queryParams;
         response["body"] = request()->postData;
+        response["ticks"] = steadyTime().time_since_epoch().count();
 
-        return Response::json(std::move(response));
+        return response;
     }
 };
 
@@ -64,6 +91,11 @@ public:
 
     ~EchoServer() = default;
 
+    void dispatchEvents()
+    {
+        thread_.dispatchEvents();
+    }
+
 private:
     Router router_;
     RequestFilterChain filters_;
@@ -75,15 +107,25 @@ private:
 
 int testMain(int, char**)
 {
-    msrv::EchoServer server;
+    EchoServer server;
 
-    msrv::logInfo("running server at port %d, press enter to stop", msrv::EchoServer::PORT);
+    logInfo("running server at port %d", EchoServer::PORT);
+    logInfo("press q<ENTER> to stop, press e<ENTER> to dispatch events");
 
-    for (int ch = '\0'; ch != '\n'; ch = ::getchar())
+    while (true)
     {
+        int ch = std::cin.get();
+        switch (ch)
+        {
+        case 'q':
+        case 'Q':
+            return 0;
+        case 'e':
+        case 'E':
+            server.dispatchEvents();
+            break;
+        }
     }
-
-    return 0;
 }
 
 }
