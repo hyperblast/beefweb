@@ -22,13 +22,12 @@ public:
 
 private:
     void executeTasks();
-    void discardTasks();
 
     IoCompletionPort* ioPort_;
     std::unique_ptr<SimpleTimerQueue> timerQueue_;
     TimePointMs now_;
     TaskPtr<CallbackTask> exitTask_;
-    bool exited_;
+    bool wantExit_;
 
     MSRV_NO_COPY_AND_ASSIGN(EventLoop);
 };

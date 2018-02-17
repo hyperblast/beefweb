@@ -128,11 +128,11 @@ public:
 
     void execute()
     {
-        bool exited = false;
-        execute(&exited);
+        bool wantExit = false;
+        execute(&wantExit);
     }
 
-    void execute(const bool* exited);
+    void execute(const bool* wantExit);
 
 private:
     friend class SimpleTimer;

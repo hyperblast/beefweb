@@ -5,27 +5,30 @@ namespace msrv {
 namespace server_windows {
 
 EventLoop::EventLoop(IoCompletionPort* ioPort)
-    : ioPort_(ioPort), timerQueue_(), now_(steadyTime()), exited_(false)
+    : ioPort_(ioPort), timerQueue_(), now_(steadyTime()), wantExit_(false)
 {
     timerQueue_ = std::make_unique<SimpleTimerQueue>(this);
-    exitTask_ = createTask<CallbackTask>([this] { exited_ = true; });
+    exitTask_ = createTask<CallbackTask>([this] { wantExit_ = true; });
 }
 
 EventLoop::~EventLoop()
 {
-    discardTasks();
+    OverlappedResult result;
+
+    while (ioPort_->getResult(&result))
+    {
+    }
 }
 
 void EventLoop::run()
 {
-    while (!exited_)
+    while (!wantExit_)
     {
         executeTasks();
-        timerQueue_->execute(&exited_);
+        timerQueue_->execute(&wantExit_);
     }
 
-    discardTasks();
-    exited_ = false;
+    wantExit_ = false;
 }
 
 void EventLoop::executeTasks()
@@ -50,19 +53,10 @@ void EventLoop::executeTasks()
 
     now_ = steadyTime();
 
-    while (hasResult && !exited_)
+    while (hasResult && !wantExit_)
     {
         tryCatchLog([&] { result.task->complete(&result); });
         hasResult = ioPort_->getResult(&result);
-    }
-}
-
-void EventLoop::discardTasks()
-{
-    OverlappedResult result;
-
-    while (ioPort_->getResult(&result))
-    {
     }
 }
 

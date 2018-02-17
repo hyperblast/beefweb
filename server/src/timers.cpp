@@ -80,11 +80,11 @@ SimpleTimerQueue::SimpleTimerQueue(TimeSource* source)
 
 SimpleTimerQueue::~SimpleTimerQueue() = default;
 
-void SimpleTimerQueue::execute(const bool* exited)
+void SimpleTimerQueue::execute(const bool* wantExit)
 {
     auto now = source_->currentTime();
 
-    while (!timers_.empty() && !*exited)
+    while (!timers_.empty() && !*wantExit)
     {
         auto first = timers_.begin();
         auto timer = *first;
