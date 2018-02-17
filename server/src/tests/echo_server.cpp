@@ -12,6 +12,21 @@
 
 namespace msrv {
 
+class EchoHeadersFilter : public RequestFilter
+{
+protected:
+    void endRequest(Request* request) override
+    {
+        auto* response = request->response.get();
+
+        if (!response)
+            return;
+
+        for (auto& pair : request->headers)
+            response->headers.emplace("X-Echo-" + pair.first, pair.second);
+    }
+};
+
 class EchoController : ControllerBase
 {
 public:
@@ -76,6 +91,7 @@ public:
     EchoServer()
     {
         EchoController::defineRoutes(&router_);
+        filters_.addFilter(std::make_unique<EchoHeadersFilter>());
         filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
         auto config = std::make_unique<ServerConfig>();
