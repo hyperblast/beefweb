@@ -1,5 +1,6 @@
 #include "http_server.hpp"
 #include "../log.hpp"
+#include "../charset.hpp"
 
 namespace msrv {
 
@@ -22,11 +23,14 @@ HttpServer::~HttpServer()
 {
 }
 
-void HttpServer::bind(int port, bool)
+void HttpServer::bind(int port, bool allowRemote)
 {
-    std::wostringstream prefix;
-    prefix << L"http://localhost:" << port << L"/";
-    requestQueue_.bind(prefix.str());
+    auto prefix = formatString(
+        "http://%s:%d/",
+        allowRemote ? "+" : "localhost",
+        port);
+
+    requestQueue_.bind(prefix);
 }
 
 }}

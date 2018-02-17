@@ -47,7 +47,7 @@ public:
     HANDLE handle() { return queueHandle_; }
     void setListener(RequestEventListener* listener) { listener_ = listener; }
 
-    void bind(const std::wstring& prefix);
+    void bind(const std::string& prefix);
     void start();
 
 private:

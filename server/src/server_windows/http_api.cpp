@@ -112,10 +112,20 @@ HttpRequestQueue::~HttpRequestQueue()
         logIfError("HttpCloseRequestQueue", ::HttpCloseRequestQueue(queueHandle_));
 }
 
-void HttpRequestQueue::bind(const std::wstring& prefix)
+void HttpRequestQueue::bind(const std::string& prefix)
 {
-    auto ret = ::HttpAddUrlToUrlGroup(urlGroupId_, prefix.c_str(), 0, 0);
-    throwIfFailed("HttpAddUrlToUrlGroup", ret == NO_ERROR, ret);
+    auto ret = ::HttpAddUrlToUrlGroup(urlGroupId_, utf8To16(prefix).c_str(), 0, 0);
+
+    if (ret == NO_ERROR)
+    {
+        logInfo("listening on prefix: %s", prefix.c_str());
+        return;
+    }
+
+    throw std::runtime_error(formatString(
+        "failed to bind prefix: %s, error: %s",
+        prefix.c_str(),
+        formatError(ret).c_str()));
 }
 
 void HttpRequestQueue::start()
