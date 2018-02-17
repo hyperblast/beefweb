@@ -88,7 +88,8 @@ class EchoServer
 public:
     static constexpr int PORT = 8882;
 
-    EchoServer()
+    EchoServer(bool allowRemote, ServerReadyCallback readyCallback)
+        : thread_(std::move(readyCallback))
     {
         EchoController::defineRoutes(&router_);
         filters_.addFilter(std::make_unique<EchoHeadersFilter>());
@@ -96,7 +97,7 @@ public:
 
         auto config = std::make_unique<ServerConfig>();
 
-        config->allowRemote = false;
+        config->allowRemote = allowRemote;
         config->port = PORT;
         config->router = &router_;
         config->filters = &filters_;
@@ -121,12 +122,28 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(EchoServer);
 };
 
-int testMain(int, char**)
+int testMain(int argc, char** argv)
 {
-    EchoServer server;
+    bool allowRemote = false;
 
-    logInfo("running server at port %d", EchoServer::PORT);
-    logInfo("press q<ENTER> to stop, press e<ENTER> to dispatch events");
+    for (int i = 1; i < argc; i++)
+    {
+        if (strcmp(argv[i], "-remote") == 0)
+        {
+            allowRemote = true;
+        }
+        else
+        {
+            logError("invalid option: %s\n\nusage: echo_server [-remote]", argv[i]);
+            return 1;
+        }
+    }
+
+    EchoServer server(allowRemote, []
+    {
+        logInfo("server is running");
+        logInfo("press q<ENTER> to stop, press e<ENTER> to dispatch events");
+    });
 
     while (true)
     {
