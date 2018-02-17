@@ -44,10 +44,10 @@ public:
     HttpRequestQueue(IoCompletionPort* ioPort);
     ~HttpRequestQueue();
 
-    HANDLE handle() { return handle_.get(); }
+    HANDLE handle() { return queueHandle_; }
     void setListener(RequestEventListener* listener) { listener_ = listener; }
 
-    void bindPrefix(std::wstring prefix);
+    void bind(const std::wstring& prefix);
     void start();
 
 private:
@@ -59,27 +59,15 @@ private:
     void notifyDone(HttpRequest* request, bool wasReady);
 
     HttpApiInit apiInit_;
-    WindowsHandle handle_;
+    HANDLE queueHandle_;
+    HTTP_SERVER_SESSION_ID sessionId_;
+    HTTP_URL_GROUP_ID urlGroupId_;
 
-    std::vector<std::unique_ptr<HttpUrlBinding>> boundPrefixes_;
     std::vector<std::unique_ptr<HttpRequest>> requests_;
 
     RequestEventListener* listener_;
 
     MSRV_NO_COPY_AND_ASSIGN(HttpRequestQueue);
-};
-
-class HttpUrlBinding
-{
-public:
-    HttpUrlBinding(HttpRequestQueue* queue, std::wstring prefix);
-    ~HttpUrlBinding();
-
-private:
-    HttpRequestQueue* queue_;
-    std::wstring prefix_;
-
-    MSRV_NO_COPY_AND_ASSIGN(HttpUrlBinding);
 };
 
 class ReceiveRequestTask : public OverlappedTask

@@ -26,7 +26,7 @@ void HttpServer::bind(int port, bool)
 {
     std::wostringstream prefix;
     prefix << L"http://localhost:" << port << L"/";
-    requestQueue_.bindPrefix(prefix.str());
+    requestQueue_.bind(prefix.str());
 }
 
 }}

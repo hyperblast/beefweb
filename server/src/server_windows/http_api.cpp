@@ -10,6 +10,12 @@ namespace server_windows {
 
 namespace {
 
+void logIfError(const char* func, DWORD errorCode)
+{
+    if (errorCode != NO_ERROR)
+        logError("%s", formatErrorFor(func, errorCode).c_str());
+}
+
 class BodyFormatter : public boost::static_visitor<bool>
 {
 public:
@@ -64,30 +70,52 @@ private:
 HttpApiInit::HttpApiInit(ULONG flags)
     : flags_(0)
 {
-    ::HTTPAPI_VERSION version = HTTPAPI_VERSION_1;
-    auto ret = ::HttpInitialize(version, flags, nullptr);
+    auto ret = ::HttpInitialize(HTTPAPI_VERSION_2, flags, nullptr);
     throwIfFailed("HttpInitialize", ret == NO_ERROR, ret);
     flags_ = flags;
 }
 
 HttpRequestQueue::HttpRequestQueue(IoCompletionPort* ioPort)
-    : apiInit_(HTTP_INITIALIZE_SERVER)
+    : apiInit_(HTTP_INITIALIZE_SERVER),
+      queueHandle_(nullptr),
+      sessionId_(HTTP_NULL_ID),
+      urlGroupId_(HTTP_NULL_ID)
 {
-    HANDLE handle;
-    auto ret = ::HttpCreateHttpHandle(&handle, 0);
+    auto ret = ::HttpCreateRequestQueue(HTTPAPI_VERSION_2, nullptr, nullptr, 0, &queueHandle_);
     throwIfFailed("HttpCreateHttpHandle", ret == NO_ERROR, ret);
-    handle_.reset(handle);
 
-    ioPort->bindHandle(handle);
+    ret = ::HttpCreateServerSession(HTTPAPI_VERSION_2, &sessionId_, 0);
+    throwIfFailed("HttpCreateServerSession", ret == NO_ERROR, ret);
+
+    ret = ::HttpCreateUrlGroup(sessionId_, &urlGroupId_, 0);
+    throwIfFailed("HttpCreateUrlGroup", ret == NO_ERROR, ret);
+
+    HTTP_BINDING_INFO bindingInfo;
+    bindingInfo.Flags.Present = 1;
+    bindingInfo.RequestQueueHandle = queueHandle_;
+    ret = ::HttpSetUrlGroupProperty(
+        urlGroupId_, HttpServerBindingProperty, &bindingInfo, sizeof(bindingInfo));
+    throwIfFailed("HttpSetUrlGroupProperty", ret == NO_ERROR, ret);
+
+    ioPort->bindHandle(queueHandle_);
 }
 
 HttpRequestQueue::~HttpRequestQueue()
 {
+    if (urlGroupId_ != HTTP_NULL_ID)
+        logIfError("HttpCloseUrlGroup", ::HttpCloseUrlGroup(urlGroupId_));
+
+    if (sessionId_ != HTTP_NULL_ID)
+        logIfError("HttpCloseServerSession", ::HttpCloseServerSession(sessionId_));
+
+    if (queueHandle_)
+        logIfError("HttpCloseRequestQueue", ::HttpCloseRequestQueue(queueHandle_));
 }
 
-void HttpRequestQueue::bindPrefix(std::wstring prefix)
+void HttpRequestQueue::bind(const std::wstring& prefix)
 {
-    boundPrefixes_.emplace_back(std::make_unique<HttpUrlBinding>(this, std::move(prefix)));
+    auto ret = ::HttpAddUrlToUrlGroup(urlGroupId_, prefix.c_str(), 0, 0);
+    throwIfFailed("HttpAddUrlToUrlGroup", ret == NO_ERROR, ret);
 }
 
 void HttpRequestQueue::start()
@@ -258,20 +286,6 @@ void HttpRequest::notifySendCompleted(OverlappedResult* result)
 
     if (endAfterSendingAllChunks_)
         queue_->notifyDone(this, true);
-}
-
-HttpUrlBinding::HttpUrlBinding(HttpRequestQueue* server, std::wstring prefix)
-    : queue_(nullptr), prefix_(std::move(prefix))
-{
-    auto ret = ::HttpAddUrl(server->handle(), prefix_.c_str(), nullptr);
-    throwIfFailed("HttpAddUrl", ret == NO_ERROR, ret);
-    queue_ = server;
-}
-
-HttpUrlBinding::~HttpUrlBinding()
-{
-    if (queue_)
-        ::HttpRemoveUrl(queue_->handle(), prefix_.c_str());
 }
 
 ReceiveRequestTask::ReceiveRequestTask(HttpRequest* request)
