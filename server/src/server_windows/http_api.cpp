@@ -143,7 +143,7 @@ HttpMethod HttpRequest::method()
 std::string HttpRequest::path()
 {
     auto& url = data()->CookedUrl;
-    return utf16To8(url.pAbsPath, url.AbsPathLength);
+    return utf16To8(url.pAbsPath, url.AbsPathLength / sizeof(wchar_t));
 }
 
 HttpKeyValueMap HttpRequest::headers()
@@ -156,7 +156,8 @@ HttpKeyValueMap HttpRequest::headers()
 HttpKeyValueMap HttpRequest::queryParams()
 {
     auto& url = data()->CookedUrl;
-    return parseQueryString(utf16To8(url.pQueryString, url.QueryStringLength));
+    auto queryString = utf16To8(url.pQueryString, url.QueryStringLength / sizeof(wchar_t));
+    return parseQueryString(queryString);
 }
 
 StringView HttpRequest::body()
@@ -199,7 +200,7 @@ void HttpRequest::sendResponseBegin(ResponseCorePtr response)
 void HttpRequest::sendResponseBody(ResponseCore::Body body)
 {
     if (sendTask_->isBusy())
-        pending_.emplace_back(std::move(body));
+        pendingChunks_.emplace_back(std::move(body));
     else
         sendTask_->run(requestId_, std::move(body), HTTP_SEND_RESPONSE_FLAG_MORE_DATA);
 }
@@ -219,7 +220,7 @@ void HttpRequest::reset()
 {
     HTTP_SET_NULL_ID(&requestId_);
     endAfterSendingAllChunks_ = false;
-    pending_.clear();
+    pendingChunks_.clear();
     receiveTask_->reset();
 }
 
@@ -246,10 +247,10 @@ void HttpRequest::notifySendCompleted(OverlappedResult* result)
         queue_->notifyDone(this, true);
     }
 
-    if (!pending_.empty())
+    if (!pendingChunks_.empty())
     {
-        auto body = std::move(pending_.front());
-        pending_.pop_front();
+        auto body = std::move(pendingChunks_.front());
+        pendingChunks_.pop_front();
         sendTask_->run(requestId_, std::move(body), HTTP_SEND_RESPONSE_FLAG_MORE_DATA);
         return;
     }

@@ -7,6 +7,8 @@
 
 #include <http.h>
 
+#include <deque>
+
 #include <boost/variant.hpp>
 
 namespace msrv {
@@ -173,7 +175,7 @@ private:
     HTTP_REQUEST_ID requestId_;
     TaskPtr<ReceiveRequestTask> receiveTask_;
     TaskPtr<SendResponseTask> sendTask_;
-    std::deque<ResponseCore::Body> pending_;
+    std::deque<ResponseCore::Body> pendingChunks_;
     bool endAfterSendingAllChunks_;
 
     MSRV_NO_COPY_AND_ASSIGN(HttpRequest);
