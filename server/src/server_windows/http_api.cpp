@@ -233,8 +233,6 @@ void HttpRequest::notifyReceiveCompleted(OverlappedResult* result)
         return;
     }
 
-    logDebug("got request");
-
     requestId_ = data()->RequestId;
     queue_->notifyReady(this);
 }
@@ -243,8 +241,11 @@ void HttpRequest::notifySendCompleted(OverlappedResult* result)
 {
     if (result->ioError != NO_ERROR)
     {
-        logError("failed to send response: %s", formatError(result->ioError).c_str());
+        if (result->ioError != ERROR_CONNECTION_INVALID)
+            logError("failed to send response: %s", formatError(result->ioError).c_str());
+
         queue_->notifyDone(this, true);
+        return;
     }
 
     if (!pendingChunks_.empty())
@@ -295,7 +296,7 @@ void ReceiveRequestTask::run()
         nullptr,
         toOverlapped());
 
-    throwIfAsyncIoFailed("HttpReceiveHttpRequest", ret);
+    handleAsyncIoResult(ret);
 }
 
 void ReceiveRequestTask::complete(OverlappedResult* result)
@@ -327,8 +328,8 @@ void SendResponseTask::run(HTTP_REQUEST_ID requestId, ResponseCorePtr response, 
         toOverlapped(),
         nullptr);
 
-    throwIfAsyncIoFailed("HttpSendHttpResponse", ret);
     isBusy_ = true;
+    handleAsyncIoResult(ret);
 }
 
 void SendResponseTask::run(HTTP_REQUEST_ID requestId, ResponseCore::Body body, ULONG flags)
@@ -347,13 +348,12 @@ void SendResponseTask::run(HTTP_REQUEST_ID requestId, ResponseCore::Body body, U
         toOverlapped(),
         nullptr);
 
-    throwIfAsyncIoFailed("HttpSendHttpResponse", ret);
     isBusy_ = true;
+    return handleAsyncIoResult(ret);
 }
 
 void SendResponseTask::complete(OverlappedResult* result)
 {
-    isBusy_ = false;
     reset();
     request_->notifySendCompleted(result);
 }
@@ -390,6 +390,7 @@ void SendResponseTask::reset()
     response_.reset();
     body_ = false;
     unknownHeaders_.clear();
+    isBusy_ = false;
 }
 
 }}

@@ -12,18 +12,16 @@ OverlappedTask::OverlappedTask()
 
 OverlappedTask::~OverlappedTask() = default;
 
-void OverlappedTask::throwIfAsyncIoFailed(const char* func, ::DWORD errorCode)
+void OverlappedTask::handleAsyncIoResult(DWORD errorCode)
 {
-    switch (errorCode)
-    {
-    case ERROR_IO_PENDING:
-        break;
+    if (errorCode == ERROR_IO_PENDING)
+        return;
 
-    default:
-        intrusive_ptr_release(this);
-        throwSystemError(func, errorCode);
-        break;
-    }
+    OverlappedResult result;
+    result.task = TaskPtr<OverlappedTask>(this, false);
+    result.bytesCount = 0;
+    result.ioError = errorCode;
+    complete(&result);
 }
 
 CallbackTask::~CallbackTask() = default;

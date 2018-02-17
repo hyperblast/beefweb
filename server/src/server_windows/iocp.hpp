@@ -49,7 +49,7 @@ public:
     }
 
 protected:
-    void throwIfAsyncIoFailed(const char* func, ::DWORD errorCode);
+    void handleAsyncIoResult(DWORD errorCode);
 
 private:
     struct Wrapper
