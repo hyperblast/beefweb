@@ -114,12 +114,12 @@ int testMain(int, char**)
 
     while (true)
     {
-        int ch = std::cin.get();
-        switch (ch)
+        switch (int ch = ::getchar())
         {
         case 'q':
         case 'Q':
             return 0;
+
         case 'e':
         case 'E':
             server.dispatchEvents();
