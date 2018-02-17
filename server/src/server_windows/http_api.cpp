@@ -149,7 +149,7 @@ std::string HttpRequest::path()
 HttpKeyValueMap HttpRequest::headers()
 {
     HttpKeyValueMap map;
-    mapRequestHeaders(&data()->Headers, map);
+    mapRequestHeaders(&data()->Headers, &map);
     return map;
 }
 
@@ -362,7 +362,7 @@ void SendResponseTask::setResponse(ResponseCorePtr response)
 {
     response_ = std::move(response);
     responseData_.StatusCode = static_cast<USHORT>(response_->status);
-    mapResponseHeaders(response_->headers, &responseData_.Headers, unknownHeaders_);
+    mapResponseHeaders(&response_->headers, &responseData_.Headers, &unknownHeaders_);
     setBody(std::move(response_->body));
 }
 
