@@ -130,7 +130,7 @@ int testMain(int, char**)
 
     while (true)
     {
-        switch (int ch = ::getchar())
+        switch (::getchar())
         {
         case 'q':
         case 'Q':
