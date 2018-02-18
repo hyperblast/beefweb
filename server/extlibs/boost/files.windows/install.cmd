@@ -1,3 +1,9 @@
+:: Why custom installation script?
+
+:: Standard install target copies single files with copy command which is very slow
+:: Version prefix is added to installation directory which is unwanted
+:: Libraries need to be renamed to have fixed name regardless of build options
+
 @if "%1" == "" @goto :usage
 
 xcopy /E /I /Y boost\* "%~f1\include\boost"
