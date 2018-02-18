@@ -35,20 +35,21 @@ if(OS_POSIX)
         PATCH_COMMAND
             ${EXTLIB_PATCHER} boost
         CONFIGURE_COMMAND
-            <SOURCE_DIR>/bootstrap.sh
+            ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> <BINARY_DIR>${CONFIG_SUFFIX}
+        COMMAND
+            <BINARY_DIR>${CONFIG_SUFFIX}/bootstrap.sh
             --prefix=${EXTLIB_INSTALL_DIR}
             --with-toolset=${BOOST_TOOLSET}
             --with-libraries=system,filesystem,thread
         BUILD_COMMAND
-            <SOURCE_DIR>/b2
+            <BINARY_DIR>${CONFIG_SUFFIX}/b2
             "cflags=${CMAKE_C_FLAGS}"
             "cxxflags=${CMAKE_CXX_FLAGS}"
             "link=${BOOST_LINK}"
             "threading=${BOOST_THREADING}"
             "variant=${BOOST_VARIANT}"
-        BUILD_IN_SOURCE 1
         INSTALL_COMMAND
-            <SOURCE_DIR>/b2
+            <BINARY_DIR>${CONFIG_SUFFIX}/b2
             "link=${BOOST_LINK}"
             "threading=${BOOST_THREADING}"
             "variant=${BOOST_VARIANT}"
@@ -71,9 +72,11 @@ if(OS_WINDOWS)
         PATCH_COMMAND
             ${EXTLIB_PATCHER} boost
         CONFIGURE_COMMAND
-            <SOURCE_DIR>/bootstrap.bat
+            ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR> <BINARY_DIR>${CONFIG_SUFFIX}
+        COMMAND
+            <BINARY_DIR>${CONFIG_SUFFIX}/run.cmd bootstrap.bat
         BUILD_COMMAND
-            <SOURCE_DIR>/b2
+            <BINARY_DIR>${CONFIG_SUFFIX}/run.cmd b2.exe
             "cflags=${CMAKE_C_FLAGS}"
             "cxxflags=${CMAKE_CXX_FLAGS}"
             "link=${BOOST_LINK}"
@@ -83,9 +86,8 @@ if(OS_WINDOWS)
             --with-system
             --with-filesystem
             --with-thread
-        BUILD_IN_SOURCE 1
         INSTALL_COMMAND
-            <SOURCE_DIR>/install.cmd ${EXTLIB_INSTALL_DIR}
+            <BINARY_DIR>${CONFIG_SUFFIX}/run.cmd install.cmd ${EXTLIB_INSTALL_DIR}
         LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
     )
 endif()
