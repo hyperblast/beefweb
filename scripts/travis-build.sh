@@ -54,7 +54,7 @@ echo
 echo '=== Running server tests ==='
 echo
 
-server/build/release/src/tests/server_tests
+server/build/release/src/tests/core_tests
 
 echo
 echo '=== Running API tests ==='

@@ -19,14 +19,14 @@ set(
 )
 
 add_executable(
-    server_tests
+    core_tests
     ${RUNNER_SOURCES}
     $<TARGET_OBJECTS:core>
     $<TARGET_OBJECTS:server>
 )
 
 target_link_libraries(
-    server_tests
+    core_tests
     "${CORE_LIBRARIES};${SERVER_LIBRARIES}"
 )
 
