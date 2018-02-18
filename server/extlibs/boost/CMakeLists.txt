@@ -94,7 +94,7 @@ if(OS_WINDOWS)
         CONFIGURE_COMMAND
             <SOURCE_DIR>/bootstrap.bat
         BUILD_COMMAND
-            <SOURCE_DIR>/b2.exe ${B2_COMMON_ARGS}
+            <SOURCE_DIR>/b2.exe ${B2_BUILD_ARGS}
         INSTALL_COMMAND
             <SOURCE_DIR>/install.cmd ${EXTLIB_INSTALL_DIR}
         LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
