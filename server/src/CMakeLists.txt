@@ -43,7 +43,9 @@ include_directories(
     ${ZLIB_INCLUDE_DIRS}
 )
 
-link_directories(${EXTLIB_INSTALL_DIR}/lib)
+link_directories(
+    ${EXTLIB_PREFIX_DIR}/Debug/lib
+)
 
 set(
     CORE_SOURCES
@@ -119,14 +121,12 @@ if(OS_WINDOWS)
     set(SYSTEM_LIBRARIES "")
 endif()
 
-add_library(core OBJECT ${CORE_SOURCES})
-
-set_target_properties(
-    core PROPERTIES
-    INTERFACE_LINK_LIBRARIES
+set(
+    CORE_LIBRARIES
     "${SYSTEM_LIBRARIES};${Boost_LIBRARIES};${LIBB64_LIBRARIES};${ZLIB_LIBRARIES}"
 )
 
+add_library(core OBJECT ${CORE_SOURCES})
 add_dependencies(core ext_all)
 
 if(OS_POSIX)

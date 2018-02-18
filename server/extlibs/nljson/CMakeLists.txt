@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_nljson
     PREFIX
-        ${EXTLIB_INSTALL_DIR}
+        ${EXTLIB_PREFIX_DIR}
     URL
         https://github.com/nlohmann/json/releases/download/v3.0.1/json.hpp
     URL_HASH
@@ -14,7 +14,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different <DOWNLOADED_FILE> <INSTALL_DIR>/include/nlohmann/json.hpp
+        ${CMAKE_COMMAND} -E copy_if_different <DOWNLOADED_FILE> ${EXTLIB_INSTALL_DIR}/include/nlohmann/json.hpp
     LOG_DOWNLOAD 0 LOG_UPDATE 0 LOG_CONFIGURE 0 LOG_BUILD 0 LOG_INSTALL 1
 )
 

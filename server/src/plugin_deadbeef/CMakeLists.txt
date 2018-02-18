@@ -29,8 +29,7 @@ add_library(
 
 target_link_libraries(
     plugin_deadbeef
-    $<TARGET_PROPERTY:core,INTERFACE_LINK_LIBRARIES>
-    $<TARGET_PROPERTY:server,INTERFACE_LINK_LIBRARIES>
+    "${CORE_LIBRARIES};${SERVER_LIBRARIES}"
 )
 
 set_target_properties(

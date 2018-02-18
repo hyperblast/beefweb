@@ -7,12 +7,11 @@ set(
     iocp.cpp iocp.hpp
 )
 
-add_library(server OBJECT ${SERVER_SOURCES})
-
-set_target_properties(
-    server PROPERTIES
-    INTERFACE_LINK_LIBRARIES
+set(
+    SERVER_LIBRARIES
     "httpapi.lib"
-) 
+    PARENT_SCOPE
+)
 
+add_library(server OBJECT ${SERVER_SOURCES})
 add_dependencies(server ext_all)

@@ -9,7 +9,7 @@ endif()
 ExternalProject_Add(
     ext_libevhtp
     PREFIX
-        ${EXTLIB_INSTALL_DIR}
+        ${EXTLIB_PREFIX_DIR}
     DEPENDS
         ${DEPENDS}
     URL
@@ -25,8 +25,8 @@ ExternalProject_Add(
     CMAKE_ARGS
         -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
         -DCMAKE_BUILD_TYPE=$<CONFIG>
-        -DCMAKE_PREFIX_PATH=<INSTALL_DIR>
-        -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+        -DCMAKE_PREFIX_PATH=${EXTLIB_INSTALL_DIR}
+        -DCMAKE_INSTALL_PREFIX=${EXTLIB_INSTALL_DIR}
         -DEVHTP_DISABLE_SSL=ON
         -DEVHTP_DISABLE_EVTHR=ON
         -DEVHTP_DISABLE_REGEX=ON

@@ -27,8 +27,7 @@ add_executable(
 
 target_link_libraries(
     server_tests
-    $<TARGET_PROPERTY:core,INTERFACE_LINK_LIBRARIES>
-    $<TARGET_PROPERTY:server,INTERFACE_LINK_LIBRARIES>
+    "${CORE_LIBRARIES};${SERVER_LIBRARIES}"
 )
 
 add_executable(
@@ -40,6 +39,5 @@ add_executable(
 
 target_link_libraries(
     echo_server
-    $<TARGET_PROPERTY:core,INTERFACE_LINK_LIBRARIES>
-    $<TARGET_PROPERTY:server,INTERFACE_LINK_LIBRARIES>
+    "${CORE_LIBRARIES};${SERVER_LIBRARIES}"
 )

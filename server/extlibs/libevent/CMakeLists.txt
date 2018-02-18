@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_libevent
     PREFIX
-        ${EXTLIB_INSTALL_DIR}
+        ${EXTLIB_PREFIX_DIR}
     URL
         https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
     URL_HASH
@@ -13,7 +13,7 @@ ExternalProject_Add(
     CONFIGURE_COMMAND
         <SOURCE_DIR>/configure
         "CFLAGS=${EXTLIB_C_FLAGS}"
-        --prefix=<INSTALL_DIR>
+        --prefix=${EXTLIB_INSTALL_DIR}
         --enable-static
         --disable-shared
         --disable-openssl

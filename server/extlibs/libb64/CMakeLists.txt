@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_libb64
     PREFIX
-        ${EXTLIB_INSTALL_DIR}
+        ${EXTLIB_PREFIX_DIR}
     URL
         https://sourceforge.net/projects/libb64/files/libb64/libb64/libb64-1.2.src.zip
     URL_HASH
@@ -15,7 +15,7 @@ ExternalProject_Add(
     CMAKE_ARGS
         -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
         -DCMAKE_BUILD_TYPE=$<CONFIG>
-        -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
+        -DCMAKE_INSTALL_PREFIX=${EXTLIB_INSTALL_DIR}
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
 )
 

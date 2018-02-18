@@ -25,7 +25,7 @@ if(OS_POSIX)
     ExternalProject_Add(
         ext_boost
         PREFIX
-            ${EXTLIB_INSTALL_DIR}
+            ${EXTLIB_PREFIX_DIR}
         URL
             https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.tar.bz2
         URL_HASH
@@ -36,7 +36,7 @@ if(OS_POSIX)
             ${EXTLIB_PATCHER} boost
         CONFIGURE_COMMAND
             <SOURCE_DIR>/bootstrap.sh
-            --prefix=<INSTALL_DIR>
+            --prefix=${EXTLIB_INSTALL_DIR}
             --with-toolset=${BOOST_TOOLSET}
             --with-libraries=system,filesystem,thread
         BUILD_COMMAND
@@ -61,7 +61,7 @@ if(OS_WINDOWS)
     ExternalProject_Add(
         ext_boost
         PREFIX
-            ${EXTLIB_INSTALL_DIR}
+            ${EXTLIB_PREFIX_DIR}
         URL
             https://sourceforge.net/projects/boost/files/boost/1.64.0/boost_1_64_0.zip
         URL_HASH
@@ -85,7 +85,7 @@ if(OS_WINDOWS)
             --with-thread
         BUILD_IN_SOURCE 1
         INSTALL_COMMAND
-            <SOURCE_DIR>/install.cmd <INSTALL_DIR>
+            <SOURCE_DIR>/install.cmd ${EXTLIB_INSTALL_DIR}
         LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
     )
 endif()

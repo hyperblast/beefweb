@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_deadbeef
     PREFIX
-        ${EXTLIB_INSTALL_DIR}
+        ${EXTLIB_PREFIX_DIR}
     URL
         http://sourceforge.net/projects/deadbeef/files/deadbeef-0.7.2.tar.bz2
     URL_HASH
@@ -17,11 +17,11 @@ ExternalProject_Add(
     INSTALL_COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
             <SOURCE_DIR>/deadbeef.h
-            <INSTALL_DIR>/include/deadbeef/deadbeef.h
+            ${EXTLIB_INSTALL_DIR}/include/deadbeef/deadbeef.h
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
             <SOURCE_DIR>/plugins/artwork/artwork.h
-            <INSTALL_DIR>/include/deadbeef/artwork.h
+            ${EXTLIB_INSTALL_DIR}/include/deadbeef/artwork.h
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 0 LOG_BUILD 0 LOG_INSTALL 1
 )
 

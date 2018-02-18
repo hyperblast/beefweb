@@ -13,12 +13,11 @@ set(
     libevhtp_glue.cpp libevhtp_glue.hpp
 )
 
-add_library(server OBJECT ${SERVER_SOURCES})
-
-set_target_properties(
-    server PROPERTIES
-    INTERFACE_LINK_LIBRARIES
+set(
+    SERVER_LIBRARIES
     "${LIBEVHTP_LIBRARIES};${LIBEVENT_PTHREADS_LIBRARIES};${LIBEVENT_LIBRARIES}"
+    PARENT_SCOPE
 )
 
+add_library(server OBJECT ${SERVER_SOURCES})
 add_dependencies(server ext_all)
