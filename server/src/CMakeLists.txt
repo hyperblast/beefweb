@@ -43,10 +43,6 @@ include_directories(
     ${ZLIB_INCLUDE_DIRS}
 )
 
-link_directories(
-    ${EXTLIB_PREFIX_DIR}/Debug/lib
-)
-
 set(
     CORE_SOURCES
     artwork_controller.cpp artwork_controller.hpp

@@ -3,9 +3,22 @@
 xcopy /E /I /Y boost\* "%~f1\include\boost"
 @if errorlevel 1 @goto :end
 
-xcopy /I /Y stage\lib\*.lib "%~f1\lib"
+if not exist "%~f1\lib\." mkdir "%~f1\lib"
 @if errorlevel 1 @goto :end
 
+call :copylib "%1" libboost_system
+@if errorlevel 1 @goto :end
+
+call :copylib "%1" libboost_filesystem
+@if errorlevel 1 @goto :end
+
+call :copylib "%1" libboost_thread
+@if errorlevel 1 @goto :end
+
+@goto :end
+
+:copylib
+copy /B /Y stage\lib\%2*.lib "%~f1\lib\%2.lib"
 @goto :end
 
 :usage
