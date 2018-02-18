@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_libb64
     PREFIX
-        ${EXTLIB_PREFIX_DIR}
+        ${EXTLIB_INSTALL_DIR}
     URL
         https://sourceforge.net/projects/libb64/files/libb64/libb64/libb64-1.2.src.zip
     URL_HASH

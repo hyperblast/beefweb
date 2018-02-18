@@ -9,7 +9,7 @@ endif()
 ExternalProject_Add(
     ext_libevhtp
     PREFIX
-        ${EXTLIB_PREFIX_DIR}
+        ${EXTLIB_INSTALL_DIR}
     DEPENDS
         ${DEPENDS}
     URL

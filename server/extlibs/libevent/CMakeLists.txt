@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_libevent
     PREFIX
-        ${EXTLIB_PREFIX_DIR}
+        ${EXTLIB_INSTALL_DIR}
     URL
         https://github.com/libevent/libevent/releases/download/release-2.0.22-stable/libevent-2.0.22-stable.tar.gz
     URL_HASH

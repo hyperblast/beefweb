@@ -2,18 +2,9 @@ cmake_minimum_required(VERSION 3.6)
 
 project(beefweb)
 
-get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
-if(IS_MULTI_CONFIG)
-    set(CONFIG_SUFFIX "-$<CONFIG>")
-else()
-    set(CONFIG_SUFFIX "")
-endif()
-
 set(CMAKE_MODULE_PATH   "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(EXTLIB_SOURCE_DIR   "${CMAKE_CURRENT_SOURCE_DIR}/extlibs")
-set(EXTLIB_PREFIX_DIR   "${CMAKE_CURRENT_BINARY_DIR}/extlibs-root")
-set(EXTLIB_INSTALL_DIR  "${EXTLIB_PREFIX_DIR}/artifacts${CONFIG_SUFFIX}")
+set(EXTLIB_INSTALL_DIR  "${CMAKE_CURRENT_BINARY_DIR}/extlibs-root")
 
 include(EnvInfo)
 include(Utils)

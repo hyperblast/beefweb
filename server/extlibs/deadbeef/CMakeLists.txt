@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_deadbeef
     PREFIX
-        ${EXTLIB_PREFIX_DIR}
+        ${EXTLIB_INSTALL_DIR}
     URL
         http://sourceforge.net/projects/deadbeef/files/deadbeef-0.7.2.tar.bz2
     URL_HASH

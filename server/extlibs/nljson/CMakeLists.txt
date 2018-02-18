@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_nljson
     PREFIX
-        ${EXTLIB_PREFIX_DIR}
+        ${EXTLIB_INSTALL_DIR}
     URL
         https://github.com/nlohmann/json/releases/download/v3.0.1/json.hpp
     URL_HASH

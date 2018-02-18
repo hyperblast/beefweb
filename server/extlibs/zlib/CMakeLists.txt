@@ -7,7 +7,7 @@ endif()
 ExternalProject_Add(
     ext_zlib
     PREFIX
-        ${EXTLIB_PREFIX_DIR}
+        ${EXTLIB_INSTALL_DIR}
     URL
         http://prdownloads.sourceforge.net/libpng/zlib-1.2.11.tar.gz
     URL_HASH

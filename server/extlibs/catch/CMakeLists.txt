@@ -3,7 +3,7 @@ include(ExternalProject)
 ExternalProject_Add(
     ext_catch
     PREFIX
-        ${EXTLIB_PREFIX_DIR}
+        ${EXTLIB_INSTALL_DIR}
     URL
         https://github.com/philsquared/Catch/releases/download/v1.9.3/catch.hpp
     URL_HASH
