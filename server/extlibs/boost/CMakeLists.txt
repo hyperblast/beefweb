@@ -49,6 +49,7 @@ set(
 set(
     B2_INSTALL_ARGS
     ${B2_COMMON_ARGS}
+    --prefix=<INSTALL_DIR>
     install
 )
 
@@ -67,9 +68,7 @@ if(OS_POSIX)
         PATCH_COMMAND
             ${EXTLIB_PATCHER} boost
         CONFIGURE_COMMAND
-            <SOURCE_DIR>/bootstrap.sh
-                --prefix=${EXTLIB_INSTALL_DIR}
-                --with-toolset=${BOOST_TOOLSET}
+            <SOURCE_DIR>/bootstrap.sh --with-toolset=${BOOST_TOOLSET}
         BUILD_COMMAND
             <SOURCE_DIR>/b2 ${B2_BUILD_ARGS}
         INSTALL_COMMAND
