@@ -21,6 +21,37 @@ else()
     message(SEND_ERROR "Unknown compiler, unable to provide boost toolset" )
 endif()
 
+set(
+    B2_COMMON_ARGS
+    --with-system
+    --with-filesystem
+    --with-thread
+    "link=${BOOST_LINK}"
+    "threading=${BOOST_THREADING}"
+    "variant=${BOOST_VARIANT}"
+)
+
+if(CXX_MSVC)
+    set(
+        B2_COMMON_ARGS
+        ${B2_COMMON_ARGS}
+        "address-model=${BOOST_ADDRESS_MODEL}"
+    )
+endif()
+
+set(
+    B2_BUILD_ARGS
+    ${B2_COMMON_ARGS}
+    "cflags=${CMAKE_C_FLAGS}"
+    "cxxflags=${CMAKE_CXX_FLAGS}"
+)
+
+set(
+    B2_INSTALL_ARGS
+    ${B2_COMMON_ARGS}
+    install
+)
+
 if(OS_POSIX)
     ExternalProject_Add(
         ext_boost
@@ -39,20 +70,10 @@ if(OS_POSIX)
             <SOURCE_DIR>/bootstrap.sh
                 --prefix=${EXTLIB_INSTALL_DIR}
                 --with-toolset=${BOOST_TOOLSET}
-                --with-libraries=system,filesystem,thread
         BUILD_COMMAND
-            <SOURCE_DIR>/b2
-                "cflags=${CMAKE_C_FLAGS}"
-                "cxxflags=${CMAKE_CXX_FLAGS}"
-                "link=${BOOST_LINK}"
-                "threading=${BOOST_THREADING}"
-                "variant=${BOOST_VARIANT}"
+            <SOURCE_DIR>/b2 ${B2_BUILD_ARGS}
         INSTALL_COMMAND
-            <SOURCE_DIR>/b2
-                "link=${BOOST_LINK}"
-                "threading=${BOOST_THREADING}"
-                "variant=${BOOST_VARIANT}"
-                install
+            <SOURCE_DIR>/b2 ${B2_INSTALL_ARGS}
         LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
     )
 endif()
@@ -74,16 +95,7 @@ if(OS_WINDOWS)
         CONFIGURE_COMMAND
             <SOURCE_DIR>/bootstrap.bat
         BUILD_COMMAND
-            <SOURCE_DIR>/b2.exe
-                "cflags=${CMAKE_C_FLAGS}"
-                "cxxflags=${CMAKE_CXX_FLAGS}"
-                "link=${BOOST_LINK}"
-                "threading=${BOOST_THREADING}"
-                "variant=${BOOST_VARIANT}"
-                "address-model=${BOOST_ADDRESS_MODEL}"
-                --with-system
-                --with-filesystem
-                --with-thread
+            <SOURCE_DIR>/b2.exe ${B2_COMMON_ARGS}
         INSTALL_COMMAND
             <SOURCE_DIR>/install.cmd ${EXTLIB_INSTALL_DIR}
         LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
