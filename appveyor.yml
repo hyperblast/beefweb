@@ -9,5 +9,8 @@ build:
 
 configuration: Release
 
+environment:
+  EnableTests: True
+
 test_script:
 - server\build\release\src\tests\Release\core_tests.exe
