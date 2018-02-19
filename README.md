@@ -2,7 +2,8 @@
 Web interface and HTTP API plugin for [DeaDBeeF player](http://deadbeef.sourceforge.net/).
 
 [![License](https://img.shields.io/github/license/hyperblast/beefweb.svg)](LICENSE)
-[![Build Status](https://travis-ci.org/hyperblast/beefweb.svg?branch=master)](https://travis-ci.org/hyperblast/beefweb)
+[![Build Status - Travis](https://travis-ci.org/hyperblast/beefweb.svg?branch=master)](https://travis-ci.org/hyperblast/beefweb)
+[![Build Status - AppVeyor](https://ci.appveyor.com/api/projects/status/github/hyperblast/beefweb?branch=master&svg=true)](https://ci.appveyor.com/project/hyperblast/beefweb)
 
 ### Features
 - Lightweight web user interface
