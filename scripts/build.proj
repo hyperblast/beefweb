@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0" DefaultTargets="All">
+    <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+        <EnableTests Condition="'$(EnableTests)' == ''">False</EnableTests>
+        <ConfigLower>$(Configuration.ToLowerInvariant())</ConfigLower>
+        <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
+
+        <ServerSourceDir>$(RootDir)\server</ServerSourceDir>
+        <ServerBuildDir>$(ServerSourceDir)\build\$(ConfigLower)</ServerBuildDir>
+
+        <WebuiSourceDir>$(RootDir)\webui</WebuiSourceDir>
+        <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigLower)</WebuiBuildDir>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ServerFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <WebuiFlags Include="--env.release" Condition="'$(Configuration)' == 'Release'" />
+        <WebuiFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
+    </ItemGroup>
+
+    <Target Name="ServerClean">
+        <RemoveDir Directories="$(ServerBuildDir)" />
+    </Target>
+    
+    <Target Name="ServerAddCustomFlags">
+        <CreateItem Include="$(ServerCustomFlags)">
+            <Output TaskParameter="Include" ItemName="ServerFlags" />
+        </CreateItem>
+    </Target>
+
+    <Target Name="ServerInit" DependsOnTargets="ServerClean;ServerAddCustomFlags">
+        <MakeDir Directories="$(ServerBuildDir)" />
+        <Exec
+            Command="cmake @(ServerFlags -> '%(Identity)', ' ') $(ServerSourceDir)"
+            WorkingDirectory="$(ServerBuildDir)" />
+    </Target>
+
+    <Target Name="Server" DependsOnTargets="ServerInit">
+        <MSBuild
+            Projects="$(ServerBuildDir)\beefweb.sln"
+            Properties="Configuration=$(Configuration)" />
+    </Target>
+
+    <Target Name="WebuiClean">
+        <RemoveDir Directories="$(WebuiBuildDir)" />
+    </Target>
+
+    <Target Name="WebuiInit" DependsOnTargets="WebuiClean">
+        <Exec
+            Command="yarn install"
+            WorkingDirectory="$(WebuiSourceDir)" />
+    </Target>
+
+    <Target Name="Webui" DependsOnTargets="WebuiInit">
+        <Exec
+            Command="yarn run build @(WebuiFlags -> '%(Identity)', ' ')"
+            WorkingDirectory="$(WebuiSourceDir)" />
+    </Target>
+
+    <Target Name="All" DependsOnTargets="Server;Webui" />
+</Project>
