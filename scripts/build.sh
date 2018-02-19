@@ -120,7 +120,7 @@ function detect_server_arch()
 
 function show_server_build_logs()
 {
-    for log_file in deps/root/src/*-stamp/*.log; do
+    for log_file in extlibs-root/src/*-stamp/*.log; do
         echo "$log_file:"
         cat $log_file
         echo
