@@ -14,28 +14,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ServerFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
+        <ServerBuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
     <ItemGroup>
-        <WebuiFlags Include="--env.release" Condition="'$(Configuration)' == 'Release'" />
-        <WebuiFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
+        <WebuiBuildFlags Include="--env.release" Condition="'$(Configuration)' == 'Release'" />
+        <WebuiBuildFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
     <Target Name="ServerClean">
         <RemoveDir Directories="$(ServerBuildDir)" />
     </Target>
-    
-    <Target Name="ServerAddCustomFlags">
-        <CreateItem Include="$(ServerCustomFlags)">
-            <Output TaskParameter="Include" ItemName="ServerFlags" />
-        </CreateItem>
-    </Target>
 
-    <Target Name="ServerInit" DependsOnTargets="ServerClean;ServerAddCustomFlags">
+    <Target Name="ServerInit" DependsOnTargets="ServerClean">
+        <CreateItem Include="$(ServerBuildFlags)">
+            <Output TaskParameter="Include" ItemName="ServerBuildFlags" />
+        </CreateItem>
         <MakeDir Directories="$(ServerBuildDir)" />
         <Exec
-            Command="cmake @(ServerFlags -> '%(Identity)', ' ') $(ServerSourceDir)"
+            Command="cmake @(ServerBuildFlags -> '%(Identity)', ' ') $(ServerSourceDir)"
             WorkingDirectory="$(ServerBuildDir)" />
     </Target>
 
@@ -57,7 +54,7 @@
 
     <Target Name="Webui" DependsOnTargets="WebuiInit">
         <Exec
-            Command="yarn run build @(WebuiFlags -> '%(Identity)', ' ')"
+            Command="yarn run build @(WebuiBuildFlags -> '%(Identity)', ' ')"
             WorkingDirectory="$(WebuiSourceDir)" />
     </Target>
 
