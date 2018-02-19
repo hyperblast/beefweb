@@ -12,7 +12,7 @@ curl --silent --fail --show-error --location -o patch.zip ^
     "https://hyperblast.org/files/patch/patch.zip"
 if errorlevel 1 goto :end
 
-7za x patch.zip
+7z x patch.zip
 if errorlevel 1 goto :end
 
 del patch.zip
