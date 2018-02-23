@@ -28,7 +28,14 @@ endif()
 
 if(OS_WINDOWS)
     set(WINVER 0x0601) # Windows 7
-    add_definitions(-DMSRV_OS_WINDOWS=1 -DSTRICT -DWINVER=${WINVER} -D_WIN32_WINNT=${WINVER})
+    add_definitions(
+        -DMSRV_OS_WINDOWS=1
+        -D_UNICODE
+        -DUNICODE
+        -DSTRICT
+        -DWINVER=${WINVER}
+        -D_WIN32_WINNT=${WINVER}
+    )
 endif()
 
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
