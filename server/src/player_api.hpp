@@ -190,6 +190,8 @@ public:
     Player();
     virtual ~Player();
 
+    // Player control and query API
+
     virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) = 0;
 
     virtual void playCurrent() = 0;
@@ -201,11 +203,16 @@ public:
     virtual void pause() = 0;
     virtual void togglePause() = 0;
 
-    virtual bool setMuted(Switch val) = 0;
-    virtual bool seekAbsolute(double offsetSeconds) = 0;
-    virtual bool seekRelative(double offsetSeconds) = 0;
+    virtual void setMuted(Switch val) = 0;
+    virtual void seekAbsolute(double offsetSeconds) = 0;
+    virtual void seekRelative(double offsetSeconds) = 0;
     virtual void setVolumeDb(double val) = 0;
     virtual void setVolumeAmp(double val) = 0;
+
+    virtual TrackQueryPtr createTrackQuery(
+        const std::vector<std::string>& columns) = 0;    
+
+    // Playlists API
 
     virtual std::vector<PlaylistInfo> getPlaylists() = 0;
     virtual std::vector<PlaylistItemInfo> getPlaylistItems(PlaylistQuery* query) = 0;
@@ -245,19 +252,22 @@ public:
 
     virtual void sortPlaylistRandom(const PlaylistRef& plref) = 0;
 
-    virtual TrackQueryPtr createTrackQuery(
-        const std::vector<std::string>& columns) = 0;
-
     virtual PlaylistQueryPtr createPlaylistQuery(
         const PlaylistRef& playlist,
         const Range& range,
         const std::vector<std::string>& columns) = 0;
 
+    // Artwork API
+
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) = 0;
+
+    // Options API
 
     PlayerOption* getOption(const std::string& name);
     const std::vector<PlayerOption*>& options() { return options_; }
     OptionValueMap optionValues();
+
+    // Events API
 
     void onEvent(PlayerEventCallback callback) { eventCallback_ = std::move(callback); }
 
