@@ -32,7 +32,6 @@ struct ServerConfig
     int port;
     const Router* router;
     const RequestFilterChain* filters;
-    WorkQueue* defaultWorkQueue;
 };
 
 struct RequestContext

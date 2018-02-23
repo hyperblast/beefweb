@@ -32,7 +32,7 @@ private:
     EventDispatcher dispatcher_;
     Router router_;
     RequestFilterChain filters_;
-    ImmediateWorkQueue workQueue_;
+    ThreadWorkQueue utilityQueue_;
     SettingsDataPtr currentSettings_;
     SettingsDataPtr nextSettings_;
     std::mutex settingsMutex_;

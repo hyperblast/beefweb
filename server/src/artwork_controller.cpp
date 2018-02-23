@@ -63,6 +63,7 @@ void ArtworkController::defineRoutes(
         return new ArtworkController(request, player, store, ctmap);
     });
 
+    routes.useWorkQueue(player->workQueue());
     routes.setPrefix("api/artwork");
     routes.get("", &ArtworkController::getArtwork);
 }

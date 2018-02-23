@@ -12,8 +12,11 @@ PlayerImpl::PlayerImpl()
     addOption(&loopOption_);
 }
 
-PlayerImpl::~PlayerImpl()
+PlayerImpl::~PlayerImpl() = default;
+
+WorkQueue* PlayerImpl::workQueue()
 {
+    return &workQueue_;
 }
 
 void PlayerImpl::connect()

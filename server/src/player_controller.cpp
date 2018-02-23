@@ -99,6 +99,8 @@ void PlayerController::defineRoutes(Router* router, Player* player)
         return new PlayerController(request, player);
     });
 
+    routes.useWorkQueue(player->workQueue());
+
     routes.setPrefix("api/player");
 
     routes.get("", &PlayerController::getState);

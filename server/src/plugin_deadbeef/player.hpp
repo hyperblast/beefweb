@@ -2,6 +2,7 @@
 
 #include "../defines.hpp"
 #include "../file_system.hpp"
+#include "../work_queue.hpp"
 
 #include "common.hpp"
 #include "playlist_mapping.hpp"
@@ -15,6 +16,8 @@ class PlayerImpl : public Player
 public:
     PlayerImpl();
     ~PlayerImpl();
+
+    virtual WorkQueue* workQueue() override;
 
     virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
 
@@ -91,6 +94,7 @@ private:
     void queryVolume(VolumeInfo* info);
     void endModifyPlaylist(ddb_playlist_t* playlist);
 
+    ThreadWorkQueue workQueue_;
     PlaylistMutex playlistMutex_;
     PlaylistMapping playlists_;
     PlaybackOrderOption orderOption_;

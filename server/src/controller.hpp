@@ -50,13 +50,8 @@ class DelegateRequestHandler : public RequestHandler
 {
 public:
     DelegateRequestHandler(
-        std::unique_ptr<T> controller, ControllerAction<T> action, WorkQueue* queue)
-        : controller_(std::move(controller)), action_(std::move(action)), workQueue_(queue) { }
-
-    WorkQueue* workQueue() override
-    {
-        return workQueue_;
-    }
+        std::unique_ptr<T> controller, ControllerAction<T> action)
+        : controller_(std::move(controller)), action_(std::move(action)) { }
 
     ResponsePtr execute() override
     {
@@ -66,22 +61,25 @@ public:
 private:
     std::unique_ptr<T> controller_;
     ControllerAction<T> action_;
-    WorkQueue* workQueue_;
 };
 
 template<typename T>
 class DelegateRequestHandlerFactory : public RequestHandlerFactory
 {
 public:
-    DelegateRequestHandlerFactory(ControllerFactory<T> factory, ControllerAction<T> action, WorkQueue* queue)
+    DelegateRequestHandlerFactory(
+        ControllerFactory<T> factory, ControllerAction<T> action, WorkQueue* queue)
         : factory_(std::move(factory)), action_(std::move(action)), workQueue_(queue) { }
 
-    ~DelegateRequestHandlerFactory() = default;
+    WorkQueue* workQueue() override
+    {
+        return workQueue_;
+    }
 
     RequestHandlerPtr createHandler(Request* request) override
     {
         return std::make_unique<DelegateRequestHandler<T>>(
-            std::unique_ptr<T>(factory_(request)), action_, workQueue_);
+            std::unique_ptr<T>(factory_(request)), action_);
     }
 
 private:

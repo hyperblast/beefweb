@@ -239,15 +239,15 @@ RequestContextPtr Server::createContext(RequestCore* corereq)
 
     auto routeResult = config_->router->dispatch(request);
 
-    if (routeResult->factory)
+    if (auto factory = routeResult->factory)
     {
-        request->handler = routeResult->factory->createHandler(request);
+        request->handler = factory->createHandler(request);
+        assert(request->handler);
+
+        context->workQueue = factory->workQueue();
+        assert(context->workQueue);
+
         request->routeParams = std::move(routeResult->params);
-
-        context->workQueue = request->handler->workQueue();
-
-        if (context->workQueue == nullptr)
-            context->workQueue = config_->defaultWorkQueue;
     }
     else
     {

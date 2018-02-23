@@ -16,7 +16,6 @@ TEST_CASE("server")
     boost::unique_future<void> started = startedPromise.get_future();
 
     Router router;
-    ImmediateWorkQueue workQueue;
     RequestFilterChain filters;
     filters.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
@@ -25,7 +24,6 @@ TEST_CASE("server")
     config->port = 8882;
     config->router = &router;
     config->filters = &filters;
-    config->defaultWorkQueue = &workQueue;
 
     ServerThread server([&] { startedPromise.set_value(); });
     server.restart(std::move(config));
