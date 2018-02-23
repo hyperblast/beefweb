@@ -1,20 +1,16 @@
 #pragma once
 
-#include "../defines.hpp"
-#include "../file_system.hpp"
-
 #include "common.hpp"
-#include "playlist_mapping.hpp"
-#include "player_options.hpp"
+#include "../player_api.hpp"
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace plugin_foobar {
 
 class PlayerImpl : public Player
 {
 public:
     PlayerImpl();
-    ~PlayerImpl();
+    virtual ~PlayerImpl();
 
     virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
 
@@ -32,9 +28,6 @@ public:
     virtual void seekRelative(double offsetSeconds) override;
     virtual void setVolumeDb(double val) override;
     virtual void setVolumeAmp(double val) override;
-
-    virtual TrackQueryPtr createTrackQuery(
-        const std::vector<std::string>& columns) override;
 
     virtual std::vector<PlaylistInfo> getPlaylists() override;
     virtual std::vector<PlaylistItemInfo> getPlaylistItems(PlaylistQuery* query) override;
@@ -74,6 +67,9 @@ public:
 
     virtual void sortPlaylistRandom(const PlaylistRef& plref) override;
 
+    virtual TrackQueryPtr createTrackQuery(
+        const std::vector<std::string>& columns) override;
+
     virtual PlaylistQueryPtr createPlaylistQuery(
         const PlaylistRef& playlist,
         const Range& range,
@@ -81,23 +77,8 @@ public:
 
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
-    void connect();
-    void disconnect();
-    void handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
-
 private:
-    PlaybackState getPlaybackState();
-    void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
-    void queryVolume(VolumeInfo* info);
-    void endModifyPlaylist(ddb_playlist_t* playlist);
-
-    PlaylistMutex playlistMutex_;
-    PlaylistMapping playlists_;
-    PlaybackOrderOption orderOption_;
-    PlaybackLoopOption loopOption_;
-    DB_artwork_plugin_t* artworkPlugin_;
-
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
-};
+};  
 
 }}

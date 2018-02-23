@@ -150,7 +150,7 @@ void PlayerImpl::togglePause()
     ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
 }
 
-bool PlayerImpl::setMuted(Switch value)
+void PlayerImpl::setMuted(Switch value)
 {
     switch (value)
     {
@@ -168,33 +168,30 @@ bool PlayerImpl::setMuted(Switch value)
     }
 
     emitEvent(PlayerEvent::PLAYER_CHANGED);
-    return true;
 }
 
-bool PlayerImpl::seekAbsolute(double offsetSeconds)
+void PlayerImpl::seekAbsolute(double offsetSeconds)
 {
     PlaylistLockGuard lock(playlistMutex_);
 
     PlaylistItemPtr item(ddbApi->streamer_get_playing_track());
     if (!item)
-        return false;
+        return;
 
     ddbApi->sendmessage(DB_EV_SEEK, 0, static_cast<uint32_t>(offsetSeconds * 1000), 0);
-    return true;
 }
 
-bool PlayerImpl::seekRelative(double offsetSeconds)
+void PlayerImpl::seekRelative(double offsetSeconds)
 {
     PlaylistLockGuard lock(playlistMutex_);
 
     PlaylistItemPtr item(ddbApi->streamer_get_playing_track());
     if (!item)
-        return false;
+        return;
 
     float currentPos = ddbApi->streamer_get_playpos();
     uint32_t newPos = static_cast<uint32_t>((currentPos + offsetSeconds) * 1000);
     ddbApi->sendmessage(DB_EV_SEEK, 0, newPos, 0);
-    return true;
 }
 
 void PlayerImpl::setVolumeDb(double value)
