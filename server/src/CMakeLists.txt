@@ -144,6 +144,10 @@ if(ENABLE_PLUGIN_DEADBEEF)
     add_subdirectory(plugin_deadbeef)
 endif()
 
+if(ENABLE_PLUGIN_FOOBAR)
+    add_subdirectory(plugin_foobar)
+endif()
+
 if(ENABLE_TESTS)
     add_subdirectory(tests)
 endif()
