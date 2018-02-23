@@ -30,11 +30,12 @@ protected:
 class EchoController : ControllerBase
 {
 public:
-    static void defineRoutes(Router* router)
+    static void defineRoutes(Router* router, WorkQueue* workQueue)
     {
         auto routes = router->defineRoutes<EchoController>();
 
         routes.createWith([](Request* request) { return new EchoController(request); });
+        routes.useWorkQueue(workQueue);
 
         routes.get("", &EchoController::handle);
         routes.get(":p*", &EchoController::handle);
@@ -91,7 +92,8 @@ public:
     EchoServer(bool allowRemote, ServerReadyCallback readyCallback)
         : thread_(std::move(readyCallback))
     {
-        EchoController::defineRoutes(&router_);
+        EchoController::defineRoutes(&router_, &workQueue_);
+
         filters_.addFilter(std::make_unique<EchoHeadersFilter>());
         filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
@@ -101,7 +103,6 @@ public:
         config->port = PORT;
         config->router = &router_;
         config->filters = &filters_;
-        config->defaultWorkQueue = &workQueue_;
 
         thread_.restart(std::move(config));
     }

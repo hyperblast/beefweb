@@ -7,6 +7,7 @@ namespace msrv {
 class Router;
 class SettingsStore;
 class ContentTypeMap;
+class WorkQueue;
 
 class StaticController : public ControllerBase
 {
@@ -16,7 +17,11 @@ public:
 
     ResponsePtr getFile();
 
-    static void defineRoutes(Router* router, SettingsStore* store, const ContentTypeMap* ctmap);
+    static void defineRoutes(
+        Router* router,
+        WorkQueue* workQueue,
+        SettingsStore* store,
+        const ContentTypeMap* ctmap);
 
 private:
     SettingsStore* store_;

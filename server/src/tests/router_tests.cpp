@@ -5,21 +5,22 @@
 namespace msrv {
 namespace router_tests {
 
-#define DEFINE_DUMMY_FACTORY(Name) \
-    class Name : public RequestHandlerFactory \
-    { \
-        virtual RequestHandlerPtr createHandler(Request*) override \
-        { \
-            return RequestHandlerPtr(); \
-        } \
+class DummyFactoryBase : public RequestHandlerFactory
+{
+    virtual RequestHandlerPtr createHandler(Request*) override
+    {
+        return RequestHandlerPtr();
     }
 
-DEFINE_DUMMY_FACTORY(GetRoot);
-DEFINE_DUMMY_FACTORY(GetSimple);
-DEFINE_DUMMY_FACTORY(GetWithParam);
-DEFINE_DUMMY_FACTORY(GetWithLongParam);
-DEFINE_DUMMY_FACTORY(GetHandler);
-DEFINE_DUMMY_FACTORY(PostHandler);
+    virtual WorkQueue* workQueue() override { return nullptr; }
+};
+
+class GetRoot : public DummyFactoryBase {};
+class GetSimple : public DummyFactoryBase {};
+class GetWithParam : public DummyFactoryBase {};
+class GetWithLongParam : public DummyFactoryBase {};
+class GetHandler : public DummyFactoryBase {};
+class PostHandler : public DummyFactoryBase {};
 
 TEST_CASE("router")
 {

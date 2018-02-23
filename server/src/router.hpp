@@ -71,13 +71,16 @@ public:
         prefix_ = std::move(prefix);
     }
 
-    void setWorkQueue(WorkQueue* queue)
+    void useWorkQueue(WorkQueue* queue)
     {
         workQueue_ = queue;
     }
 
     void define(HttpMethod method, const std::string& path, ControllerAction<T> action)
     {
+        assert(factory_);
+        assert(workQueue_);
+
         router_->defineRoute(
             method,
             prefix_ + path,

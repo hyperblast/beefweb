@@ -44,9 +44,4 @@ RequestHandler::~RequestHandler()
 {
 }
 
-WorkQueue* RequestHandler::workQueue()
-{
-    return nullptr;
-}
-
 }

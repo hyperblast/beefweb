@@ -7,6 +7,7 @@ namespace msrv {
 
 class Router;
 class SettingsStore;
+class WorkQueue;
 
 class BrowserController : public ControllerBase
 {
@@ -17,7 +18,7 @@ public:
     ResponsePtr getRoots();
     ResponsePtr getEntries();
 
-    static void defineRoutes(Router* router, SettingsStore* store);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, SettingsStore* store);
 
 private:
     SettingsStore* store_;

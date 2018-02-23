@@ -33,7 +33,11 @@ ResponsePtr StaticController::getFile()
     return Response::file(filePath, ctmap_->get(filePath));
 }
 
-void StaticController::defineRoutes(Router* router, SettingsStore* store, const ContentTypeMap* ctmap)
+void StaticController::defineRoutes(
+    Router* router,
+    WorkQueue* workQueue,
+    SettingsStore* store,
+    const ContentTypeMap* ctmap)
 {
     auto routes = router->defineRoutes<StaticController>();
 
@@ -41,6 +45,8 @@ void StaticController::defineRoutes(Router* router, SettingsStore* store, const 
     {
         return new StaticController(request, store, ctmap);
     });
+
+    routes.useWorkQueue(workQueue);
 
     routes.get("", &StaticController::getFile);
     routes.get(":path*", &StaticController::getFile);

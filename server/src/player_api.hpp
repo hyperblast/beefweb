@@ -13,6 +13,8 @@
 
 namespace msrv {
 
+class WorkQueue;
+
 using OptionValueMap = std::unordered_map<std::string, std::string>;
 
 enum class PlaybackState
@@ -189,6 +191,8 @@ class Player
 public:
     Player();
     virtual ~Player();
+
+    virtual WorkQueue* workQueue() = 0;
 
     // Player control and query API
 

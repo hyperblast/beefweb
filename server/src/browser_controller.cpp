@@ -107,7 +107,7 @@ ResponsePtr BrowserController::getEntries()
     return  Response::json({{ "entries", entries }});
 }
 
-void BrowserController::defineRoutes(Router* router, SettingsStore* store)
+void BrowserController::defineRoutes(Router* router, WorkQueue* workQueue, SettingsStore* store)
 {
     auto routes = router->defineRoutes<BrowserController>();
 
@@ -115,6 +115,8 @@ void BrowserController::defineRoutes(Router* router, SettingsStore* store)
     {
         return new BrowserController(request, store);
     });
+
+    routes.useWorkQueue(workQueue);
 
     routes.setPrefix("api/browser");
 

@@ -136,6 +136,8 @@ void QueryController::defineRoutes(Router* router, Player* player, EventDispatch
         return new QueryController(request, player, dispatcher);
     });
 
+    routes.useWorkQueue(player->workQueue());
+
     routes.setPrefix("api/query");
 
     routes.get("", &QueryController::query);

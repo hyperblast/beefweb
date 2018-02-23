@@ -205,6 +205,8 @@ void PlaylistsController::defineRoutes(Router* router, Player* player, SettingsS
         return new PlaylistsController(request, player, store);
     });
 
+    routes.useWorkQueue(player->workQueue());
+
     routes.setPrefix("api/playlists");
 
     routes.get("", &PlaylistsController::getPlaylists);

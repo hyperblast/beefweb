@@ -78,9 +78,7 @@ class RequestHandler
 public:
     RequestHandler();
     virtual ~RequestHandler();
-
     virtual std::unique_ptr<Response> execute() = 0;
-    virtual WorkQueue* workQueue();
 
     MSRV_NO_COPY_AND_ASSIGN(RequestHandler);
 };
@@ -90,6 +88,7 @@ class RequestHandlerFactory
 public:
     RequestHandlerFactory() = default;
     virtual ~RequestHandlerFactory() = default;
+    virtual WorkQueue* workQueue() = 0;
     virtual RequestHandlerPtr createHandler(Request* request) = 0;
 
     MSRV_NO_COPY_AND_ASSIGN(RequestHandlerFactory);

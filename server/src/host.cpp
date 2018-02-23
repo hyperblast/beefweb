@@ -21,12 +21,13 @@ Host::Host(Player* player)
 
     ctmap_.addDefaults();
 
-    ArtworkController::defineRoutes(&router_, player_, this, &ctmap_);
-    BrowserController::defineRoutes(&router_, this);
-    StaticController::defineRoutes(&router_, this, &ctmap_);
     PlayerController::defineRoutes(&router_, player_);
     PlaylistsController::defineRoutes(&router_, player_, this);
     QueryController::defineRoutes(&router_, player_, &dispatcher_);
+    ArtworkController::defineRoutes(&router_, player_, this, &ctmap_);
+
+    BrowserController::defineRoutes(&router_, &utilityQueue_, this);
+    StaticController::defineRoutes(&router_, &utilityQueue_, this, &ctmap_);
 
     player_->onEvent([this] (PlayerEvent event) { handlePlayerEvent(event); });
 
@@ -61,7 +62,6 @@ void Host::reconfigure(const SettingsData& settings)
 
     config->allowRemote = settings.allowRemote;
     config->port = settings.port;
-    config->defaultWorkQueue = &workQueue_;
     config->filters = &filters_;
     config->router = &router_;
 
