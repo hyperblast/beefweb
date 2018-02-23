@@ -1,6 +1,7 @@
 #include "../core_types.hpp"
 #include "../log.hpp"
-#include "util.hpp"
+
+#include "common.hpp"
 
 namespace msrv {
 namespace plugin_deadbeef {

@@ -2,7 +2,8 @@
 
 #include "../file_system.hpp"
 #include "../player_api.hpp"
-#include "util.hpp"
+
+#include "common.hpp"
 
 #include <boost/smart_ptr/intrusive_ptr.hpp>
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>

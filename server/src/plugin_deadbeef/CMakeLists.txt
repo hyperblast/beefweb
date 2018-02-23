@@ -10,6 +10,7 @@ set(
     PLUGIN_DEADBEEF_SOURCES
     add_items_scope.cpp add_items_scope.hpp
     artwork_request.cpp artwork_request.hpp
+    common.cpp common.hpp
     player.hpp
     player_control.cpp
     player_misc.cpp
@@ -17,7 +18,6 @@ set(
     player_playlists.cpp
     playlist_mapping.cpp playlist_mapping.hpp
     plugin.cpp plugin.hpp
-    util.cpp util.hpp
 )
 
 add_library(
