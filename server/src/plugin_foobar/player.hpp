@@ -82,6 +82,7 @@ public:
 
 private:
     std::shared_ptr<FoobarWorkQueue> workQueue_;
+    service_ptr_t<playback_control> playbackControl_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };  
