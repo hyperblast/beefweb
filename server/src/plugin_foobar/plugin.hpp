@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "player.hpp"
 #include "settings.hpp"
+#include "work_queue.hpp"
 #include "../host.hpp"
 
 namespace msrv {
@@ -27,8 +28,11 @@ public:
 private:
     static Plugin* current_;
 
+    std::shared_ptr<WorkQueue> workQueue_;
     PlayerImpl player_;
     Host host_;
+
+    MSRV_NO_COPY_AND_ASSIGN(Plugin);
 };
 
 }}
