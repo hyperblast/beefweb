@@ -11,12 +11,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /d2notypeopt")
 set(
     PLUGIN_FOOBAR_SOURCES
     common.hpp
+    log.cpp log.hpp
     player.hpp
     player_control.cpp
     player_misc.cpp
     player_options.cpp
     player_playlists.cpp
     plugin.cpp plugin.hpp
+    settings.cpp settings.hpp
 )
 
 add_library(
