@@ -10,6 +10,7 @@ PlayerStatePtr PlayerImpl::queryPlayerState(TrackQuery* activeItemQuery)
 
 void PlayerImpl::playCurrent()
 {
+    playbackControl_->play_or_unpause();
 }
 
 void PlayerImpl::playItem(const PlaylistRef& playlist, int32_t itemIndex)
@@ -39,7 +40,6 @@ void PlayerImpl::pause()
 void PlayerImpl::togglePause()
 {
 }
-
 
 void PlayerImpl::setMuted(Switch val)
 {

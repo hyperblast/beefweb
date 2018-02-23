@@ -6,6 +6,7 @@ namespace plugin_foobar {
 PlayerImpl::PlayerImpl()
 {
     workQueue_ = std::make_shared<FoobarWorkQueue>();
+    playbackControl_ = fb2k::std_api_get<playback_control>();
 }
 
 PlayerImpl::~PlayerImpl()
