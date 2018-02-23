@@ -27,7 +27,7 @@ void HttpServer::bind(int port, bool allowRemote)
 {
     auto prefix = formatString(
         "http://%s:%d/",
-        allowRemote ? "+" : "localhost",
+        allowRemote ? "*" : "localhost",
         port);
 
     requestQueue_.bind(prefix);
