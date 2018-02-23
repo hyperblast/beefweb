@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "../player_api.hpp"
+#include "work_queue.hpp"
 
 namespace msrv {
 namespace plugin_foobar {
@@ -11,6 +12,8 @@ class PlayerImpl : public Player
 public:
     PlayerImpl();
     virtual ~PlayerImpl();
+
+    virtual WorkQueue* workQueue() override;
 
     virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
 
@@ -78,6 +81,8 @@ public:
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
 private:
+    std::shared_ptr<FoobarWorkQueue> workQueue_;
+
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };  
 

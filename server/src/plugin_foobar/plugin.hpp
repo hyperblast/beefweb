@@ -28,7 +28,6 @@ public:
 private:
     static Plugin* current_;
 
-    std::shared_ptr<WorkQueue> workQueue_;
     PlayerImpl player_;
     Host host_;
 
