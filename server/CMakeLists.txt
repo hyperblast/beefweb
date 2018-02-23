@@ -28,6 +28,12 @@ if(OS_POSIX)
 endif()
 
 if(OS_WINDOWS)
+    option(ENABLE_PLUGIN_FOOBAR "Build foobar2000 plugin" ON)
+
+    if(ENABLE_PLUGIN_FOOBAR)
+        local_library(foosdk)
+    endif()
+
     local_library_option(zlib   ENABLE_LOCAL_ZLIB "")
 endif()
 

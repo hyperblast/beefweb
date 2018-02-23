@@ -45,3 +45,7 @@ endif()
 if(ENABLE_LOCAL_ZLIB)
     add_subdirectory(zlib)
 endif()
+
+if(ENABLE_PLUGIN_FOOBAR)
+    add_subdirectory(foosdk)
+endif()

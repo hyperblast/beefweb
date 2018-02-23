@@ -23,6 +23,10 @@ macro(add_linker_flag FLAG)
     set(CMAKE_MODULE_LINKER_FLAGS   "${CMAKE_MODULE_LINKER_FLAGS} ${FLAG}")
 endmacro()
 
+function(local_library NAME)
+    set(CMAKE_MODULE_PATH "${EXTLIB_SOURCE_DIR}/${NAME}/local;${CMAKE_MODULE_PATH}" PARENT_SCOPE)
+endfunction()
+
 function(local_library_option NAME OPT COND)
     set(DESC "Build with local ${NAME}")
 
