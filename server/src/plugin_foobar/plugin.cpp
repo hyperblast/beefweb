@@ -7,7 +7,8 @@ namespace msrv {
 namespace plugin_foobar {
 
 Plugin::Plugin()
-    : player_(),
+    : workQueue_(std::make_shared<FoobarWorkQueue>()),
+      player_(),
       host_(&player_)
 {
     current_ = this;

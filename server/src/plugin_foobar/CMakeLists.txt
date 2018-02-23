@@ -19,6 +19,7 @@ set(
     player_playlists.cpp
     plugin.cpp plugin.hpp
     settings.cpp settings.hpp
+    work_queue.cpp work_queue.hpp
 )
 
 add_library(
