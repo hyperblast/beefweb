@@ -2,7 +2,7 @@
 #include "../project_info.hpp"
 
 namespace msrv {
-namespace plugin_foobar {
+namespace player_foobar2000 {
 
 FoobarLogger::FoobarLogger() = default;
 FoobarLogger::~FoobarLogger() = default;

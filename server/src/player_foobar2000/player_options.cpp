@@ -1,6 +1,6 @@
 #include "player.hpp"
 
 namespace msrv {
-namespace plugin_foobar {
+namespace player_foobar2000 {
 
 }}

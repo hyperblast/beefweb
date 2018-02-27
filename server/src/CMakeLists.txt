@@ -144,8 +144,8 @@ if(ENABLE_PLAYER_DEADBEEF)
     add_subdirectory(player_deadbeef)
 endif()
 
-if(ENABLE_PLUGIN_FOOBAR)
-    add_subdirectory(plugin_foobar)
+if(ENABLE_PLAYER_FOOBAR2000)
+    add_subdirectory(player_foobar2000)
 endif()
 
 if(ENABLE_TESTS)

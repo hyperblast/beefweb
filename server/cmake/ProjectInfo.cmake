@@ -1,2 +1,2 @@
 set(DEADBEEF_PLUGIN_FILE "beefweb")
-set(PLUGIN_FOOBAR_FILE "foo_beefweb")
+set(FOOBAR2000_PLUGIN_FILE "foo_beefweb")
