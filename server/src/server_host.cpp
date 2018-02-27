@@ -1,4 +1,4 @@
-#include "host.hpp"
+#include "server_host.hpp"
 #include "artwork_controller.hpp"
 #include "browser_controller.hpp"
 #include "static_controller.hpp"
@@ -11,7 +11,7 @@
 
 namespace msrv {
 
-Host::Host(Player* player)
+ServerHost::ServerHost(Player* player)
     : player_(player)
 {
     filters_.addFilter(std::make_unique<BasicAuthFilter>(static_cast<SettingsStore*>(this)));
@@ -34,24 +34,24 @@ Host::Host(Player* player)
     serverThread_ = std::make_unique<ServerThread>([this] { handleServerReady(); });
 }
 
-Host::~Host()
+ServerHost::~ServerHost()
 {
     player_->onEvent(PlayerEventCallback());
 }
 
-SettingsDataPtr Host::settings()
+SettingsDataPtr ServerHost::settings()
 {
     std::lock_guard<std::mutex> lock(settingsMutex_);
     return currentSettings_;
 }
 
-void Host::handlePlayerEvent(PlayerEvent event)
+void ServerHost::handlePlayerEvent(PlayerEvent event)
 {
     dispatcher_.dispatch(event);
     serverThread_->dispatchEvents();
 }
 
-void Host::reconfigure(const SettingsData& settings)
+void ServerHost::reconfigure(const SettingsData& settings)
 {
     {
         std::lock_guard<std::mutex> lock(settingsMutex_);
@@ -68,7 +68,7 @@ void Host::reconfigure(const SettingsData& settings)
     serverThread_->restart(std::move(config));
 }
 
-void Host::handleServerReady()
+void ServerHost::handleServerReady()
 {
     std::lock_guard<std::mutex> lock(settingsMutex_);
     currentSettings_ = std::move(nextSettings_);

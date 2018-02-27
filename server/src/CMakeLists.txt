@@ -70,7 +70,6 @@ set(
     file_system.cpp file_system.hpp
     fnv_hash.hpp
     gzip.cpp gzip.hpp
-    host.cpp host.hpp
     http.cpp http.hpp
     json.hpp
     log.cpp log.hpp
@@ -90,6 +89,7 @@ set(
     router.cpp router.hpp
     server.cpp server.hpp
     server_core.cpp server_core.hpp
+    server_host.cpp server_host.hpp
     server_thread.cpp server_thread.hpp
     settings.cpp settings.hpp
     static_controller.cpp static_controller.hpp

@@ -14,11 +14,11 @@
 
 namespace msrv {
 
-class Host : SettingsStore
+class ServerHost : SettingsStore
 {
 public:
-    Host(Player* player);
-    virtual ~Host();
+    ServerHost(Player* player);
+    virtual ~ServerHost();
 
     void reconfigure(const SettingsData& settings);
 
@@ -39,7 +39,7 @@ private:
     ContentTypeMap ctmap_;
     std::unique_ptr<ServerThread> serverThread_;
 
-    MSRV_NO_COPY_AND_ASSIGN(Host);
+    MSRV_NO_COPY_AND_ASSIGN(ServerHost);
 };
 
 }

@@ -2,7 +2,7 @@
 
 #include "../defines.hpp"
 #include "../settings.hpp"
-#include "../host.hpp"
+#include "../server_host.hpp"
 #include "../file_system.hpp"
 
 #include "player.hpp"
@@ -24,12 +24,12 @@ private:
     bool reloadConfig();
 
     bool ready_;
+    Path pluginDir_;
     SettingsData settings_;
-    Path pluginDir;
     std::string musicDirList_;
 
-    std::unique_ptr<PlayerImpl> player_;
-    std::unique_ptr<Host> host_;
+    PlayerImpl player_;
+    ServerHost host_;
 
     MSRV_NO_COPY_AND_ASSIGN(Plugin);
 };
