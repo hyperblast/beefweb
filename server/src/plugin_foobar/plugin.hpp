@@ -4,7 +4,7 @@
 #include "player.hpp"
 #include "settings.hpp"
 #include "work_queue.hpp"
-#include "../host.hpp"
+#include "../server_host.hpp"
 
 namespace msrv {
 namespace plugin_foobar {
@@ -29,7 +29,7 @@ private:
     static Plugin* current_;
 
     PlayerImpl player_;
-    Host host_;
+    ServerHost host_;
 
     MSRV_NO_COPY_AND_ASSIGN(Plugin);
 };

@@ -29,12 +29,11 @@ const char PLUGIN_CONFIG_DIALOG[] =
 }
 
 Plugin::Plugin()
-    : ready_(false)
+    : ready_(false),
+      pluginDir_(getModulePath(&pluginDef).parent_path()),
+      player_(),
+      host_(&player_)
 {
-    pluginDir = getModulePath(&pluginDef).parent_path();
-
-    player_.reset(new PlayerImpl());
-    host_.reset(new Host(player_.get()));
 }
 
 Plugin::~Plugin()
@@ -72,8 +71,8 @@ bool Plugin::reloadConfig()
     settings_.authUser = authUser;
     settings_.authPassword = authPassword;
 
-    if (!pluginDir.empty())
-        settings_.staticDir = pathToUtf8(pluginDir / pathFromUtf8(MSRV_WEB_ROOT));
+    if (!pluginDir_.empty())
+        settings_.staticDir = pathToUtf8(pluginDir_ / pathFromUtf8(MSRV_WEB_ROOT));
     else
         settings_.staticDir = std::string();
 
@@ -82,12 +81,12 @@ bool Plugin::reloadConfig()
 
 void Plugin::connect()
 {
-    player_->connect();
+    player_.connect();
 }
 
 void Plugin::disconnect()
 {
-    player_->disconnect();
+    player_.disconnect();
 }
 
 void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
@@ -96,17 +95,17 @@ void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
     {
     case DB_EV_CONFIGCHANGED:
         if (ready_ && reloadConfig())
-            host_->reconfigure(settings_);
+            host_.reconfigure(settings_);
         break;
 
     case DB_EV_PLUGINSLOADED:
         ready_ = true;
         reloadConfig();
-        host_->reconfigure(settings_);
+        host_.reconfigure(settings_);
         break;
     }
 
-    player_->handleMessage(id, ctx, p1, p2);
+    player_.handleMessage(id, ctx, p1, p2);
 }
 
 static int pluginStart()
