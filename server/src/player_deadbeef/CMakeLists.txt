@@ -7,7 +7,7 @@ include_directories(
 )
 
 set(
-    PLUGIN_DEADBEEF_SOURCES
+    DEADBEEF_PLUGIN_SOURCES
     add_items_scope.cpp add_items_scope.hpp
     artwork_request.cpp artwork_request.hpp
     common.cpp common.hpp
@@ -21,50 +21,50 @@ set(
 )
 
 add_library(
-    plugin_deadbeef MODULE
-    ${PLUGIN_DEADBEEF_SOURCES}
+    deadbeef_plugin MODULE
+    ${DEADBEEF_PLUGIN_SOURCES}
     $<TARGET_OBJECTS:core>
     $<TARGET_OBJECTS:server>
 )
 
 target_link_libraries(
-    plugin_deadbeef
+    deadbeef_plugin
     "${CORE_LIBRARIES};${SERVER_LIBRARIES}"
 )
 
 set_target_properties(
-    plugin_deadbeef PROPERTIES
+    deadbeef_plugin PROPERTIES
     PREFIX ""
-    OUTPUT_NAME "${PLUGIN_DEADBEEF_FILE}"
+    OUTPUT_NAME "${DEADBEEF_PLUGIN_FILE}"
     LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_SOURCE_DIR}/symbols"
 )
 
-add_dependencies(plugin_deadbeef ext_all)
+add_dependencies(deadbeef_plugin ext_all)
 
 if(ENABLE_TESTS)
     add_library(
-        plugin_deadbeef_dummy_gui MODULE
+        deadbeef_plugin_dummy_gui MODULE
         dummy_gui.c
     )
 
     set_target_properties(
-        plugin_deadbeef_dummy_gui PROPERTIES
+        deadbeef_plugin_dummy_gui PROPERTIES
         PREFIX ""
         OUTPUT_NAME "ddb_gui_dummy"
     )
 
-    add_dependencies(plugin_deadbeef_dummy_gui ext_all)
+    add_dependencies(deadbeef_plugin_dummy_gui ext_all)
 
     add_library(
-        plugin_deadbeef_nullout2 MODULE
+        deadbeef_plugin_nullout2 MODULE
         nullout2.c
     )
 
     set_target_properties(
-        plugin_deadbeef_nullout2 PROPERTIES
+        deadbeef_plugin_nullout2 PROPERTIES
         PREFIX ""
         OUTPUT_NAME "nullout2"
     )
 
-    add_dependencies(plugin_deadbeef_nullout2 ext_all)
+    add_dependencies(deadbeef_plugin_nullout2 ext_all)
 endif()

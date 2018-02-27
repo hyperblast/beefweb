@@ -1,7 +1,7 @@
 #include "player_options.hpp"
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace player_deadbeef {
 
 PlaybackOrderOption::PlaybackOrderOption()
     : PlayerOption("order")

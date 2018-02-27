@@ -2,7 +2,7 @@
 #include "../file_system.hpp"
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace player_deadbeef {
 
 AddItemsScope::AddItemsScope(ddb_playlist_t* playlist, int visibility)
     : playlist_(playlist), visibility_(visibility), created_(false), aborted_(0)

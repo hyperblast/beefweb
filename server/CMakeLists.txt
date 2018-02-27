@@ -20,11 +20,11 @@ local_library_option(nljson ENABLE_LOCAL_NLJSON "")
 local_library_option(catch  ENABLE_LOCAL_CATCH "ENABLE_TESTS")
 
 if(OS_POSIX)
-    option(ENABLE_PLUGIN_DEADBEEF   "Build deadbeef plugin" ON)
+    option(ENABLE_PLAYER_DEADBEEF   "Build plugin deadbeef player" ON)
 
     local_library_option(libevent   ENABLE_LOCAL_LIBEVENT "")
     local_library_option(libevhtp   ENABLE_LOCAL_LIBEVHTP "")
-    local_library_option(deadbeef   ENABLE_LOCAL_DEADBEEF "ENABLE_PLUGIN_DEADBEEF")
+    local_library_option(deadbeef   ENABLE_LOCAL_DEADBEEF "ENABLE_PLAYER_DEADBEEF")
 endif()
 
 if(OS_WINDOWS)

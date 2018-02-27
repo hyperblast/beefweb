@@ -3,7 +3,7 @@
 #include "artwork_request.hpp"
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace player_deadbeef {
 
 PlayerImpl::PlayerImpl()
     : artworkPlugin_(nullptr)

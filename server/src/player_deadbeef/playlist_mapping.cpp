@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace player_deadbeef {
 
 namespace {
 constexpr char PLAYLIST_ID_META[] = MSRV_PROJECT_ID ".unique_id";

@@ -23,7 +23,7 @@ class TestContext
         const musicDir = path.join(testsRootDir, 'tracks');
 
         const pluginBuildDir = path.join(
-            rootDir, 'server/build', buildType, 'src/plugin_deadbeef');
+            rootDir, 'server/build', buildType, 'src/player_deadbeef');
 
         const pluginFiles = [
             'beefweb.so',

@@ -11,7 +11,7 @@
 #define CONF_AUTH_PASSWORD  MSRV_PROJECT_ID ".auth_password"
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace player_deadbeef {
 
 namespace {
 
