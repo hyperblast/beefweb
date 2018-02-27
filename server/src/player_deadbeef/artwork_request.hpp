@@ -10,7 +10,7 @@
 #include <boost/thread/future.hpp>
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace player_deadbeef {
 
 class ArtworkRequest
     : public boost::intrusive_ref_counter<ArtworkRequest, boost::thread_safe_counter>

@@ -140,8 +140,8 @@ if(OS_WINDOWS)
     add_subdirectory(server_windows)
 endif()
 
-if(ENABLE_PLUGIN_DEADBEEF)
-    add_subdirectory(plugin_deadbeef)
+if(ENABLE_PLAYER_DEADBEEF)
+    add_subdirectory(player_deadbeef)
 endif()
 
 if(ENABLE_PLUGIN_FOOBAR)

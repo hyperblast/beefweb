@@ -2,7 +2,7 @@
 #include "../log.hpp"
 
 namespace msrv {
-namespace plugin_deadbeef {
+namespace player_deadbeef {
 
 ArtworkRequest::ArtworkRequest(DB_artwork_plugin_t* plugin)
     : plugin_(plugin)
