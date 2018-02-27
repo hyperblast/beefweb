@@ -22,22 +22,22 @@ add_executable(
     core_tests
     ${RUNNER_SOURCES}
     $<TARGET_OBJECTS:core>
-    $<TARGET_OBJECTS:server>
+    $<TARGET_OBJECTS:core_server>
 )
 
 target_link_libraries(
     core_tests
-    "${CORE_LIBRARIES};${SERVER_LIBRARIES}"
+    "${CORE_LIBRARIES}"
 )
 
 add_executable(
     echo_server
     ${ECHO_SERVER_SOURCES}
     $<TARGET_OBJECTS:core>
-    $<TARGET_OBJECTS:server>
+    $<TARGET_OBJECTS:core_server>
 )
 
 target_link_libraries(
     echo_server
-    "${CORE_LIBRARIES};${SERVER_LIBRARIES}"
+    "${CORE_LIBRARIES}"
 )
