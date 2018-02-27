@@ -46,6 +46,6 @@ if(ENABLE_LOCAL_ZLIB)
     add_subdirectory(zlib)
 endif()
 
-if(ENABLE_PLUGIN_FOOBAR)
+if(ENABLE_PLAYER_FOOBAR2000)
     add_subdirectory(foosdk)
 endif()
