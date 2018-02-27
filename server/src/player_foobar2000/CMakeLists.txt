@@ -26,12 +26,12 @@ add_library(
     foobar2000_plugin MODULE
     ${FOOBAR2000_PLUGIN_SOURCES}
     $<TARGET_OBJECTS:core>
-    $<TARGET_OBJECTS:server>
+    $<TARGET_OBJECTS:core_server>
 )
 
 target_link_libraries(
     foobar2000_plugin
-    "${CORE_LIBRARIES};${SERVER_LIBRARIES};${FOOSDK_LIBRARIES}"
+    "${CORE_LIBRARIES};${FOOSDK_LIBRARIES}"
 )
 
 set_target_properties(
