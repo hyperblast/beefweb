@@ -2,7 +2,7 @@
 #include "common.hpp"
 
 namespace msrv {
-namespace plugin_foobar {
+namespace player_foobar2000 {
 
 FoobarWorkQueue::FoobarWorkQueue() = default;
 FoobarWorkQueue::~FoobarWorkQueue() = default;
