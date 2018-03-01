@@ -19,7 +19,7 @@ DB_misc_t pluginDef;
 Plugin* pluginInstance;
 
 const char PLUGIN_CONFIG_DIALOG[] =
-    "property \"Network port\" entry " CONF_PORT " 8880;"
+    "property \"Network port\" entry " CONF_PORT " " MSRV_STRINGIFY(MSRV_DEFAULT_PORT) ";"
     "property \"Allow remote connections\" checkbox " CONF_ALLOW_REMOTE " 1;"
     "property \"Music directories\" entry " CONF_MUSIC_DIRS " \"\";"
     "property \"Require authentication\" checkbox " CONF_AUTH_REQUIRED " 0;"
@@ -115,7 +115,7 @@ bool Plugin::reloadConfig()
     ConfigMutex mutex;
     ConfigLockGuard lock(mutex);
 
-    int port = ddbApi->conf_get_int(CONF_PORT, 8880);
+    int port = ddbApi->conf_get_int(CONF_PORT, MSRV_DEFAULT_PORT);
     bool allowRemote = ddbApi->conf_get_int(CONF_ALLOW_REMOTE, 1) != 0;
     const char* musicDirList = ddbApi->conf_get_str_fast(CONF_MUSIC_DIRS, "");
     bool authRequired = ddbApi->conf_get_int(CONF_AUTH_REQUIRED, 0) != 0;

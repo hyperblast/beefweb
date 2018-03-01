@@ -3,6 +3,7 @@
 #include "../request_filter.hpp"
 #include "../work_queue.hpp"
 #include "../settings.hpp"
+#include "../project_info.hpp"
 
 #include <catch.hpp>
 #include <boost/thread/future.hpp>
@@ -21,7 +22,7 @@ TEST_CASE("server")
 
     auto config = std::make_unique<ServerConfig>();
     config->allowRemote = false;
-    config->port = 8882;
+    config->port = MSRV_DEFAULT_TEST_PORT;
     config->router = &router;
     config->filters = &filters;
 
