@@ -26,6 +26,76 @@ const char PLUGIN_CONFIG_DIALOG[] =
     "property \"User\" entry " CONF_AUTH_USER " \"\";"
     "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";";
 
+int pluginStart()
+{
+    static StderrLogger logger;
+    Logger::setCurrent(&logger);
+
+    auto ok = tryCatchLog([]
+    {
+        setLocaleCharset();
+        pluginInstance = new Plugin();
+    });
+
+    if (ok)
+        return 0;
+
+    Logger::setCurrent(nullptr);
+    return -1;
+}
+
+int pluginStop()
+{
+    if (pluginInstance)
+    {
+        tryCatchLog([] { delete pluginInstance; });
+        pluginInstance = nullptr;
+    }
+
+    Logger::setCurrent(nullptr);
+    return 0;
+}
+
+int pluginConnect()
+{
+    return tryCatchLog([] { pluginInstance->connect(); }) ? 0 : -1;
+}
+
+int pluginDisconnect()
+{
+    return tryCatchLog([] { pluginInstance->disconnect(); }) ? 0 : -1;
+}
+
+int pluginMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
+{
+    return tryCatchLog([&] { pluginInstance->handleMessage(id, ctx, p1, p2); }) ? 0 : -1;
+}
+
+void pluginInitDef()
+{
+    auto& p = pluginDef.plugin;
+
+    if (p.api_vmajor)
+        return;
+
+    p.api_vmajor = 1;
+    p.api_vminor = DDB_API_LEVEL;
+    p.version_major = MSRV_VERSION_MAJOR;
+    p.version_minor = MSRV_VERSION_MINOR;
+    p.type = DB_PLUGIN_MISC;
+    p.id = MSRV_PROJECT_ID;
+    p.name = MSRV_PROJECT_NAME;
+    p.descr = MSRV_PROJECT_DESC;
+    p.copyright = MSRV_LICENSE_TEXT;
+    p.website = MSRV_PROJECT_URL;
+    p.start = pluginStart;
+    p.stop = pluginStop;
+    p.connect = pluginConnect;
+    p.disconnect = pluginDisconnect;
+    p.message = pluginMessage;
+    p.configdialog = PLUGIN_CONFIG_DIALOG;
+}
+
 }
 
 Plugin::Plugin()
@@ -108,73 +178,8 @@ void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
     player_.handleMessage(id, ctx, p1, p2);
 }
 
-static int pluginStart()
+extern "C" DB_plugin_t* MSRV_DEADBEEF_ENTRY(DB_functions_t* api)
 {
-    auto ok = tryCatchLog([]
-    {
-        setLocaleCharset();
-        pluginInstance = new Plugin();
-    });
-
-    return ok ? 0 : -1;
-}
-
-static int pluginStop()
-{
-    if (pluginInstance)
-    {
-        tryCatchLog([] { delete pluginInstance; });
-        pluginInstance = nullptr;
-    }
-
-    return 0;
-}
-
-static int pluginConnect()
-{
-    return tryCatchLog([] { pluginInstance->connect(); }) ? 0 : -1;
-}
-
-static int pluginDisconnect()
-{
-    return tryCatchLog([] { pluginInstance->disconnect(); }) ? 0 : -1;
-}
-
-static int pluginMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
-{
-    return tryCatchLog([&] { pluginInstance->handleMessage(id, ctx, p1, p2); }) ? 0 : -1;
-}
-
-static void pluginInitDef()
-{
-    auto& p = pluginDef.plugin;
-
-    if (p.api_vmajor)
-        return;
-
-    p.api_vmajor = 1;
-    p.api_vminor = DDB_API_LEVEL;
-    p.version_major = MSRV_VERSION_MAJOR;
-    p.version_minor = MSRV_VERSION_MINOR;
-    p.type = DB_PLUGIN_MISC;
-    p.id = MSRV_PROJECT_ID;
-    p.name = MSRV_PROJECT_NAME;
-    p.descr = MSRV_PROJECT_DESC;
-    p.copyright = MSRV_LICENSE_TEXT;
-    p.website = MSRV_PROJECT_URL;
-    p.start = pluginStart;
-    p.stop = pluginStop;
-    p.connect = pluginConnect;
-    p.disconnect = pluginDisconnect;
-    p.message = pluginMessage;
-    p.configdialog = PLUGIN_CONFIG_DIALOG;
-}
-
-extern "C" DB_plugin_t* MSRV_PREFIXED(load)(DB_functions_t* api)
-{
-    static StderrLogger logger(MSRV_PROJECT_ID);
-    Logger::setCurrent(&logger);
-
     ddbApi = api;
     pluginInitDef();
     return DB_PLUGIN(&pluginDef);

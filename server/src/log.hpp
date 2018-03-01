@@ -22,16 +22,19 @@ public:
     virtual ~Logger() = default;
     virtual void log(LogLevel, const char*, va_list va) = 0;
 
-    static void setCurrent(Logger* logger);
+    static Logger* getCurrent() { return current_; }
+    static void setCurrent(Logger* logger) { current_ = logger; }
 
 private:
+    static Logger* current_;
+
     MSRV_NO_COPY_AND_ASSIGN(Logger);
 };
 
-class StderrLogger : public Logger
+class StderrLogger final : public Logger
 {
 public:
-    StderrLogger(const std::string& appName);
+    StderrLogger();
     virtual ~StderrLogger();
     virtual void log(LogLevel level, const char* fmt, va_list va) override;
 
@@ -39,6 +42,26 @@ private:
     std::string prefix_;
 
     MSRV_NO_COPY_AND_ASSIGN(StderrLogger);
+};
+
+class LoggerScope
+{
+public:
+    explicit LoggerScope(Logger* logger)
+        : previous_(Logger::getCurrent())
+    {
+        Logger::setCurrent(logger);
+    }
+
+    ~LoggerScope()
+    {
+        Logger::setCurrent(previous_);
+    }
+
+private:
+    Logger* previous_;
+
+    MSRV_NO_COPY_AND_ASSIGN(LoggerScope);
 };
 
 #ifdef NDEBUG
