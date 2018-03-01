@@ -40,8 +40,6 @@ public:
     static DB_plugin_t* load(DB_functions_t* api);
 
 private:
-    static const char configDialog_[];
-
     static void initDef();
     static int start();
     static int stop();
@@ -51,6 +49,7 @@ private:
 
     static DB_misc_t definition_;
     static Plugin* instance_;
+    static const char configDialog_[];
 
     PluginWrapper();
     MSRV_NO_COPY_AND_ASSIGN(PluginWrapper);
