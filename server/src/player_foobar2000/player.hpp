@@ -81,6 +81,9 @@ public:
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
 private:
+    PlaybackState getPlaybackState();
+    void queryVolume(VolumeInfo* volume);
+
     service_ptr_t<Fb2kWorkQueue> workQueue_;
     service_ptr_t<playback_control> playbackControl_;
 
