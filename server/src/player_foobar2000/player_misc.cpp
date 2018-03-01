@@ -4,9 +4,9 @@ namespace msrv {
 namespace player_foobar2000 {
 
 PlayerImpl::PlayerImpl()
+    : workQueue_(new service_impl_t<Fb2kWorkQueue>),
+      playbackControl_(playback_control::get())
 {
-    workQueue_ = std::make_shared<FoobarWorkQueue>();
-    playbackControl_ = fb2k::std_api_get<playback_control>();
 }
 
 PlayerImpl::~PlayerImpl()
@@ -15,7 +15,7 @@ PlayerImpl::~PlayerImpl()
 
 WorkQueue* PlayerImpl::workQueue()
 {
-    return workQueue_.get();
+    return workQueue_.get_ptr();
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)

@@ -81,7 +81,7 @@ public:
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
 private:
-    std::shared_ptr<FoobarWorkQueue> workQueue_;
+    service_ptr_t<Fb2kWorkQueue> workQueue_;
     service_ptr_t<playback_control> playbackControl_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
