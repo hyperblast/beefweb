@@ -1,10 +1,9 @@
 #include "log.hpp"
+#include "project_info.hpp"
 
 namespace msrv {
 
-namespace {
-Logger* currentLogger;
-}
+Logger* Logger::current_;
 
 #ifndef NDEBUG
 
@@ -13,8 +12,8 @@ void logDebug(const char* fmt, ...)
     va_list va;
     va_start(va, fmt);
 
-    if (currentLogger)
-        currentLogger->log(LogLevel::DEBUG, fmt, va);
+    if (auto logger = Logger::getCurrent())
+        logger->log(LogLevel::DEBUG, fmt, va);
 
     va_end(va);
 }
@@ -26,8 +25,8 @@ void logInfo(const char* fmt, ...)
     va_list va;
     va_start(va, fmt);
 
-    if (currentLogger)
-        currentLogger->log(LogLevel::INFO, fmt, va);
+    if (auto logger = Logger::getCurrent())
+        logger->log(LogLevel::INFO, fmt, va);
 
     va_end(va);
 }
@@ -37,19 +36,14 @@ void logError(const char* fmt, ...)
     va_list va;
     va_start(va, fmt);
 
-    if (currentLogger)
-        currentLogger->log(LogLevel::ERROR, fmt, va);
+    if (auto logger = Logger::getCurrent())
+        logger->log(LogLevel::ERROR, fmt, va);
 
     va_end(va);
 }
 
-void Logger::setCurrent(Logger* logger)
-{
-    currentLogger = logger;
-}
-
-StderrLogger::StderrLogger(const std::string& appName)
-    : prefix_(appName + ": ")
+StderrLogger::StderrLogger()
+    : prefix_(MSRV_PROJECT_ID ": ")
 {
 }
 

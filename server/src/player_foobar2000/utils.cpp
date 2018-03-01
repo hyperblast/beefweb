@@ -5,7 +5,7 @@ namespace msrv {
 namespace player_foobar2000 {
 
 Fb2kLogger::Fb2kLogger()
-    : prefix_(std::string(MSRV_PROJECT_ID) + ": ")
+    : prefix_(MSRV_PROJECT_ID ": ")
 {
 }
 

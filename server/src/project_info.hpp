@@ -1,17 +1,18 @@
 #pragma once
 
-#define MSRV_AS_STRING_(v)      #v
-#define MSRV_AS_STRING(v)       MSRV_AS_STRING_(v)
+#define MSRV_STRINGIFY_(v)      #v
+#define MSRV_STRINGIFY(v)       MSRV_STRINGIFY(v)
 
 #define MSRV_PROJECT_ID         "beefweb"
 #define MSRV_PROJECT_NAME       "Beefweb"
-#define MSRV_PREFIXED(name)     beefweb_ ## name
 #define MSRV_WEB_ROOT           "beefweb.root"
 #define MSRV_PROJECT_DESC       "Provides web UI and HTTP API for controlling player remotely"
 #define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
 #define MSRV_VERSION_MAJOR      0
 #define MSRV_VERSION_MINOR      1
-#define MSRV_VERSION_STRING     MSRV_AS_STRING(MSRV_VERSION_MAJOR) "." MSRV_AS_STRING(MSRV_VERSION_MINOR)
+#define MSRV_VERSION_STRING     MSRV_STRINGIFY(MSRV_VERSION_MAJOR) "." MSRV_STRINGIFY(MSRV_VERSION_MINOR)
+#define MSRV_DEADBEEF_ENTRY     beefweb_load
+#define MSRV_FOOBAR2000_FILE    "foo_beefweb.dll"
 
 #define MSRV_LICENSE_TEXT \
     "Copyright 2015-2018 Hyperblast\n" \

@@ -16,8 +16,8 @@ int main(int argc, char* argv[])
 {
     using namespace msrv;
 
-    StderrLogger logger(MSRV_PROJECT_ID);
-    Logger::setCurrent(&logger);
+    StderrLogger logger;
+    LoggerScope loggerScope(&logger);
 
 #ifdef MSRV_OS_POSIX
     ::setlocale(LC_ALL, "");
