@@ -87,7 +87,7 @@ public:
 class EchoServer
 {
 public:
-    static constexpr int PORT = 8882;
+    static constexpr int PORT = MSRV_DEFAULT_TEST_PORT;
 
     EchoServer(bool allowRemote, ServerReadyCallback readyCallback)
         : thread_(std::move(readyCallback))

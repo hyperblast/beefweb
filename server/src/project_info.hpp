@@ -1,7 +1,7 @@
 #pragma once
 
 #define MSRV_STRINGIFY_(v)      #v
-#define MSRV_STRINGIFY(v)       MSRV_STRINGIFY(v)
+#define MSRV_STRINGIFY(v)       MSRV_STRINGIFY_(v)
 
 #define MSRV_PROJECT_ID         "beefweb"
 #define MSRV_PROJECT_NAME       "Beefweb"
@@ -11,6 +11,10 @@
 #define MSRV_VERSION_MAJOR      0
 #define MSRV_VERSION_MINOR      1
 #define MSRV_VERSION_STRING     MSRV_STRINGIFY(MSRV_VERSION_MAJOR) "." MSRV_STRINGIFY(MSRV_VERSION_MINOR)
+
+#define MSRV_DEFAULT_PORT       8880
+#define MSRV_DEFAULT_TEST_PORT  8882
+
 #define MSRV_DEADBEEF_ENTRY     beefweb_load
 #define MSRV_FOOBAR2000_FILE    "foo_beefweb.dll"
 

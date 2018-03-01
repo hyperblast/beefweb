@@ -28,8 +28,8 @@ fi
 
 relink \
     "$plugin_dir/$plugin_file" \
-    "$(pwd)/server/build/debug/src/plugin_deadbeef/$plugin_file"
-    
+    "$(pwd)/server/build/debug/src/player_deadbeef/$plugin_file"
+
 relink \
     "$plugin_dir/$webui_root" \
     "$(pwd)/webui/build/debug"
