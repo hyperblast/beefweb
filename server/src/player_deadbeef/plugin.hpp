@@ -16,8 +16,8 @@ public:
     Plugin();
     ~Plugin();
 
-    void connect();
-    void disconnect();
+    void connect() { player_.connect(); }
+    void disconnect() { player_.disconnect(); }
     void handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 private:
@@ -32,6 +32,28 @@ private:
     ServerHost host_;
 
     MSRV_NO_COPY_AND_ASSIGN(Plugin);
+};
+
+class PluginWrapper
+{
+public:
+    static DB_plugin_t* load(DB_functions_t* api);
+
+private:
+    static const char configDialog_[];
+
+    static void initDef();
+    static int start();
+    static int stop();
+    static int connect();
+    static int disconnect();
+    static int handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
+
+    static DB_misc_t definition_;
+    static Plugin* instance_;
+
+    PluginWrapper();
+    MSRV_NO_COPY_AND_ASSIGN(PluginWrapper);
 };
 
 }}

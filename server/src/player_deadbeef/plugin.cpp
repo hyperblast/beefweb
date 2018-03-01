@@ -13,12 +13,10 @@
 namespace msrv {
 namespace player_deadbeef {
 
-namespace {
+DB_misc_t PluginWrapper::definition_;
+Plugin*  PluginWrapper::instance_;
 
-DB_misc_t pluginDef;
-Plugin* pluginInstance;
-
-const char PLUGIN_CONFIG_DIALOG[] =
+const char PluginWrapper::configDialog_[] =
     "property \"Network port\" entry " CONF_PORT " " MSRV_STRINGIFY(MSRV_DEFAULT_PORT) ";"
     "property \"Allow remote connections\" checkbox " CONF_ALLOW_REMOTE " 1;"
     "property \"Music directories\" entry " CONF_MUSIC_DIRS " \"\";"
@@ -26,81 +24,9 @@ const char PLUGIN_CONFIG_DIALOG[] =
     "property \"User\" entry " CONF_AUTH_USER " \"\";"
     "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";";
 
-int pluginStart()
-{
-    static StderrLogger logger;
-    Logger::setCurrent(&logger);
-
-    auto ok = tryCatchLog([]
-    {
-        setLocaleCharset();
-        pluginInstance = new Plugin();
-    });
-
-    if (ok)
-        return 0;
-
-    Logger::setCurrent(nullptr);
-    return -1;
-}
-
-int pluginStop()
-{
-    if (pluginInstance)
-    {
-        tryCatchLog([] { delete pluginInstance; });
-        pluginInstance = nullptr;
-    }
-
-    Logger::setCurrent(nullptr);
-    return 0;
-}
-
-int pluginConnect()
-{
-    return tryCatchLog([] { pluginInstance->connect(); }) ? 0 : -1;
-}
-
-int pluginDisconnect()
-{
-    return tryCatchLog([] { pluginInstance->disconnect(); }) ? 0 : -1;
-}
-
-int pluginMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
-{
-    return tryCatchLog([&] { pluginInstance->handleMessage(id, ctx, p1, p2); }) ? 0 : -1;
-}
-
-void pluginInitDef()
-{
-    auto& p = pluginDef.plugin;
-
-    if (p.api_vmajor)
-        return;
-
-    p.api_vmajor = 1;
-    p.api_vminor = DDB_API_LEVEL;
-    p.version_major = MSRV_VERSION_MAJOR;
-    p.version_minor = MSRV_VERSION_MINOR;
-    p.type = DB_PLUGIN_MISC;
-    p.id = MSRV_PROJECT_ID;
-    p.name = MSRV_PROJECT_NAME;
-    p.descr = MSRV_PROJECT_DESC;
-    p.copyright = MSRV_LICENSE_TEXT;
-    p.website = MSRV_PROJECT_URL;
-    p.start = pluginStart;
-    p.stop = pluginStop;
-    p.connect = pluginConnect;
-    p.disconnect = pluginDisconnect;
-    p.message = pluginMessage;
-    p.configdialog = PLUGIN_CONFIG_DIALOG;
-}
-
-}
-
 Plugin::Plugin()
     : ready_(false),
-      pluginDir_(getModulePath(&pluginDef).parent_path()),
+      pluginDir_(getModulePath(&ddbApi).parent_path()),
       player_(),
       host_(&player_)
 {
@@ -149,16 +75,6 @@ bool Plugin::reloadConfig()
     return true;
 }
 
-void Plugin::connect()
-{
-    player_.connect();
-}
-
-void Plugin::disconnect()
-{
-    player_.disconnect();
-}
-
 void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
 {
     switch (id)
@@ -178,11 +94,86 @@ void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
     player_.handleMessage(id, ctx, p1, p2);
 }
 
-extern "C" DB_plugin_t* MSRV_DEADBEEF_ENTRY(DB_functions_t* api)
+DB_plugin_t* PluginWrapper::load(DB_functions_t* api)
 {
     ddbApi = api;
-    pluginInitDef();
-    return DB_PLUGIN(&pluginDef);
+    initDef();
+    return &definition_.plugin;
+}
+
+void PluginWrapper::initDef()
+{
+    auto& p = definition_.plugin;
+
+    if (p.api_vmajor)
+        return;
+
+    p.api_vmajor = 1;
+    p.api_vminor = DDB_API_LEVEL;
+    p.version_major = MSRV_VERSION_MAJOR;
+    p.version_minor = MSRV_VERSION_MINOR;
+    p.type = DB_PLUGIN_MISC;
+    p.id = MSRV_PROJECT_ID;
+    p.name = MSRV_PROJECT_NAME;
+    p.descr = MSRV_PROJECT_DESC;
+    p.copyright = MSRV_LICENSE_TEXT;
+    p.website = MSRV_PROJECT_URL;
+    p.start = start;
+    p.stop = stop;
+    p.connect = connect;
+    p.disconnect = disconnect;
+    p.message = handleMessage;
+    p.configdialog = configDialog_;
+}
+
+int PluginWrapper::start()
+{
+    static StderrLogger logger;
+    Logger::setCurrent(&logger);
+
+    auto ok = tryCatchLog([]
+    {
+        setLocaleCharset();
+        instance_ = new Plugin();
+    });
+
+    if (ok)
+        return 0;
+
+    Logger::setCurrent(nullptr);
+    return -1;
+}
+
+int PluginWrapper::stop()
+{
+    if (instance_)
+    {
+        tryCatchLog([] { delete instance_; });
+        instance_ = nullptr;
+    }
+
+    Logger::setCurrent(nullptr);
+    return 0;
+}
+
+int PluginWrapper::connect()
+{
+    return tryCatchLog([] { instance_->connect(); }) ? 0 : -1;
+}
+
+int PluginWrapper::disconnect()
+{
+    return tryCatchLog([] { instance_->disconnect(); }) ? 0 : -1;
+}
+
+int PluginWrapper::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
+{
+    return tryCatchLog([&] { instance_->handleMessage(id, ctx, p1, p2); }) ? 0 : -1;
+}
+
+extern "C" DB_plugin_t* MSRV_DEADBEEF_ENTRY(DB_functions_t* api)
+{
+    return PluginWrapper::load(api);
 }
 
 }}
