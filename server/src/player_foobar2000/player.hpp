@@ -84,8 +84,9 @@ private:
     PlaybackState getPlaybackState();
     void queryVolume(VolumeInfo* volume);
 
-    service_ptr_t<Fb2kWorkQueue> workQueue_;
     service_ptr_t<playback_control> playbackControl_;
+    service_ptr_t<Fb2kWorkQueue> workQueue_;
+    PlayerEventAdapter playerEventAdapter_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };  

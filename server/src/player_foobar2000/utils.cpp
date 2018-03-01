@@ -29,4 +29,15 @@ void Fb2kWorkQueue::schedule()
     callback_enqueue();
 }
 
+PlayerEventAdapter::PlayerEventAdapter()
+{
+    const auto flags = flag_on_playback_all & ~(flag_on_playback_dynamic_info | flag_on_playback_time);
+    play_callback_manager::get()->register_callback(this, flags, false);
+}
+
+PlayerEventAdapter::~PlayerEventAdapter()
+{
+    play_callback_manager::get()->unregister_callback(this);
+}
+
 }}
