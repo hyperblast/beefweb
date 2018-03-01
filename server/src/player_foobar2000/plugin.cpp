@@ -1,6 +1,7 @@
 #include "plugin.hpp"
 #include "../project_info.hpp"
-#include "log.hpp"
+#include "utils.hpp"
+
 #include <memory>
 
 namespace msrv {
