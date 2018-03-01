@@ -7,25 +7,28 @@
 namespace msrv {
 namespace player_foobar2000 {
 
-class FoobarLogger : public Logger
+class Fb2kLogger : public Logger
 {
 public:
-    FoobarLogger();
-    virtual ~FoobarLogger();
+    Fb2kLogger();
+    virtual ~Fb2kLogger();
     virtual void log(LogLevel, const char*, va_list va) override;
+
+private:
+    std::string prefix_;
 };
 
-class FoobarWorkQueue
-    : public ExternalWorkQueue,
-      public std::enable_shared_from_this<FoobarWorkQueue>
+class Fb2kWorkQueue
+    : public main_thread_callback,
+      public ExternalWorkQueue
 {
 public:
-    FoobarWorkQueue();
-    virtual ~FoobarWorkQueue();
+    Fb2kWorkQueue();
+    virtual ~Fb2kWorkQueue();
+    virtual void callback_run() override;
 
 protected:
     virtual void schedule() override;
 };
-  
 
 }}

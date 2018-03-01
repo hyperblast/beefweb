@@ -4,32 +4,29 @@
 namespace msrv {
 namespace player_foobar2000 {
 
-FoobarLogger::FoobarLogger() = default;
-FoobarLogger::~FoobarLogger() = default;
-
-void FoobarLogger::log(LogLevel, const char* fmt, va_list va)
+Fb2kLogger::Fb2kLogger()
+    : prefix_(std::string(MSRV_PROJECT_ID) + ": ")
 {
-    std::string format(MSRV_PROJECT_ID);
-
-    format.append(": ");
-    format.append(fmt);
-
-    console::printfv(format.c_str(), va);
 }
 
+Fb2kLogger::~Fb2kLogger() = default;
 
-FoobarWorkQueue::FoobarWorkQueue() = default;
-FoobarWorkQueue::~FoobarWorkQueue() = default;
-
-void FoobarWorkQueue::schedule()
+void Fb2kLogger::log(LogLevel, const char* fmt, va_list va)
 {
-    std::weak_ptr<FoobarWorkQueue> thisPtr = shared_from_this();
+    console::printfv((prefix_ + fmt).c_str(), va);
+}
 
-    fb2k::inMainThread([thisPtr]
-    {
-        if (auto queue = thisPtr.lock())
-            queue->execute();
-    });
-}  
+Fb2kWorkQueue::Fb2kWorkQueue() = default;
+Fb2kWorkQueue::~Fb2kWorkQueue() = default;
+
+void Fb2kWorkQueue::callback_run()
+{
+    execute();
+}
+
+void Fb2kWorkQueue::schedule()
+{
+    callback_enqueue();
+}
 
 }}

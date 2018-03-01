@@ -40,14 +40,14 @@ public:
     }
 
 private:
-    FoobarLogger logger_;
+    Fb2kLogger logger_;
     std::unique_ptr<Plugin> plugin_;
 };
 
 initquit_factory_t<InitQuit> InitQuitFactory;
 
 DECLARE_COMPONENT_VERSION(
-    MSRV_PROJECT_ID,
+    MSRV_PROJECT_NAME,
     MSRV_VERSION_STRING,
     MSRV_PROJECT_DESC "\n\n" MSRV_PROJECT_URL "\n\n" MSRV_LICENSE_TEXT);
 
