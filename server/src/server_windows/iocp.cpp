@@ -14,7 +14,7 @@ OverlappedTask::~OverlappedTask() = default;
 
 void OverlappedTask::handleAsyncIoResult(DWORD errorCode)
 {
-    if (errorCode == ERROR_IO_PENDING)
+    if (errorCode == NO_ERROR || errorCode == ERROR_IO_PENDING)
         return;
 
     OverlappedResult result;
