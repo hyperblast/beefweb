@@ -102,6 +102,15 @@ HttpRequestQueue::HttpRequestQueue(IoCompletionPort* ioPort)
 
 HttpRequestQueue::~HttpRequestQueue()
 {
+    if (listener_)
+    {
+        for (auto& request : requests_)
+        {
+            if (request->processing_)
+                tryCatchLog([this, &request] { listener_->onRequestDone(request.get()); });
+        }
+    }
+
     if (urlGroupId_ != HTTP_NULL_ID)
         logIfError("HttpCloseUrlGroup", ::HttpCloseUrlGroup(urlGroupId_));
 
@@ -159,7 +168,6 @@ HttpRequest::HttpRequest(HttpRequestQueue* queue)
 {
     receiveTask_ = createTask<ReceiveRequestTask>(this);
     sendTask_ = createTask<SendResponseTask>(this);
-
     reset();
 }
 
@@ -256,8 +264,9 @@ void HttpRequest::receive()
 
 void HttpRequest::reset()
 {
-    HTTP_SET_NULL_ID(&requestId_);
+    requestId_ = HTTP_NULL_ID;
     endAfterSendingAllChunks_ = false;
+    processing_ = false;
     pendingChunks_.clear();
     receiveTask_->reset();
 }
@@ -272,6 +281,7 @@ void HttpRequest::notifyReceiveCompleted(OverlappedResult* result)
     }
 
     requestId_ = data()->RequestId;
+    processing_ = true;
     queue_->notifyReady(this);
 }
 

@@ -32,11 +32,12 @@ Server::~Server()
     for (auto corereq : requests)
         corereq->abort();
 
+    dispatchEventsTimer_.reset();
+    core_.reset();
+
     assert(contexts_.empty());
     assert(eventStreamContexts_.empty());
 
-    dispatchEventsTimer_.reset();
-    core_.reset();
     destroyed_.set_value();
 }
 
