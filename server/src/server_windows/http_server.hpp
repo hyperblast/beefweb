@@ -27,7 +27,7 @@ public:
 
     virtual void bind(int port, bool allowRemote) override;
 
-    virtual void setEventListener(RequestEventListener* listener)
+    virtual void setEventListener(RequestEventListener* listener) override
     {
         requestQueue_.setListener(listener);
     }
