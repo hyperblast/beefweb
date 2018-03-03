@@ -165,6 +165,7 @@ private:
     TaskPtr<SendResponseTask> sendTask_;
     std::deque<ResponseCore::Body> pendingChunks_;
     bool endAfterSendingAllChunks_;
+    bool processing_;
 
     MSRV_NO_COPY_AND_ASSIGN(HttpRequest);
 };
