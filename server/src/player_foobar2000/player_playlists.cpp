@@ -32,7 +32,7 @@ void PlayerImpl::removePlaylist(const PlaylistRef& playlist)
 
 void PlayerImpl::movePlaylist(const PlaylistRef& playlist, int32_t index)
 {
-    auto count = playlistManager_->queue_get_count();
+    auto count = playlistManager_->get_playlist_count();
     auto oldIndex = playlists_.resolve(playlist);
     auto newIndex = static_cast<t_size>(index);
 
