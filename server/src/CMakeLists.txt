@@ -19,6 +19,10 @@ if(CXX_CLANG)
     add_cxx_compiler_flag(-Wno-extern-c-compat)
 endif()
 
+if(CXX_MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
 if(OS_POSIX)
     add_definitions(-DMSRV_OS_POSIX=1)
 
