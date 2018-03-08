@@ -16,6 +16,7 @@ set(
     player_misc.cpp
     player_options.cpp
     player_playlists.cpp
+    playlist_mapping.cpp playlist_mapping.hpp
     plugin.cpp plugin.hpp
     settings.cpp settings.hpp
     utils.cpp utils.hpp
@@ -30,7 +31,7 @@ add_library(
 
 target_link_libraries(
     foobar2000_plugin
-    "${CORE_LIBRARIES};${FOOSDK_LIBRARIES}"
+    "${CORE_LIBRARIES};${FOOSDK_LIBRARIES};shlwapi.lib"
 )
 
 set_target_properties(

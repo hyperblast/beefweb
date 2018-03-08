@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "../player_api.hpp"
+#include "playlist_mapping.hpp"
 #include "utils.hpp"
 
 namespace msrv {
@@ -88,6 +89,7 @@ private:
     service_ptr_t<playlist_manager_v4> playlistManager_;
     service_ptr_t<Fb2kWorkQueue> workQueue_;
 
+    PlaylistMapping playlists_;
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
 
