@@ -40,4 +40,25 @@ PlayerEventAdapter::~PlayerEventAdapter()
     play_callback_manager::get()->unregister_callback(this);
 }
 
+PlaylistEventAdapter::PlaylistEventAdapter()
+{
+    const auto flags = flag_on_items_added
+        | flag_on_items_reordered
+        | flag_on_items_removed
+        | flag_on_items_modified
+        | flag_on_items_replaced
+        | flag_on_playlist_activate
+        | flag_on_playlist_created
+        | flag_on_playlists_reorder
+        | flag_on_playlists_removed
+        | flag_on_playlist_renamed;
+
+    playlist_manager::get()->register_callback(this, flags);
+}
+
+PlaylistEventAdapter::~PlaylistEventAdapter()
+{
+    playlist_manager::get()->unregister_callback(this);
+}
+
 }}
