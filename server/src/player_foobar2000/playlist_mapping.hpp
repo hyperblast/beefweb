@@ -29,7 +29,6 @@ private:
 
     service_ptr_t<playlist_manager_v4> playlistManager_;
     int64_t maxId_;
-    pfc::array_t<char> buffer_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistMapping);
 };
