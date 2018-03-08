@@ -100,11 +100,11 @@ t_size PlaylistMapping::resolve(const PlaylistRef& plref)
                 return playlistManager_->get_active_playlist();
 
             pfc::array_t<char> buffer;
-            t_size count = playlistManager_->get_playlist_count();
+            auto count = playlistManager_->get_playlist_count();
 
-            for (size_t i = 0; i < count; i++)
+            for (t_size i = 0; i < count; i++)
             {
-                if (!playlistManager_->playlist_get_property(i, ID_PROPERTY, buffer))
+                if (!readId(i, &buffer))
                     continue;
 
                 StringView currentId(buffer.get_ptr(), buffer.get_size());
