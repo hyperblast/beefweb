@@ -5,9 +5,13 @@ namespace player_foobar2000 {
 
 PlayerImpl::PlayerImpl()
     : playbackControl_(playback_control::get()),
+      playlistManager_(playlist_manager_v4::get()),
       workQueue_(new service_impl_t<Fb2kWorkQueue>)
 {
-    playerEventAdapter_.setCallback([this](PlayerEvent ev) { emitEvent(ev); });
+    auto callback = [this] (PlayerEvent ev) { emitEvent(ev); };
+
+    playerEventAdapter_.setCallback(callback);
+    playlistEventAdapter_.setCallback(callback);
 }
 
 PlayerImpl::~PlayerImpl()

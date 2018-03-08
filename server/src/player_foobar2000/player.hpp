@@ -32,6 +32,9 @@ public:
     virtual void setVolumeDb(double val) override;
     virtual void setVolumeAmp(double val) override;
 
+    virtual TrackQueryPtr createTrackQuery(
+        const std::vector<std::string>& columns) override;
+
     virtual std::vector<PlaylistInfo> getPlaylists() override;
     virtual std::vector<PlaylistItemInfo> getPlaylistItems(PlaylistQuery* query) override;
 
@@ -70,9 +73,6 @@ public:
 
     virtual void sortPlaylistRandom(const PlaylistRef& plref) override;
 
-    virtual TrackQueryPtr createTrackQuery(
-        const std::vector<std::string>& columns) override;
-
     virtual PlaylistQueryPtr createPlaylistQuery(
         const PlaylistRef& playlist,
         const Range& range,
@@ -85,8 +85,11 @@ private:
     void queryVolume(VolumeInfo* volume);
 
     service_ptr_t<playback_control> playbackControl_;
+    service_ptr_t<playlist_manager_v4> playlistManager_;
     service_ptr_t<Fb2kWorkQueue> workQueue_;
+
     PlayerEventAdapter playerEventAdapter_;
+    PlaylistEventAdapter playlistEventAdapter_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };  
