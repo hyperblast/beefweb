@@ -43,6 +43,32 @@ inline t_size clampIndex(int32_t index, t_size count, t_size fallback)
 
 }
 
+std::vector<std::string> PlayerImpl::evaluatePlaylistColumns(
+    t_size playlist,
+    t_size item,
+    const TitleFormatVector& compiledColumns,
+    pfc::string8* buffer)
+{
+    std::vector<std::string> result;
+    result.reserve(compiledColumns.size());
+
+    for (auto& compiledColumn : compiledColumns)
+    {
+        playlistManager_->playlist_item_format_title(
+            playlist,
+            item,
+            nullptr,
+            *buffer,
+            compiledColumn,
+            nullptr,
+            playback_control::display_level_basic);
+
+        result.emplace_back(buffer->get_ptr(), buffer->get_length());
+    }
+
+    return result;
+}
+
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
 {
     playlists_.ensureInitialized();
@@ -90,26 +116,7 @@ std::vector<PlaylistItemInfo> PlayerImpl::getPlaylistItems(PlaylistQuery* queryP
     pfc::string8 buffer;
 
     for (t_size item = start; item < end; item++)
-    {
-        PlaylistItemInfo info;
-        info.columns.reserve(query->columns.size());
-
-        for (auto& compiledColumn : query->columns)
-        {
-            playlistManager_->playlist_item_format_title(
-                playlist,
-                item,
-                nullptr,
-                buffer,
-                compiledColumn,
-                nullptr,
-                playback_control::display_level_titles);
-
-            info.columns.emplace_back(buffer.get_ptr(), buffer.get_length());
-        }
-
-        result.emplace_back(std::move(info));
-    }
+        result.emplace_back(evaluatePlaylistColumns(playlist, item, query->columns, &buffer));
 
     return result;
 }

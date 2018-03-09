@@ -84,7 +84,17 @@ public:
 private:
     PlaybackState getPlaybackState();
     void queryVolume(VolumeInfo* volume);
-    TitleFormatVector PlayerImpl::compileColumns(const std::vector<std::string>& columns);
+    void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
+
+    TitleFormatVector compileColumns(const std::vector<std::string>& columns);
+
+    std::vector<std::string> evaluatePlaylistColumns(
+        t_size playlist,
+        t_size item,
+        const TitleFormatVector& compiledColumns,
+        pfc::string8* buffer);
+
+    std::vector<std::string> evaluatePlaybackColumns(const TitleFormatVector& compiledColumns);
 
     service_ptr_t<playback_control> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;
