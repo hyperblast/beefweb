@@ -146,11 +146,15 @@ void PlayerImpl::movePlaylist(const PlaylistRef& plref, int32_t targetIndex)
 {
     PlaylistLockGuard lock(playlistMutex_);
 
-    int count = ddbApi->plt_get_count();
-    if (targetIndex < 0 || targetIndex > count)
-        targetIndex = count;
-
     int sourceIndex = playlists_.resolveIndex(plref);
+
+    int count = ddbApi->plt_get_count();
+    if (targetIndex < 0 || targetIndex >= count)
+        targetIndex = count - 1;
+
+    if (sourceIndex == targetIndex)
+        return;
+
     ddbApi->plt_move(sourceIndex, targetIndex);
 }
 
