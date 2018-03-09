@@ -75,6 +75,8 @@ struct PlaylistInfo
 struct PlaylistItemInfo
 {
     PlaylistItemInfo() = default;
+    PlaylistItemInfo(std::vector<std::string> columnsVal)
+        : columns(std::move(columnsVal)) { }
     PlaylistItemInfo(PlaylistItemInfo&&) = default;
     PlaylistItemInfo& operator=(PlaylistItemInfo&&) = default;
 
