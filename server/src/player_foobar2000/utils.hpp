@@ -8,6 +8,8 @@
 namespace msrv {
 namespace player_foobar2000 {
 
+using TitleFormatVector = std::vector<service_ptr_t<titleformat_object>>;
+
 class Fb2kLogger : public Logger
 {
 public:

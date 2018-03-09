@@ -26,6 +26,8 @@ struct Range
 
     int32_t offset;
     int32_t count;
+
+    int32_t endOffset() { return offset + count; }
 };
 
 class InvalidRequestException : public std::runtime_error

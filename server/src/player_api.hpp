@@ -60,6 +60,10 @@ struct PlayerState
 
 struct PlaylistInfo
 {
+    PlaylistInfo() = default;
+    PlaylistInfo(PlaylistInfo&&) = default;
+    PlaylistInfo& operator=(PlaylistInfo&&) = default;
+
     std::string id;
     int32_t index;
     std::string title;
@@ -70,6 +74,10 @@ struct PlaylistInfo
 
 struct PlaylistItemInfo
 {
+    PlaylistItemInfo() = default;
+    PlaylistItemInfo(PlaylistItemInfo&&) = default;
+    PlaylistItemInfo& operator=(PlaylistItemInfo&&) = default;
+
     std::vector<std::string> columns;
 };
 
