@@ -1,6 +1,8 @@
 #pragma once
 
-#include "common.hpp"
+#include "../player_api.hpp"
+
+#include "utils.hpp"
 
 namespace msrv {
 namespace player_deadbeef {

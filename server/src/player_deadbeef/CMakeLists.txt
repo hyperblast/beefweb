@@ -18,6 +18,7 @@ set(
     player_playlists.cpp
     playlist_mapping.cpp playlist_mapping.hpp
     plugin.cpp plugin.hpp
+    utils.cpp utils.hpp
 )
 
 add_library(

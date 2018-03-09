@@ -1,4 +1,5 @@
 #include "player_options.hpp"
+#include "common.hpp"
 
 namespace msrv {
 namespace player_deadbeef {

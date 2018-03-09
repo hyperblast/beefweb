@@ -3,8 +3,9 @@
 #include "../defines.hpp"
 #include "../file_system.hpp"
 #include "../work_queue.hpp"
+#include "../player_api.hpp"
 
-#include "common.hpp"
+#include "utils.hpp"
 #include "playlist_mapping.hpp"
 #include "player_options.hpp"
 
