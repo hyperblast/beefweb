@@ -1,6 +1,7 @@
 #pragma once
 
-#include "common.hpp"
+#include "../defines.hpp"
+#include "utils.hpp"
 
 namespace msrv {
 namespace player_deadbeef {
