@@ -14,6 +14,9 @@ bool ValueParser<Range>::tryParse(StringView str, Range* outVal)
         if (!tryParseValue(str, &offset))
             return false;
 
+        if (offset < 0)
+            return false;
+
         *outVal = Range(offset, 1);
         return true;
     }
@@ -22,6 +25,9 @@ bool ValueParser<Range>::tryParse(StringView str, Range* outVal)
         return false;
 
     if (!tryParseValue(str.substr(pos + 1), &count))
+        return false;
+
+    if (offset < 0 || count < 0)
         return false;
 
     *outVal = Range(offset, count);

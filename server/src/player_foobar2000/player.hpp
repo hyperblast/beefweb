@@ -84,9 +84,11 @@ public:
 private:
     PlaybackState getPlaybackState();
     void queryVolume(VolumeInfo* volume);
+    TitleFormatVector PlayerImpl::compileColumns(const std::vector<std::string>& columns);
 
     service_ptr_t<playback_control> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;
+    service_ptr_t<titleformat_compiler> titleFormatCompiler_;
     service_ptr_t<Fb2kWorkQueue> workQueue_;
 
     PlaylistMapping playlists_;
