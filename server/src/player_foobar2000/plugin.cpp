@@ -12,7 +12,7 @@ Plugin::Plugin()
       host_(&player_)
 {
     current_ = this;
-    applySettings();
+    reconfigure();
 }
 
 Plugin::~Plugin()
