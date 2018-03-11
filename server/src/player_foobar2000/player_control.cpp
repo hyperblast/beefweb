@@ -109,8 +109,12 @@ void PlayerImpl::playCurrent()
     playbackControl_->play_or_unpause();
 }
 
-void PlayerImpl::playItem(const PlaylistRef& playlist, int32_t itemIndex)
+void PlayerImpl::playItem(const PlaylistRef& plref, int32_t itemIndex)
 {
+    auto playlist = playlists_.resolve(plref);
+
+    if (isValidItemIndex(playlist, itemIndex))
+        playlistManager_->playlist_execute_default_action(playlist, itemIndex);
 }
 
 void PlayerImpl::playRandom()

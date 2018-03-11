@@ -82,6 +82,12 @@ public:
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
 private:
+    bool isValidItemIndex(t_size playlist, t_size item)
+    {
+        return item >= 0
+            && static_cast<t_size>(item) < playlistManager_->playlist_get_item_count(playlist);
+    }
+
     PlaybackState getPlaybackState();
     void queryVolume(VolumeInfo* volume);
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
