@@ -101,7 +101,7 @@ ResponsePtr PlaylistsController::addItems()
 
     for (auto& item : items)
     {
-        auto normalizedPath = pathToUtf8(pathFromUtf8(stripFileScheme(item)).lexically_normal());
+        auto normalizedPath = pathToUtf8(pathFromUtf8(stripFileScheme(item)).lexically_normal().make_preferred());
 
         if (!settings->isAllowedPath(normalizedPath))
             return Response::error(HttpStatus::S_403_FORBIDDEN, "item is not under allowed path: " + item);

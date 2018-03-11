@@ -80,7 +80,7 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* queryPtr)
 
     if (playlistManager_->get_playing_item_location(&activePlaylist, &activeItem))
     {
-        info->playlistId = playlists_.getId(activePlaylist);
+        info->playlistId = playlists_->getId(activePlaylist);
         info->playlistIndex = activePlaylist;
         info->index = activeItem;
     }
@@ -93,7 +93,7 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* queryPtr)
 
 PlayerStatePtr PlayerImpl::queryPlayerState(TrackQuery* activeItemQuery)
 {
-    playlists_.ensureInitialized();
+    playlists_->ensureInitialized();
 
     auto state = std::make_unique<PlayerState>();
 
@@ -111,7 +111,7 @@ void PlayerImpl::playCurrent()
 
 void PlayerImpl::playItem(const PlaylistRef& plref, int32_t itemIndex)
 {
-    auto playlist = playlists_.resolve(plref);
+    auto playlist = playlists_->resolve(plref);
 
     if (isValidItemIndex(playlist, itemIndex))
         playlistManager_->playlist_execute_default_action(playlist, itemIndex);

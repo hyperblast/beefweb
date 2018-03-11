@@ -85,7 +85,7 @@ ResponsePtr BrowserController::getRoots()
 ResponsePtr BrowserController::getEntries()
 {
     auto requestedPath = param<std::string>("path");
-    auto normalizedPath = pathFromUtf8(requestedPath).lexically_normal();
+    auto normalizedPath = pathFromUtf8(requestedPath).lexically_normal().make_preferred();
     auto settings = store_->settings();
 
     if (!settings->isAllowedPath(pathToUtf8(normalizedPath)))
