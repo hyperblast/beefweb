@@ -13,3 +13,4 @@ webui/node_modules/*
 *.orig
 *.rej
 *.so
+*.aps
