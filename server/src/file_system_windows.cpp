@@ -64,7 +64,7 @@ FileInfo queryFileInfo(FileHandle::Type handle)
 
     FileInfo info;
     info.inode = -1;
-    info.size = makeInt64(data.nFileSizeHigh, data.nFileIndexLow);
+    info.size = makeInt64(data.nFileSizeHigh, data.nFileSizeLow);
     info.type = getFileType(data.dwFileAttributes);
     info.timestamp = getUnixTimestamp(data.ftLastWriteTime);
     return info;
