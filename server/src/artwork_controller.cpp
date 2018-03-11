@@ -23,7 +23,7 @@ ResponsePtr ArtworkController::getArtwork()
 
     if (auto path = optionalParam<std::string>("file"))
     {
-        auto normalizedPath = pathToUtf8(pathFromUtf8(*path).lexically_normal());
+        auto normalizedPath = pathToUtf8(pathFromUtf8(*path).lexically_normal().make_preferred());
         auto settings = store_->settings();
 
         if (!settings->isAllowedPath(normalizedPath))

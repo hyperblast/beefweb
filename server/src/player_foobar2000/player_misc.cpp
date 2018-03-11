@@ -6,7 +6,9 @@ namespace player_foobar2000 {
 PlayerImpl::PlayerImpl()
     : playbackControl_(playback_control::get()),
       playlistManager_(playlist_manager_v4::get()),
+      incomingItemFilter_(playlist_incoming_item_filter_v3::get()),
       titleFormatCompiler_(titleformat_compiler::get()),
+      playlists_(std::make_shared<PlaylistMapping>()),
       workQueue_(new service_impl_t<Fb2kWorkQueue>)
 {
     auto callback = [this] (PlayerEvent ev) { emitEvent(ev); };
