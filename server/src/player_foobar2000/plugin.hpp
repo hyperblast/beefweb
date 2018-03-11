@@ -20,7 +20,7 @@ public:
     Plugin();
     ~Plugin();
 
-    void applySettings()
+    void reconfigure()
     {
         host_.reconfigure(getCurrentSettings());
     }
