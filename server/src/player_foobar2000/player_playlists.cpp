@@ -42,12 +42,17 @@ public:
 
     boost::unique_future<void> getResult() { return result_.get_future(); }
 
-    virtual void on_completion(const pfc::list_base_const_t<metadb_handle_ptr> & p_items) override
+    virtual void on_completion(const pfc::list_base_const_t<metadb_handle_ptr>& items) override
     {
-        auto playlist = playlists_->resolve(plref_);
-        auto itemCount = playlistManager_->playlist_get_item_count(playlist);
-        auto index = clampIndex(index_, itemCount, pfc_infinite);
-        playlistManager_->playlist_insert_items(playlist, index, p_items, bit_array_false());
+        try
+        {
+            complete(items);
+        }
+        catch (std::exception& ex)
+        {
+            result_.set_exception(ex);
+        }
+
         result_.set_value();
     }
 
@@ -57,6 +62,14 @@ public:
     }
 
 private:
+    void complete(const pfc::list_base_const_t<metadb_handle_ptr>& items)
+    {
+        auto playlist = playlists_->resolve(plref_);
+        auto itemCount = playlistManager_->playlist_get_item_count(playlist);
+        auto index = clampIndex(index_, itemCount, pfc_infinite);
+        playlistManager_->playlist_insert_items(playlist, index, items, bit_array_false());
+    }
+
     service_ptr_t<playlist_manager_v4> playlistManager_;
     std::shared_ptr<PlaylistMapping> playlists_;
     PlaylistRef plref_;
