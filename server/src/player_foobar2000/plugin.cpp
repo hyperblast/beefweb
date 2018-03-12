@@ -28,9 +28,16 @@ void Plugin::reconfigure()
     SettingsData settings;
 
     settings.port = SettingVars::port;
+    settings.allowRemote = SettingVars::allowRemote;
     settings.musicDirs = SettingVars::getMusicDirs();
-    settings.musicDirs.emplace_back("D:\\downloads");
     settings.staticDir = staticDir_;
+    settings.authRequired = SettingVars::authRequired;
+
+    if (settings.authRequired)
+    {
+        settings.authUser = SettingVars::authUser;
+        settings.authPassword = SettingVars::authPassword;
+    }
 
     host_.reconfigure(settings);
 }
