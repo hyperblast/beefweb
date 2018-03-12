@@ -1,6 +1,7 @@
 'use strict';
 
 const q = require('qunit');
+const isArray = require('lodash/isArray');
 const { client, usePlayer, tracks } = require('./test_context');
 
 q.module('player api', usePlayer());
@@ -10,7 +11,7 @@ q.test('get state', async assert =>
     const state = await client.getPlayerState();
     assert.ok(state);
 
-    const { activeItem, playbackState, volume, options } = state;
+    const { activeItem, playbackState, volume, playbackMode, playbackModes } = state;
 
     assert.ok(activeItem);
     const { playlistId, playlistIndex, index, position, duration } = activeItem;
@@ -31,10 +32,8 @@ q.test('get state', async assert =>
     assert.equal(typeof value, 'number');
     assert.equal(typeof isMuted, 'boolean');
 
-    assert.ok(options);
-    const { loop, order } = options;
-    assert.equal(typeof loop, 'string');
-    assert.equal(typeof order, 'string');
+    assert.equal(typeof playbackMode, 'number');
+    assert.ok(isArray(playbackModes));
 });
 
 q.test('query current track', async assert =>
@@ -81,20 +80,14 @@ q.test('set muted', async assert =>
     assert.equal(state.volume.isMuted, true);
 });
 
-q.test('set loop mode', async assert =>
+q.test('set playback mode', async assert =>
 {
-    await client.setLoopMode('single');
+    let state = await client.getPlayerState();
+    const newMode = state.playbackModes.length - 1;
+    await client.setPlaybackMode(newMode);
 
-    const state = await client.getPlayerState();
-    assert.equal(state.options.loop, 'single');
-});
-
-q.test('set playback order', async assert =>
-{
-    await client.setPlaybackOrder('random');
-
-    const state = await client.getPlayerState();
-    assert.equal(state.options.order, 'random');
+    state = await client.getPlayerState();
+    assert.equal(state.playbackMode, newMode);
 });
 
 q.test('play', async assert =>

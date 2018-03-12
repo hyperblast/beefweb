@@ -2,10 +2,12 @@ import EventEmitter from 'wolfy87-eventemitter'
 import debounce from 'lodash/debounce'
 import clamp from 'lodash/clamp'
 import Timer from './timer'
-import { SwitchParam, PlaybackState, PlaybackOrder, LoopMode } from './api_client'
+import { SwitchParam, PlaybackState } from './api_client'
 
 const initialPlayerInfo = Object.freeze({
     playbackState: PlaybackState.stopped,
+    playbackMode: 0,
+    playbackModes: ['Default'],
     volume: {
         type: 'db',
         min: 0.0,
@@ -16,12 +18,8 @@ const initialPlayerInfo = Object.freeze({
     activeItem: {
         position: -1,
         duration: -1,
-        columns: []
+        columns: [],
     },
-    options: {
-        order: PlaybackOrder.linear,
-        loop: LoopMode.all,
-    }
 });
 
 export default class PlayerModel extends EventEmitter
@@ -94,14 +92,9 @@ export default class PlayerModel extends EventEmitter
         this.client.setPlaybackPosition(value);
     }
 
-    setPlaybackOrder(value)
+    setPlaybackMode(value)
     {
-        this.client.setPlaybackOrder(value);
-    }
-
-    setLoopMode(value)
-    {
-        this.client.setLoopMode(value);
+        this.client.setPlaybackMode(value);
     }
 
     update(playerInfo)

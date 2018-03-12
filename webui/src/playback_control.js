@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import mapValues from 'lodash/mapValues'
-import { PlaybackOrder, LoopMode } from './api_client'
 import Component from './component'
 import PlayerModel from './player_model'
 import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
@@ -18,28 +17,13 @@ export default class PlaybackControl extends Component
         });
 
         this.updateOn({ playerModel: 'change' });
-
         bindHandlers(this);
-
-        this.playbackOrderHandlers = mapValues(PlaybackOrder, order => {
-            return e => {
-                e.preventDefault();
-                this.props.playerModel.setPlaybackOrder(order);
-            };
-        });
-
-        this.loopModeHandlers = mapValues(LoopMode, mode => {
-            return e => {
-                e.preventDefault();
-                this.props.playerModel.setLoopMode(mode);
-            };
-        });
     }
 
     getStateFromModel()
     {
-        const { order, loop } = this.props.playerModel.options;
-        return { order, loop };
+        const { playbackMode, playbackModes } = this.props.playerModel;
+        return { playbackMode, playbackModes };
     }
 
     handleStop(e)
@@ -72,6 +56,12 @@ export default class PlaybackControl extends Component
         this.props.playerModel.next();
     }
 
+    handleSetMode(e, value)
+    {
+        e.preventDefault();
+        this.props.playerModel.setPlaybackMode(value);
+    }
+
     handleAudioMenuToggle(value)
     {
         this.setState({ audioMenuOpen: value });
@@ -79,7 +69,14 @@ export default class PlaybackControl extends Component
 
     render()
     {
-        const { order, loop, audioMenuOpen } = this.state;
+        const { playbackMode, playbackModes, audioMenuOpen } = this.state;
+
+        const modeMenuItems = playbackModes.map((mode, index) => (
+            <MenuItem
+                title={mode}
+                checked={index === playbackMode}
+                onClick={e => this.handleSetMode(e, index)} />
+        ));
 
         return (
             <div className='playback-control button-bar'>
@@ -109,37 +106,8 @@ export default class PlaybackControl extends Component
                     isOpen={audioMenuOpen}
                     onRequestToggle={this.handleAudioMenuToggle}>
                     <Menu>
-                        <MenuLabel title='Order' />
-                        <MenuItem
-                            title='Linear'
-                            checked={order === PlaybackOrder.linear}
-                            onClick={this.playbackOrderHandlers[PlaybackOrder.linear]} />
-                        <MenuItem
-                            title='Shuffle albums'
-                            checked={order === PlaybackOrder.shuffleAlbums}
-                            onClick={this.playbackOrderHandlers[PlaybackOrder.shuffleAlbums]} />
-                        <MenuItem
-                            title='Shuffle tracks'
-                            checked={order === PlaybackOrder.shuffleTracks}
-                            onClick={this.playbackOrderHandlers[PlaybackOrder.shuffleTracks]} />
-                        <MenuItem
-                            title='Random'
-                            checked={order === PlaybackOrder.random}
-                            onClick={this.playbackOrderHandlers[PlaybackOrder.random]} />
-                        <MenuSeparator />
-                        <MenuLabel title='Loop' />
-                        <MenuItem
-                            title='Loop all'
-                            checked={loop === LoopMode.all}
-                            onClick={this.loopModeHandlers[LoopMode.all]} />
-                        <MenuItem
-                            title='Loop single track'
-                            checked={loop === LoopMode.single}
-                            onClick={this.loopModeHandlers[LoopMode.single]} />
-                        <MenuItem
-                            title={'Don\'t loop'}
-                            checked={loop === LoopMode.none}
-                            onClick={this.loopModeHandlers[LoopMode.none]} />
+                        <MenuLabel title='Mode' />
+                        { modeMenuItems }
                     </Menu>
                 </Dropdown>
             </div>

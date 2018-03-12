@@ -45,8 +45,6 @@ class VolumeControlPanel extends Component
 
     render()
     {
-        console.log(this.state);
-
         const { type, min, max, value, isMuted } = this.state;
         const title = value + (type === 'db' ? 'dB' : '');
 

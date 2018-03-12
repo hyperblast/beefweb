@@ -36,10 +36,9 @@ class TestApiClient extends ApiClient
         const state = await this.waitForState('stopped');
 
         await this.setPlayerState({
-            order: 'linear',
-            loop: 'all',
             isMuted: false,
             volume: state.volume.max,
+            playbackMode: 0,
         });
 
         const playlists = await this.getPlaylists();

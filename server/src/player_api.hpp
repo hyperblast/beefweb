@@ -15,8 +15,6 @@ namespace msrv {
 
 class WorkQueue;
 
-using OptionValueMap = std::unordered_map<std::string, std::string>;
-
 enum class PlaybackState
 {
     STOPPED,
@@ -62,7 +60,8 @@ struct PlayerState
     PlaybackState playbackState;
     VolumeInfo volume;
     ActiveItemInfo activeItem;
-    OptionValueMap options;
+    int32_t playbackMode;
+    const std::vector<std::string>* playbackModes;
 };
 
 struct PlaylistInfo
@@ -159,30 +158,6 @@ public:
     MSRV_NO_COPY_AND_ASSIGN(PlaylistQuery);
 };
 
-class PlayerOption
-{
-public:
-    PlayerOption(std::string name);
-    virtual ~PlayerOption();
-
-    const std::string& name() const { return name_; }
-    const std::vector<std::string>& values() const { return strValues_; }
-
-    const std::string& get();
-    void set(const std::string& value);
-
-protected:
-    void defineValue(std::string strValue, int32_t intValue);
-
-    virtual void doSet(int32_t value) = 0;
-    virtual int32_t doGet() = 0;
-
-private:
-    std::string name_;
-    std::vector<std::string> strValues_;
-    std::vector<int32_t> intValues_;
-};
-
 struct ArtworkQuery
 {
     std::string file;
@@ -206,7 +181,7 @@ using PlayerEventCallback = std::function<void(PlayerEvent)>;
 class Player
 {
 public:
-    Player();
+    Player() = default;
     virtual ~Player();
 
     virtual WorkQueue* workQueue() = 0;
@@ -228,6 +203,7 @@ public:
     virtual void seekAbsolute(double offsetSeconds) = 0;
     virtual void seekRelative(double offsetSeconds) = 0;
     virtual void setVolume(double val) = 0;
+    virtual void setPlaybackMode(int32_t val) = 0;
 
     virtual TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) = 0;
@@ -281,12 +257,6 @@ public:
 
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) = 0;
 
-    // Options API
-
-    PlayerOption* getOption(const std::string& name);
-    const std::vector<PlayerOption*>& options() { return options_; }
-    OptionValueMap optionValues();
-
     // Events API
 
     void onEvent(PlayerEventCallback callback) { eventCallback_ = std::move(callback); }
@@ -298,14 +268,8 @@ protected:
             eventCallback_(event);
     }
 
-    void addOption(PlayerOption* option)
-    {
-        options_.push_back(option);
-    }
-
 private:
     PlayerEventCallback eventCallback_;
-    std::vector<PlayerOption*> options_;
 
     MSRV_NO_COPY_AND_ASSIGN(Player);
 };

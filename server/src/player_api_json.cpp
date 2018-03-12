@@ -104,7 +104,8 @@ void to_json(Json& json, const PlayerState& value)
     json["playbackState"] = value.playbackState;
     json["volume"] = value.volume;
     json["activeItem"] = value.activeItem;
-    json["options"] = value.options;
+    json["playbackMode"] = value.playbackMode;
+    json["playbackModes"] = *value.playbackModes;
 }
 
 void to_json(Json& json, const PlaylistInfo& value)

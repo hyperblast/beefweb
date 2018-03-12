@@ -8,8 +8,7 @@ namespace player_deadbeef {
 PlayerImpl::PlayerImpl()
     : artworkPlugin_(nullptr)
 {
-    addOption(&orderOption_);
-    addOption(&loopOption_);
+    initPlaybackModes();
 }
 
 PlayerImpl::~PlayerImpl() = default;

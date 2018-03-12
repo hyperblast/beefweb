@@ -7,7 +7,6 @@
 
 #include "utils.hpp"
 #include "playlist_mapping.hpp"
-#include "player_options.hpp"
 
 namespace msrv {
 namespace player_deadbeef {
@@ -35,6 +34,7 @@ public:
     virtual void seekAbsolute(double offsetSeconds) override;
     virtual void seekRelative(double offsetSeconds) override;
     virtual void setVolume(double val) override;
+    virtual void setPlaybackMode(int32_t val) override;
 
     virtual TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) override;
@@ -92,13 +92,16 @@ private:
     PlaybackState getPlaybackState();
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
     void queryVolume(VolumeInfo* info);
+    void initPlaybackModes();
+    void setModes(int order, int loop);
+    int32_t getPlaybackMode();
     void endModifyPlaylist(ddb_playlist_t* playlist);
 
     ThreadWorkQueue workQueue_;
     PlaylistMutex playlistMutex_;
+    ConfigMutex configMutex_;
     PlaylistMapping playlists_;
-    PlaybackOrderOption orderOption_;
-    PlaybackLoopOption loopOption_;
+    std::vector<std::string> playbackModes_;
     DB_artwork_plugin_t* artworkPlugin_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
