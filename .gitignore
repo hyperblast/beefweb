@@ -14,3 +14,4 @@ webui/node_modules/*
 *.rej
 *.so
 *.aps
+*.log

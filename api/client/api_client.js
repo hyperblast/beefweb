@@ -20,19 +20,6 @@ const PlaybackState = Object.freeze({
     paused: 'paused'
 });
 
-const LoopMode = Object.freeze({
-    none: 'none',
-    single: 'single',
-    all: 'all'
-});
-
-const PlaybackOrder = Object.freeze({
-    linear: 'linear',
-    random: 'random',
-    shuffleAlbums: 'shuffleAlbums',
-    shuffleTracks: 'shuffleTracks'
-});
-
 function skipUndefined(params)
 {
     const result = {};
@@ -156,14 +143,9 @@ class ApiClient
         return this.setPlayerState({ relativePosition: value });
     }
 
-    setLoopMode(value)
+    setPlaybackMode(value)
     {
-        return this.setPlayerState({ loop: value });
-    }
-
-    setPlaybackOrder(value)
-    {
-        return this.setPlayerState({ order: value });
+        return this.setPlayerState({ playbackMode: value });
     }
 
     play(plref, item)
@@ -348,7 +330,5 @@ module.exports = {
     ErrorType,
     SwitchParam,
     PlaybackState,
-    LoopMode,
-    PlaybackOrder,
     ApiClient,
 };

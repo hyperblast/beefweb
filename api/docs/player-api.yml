@@ -64,14 +64,10 @@ paths:
         description: New relative playback position (seconds)
         in: query
         type: number
-      - name: loop
-        description: New loop mode
+      - name: playbackMode
+        description: New playback mode index
         in: query
-        type: string
-      - name: order
-        description: New playback order
-        in: query
-        type: string
+        type: number
       responses:
         200:
           description: Success
@@ -609,14 +605,6 @@ definitions:
     type: string
     enum: [ stopped, playing, paused ]
 
-  LoopMode:
-    type: string
-    enum: [ none, single, all ]
-
-  PlaybackOrder:
-    type: string
-    enum: [ linear, random, shuffleAlbums, shuffleTracks ]
-
   VolumeType:
     type: string
     enum: [ db, linear ]
@@ -643,6 +631,12 @@ definitions:
               type: string
       playbackState:
         $ref: '#/definitions/PlaybackState'
+      playbackMode:
+        type: number
+      playbackModes:
+        type: array
+        items:
+          type: string
       volume:
         type: object
         properties:
@@ -656,13 +650,6 @@ definitions:
             type: number
           isMuted:
             type: boolean
-      options:
-        type: object
-        properties:
-          loop:
-            $ref: '#/definitions/LoopMode'
-          order:
-            $ref: '#/definitions/PlaybackOrder'
 
   PlaylistInfo:
     type: object

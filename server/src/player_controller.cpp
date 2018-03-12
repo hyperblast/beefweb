@@ -38,11 +38,8 @@ void PlayerController::setState()
     if (auto relativePosition = optionalParam<double>("relativePosition"))
         player_->seekRelative(*relativePosition);
 
-    for (auto option : player_->options())
-    {
-        if (auto value = optionalParam<std::string>(option->name()))
-            option->set(*value);
-    }
+    if (auto playbackMode = optionalParam<int32_t>("playbackMode"))
+        player_->setPlaybackMode(*playbackMode);
 }
 
 void PlayerController::playItem()
