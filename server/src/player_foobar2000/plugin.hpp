@@ -20,14 +20,12 @@ public:
     Plugin();
     ~Plugin();
 
-    void reconfigure()
-    {
-        host_.reconfigure(getCurrentSettings());
-    }
+    void reconfigure();
 
 private:
     static Plugin* current_;
 
+    std::string staticDir_;
     PlayerImpl player_;
     ServerHost host_;
 
