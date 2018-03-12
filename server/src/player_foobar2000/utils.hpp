@@ -154,33 +154,39 @@ private:
         override { /* ignore */ }
 
     virtual void on_playlist_activate(t_size p_old, t_size p_new)
-        override { notifySet(); }
+        override { notifyPlaylists(); }
     
     virtual void on_playlist_created(t_size p_index, const char * p_name, t_size p_name_len)
-        override { notifySet(); }
+        override { notifyPlaylists(); }
 
     virtual void on_playlists_reorder(const t_size * p_order, t_size p_count)
-        override { notifySet(); }
+        override { notifyPlaylists(); }
 
     virtual void on_playlists_removing(const bit_array & p_mask, t_size p_old_count, t_size p_new_count)
         override { /* ignore */ }
 
     virtual void on_playlists_removed(const bit_array & p_mask, t_size p_old_count, t_size p_new_count)
-        override { notifySet(); }
+        override { notifyPlaylists(); }
 
     virtual void on_playlist_renamed(t_size p_index, const char * p_new_name, t_size p_new_name_len)
-        override { notifySet(); }
+        override { notifyPlaylists(); }
 
     virtual void on_default_format_changed()
         override { /* ignore */ }
 
     virtual void on_playback_order_changed(t_size p_new_index)
-        override { /* ignore */ }
+        override { notifyPlayer(); }
 
     virtual void on_playlist_locked(t_size p_playlist, bool p_locked)
         override { /* ignore */ }
 
-    void notifySet()
+    void notifyPlayer()
+    {
+        if (callback_)
+            callback_(PlayerEvent::PLAYER_CHANGED);
+    }
+
+    void notifyPlaylists()
     {
         if (callback_)
             callback_(PlayerEvent::PLAYLIST_SET_CHANGED);
