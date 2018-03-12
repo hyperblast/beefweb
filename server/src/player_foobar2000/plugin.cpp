@@ -8,9 +8,11 @@ namespace msrv {
 namespace player_foobar2000 {
 
 Plugin::Plugin()
-    : player_(),
+    : staticDir_(SettingsData::defaultStaticDir()),
+      player_(),
       host_(&player_)
 {
+    assert(!current_);
     current_ = this;
     reconfigure();
 }
@@ -18,6 +20,14 @@ Plugin::Plugin()
 Plugin::~Plugin()
 {
     current_ = nullptr;
+}
+
+void Plugin::reconfigure()
+{
+    SettingsData settings;
+    settings.staticDir = staticDir_;
+    settings.musicDirs.emplace_back("D:\\downloads");
+    host_.reconfigure(settings);
 }
 
 Plugin* Plugin::current_ = nullptr;
