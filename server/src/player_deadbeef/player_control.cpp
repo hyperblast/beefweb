@@ -3,6 +3,8 @@
 namespace msrv {
 namespace player_deadbeef {
 
+namespace {
+
 class TrackQueryImpl : public TrackQuery
 {
 public:
@@ -11,6 +13,13 @@ public:
 
     std::vector<TitleFormatPtr> formatters;
 };
+
+inline float clampVolume(float val)
+{
+    return std::max(std::min(val, 0.0f), ddbApi->volume_get_min_db());
+}
+
+}
 
 std::unique_ptr<TrackQuery> PlayerImpl::createTrackQuery(
     const std::vector<std::string>& columns)
@@ -96,9 +105,10 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* query)
 
 void PlayerImpl::queryVolume(VolumeInfo* info)
 {
-    info->db = ddbApi->volume_get_db();
-    info->dbMin = ddbApi->volume_get_min_db();
-    info->amp = ddbApi->volume_get_amp();
+    info->type = VolumeType::DB;
+    info->min = ddbApi->volume_get_min_db();
+    info->max = 0.0;
+    info->value = ddbApi->volume_get_db();
     info->isMuted = ddbApi->audio_is_mute() != 0;
 }
 
@@ -194,14 +204,9 @@ void PlayerImpl::seekRelative(double offsetSeconds)
     ddbApi->sendmessage(DB_EV_SEEK, 0, newPos, 0);
 }
 
-void PlayerImpl::setVolumeDb(double value)
+void PlayerImpl::setVolume(double value)
 {
-    ddbApi->volume_set_db(value);
-}
-
-void PlayerImpl::setVolumeAmp(double value)
-{
-    ddbApi->volume_set_amp(value);
+    ddbApi->volume_set_db(clampVolume(value));
 }
 
 TrackQueryImpl::TrackQueryImpl(const std::vector<std::string>& columns)

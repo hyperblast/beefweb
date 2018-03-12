@@ -3,8 +3,9 @@
 namespace msrv {
 
 namespace {
-constexpr char INVALID_PLAYLIST_REF[] = "invalid playlist reference";
-constexpr char INVALID_PLAYBACK_STATE[] = "invalid playback state";
+const char INVALID_PLAYLIST_REF[] = "Invalid playlist reference";
+const char INVALID_PLAYBACK_STATE[] = "Invalid playback state";
+const char INVALID_VOLUME_TYPE[] = "Invalid volume type";
 }
 
 void from_json(const Json& json, PlaylistRef& value)
@@ -62,11 +63,29 @@ void to_json(Json& json, const PlaybackState& value)
     }
 }
 
+void to_json(Json& json, const VolumeType& type)
+{
+    switch (type)
+    {
+    case VolumeType::DB:
+        json = "db";
+        break;
+
+    case VolumeType::LINEAR:
+        json = "linear";
+        break;
+
+    default:
+        throw std::invalid_argument(INVALID_VOLUME_TYPE);
+    }
+}
+
 void to_json(Json& json, const VolumeInfo& value)
 {
-    json["db"] = value.db;
-    json["dbMin"] = value.dbMin;
-    json["amp"] = value.amp;
+    json["type"] = value.type;
+    json["min"] = value.min;
+    json["max"] = value.max;
+    json["value"] = value.value;
     json["isMuted"] = value.isMuted;
 }
 

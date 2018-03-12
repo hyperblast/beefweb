@@ -7,8 +7,10 @@ import { SwitchParam, PlaybackState, PlaybackOrder, LoopMode } from './api_clien
 const initialPlayerInfo = Object.freeze({
     playbackState: PlaybackState.stopped,
     volume: {
-        dbMin: 0.0,
-        db: 0.0,
+        type: 'db',
+        min: 0.0,
+        max: 0.0,
+        value: 0.0,
         isMuted: false,
     },
     activeItem: {
@@ -35,7 +37,7 @@ export default class PlayerModel extends EventEmitter
         Object.assign(this, initialPlayerInfo);
 
         this.defineEvent('change');
-        this.setVolumeRemote = debounce(value => this.client.setVolumeDb(value), 50);
+        this.setVolumeRemote = debounce(value => this.client.setVolume(value), 80);
     }
 
     start()
@@ -76,13 +78,13 @@ export default class PlayerModel extends EventEmitter
         this.volume = Object.assign(
             {}, this.volume, { isMuted: !this.volume.isMuted });
 
-        this.client.setMuted(SwitchParam.toggle);
         this.emit('change');
+        this.client.setMuted(this.volume.isMuted);
     }
 
     setVolume(value)
     {
-        this.volume = Object.assign({}, this.volume, { db: value });
+        this.volume = Object.assign({}, this.volume, { value });
         this.emit('change');
         this.setVolumeRemote(value);
     }

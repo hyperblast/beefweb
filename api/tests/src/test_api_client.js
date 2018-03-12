@@ -33,13 +33,13 @@ class TestApiClient extends ApiClient
     async resetState()
     {
         await this.stop();
-        await this.waitForState('stopped');
+        const state = await this.waitForState('stopped');
 
         await this.setPlayerState({
             order: 'linear',
             loop: 'all',
             isMuted: false,
-            volumeDb: 0.0,
+            volume: state.volume.max,
         });
 
         const playlists = await this.getPlaylists();

@@ -23,14 +23,7 @@ class VolumeControlPanel extends Component
 
     getStateFromModel()
     {
-        const { db, dbMin, isMuted } = this.props.playerModel.volume;
-
-        return {
-            volume: db,
-            volumeMax: 0.0,
-            volumeMin: dbMin,
-            isMuted: isMuted,
-        };
+        return this.props.playerModel.volume;
     }
 
     handleMuteClick(e)
@@ -52,7 +45,10 @@ class VolumeControlPanel extends Component
 
     render()
     {
-        const { isMuted, volume, volumeMin, volumeMax } = this.state;
+        console.log(this.state);
+
+        const { type, min, max, value, isMuted } = this.state;
+        const title = value + (type === 'db' ? 'dB' : '');
 
         return (
             <div className='volume-control-panel'>
@@ -64,10 +60,10 @@ class VolumeControlPanel extends Component
                 </div>
                 <input type='range'
                     className='volume-slider'
-                    max={volumeMax}
-                    min={volumeMin}
-                    value={volume}
-                    title={volume + 'dB'}
+                    max={max}
+                    min={min}
+                    value={value}
+                    title={title}
                     onChange={this.handleVolumeChange} />
             </div>
         );

@@ -26,11 +26,8 @@ ResponsePtr PlayerController::getState()
 
 void PlayerController::setState()
 {
-    if (auto volumeDb = optionalParam<double>("volumeDb"))
-        player_->setVolumeDb(*volumeDb);
-
-    if (auto volumeAmp = optionalParam<double>("volumeAmp"))
-        player_->setVolumeAmp(*volumeAmp);
+    if (auto volume = optionalParam<double>("volume"))
+        player_->setVolume(*volume);
 
     if (auto isMuted = optionalParam<Switch>("isMuted"))
         player_->setMuted(*isMuted);
