@@ -26,7 +26,7 @@ const char PluginWrapper::configDialog_[] =
 
 Plugin::Plugin()
     : ready_(false),
-      pluginDir_(getModulePath(&ddbApi).parent_path()),
+      staticDir_(SettingsData::defaultStaticDir()),
       player_(),
       host_(&player_)
 {
@@ -63,14 +63,10 @@ bool Plugin::reloadConfig()
     musicDirList_ = musicDirList;
     settings_.musicDirs.clear();
     settings_.musicDirs = parseValueList<std::string>(musicDirList_, ';');
+    settings_.staticDir = staticDir_;
     settings_.authRequired = authRequired;
     settings_.authUser = authUser;
     settings_.authPassword = authPassword;
-
-    if (!pluginDir_.empty())
-        settings_.staticDir = pathToUtf8(pluginDir_ / pathFromUtf8(MSRV_WEB_ROOT));
-    else
-        settings_.staticDir = std::string();
 
     return true;
 }

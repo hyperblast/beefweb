@@ -11,6 +11,8 @@ namespace msrv {
 class SettingsData
 {
 public:
+    static std::string defaultStaticDir();
+
     SettingsData();
     ~SettingsData();
 
