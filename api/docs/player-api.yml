@@ -48,12 +48,8 @@ paths:
       summary: Set player state
       tags: [ player ]
       parameters:
-      - name: volumeDb
-        description: New volume dB value
-        in: query
-        type: number
-      - name: volumeAmp
-        description: New volume amp value
+      - name: volume
+        description: New volume value
         in: query
         type: number
       - name: isMuted
@@ -621,6 +617,10 @@ definitions:
     type: string
     enum: [ linear, random, shuffleAlbums, shuffleTracks ]
 
+  VolumeType:
+    type: string
+    enum: [ db, linear ]
+
   PlayerState:
     type: object
     properties:
@@ -646,11 +646,13 @@ definitions:
       volume:
         type: object
         properties:
-          amp:
+          type:
+            $ref: '#/definitions/VolumeType'
+          min:
             type: number
-          db:
+          max:
             type: number
-          dbMin:
+          value:
             type: number
           isMuted:
             type: boolean
