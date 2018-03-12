@@ -24,7 +24,7 @@ private:
     bool reloadConfig();
 
     bool ready_;
-    Path pluginDir_;
+    std::string staticDir_;
     SettingsData settings_;
     std::string musicDirList_;
 

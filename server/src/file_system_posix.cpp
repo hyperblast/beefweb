@@ -20,7 +20,7 @@ void statToFileInfo(const struct ::stat& st, FileInfo& info)
         info.type = FileType::UNKNOWN;
 
     info.size = st.st_size;
-    info.inode = st.st_ino;
+    info.inode = static_cast<int64_t>(st.st_ino);
     info.timestamp = st.st_mtime;
 }
 
@@ -31,7 +31,7 @@ Path getModulePath(void* symbol)
     ::Dl_info info;
 
     if (::dladdr(symbol, &info) == 0 || !info.dli_fname)
-        return Path();
+        throw std::runtime_error("Failed to obtain module file name");
 
     return Path(info.dli_fname);
 }

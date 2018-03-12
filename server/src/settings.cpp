@@ -1,5 +1,6 @@
 #include "settings.hpp"
 #include "file_system.hpp"
+#include "project_info.hpp"
 
 #include <boost/algorithm/string.hpp>
 
@@ -15,10 +16,18 @@ bool isSubpath(const std::string& path, const std::string& childPath)
             || childPath[path.length()] == static_cast<char>(Path::preferred_separator));
 }
 
+int dummySymbol;
+
+}
+
+std::string SettingsData::defaultStaticDir()
+{
+    auto modulePath = getModulePath(&dummySymbol);
+    return pathToUtf8(modulePath.parent_path() / pathFromUtf8(MSRV_WEB_ROOT));
 }
 
 SettingsData::SettingsData()
-    : port(0), allowRemote(false), authRequired(false)
+    : port(MSRV_DEFAULT_PORT), allowRemote(false), authRequired(false)
 {
 }
 
