@@ -30,8 +30,7 @@ public:
     virtual void setMuted(Switch val) override;
     virtual void seekAbsolute(double offsetSeconds) override;
     virtual void seekRelative(double offsetSeconds) override;
-    virtual void setVolumeDb(double val) override;
-    virtual void setVolumeAmp(double val) override;
+    virtual void setVolume(double val) override;
 
     virtual TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) override;

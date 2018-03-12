@@ -16,6 +16,11 @@ public:
     TitleFormatVector columns;
 };
 
+inline double clampVolume(double value)
+{
+    return std::max(std::min(value, 0.0), static_cast<double>(playback_control::volume_mute));
+}
+
 }
 
 std::vector<std::string> PlayerImpl::evaluatePlaybackColumns(const TitleFormatVector& compiledColumns)
@@ -59,8 +64,10 @@ PlaybackState PlayerImpl::getPlaybackState()
 
 void PlayerImpl::queryVolume(VolumeInfo* volume)
 {
-    volume->db = playbackControl_->get_volume();
-    volume->dbMin = playback_control::volume_mute;
+    volume->type = VolumeType::DB;
+    volume->min = playback_control::volume_mute;
+    volume->max = 0.0;
+    volume->value = playbackControl_->get_volume();
     volume->isMuted = playbackControl_->is_muted();
 }
 
@@ -177,13 +184,9 @@ void PlayerImpl::seekRelative(double offsetSeconds)
     playbackControl_->playback_seek_delta(offsetSeconds);
 }
 
-void PlayerImpl::setVolumeDb(double val)
+void PlayerImpl::setVolume(double val)
 {
-    playbackControl_->set_volume(static_cast<float>(val));
-}
-
-void PlayerImpl::setVolumeAmp(double val)
-{
+    playbackControl_->set_volume(clampVolume(val));
 }
 
 TrackQueryPtr PlayerImpl::createTrackQuery(const std::vector<std::string>& columns)
