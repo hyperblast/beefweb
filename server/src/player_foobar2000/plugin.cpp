@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "settings.hpp"
 #include "../project_info.hpp"
 #include "utils.hpp"
 
@@ -25,8 +26,12 @@ Plugin::~Plugin()
 void Plugin::reconfigure()
 {
     SettingsData settings;
-    settings.staticDir = staticDir_;
+
+    settings.port = SettingVars::port;
+    settings.musicDirs = SettingVars::getMusicDirs();
     settings.musicDirs.emplace_back("D:\\downloads");
+    settings.staticDir = staticDir_;
+
     host_.reconfigure(settings);
 }
 
