@@ -31,6 +31,7 @@ public:
     virtual void seekAbsolute(double offsetSeconds) override;
     virtual void seekRelative(double offsetSeconds) override;
     virtual void setVolume(double val) override;
+    virtual void setPlaybackMode(int32_t val) override;
 
     virtual TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) override;
@@ -90,6 +91,7 @@ private:
     PlaybackState getPlaybackState();
     void queryVolume(VolumeInfo* volume);
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
+    void initPlaybackModes();
 
     TitleFormatVector compileColumns(const std::vector<std::string>& columns);
 
@@ -110,6 +112,7 @@ private:
     std::shared_ptr<PlaylistMapping> playlists_;
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
+    std::vector<std::string> playbackModes_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };  

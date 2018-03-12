@@ -15,6 +15,8 @@ PlayerImpl::PlayerImpl()
 
     playerEventAdapter_.setCallback(callback);
     playlistEventAdapter_.setCallback(callback);
+
+    initPlaybackModes();
 }
 
 PlayerImpl::~PlayerImpl()

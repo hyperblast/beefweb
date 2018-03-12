@@ -107,6 +107,8 @@ PlayerStatePtr PlayerImpl::queryPlayerState(TrackQuery* activeItemQuery)
     state->playbackState = getPlaybackState();
     queryVolume(&state->volume);
     queryActiveItem(&state->activeItem, activeItemQuery);
+    state->playbackMode = playlistManager_->playback_order_get_active();
+    state->playbackModes = &playbackModes_;
 
     return state;
 }
@@ -186,7 +188,27 @@ void PlayerImpl::seekRelative(double offsetSeconds)
 
 void PlayerImpl::setVolume(double val)
 {
-    playbackControl_->set_volume(clampVolume(val));
+    playbackControl_->set_volume(static_cast<float>(clampVolume(val)));
+}
+
+void PlayerImpl::initPlaybackModes()
+{
+    t_size count = playlistManager_->playback_order_get_count();
+
+    playbackModes_.reserve(count);
+
+    for (t_size i = 0; i < count; i++)
+        playbackModes_.emplace_back(playlistManager_->playback_order_get_name(i));
+}
+
+void PlayerImpl::setPlaybackMode(int32_t val)
+{
+    t_size count = playlistManager_->playback_order_get_count();
+
+    if (val < 0 || static_cast<t_size>(val) >= count)
+        throw InvalidRequestException("Invalid playback mode");
+
+    playlistManager_->playback_order_set_active(val);
 }
 
 TrackQueryPtr PlayerImpl::createTrackQuery(const std::vector<std::string>& columns)
