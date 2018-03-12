@@ -24,10 +24,11 @@ q.test('get state', async assert =>
     assert.equal(typeof playbackState, 'string');
 
     assert.ok(volume);
-    const { amp, db, dbMin, isMuted } = volume;
-    assert.equal(typeof amp, 'number');
-    assert.equal(typeof db, 'number');
-    assert.equal(typeof dbMin, 'number');
+    const { type, min, max, value, isMuted } = volume;
+    assert.equal(typeof type, 'string');
+    assert.equal(typeof min, 'number');
+    assert.equal(typeof max, 'number');
+    assert.equal(typeof value, 'number');
     assert.equal(typeof isMuted, 'boolean');
 
     assert.ok(options);
@@ -62,20 +63,14 @@ q.test('query current track', async assert =>
     ]);
 });
 
-q.test('set volume db', async assert =>
+q.test('set volume', async assert =>
 {
-    await client.setVolumeDb(-5.0);
+    let state = await client.getPlayerState();
+    const newVolume = (state.volume.min + state.volume.max) / 2;
+    await client.setVolume(newVolume);
 
-    const state = await client.getPlayerState();
-    assert.equal(state.volume.db, -5.0);
-});
-
-q.test('set volume amp', async assert =>
-{
-    await client.setVolumeAmp(0.5);
-
-    const state = await client.getPlayerState();
-    assert.equal(state.volume.amp, 0.5);
+    state = await client.getPlayerState();
+    assert.equal(state.volume.value, newVolume);
 });
 
 q.test('set muted', async assert =>

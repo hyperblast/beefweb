@@ -141,14 +141,9 @@ class ApiClient
         return this.setPlayerState({ isMuted: value });
     }
 
-    setVolumeDb(value)
+    setVolume(value)
     {
-        return this.setPlayerState({ volumeDb: value });
-    }
-
-    setVolumeAmp(value)
-    {
-        return this.setPlayerState({ volumeAmp: value });
+        return this.setPlayerState({ volume: value });
     }
 
     setPlaybackPosition(value)

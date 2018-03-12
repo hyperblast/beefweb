@@ -32,11 +32,18 @@ enum class PlayerEvent
     COUNT
 };
 
+enum class VolumeType
+{
+    DB,
+    LINEAR,
+};
+
 struct VolumeInfo
 {
-    double db;
-    double dbMin;
-    double amp;
+    VolumeType type;
+    double min;
+    double max;
+    double value;
     bool isMuted;
 };
 
@@ -220,11 +227,10 @@ public:
     virtual void setMuted(Switch val) = 0;
     virtual void seekAbsolute(double offsetSeconds) = 0;
     virtual void seekRelative(double offsetSeconds) = 0;
-    virtual void setVolumeDb(double val) = 0;
-    virtual void setVolumeAmp(double val) = 0;
+    virtual void setVolume(double val) = 0;
 
     virtual TrackQueryPtr createTrackQuery(
-        const std::vector<std::string>& columns) = 0;    
+        const std::vector<std::string>& columns) = 0;
 
     // Playlists API
 
