@@ -27,7 +27,7 @@ std::string SettingsData::defaultStaticDir()
 }
 
 SettingsData::SettingsData()
-    : port(MSRV_DEFAULT_PORT), allowRemote(false), authRequired(false)
+    : port(MSRV_DEFAULT_PORT), allowRemote(true), authRequired(false)
 {
 }
 
