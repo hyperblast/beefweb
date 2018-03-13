@@ -28,7 +28,6 @@ SettingsPageInstance::SettingsPageInstance(
     HWND parent, preferences_page_callback::ptr callback)
     : parent_(parent),
       handle_(nullptr),
-      musicDirsList_(nullptr),
       callback_(callback)
 {
     handle_ = CreateDialogW(
@@ -41,18 +40,20 @@ SettingsPageInstance::SettingsPageInstance(
         throwIfFailed("CreateDialogW", handle_ != nullptr);
 
     SetWindowLongPtrW(handle_, DWLP_USER, reinterpret_cast<LONG_PTR>(this));
-
-    musicDirsList_ = GetDlgItem(handle_, IDC_MUSIC_DIRS);
-    throwIfFailed("GetDlgItem", musicDirsList_ != nullptr);
-
+    musicDirsList_ = ListBox(handle_, IDC_MUSIC_DIRS);
     load();
-    updateAuthControls();
 }
 
 SettingsPageInstance::~SettingsPageInstance()
 {
     if (handle_)
         DestroyWindow(handle_);
+}
+
+t_uint32 SettingsPageInstance::get_state()
+{
+    return preferences_state::resettable
+        | (hasChanges() ? preferences_state::changed : 0);
 }
 
 INT_PTR CALLBACK SettingsPageInstance::dialogProcWrapper(
@@ -119,12 +120,12 @@ INT_PTR SettingsPageInstance::handleCommand(int control, int message)
 
     case IDC_MUSIC_DIR_ADD:
         if (message == BN_CLICKED)
-            browseAndAddMusicDir();
+            addMusicDir();
         return 1;
 
     case IDC_MUSIC_DIR_REMOVE:
         if (message == BN_CLICKED)
-            removeSelectedMusicDir();
+            removeMusicDir();
         return 1;
 
     default:
@@ -139,19 +140,35 @@ void SettingsPageInstance::load()
 
     musicDirs_ = SettingVars::getMusicDirs();
 
-    SendMessageW(musicDirsList_, LB_RESETCONTENT, 0, 0);
-
     for (auto& dir : musicDirs_)
-        addMusicDir(dir.data(), dir.length());
+        musicDirsList_.add(dir.data(), dir.length());
 
     uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, SettingVars::authRequired);
     uSetDlgItemText(handle_, IDC_AUTH_USER, SettingVars::authUser.get_ptr());
     uSetDlgItemText(handle_, IDC_AUTH_PASSWORD, SettingVars::authPassword.get_ptr());
+
+    updateAuthControls();
 }
 
-void SettingsPageInstance::save()
+void SettingsPageInstance::reset()
 {
-    SettingVars::port = getPort();
+    SetDlgItemInt(handle_, IDC_PORT, MSRV_DEFAULT_PORT, 0);
+    uButton_SetCheck(handle_, IDC_ALLOW_REMOTE, true);
+    
+    musicDirs_.clear();
+    musicDirsList_.clear();
+
+    uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, false);
+    uSetDlgItemText(handle_, IDC_AUTH_USER, "");
+    uSetDlgItemText(handle_, IDC_AUTH_PASSWORD, "");
+
+    updateAuthControls();
+    notifyChanged();
+}
+
+void SettingsPageInstance::apply()
+{
+    SettingVars::port = GetDlgItemInt(handle_, IDC_PORT, nullptr, 0);
     SettingVars::allowRemote = uButton_GetCheck(handle_, IDC_ALLOW_REMOTE);
 
     SettingVars::setMusicDirs(musicDirs_);
@@ -162,11 +179,13 @@ void SettingsPageInstance::save()
 
     if (auto plugin = Plugin::current())
         plugin->reconfigure();
+
+    notifyChanged();
 }
 
 bool SettingsPageInstance::hasChanges()
 {
-    if (SettingVars::port != getPort())
+    if (SettingVars::port != GetDlgItemInt(handle_, IDC_PORT, nullptr, 0))
         return true;
 
     if (SettingVars::allowRemote != uButton_GetCheck(handle_, IDC_ALLOW_REMOTE))
@@ -187,42 +206,33 @@ bool SettingsPageInstance::hasChanges()
     return false;
 }
 
-int SettingsPageInstance::getPort()
-{
-    BOOL ok;
-    UINT port = GetDlgItemInt(handle_, IDC_PORT, &ok, 0);
-    return ok != 0 ? port : MSRV_DEFAULT_PORT;
-}
-
-void SettingsPageInstance::addMusicDir(const char* str, size_t len)
-{
-    auto wstr = utf8To16(str, len);
-    SendMessageW(musicDirsList_, LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wstr.c_str()));
-}
-
-void SettingsPageInstance::browseAndAddMusicDir()
+void SettingsPageInstance::addMusicDir()
 {
     pfc::string8 path;
 
-    if (uBrowseForFolder(parent_, "Select music directory", path) != 0)
-    {
-        // TODO: handle duplicate items
-        musicDirs_.emplace_back(path.get_ptr(), path.get_length());
-        addMusicDir(path.get_ptr(), path.get_length());
-        notifyChanged();
-    }
+    if (uBrowseForFolder(parent_, "Select music directory", path) == 0)
+        return;
+
+    std::string dir(path.get_ptr(), path.get_length());
+
+    if (std::find(musicDirs_.begin(), musicDirs_.end(), dir) != musicDirs_.end())
+        return;
+
+    musicDirs_.emplace_back(std::move(dir));
+    musicDirsList_.add(path.get_ptr(), path.get_length());
+    notifyChanged();
 }
 
-void SettingsPageInstance::removeSelectedMusicDir()
+void SettingsPageInstance::removeMusicDir()
 {
-    auto index = SendMessageW(musicDirsList_, LB_GETCURSEL, 0, 0);
+    auto index = musicDirsList_.selectedIndex();
 
-    if (index != LB_ERR)
-    {
-        musicDirs_.erase(musicDirs_.begin() + index);
-        SendMessageW(musicDirsList_, LB_DELETESTRING, index, 0);
-        notifyChanged();
-    }
+    if (index == LB_ERR)
+        return;
+
+    musicDirs_.erase(musicDirs_.begin() + index);
+    musicDirsList_.remove(index);
+    notifyChanged();
 }
 
 void SettingsPageInstance::updateAuthControls()
