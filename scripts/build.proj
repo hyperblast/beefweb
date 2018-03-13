@@ -21,13 +21,11 @@
 
     <ItemGroup>
         <ServerBuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
-        <ServerFiles Include="$(ServerBuildDir)\src\player_foobar2000\$(Configuration)\$(PluginFile)" />
     </ItemGroup>
 
     <ItemGroup>
         <WebuiBuildFlags Include="--env.release" Condition="'$(Configuration)' == 'Release'" />
         <WebuiBuildFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
-        <WebuiFiles Include="$(WebuiBuildDir)\*.*" />
     </ItemGroup>
 
     <Target Name="ServerClean">
@@ -80,6 +78,10 @@
     </Target>
 
     <Target Name="Package" DependsOnTargets="$(PackageDependsOn)">
+        <ItemGroup>
+            <ServerFiles Include="$(ServerBuildDir)\src\player_foobar2000\$(Configuration)\$(PluginFile)" />
+            <WebuiFiles Include="$(WebuiBuildDir)\*.*" />
+        </ItemGroup>
         <Copy
             SourceFiles="@(ServerFiles)"
             DestinationFolder="$(PackageTempDir)" />
