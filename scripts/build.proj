@@ -11,15 +11,22 @@
 
         <WebuiSourceDir>$(RootDir)\webui</WebuiSourceDir>
         <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigLower)</WebuiBuildDir>
+
+        <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
+        <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
+        <PackageDependsOn>PackageClean</PackageDependsOn>
+        <PackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(PackageDependsOn);Server;Webui</PackageDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
         <ServerBuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
+        <ServerFiles Include="$(ServerBuildDir)\src\player_foobar2000\$(Configuration)\foo_beefweb.dll" />
     </ItemGroup>
 
     <ItemGroup>
         <WebuiBuildFlags Include="--env.release" Condition="'$(Configuration)' == 'Release'" />
         <WebuiBuildFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
+        <WebuiFiles Include="$(WebuiBuildDir)\*.*" />
     </ItemGroup>
 
     <Target Name="ServerClean">
@@ -58,5 +65,22 @@
             WorkingDirectory="$(WebuiSourceDir)" />
     </Target>
 
-    <Target Name="All" DependsOnTargets="Server;Webui" />
+    <Target Name="PackageClean">
+        <RemoveDir Directories="$(PackageBuildDir)" />
+    </Target>
+
+    <Target Name="Package" DependsOnTargets="$(PackageDependsOn)">
+        <Copy
+            SourceFiles="@(ServerFiles)"
+            DestinationFolder="$(PackageTempDir)" />
+        <Copy
+            SourceFiles="@(WebuiFiles)"
+            DestinationFolder="$(PackageTempDir)\beefweb.root" />
+        <Exec
+            Command="7z a -r -mx9 -tzip ..\foo_beefweb.fb2k-component *"
+            WorkingDirectory="$(PackageTempDir)" />
+        <RemoveDir Directories="$(PackageTempDir)" />
+    </Target>
+
+    <Target Name="All" DependsOnTargets="Server;Webui;Package" />
 </Project>
