@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0" DefaultTargets="All">
+    <Import Project="$(MSBuildProjectDirectory)\config.props" />
     <PropertyGroup>
         <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
         <EnableTests Condition="'$(EnableTests)' == ''">False</EnableTests>
@@ -20,7 +21,7 @@
 
     <ItemGroup>
         <ServerBuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
-        <ServerFiles Include="$(ServerBuildDir)\src\player_foobar2000\$(Configuration)\foo_beefweb.dll" />
+        <ServerFiles Include="$(ServerBuildDir)\src\player_foobar2000\$(Configuration)\$(PluginFile)" />
     </ItemGroup>
 
     <ItemGroup>
@@ -75,9 +76,9 @@
             DestinationFolder="$(PackageTempDir)" />
         <Copy
             SourceFiles="@(WebuiFiles)"
-            DestinationFolder="$(PackageTempDir)\beefweb.root" />
+            DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
         <Exec
-            Command="7z a -r -mx9 -tzip ..\foo_beefweb.fb2k-component *"
+            Command="7z a -r -mx9 -tzip ..\$(PackageFile)-$(PackageVersion).fb2k-component *"
             WorkingDirectory="$(PackageTempDir)" />
         <RemoveDir Directories="$(PackageTempDir)" />
     </Target>
