@@ -21,7 +21,7 @@ However development builds should be stable enought for general use. You could [
 Choose latest available date and pick the file specific to your CPU architecture.
 
 ### How to install
-Unpack `beefweb-*.tar.gz` to `$HOME/.local/lib/deadbeef`.
+Unpack `ddb_beefweb-*.tar.gz` to `$HOME/.local/lib/deadbeef`.
 
 ### How to use
 Point your browser to `http://localhost:8880` and enjoy your web interface.
