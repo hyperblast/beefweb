@@ -15,7 +15,7 @@
 
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
-        <PackageDependsOn>PackageClean</PackageDependsOn>
+        <PackageDependsOn>PackageClean;DetectGitRevision</PackageDependsOn>
         <PackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(PackageDependsOn);Server;Webui</PackageDependsOn>
     </PropertyGroup>
 
@@ -66,6 +66,15 @@
             WorkingDirectory="$(WebuiSourceDir)" />
     </Target>
 
+    <Target Name="DetectGitRevision">
+        <Exec
+            Command="git rev-parse --short HEAD"
+            WorkingDirectory="$(RootDir)"
+            ConsoleToMSBuild="True">
+            <Output TaskParameter="ConsoleOutput" PropertyName="GitRevision" />
+        </Exec>
+    </Target>
+
     <Target Name="PackageClean">
         <RemoveDir Directories="$(PackageBuildDir)" />
     </Target>
@@ -78,7 +87,7 @@
             SourceFiles="@(WebuiFiles)"
             DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
         <Exec
-            Command="7z a -r -mx9 -tzip ..\$(PackageFile)-$(PackageVersion).fb2k-component *"
+            Command="7z a -r -mx9 -tzip ..\$(PackageFile)-$(PackageVersion)-$(GitRevision).fb2k-component *"
             WorkingDirectory="$(PackageTempDir)" />
         <RemoveDir Directories="$(PackageTempDir)" />
     </Target>
