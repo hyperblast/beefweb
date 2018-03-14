@@ -189,6 +189,9 @@ void PlayerImpl::addPlaylist(int32_t index, const std::string& title)
 void PlayerImpl::removePlaylist(const PlaylistRef& playlist)
 {
     playlistManager_->remove_playlist_switch(playlists_->resolve(playlist));
+
+    if (playlistManager_->get_playlist_count() == 0)
+        playlistManager_->create_playlist_autoname();
 }
 
 void PlayerImpl::movePlaylist(const PlaylistRef& playlist, int32_t index)
