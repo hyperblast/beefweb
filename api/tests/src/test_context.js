@@ -7,7 +7,7 @@ function getContextType()
     switch (os.type())
     {
     case 'Windows_NT':
-        throw new Error('Not implemented');
+        return require('./foobar2000/test_context');
 
     default:
         return require('./deadbeef/test_context');
