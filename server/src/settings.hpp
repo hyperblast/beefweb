@@ -1,6 +1,7 @@
 #pragma once
 
 #include "defines.hpp"
+#include "file_system.hpp"
 
 #include <string>
 #include <vector>
@@ -11,7 +12,8 @@ namespace msrv {
 class SettingsData
 {
 public:
-    static std::string defaultStaticDir();
+    static const std::string& defaultStaticDir();
+    static const Path& defaultConfigFile();
 
     SettingsData();
     ~SettingsData();
@@ -26,6 +28,9 @@ public:
     std::string authPassword;
 
     bool isAllowedPath(const std::string& path) const;
+
+    bool load(const Path& path);
+    bool load() { return load(defaultConfigFile()); }
 };
 
 using SettingsDataPtr = std::shared_ptr<const SettingsData>;

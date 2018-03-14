@@ -26,18 +26,37 @@ const char PluginWrapper::configDialog_[] =
 
 Plugin::Plugin()
     : ready_(false),
-      staticDir_(SettingsData::defaultStaticDir()),
+      settingsLocked_(false),
       player_(),
       host_(&player_)
 {
+    settings_.staticDir = SettingsData::defaultStaticDir();
 }
 
-Plugin::~Plugin()
+Plugin::~Plugin() = default;
+
+void Plugin::handleConfigChanged()
 {
+    if (ready_ && !settingsLocked_ && reloadConfig())
+        host_.reconfigure(settings_);
+}
+
+void Plugin::handlePluginsLoaded()
+{
+    ready_ = true;
+
+    settingsLocked_ = settings_.load();
+
+    if (!settingsLocked_)
+        reloadConfig();
+
+    host_.reconfigure(settings_);
 }
 
 bool Plugin::reloadConfig()
 {
+    assert(!settingsLocked_);
+
     ConfigMutex mutex;
     ConfigLockGuard lock(mutex);
 
@@ -63,7 +82,6 @@ bool Plugin::reloadConfig()
     musicDirList_ = musicDirList;
     settings_.musicDirs.clear();
     settings_.musicDirs = parseValueList<std::string>(musicDirList_, ';');
-    settings_.staticDir = staticDir_;
     settings_.authRequired = authRequired;
     settings_.authUser = authUser;
     settings_.authPassword = authPassword;
@@ -76,14 +94,11 @@ void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
     switch (id)
     {
     case DB_EV_CONFIGCHANGED:
-        if (ready_ && reloadConfig())
-            host_.reconfigure(settings_);
+        handleConfigChanged();
         break;
 
     case DB_EV_PLUGINSLOADED:
-        ready_ = true;
-        reloadConfig();
-        host_.reconfigure(settings_);
+        handlePluginsLoaded();
         break;
     }
 
