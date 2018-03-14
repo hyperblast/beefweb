@@ -13,20 +13,20 @@ namespace player_foobar2000 {
 class Plugin
 {
 public:
-    static Plugin* current()
-    {
-        return current_;
-    }
+    static Plugin* current() { return current_; }
 
     Plugin();
     ~Plugin();
 
+    bool settingsLocked() const { return settingsLocked_; }
     void reconfigure();
 
 private:
     static Plugin* current_;
 
-    std::string staticDir_;
+    bool reconfigureFromFile();
+
+    bool settingsLocked_;
     PlayerImpl player_;
     ServerHost host_;
 
