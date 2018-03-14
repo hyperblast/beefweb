@@ -39,7 +39,7 @@ class PlayerController
         this.paths = {};
     }
 
-    async start(settings)
+    async start(pluginSettings)
     {
         if (!this.pluginArch)
             await this.detectPluginArch();
@@ -51,8 +51,8 @@ class PlayerController
             await this.initProfile();
 
         await this.installPlugins();
-        await this.writePlayerConfig();
-        await this.writePluginConfig(settings);
+        await this.writePlayerSettings();
+        await this.writePluginSettings(pluginSettings);
         await this.startProcess();
     }
 
@@ -127,7 +127,7 @@ class PlayerController
         });
     }
 
-    async writePlayerConfig()
+    async writePlayerSettings()
     {
         const settings = this.config.deadbeefSettings;
 
@@ -140,7 +140,7 @@ class PlayerController
         await writeFile(this.paths.configFile, data);
     }
 
-    async writePluginConfig(settings)
+    async writePluginSettings(settings)
     {
         await mkdirp(this.paths.libDir);
 
