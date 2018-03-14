@@ -21,12 +21,14 @@ public:
     void handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 private:
+    void handleConfigChanged();
+    void handlePluginsLoaded();
     bool reloadConfig();
 
     bool ready_;
-    std::string staticDir_;
     SettingsData settings_;
     std::string musicDirList_;
+    bool settingsLocked_;
 
     PlayerImpl player_;
     ServerHost host_;
