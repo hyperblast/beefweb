@@ -48,7 +48,7 @@ class TestContextBase
         this.tracks = Object.freeze({
             t1: path.join(musicDir, 'track1.flac'),
             t2: path.join(musicDir, 'track2.flac'),
-            t3: path.join(musicDir, 'subdir/track3.flac'),
+            t3: path.join(musicDir, 'subdir', 'track3.flac'),
         });
 
         this.usePlayer = this.usePlayer.bind(this);
@@ -79,7 +79,10 @@ class TestContextBase
             return;
 
         const logData = await this.player.getLog();
-        console.error('Player run log:\n%s', logData);
+
+        if (logData)
+            console.error('Player run log:\n%s', logData);
+
         throw Error('Failed to reach API endpoint');
     }
 
