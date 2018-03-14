@@ -51,6 +51,7 @@ public:
         catch (std::exception& ex)
         {
             result_.set_exception(ex);
+            return;
         }
 
         result_.set_value();
