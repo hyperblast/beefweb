@@ -20,7 +20,7 @@ class TestContextBase
         const webRootDir = path.join(testsRootDir, 'webroot');
         const musicDir = path.join(testsRootDir, 'tracks');
 
-        const playerSettings = {
+        const pluginSettings = {
             port,
             allowRemote: false,
             musicDirs: [musicDir],
@@ -36,7 +36,7 @@ class TestContextBase
             toolsDir,
             webRootDir,
             musicDir,
-            playerSettings,
+            pluginSettings,
         };
 
         this.initConfig(config);
@@ -56,22 +56,22 @@ class TestContextBase
 
     usePlayer(options = {})
     {
-        const playerSettings = Object.assign(
-            {}, this.config.playerSettings, options.playerSettings);
+        const pluginSettings = Object.assign(
+            {}, this.config.pluginSettings, options.pluginSettings);
 
         const axiosConfig = options.axiosConfig || null;
 
         return {
-            before: () => this.beginModule(playerSettings, axiosConfig),
+            before: () => this.beginModule(pluginSettings, axiosConfig),
             after: () => this.endModule(),
             beforeEach: () => this.beginTest(axiosConfig),
             afterEach: () => this.endTest(),
         };
     }
 
-    async beginModule(playerSettings, axiosConfig)
+    async beginModule(pluginSettings, axiosConfig)
     {
-        await this.player.start(playerSettings);
+        await this.player.start(pluginSettings);
 
         this.client.handler.init(axiosConfig);
 

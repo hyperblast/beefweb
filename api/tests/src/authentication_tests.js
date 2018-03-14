@@ -7,7 +7,7 @@ const { client, usePlayer } = require('./test_context');
 const authUser = 'user1';
 const authPassword = 'password1';
 
-const playerSettings = {
+const pluginSettings = {
     authRequired: true,
     authUser,
     authPassword,
@@ -30,7 +30,7 @@ function makeRequest(config)
     return client.handler.axios.get('api/player', fullConfig);
 }
 
-q.module('authentication', usePlayer({ playerSettings, axiosConfig }));
+q.module('authentication', usePlayer({ pluginSettings, axiosConfig }));
 
 q.test('require auth', async assert =>
 {
