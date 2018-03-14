@@ -8,9 +8,9 @@ const authUser = 'user1';
 const authPassword = 'password1';
 
 const playerSettings = {
-    'beefweb.auth_required': 1,
-    'beefweb.auth_user': authUser,
-    'beefweb.auth_password': authPassword,
+    authRequired: true,
+    authUser,
+    authPassword,
 };
 
 const axiosConfig = {

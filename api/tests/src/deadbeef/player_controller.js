@@ -35,20 +35,8 @@ class PlayerController
 {
     constructor(config)
     {
-        const {
-            toolsDir,
-            webRootDir,
-            pluginBuildDir,
-            pluginFiles,
-        } = config;
-
-        this.paths = {
-            toolsDir,
-            webRootDir,
-            pluginBuildDir,
-        };
-
-        this.pluginFiles = pluginFiles;
+        this.config = config;
+        this.paths = {};
     }
 
     async start(settings)
@@ -62,8 +50,9 @@ class PlayerController
         if (!this.paths.profileDir)
             await this.initProfile();
 
-        await this.writePlayerConfig(settings);
         await this.installPlugins();
+        await this.writePlayerConfig();
+        await this.writePluginConfig(settings);
         await this.startProcess();
     }
 
@@ -83,14 +72,17 @@ class PlayerController
 
     async detectPluginArch()
     {
-        this.pluginArch = await getBinaryArch(
-            path.join(this.paths.pluginBuildDir, this.pluginFiles[0]));
+        const pluginPath = path.join(
+            this.config.pluginBuildDir,
+            this.config.pluginFiles[0]);
+
+        this.pluginArch = await getBinaryArch(pluginPath);
     }
 
     async findPlayerBinary()
     {
         const locations = [
-            path.join(this.paths.toolsDir, `deadbeef.${this.pluginArch}/deadbeef`),
+            path.join(this.config.toolsDir, `deadbeef.${this.pluginArch}/deadbeef`),
             '/opt/deadbeef/bin/deadbeef',
             '/usr/local/bin/deadbeef',
             '/usr/bin/deadbeef'
@@ -135,8 +127,10 @@ class PlayerController
         });
     }
 
-    async writePlayerConfig(settings = {})
+    async writePlayerConfig()
     {
+        const settings = this.config.deadbeefSettings;
+
         const data = Object
             .keys(settings)
             .map(key => `${key} ${settings[key]}\n`)
@@ -146,20 +140,25 @@ class PlayerController
         await writeFile(this.paths.configFile, data);
     }
 
+    async writePluginConfig(settings)
+    {
+        await mkdirp(this.paths.libDir);
+
+        await writeFile(
+            path.join(this.paths.libDir, 'beefweb.config.json'),
+            JSON.stringify(settings));
+    }
+
     async installPlugins()
     {
         await mkdirp(this.paths.libDir);
 
-        for (let name of this.pluginFiles)
+        for (let name of this.config.pluginFiles)
         {
             await symlink(
-                path.join(this.paths.pluginBuildDir, name),
+                path.join(this.config.pluginBuildDir, name),
                 path.join(this.paths.libDir, name));
         }
-
-        await symlink(
-            this.paths.webRootDir,
-            path.join(this.paths.libDir, 'beefweb.root'));
     }
 
     async removeTempFiles()
