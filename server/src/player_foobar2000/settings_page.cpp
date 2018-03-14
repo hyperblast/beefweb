@@ -177,7 +177,8 @@ void SettingsPageInstance::apply()
     SettingVars::authUser.set_string(uGetDlgItemText(handle_, IDC_AUTH_USER).get_ptr());
     SettingVars::authPassword.set_string(uGetDlgItemText(handle_, IDC_AUTH_PASSWORD).get_ptr());
 
-    if (auto plugin = Plugin::current())
+    auto plugin = Plugin::current();
+    if (plugin && !plugin->settingsLocked())
         plugin->reconfigure();
 
     notifyChanged();

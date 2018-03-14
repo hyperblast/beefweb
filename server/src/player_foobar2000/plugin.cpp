@@ -9,13 +9,18 @@ namespace msrv {
 namespace player_foobar2000 {
 
 Plugin::Plugin()
-    : staticDir_(SettingsData::defaultStaticDir()),
+    : settingsLocked_(false),
       player_(),
       host_(&player_)
 {
     assert(!current_);
+
+    settingsLocked_ = reconfigureFromFile();
+
+    if (!settingsLocked_)
+        reconfigure();
+
     current_ = this;
-    reconfigure();
 }
 
 Plugin::~Plugin()
@@ -23,14 +28,28 @@ Plugin::~Plugin()
     current_ = nullptr;
 }
 
+bool Plugin::reconfigureFromFile()
+{
+    SettingsData settings;
+    settings.staticDir = SettingsData::defaultStaticDir();
+
+    if (!settings.load())
+        return false;
+
+    host_.reconfigure(settings);
+    return true;
+}
+
 void Plugin::reconfigure()
 {
+    assert(!settingsLocked_);
+
     SettingsData settings;
 
     settings.port = SettingVars::port;
     settings.allowRemote = SettingVars::allowRemote;
     settings.musicDirs = SettingVars::getMusicDirs();
-    settings.staticDir = staticDir_;
+    settings.staticDir = SettingsData::defaultStaticDir();
     settings.authRequired = SettingVars::authRequired;
 
     if (settings.authRequired)
