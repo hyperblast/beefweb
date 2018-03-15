@@ -135,6 +135,22 @@ std::vector<std::string> PlayerImpl::evaluatePlaylistColumns(
     return result;
 }
 
+void PlayerImpl::makeItemsMask(
+    t_size playlist,
+    const std::vector<int32_t>& indexes,
+    pfc::bit_array_flatIndexList* mask)
+{
+    auto count = playlistManager_->playlist_get_item_count(playlist);
+
+    for (auto index : indexes)
+    {
+        if (index >= 0 && static_cast<t_size>(index) < count)
+            mask->add(index);
+    }
+
+    mask->presort();
+}
+
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
 {
     playlists_->ensureInitialized();
@@ -270,6 +286,21 @@ void PlayerImpl::copyPlaylistItems(
     const std::vector<int32_t>& sourceItemIndexes,
     int32_t targetIndex)
 {
+    auto source = playlists_->resolve(sourcePlaylist);
+    auto target = playlists_->resolve(targetPlaylist);
+
+    pfc::bit_array_flatIndexList items;
+    makeItemsMask(source, sourceItemIndexes, &items);
+
+    pfc::list_t<metadb_handle_ptr> handles;
+    playlistManager_->playlist_get_items(source, handles, items);
+
+    auto position = clampIndex(
+        targetIndex,
+        playlistManager_->playlist_get_item_count(target),
+        pfc_infinite);
+
+    playlistManager_->playlist_insert_items(target, position, handles, bit_array_false());
 }
 
 void PlayerImpl::movePlaylistItems(
@@ -278,6 +309,24 @@ void PlayerImpl::movePlaylistItems(
     const std::vector<int32_t>& sourceItemIndexes,
     int32_t targetIndex)
 {
+    auto source = playlists_->resolve(sourcePlaylist);
+    auto target = playlists_->resolve(targetPlaylist);
+
+    pfc::bit_array_flatIndexList items;
+    makeItemsMask(source, sourceItemIndexes, &items);
+
+    pfc::list_t<metadb_handle_ptr> handles;
+    playlistManager_->playlist_get_items(source, handles, items);
+
+    playlistManager_->playlist_remove_items(source, items);
+
+    // TODO: handle index recalculation if removed items affect new position
+    auto position = clampIndex(
+        targetIndex,
+        playlistManager_->playlist_get_item_count(target),
+        pfc_infinite);
+
+    playlistManager_->playlist_insert_items(target, position, handles, bit_array_false());
 }
 
 void PlayerImpl::removePlaylistItems(
@@ -285,18 +334,8 @@ void PlayerImpl::removePlaylistItems(
     const std::vector<int32_t>& itemIndexes)
 {
     auto playlist = playlists_->resolve(plref);
-    auto count = playlistManager_->playlist_get_item_count(playlist);
-
     pfc::bit_array_flatIndexList items;
-
-    for (auto index : itemIndexes)
-    {
-        if (index >= 0 && static_cast<t_size>(index) < count)
-            items.add(index);
-    }
-
-    items.presort();
-
+    makeItemsMask(playlist, itemIndexes, &items);
     playlistManager_->playlist_remove_items(playlist, items);
 }
 
