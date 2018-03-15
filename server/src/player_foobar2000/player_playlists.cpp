@@ -89,6 +89,17 @@ std::vector<t_size> createIndexesVector(t_size count)
     return indexes;
 }
 
+std::vector<t_size> createReverseIndexesVector(t_size count)
+{
+    std::vector<t_size> indexes;
+    indexes.reserve(count);
+
+    for (t_size i = count; i > 0; i--)
+        indexes.push_back(i - 1);
+
+    return indexes;
+}
+
 inline t_size clampIndex(int32_t index, t_size count, t_size fallback)
 {
     return index >= 0 && static_cast<t_size>(index) < count
@@ -294,8 +305,21 @@ void PlayerImpl::sortPlaylist(
     const std::string& expression,
     bool descending)
 {
-    playlistManager_->playlist_sort_by_format(playlists_->resolve(plref), expression.c_str(), false);
-    // TODO: descending sort
+    auto playlist = playlists_->resolve(plref);
+    auto count = playlistManager_->playlist_get_item_count(playlist);
+    if (count == 0)
+        return;
+
+    if (!descending)
+    {
+        playlistManager_->playlist_sort_by_format(playlist, expression.c_str(), false);
+        return;
+    }
+
+    auto reverseOrder = createReverseIndexesVector(count);
+    playlistManager_->playlist_reorder_items(playlist, reverseOrder.data(), count);
+    playlistManager_->playlist_sort_by_format(playlist, expression.c_str(), false);
+    playlistManager_->playlist_reorder_items(playlist, reverseOrder.data(), count);
 }
 
 void PlayerImpl::sortPlaylistRandom(const PlaylistRef& plref)
