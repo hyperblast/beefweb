@@ -62,7 +62,7 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
-        this.process = childProcess.spawn(this.paths.exeFile, [], {
+        this.process = childProcess.spawn(this.paths.exeFile, ['/hide'], {
             cwd: this.config.playerDir,
             detached: true,
         });
