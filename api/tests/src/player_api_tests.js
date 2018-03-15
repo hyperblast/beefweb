@@ -42,6 +42,7 @@ q.test('query current track', async assert =>
 
     await client.play(0, 0);
     await client.waitForState('playing');
+    await client.waitPlaybackMetadata();
 
     const state = await client.getPlayerState([
         '%genre%',
@@ -175,7 +176,9 @@ q.test('next', async assert =>
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
 
     await client.play(0, 0);
-    await client.waitForState('playing');
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 0;
+    });
 
     await client.next();
     await client.waitForState(s => {
@@ -190,7 +193,9 @@ q.test('previous', async assert =>
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
 
     await client.play(0, 1);
-    await client.waitForState('playing');
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 1;
+    });
 
     await client.previous();
     await client.waitForState(s => {
@@ -205,7 +210,9 @@ q.test('set playback position', async assert =>
     await client.addPlaylistItems(0, [tracks.t3]);
 
     await client.play(0, 0);
-    await client.waitForState('playing');
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 0;
+    });
 
     await client.pause();
     await client.waitForState('paused');
@@ -223,7 +230,9 @@ q.test('move playback position', async assert =>
     await client.addPlaylistItems(0, [tracks.t3]);
 
     await client.play(0, 0);
-    await client.waitForState('playing');
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 0;
+    });
 
     await client.pause();
     await client.waitForState('paused');
