@@ -14,13 +14,7 @@ environment:
   EnableTests: True
 
 test_script:
-- @echo.
-- @echo "=== Running server tests ==="
-- @echo.
 - server\build\release\src\tests\Release\core_tests.exe
-- @echo.
-- @echo "=== Running API tests ==="
-- @echo.
 - set API_TESTS_BUILD_TYPE=release
 - pushd api\tests
 - yarn install
