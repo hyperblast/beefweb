@@ -38,7 +38,7 @@ void CacheSupportFilter::setCacheHeaders(Response* reponse, const std::string& e
 
 std::string CacheSupportFilter::calculateETag(FileResponse* response)
 {
-    const auto& pathString = response->path.string();
+    const auto& pathString = response->path.native();
 
     FnvHash hash;
     hash.addBytes(pathString.data(), pathString.size() * sizeof(Path::value_type));
