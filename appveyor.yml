@@ -17,6 +17,7 @@ test_script:
 - echo "=== Running server tests ==="
 - server\build\release\src\tests\Release\core_tests.exe
 - echo "=== Running API tests ==="
+- set API_TESTS_BUILD_TYPE=release
 - pushd api\tests
 - yarn install
 - yarn test
