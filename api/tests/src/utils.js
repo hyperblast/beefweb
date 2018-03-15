@@ -1,5 +1,7 @@
 'use strict';
 
+const os = require('os');
+
 function sleep(timeout)
 {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -38,4 +40,53 @@ function waitForExit(process, timeout = -1)
     });
 }
 
-module.exports = { sleep, waitUntil, waitForExit };
+function getNormalizePath()
+{
+    switch (os.type())
+    {
+    case 'Windows_NT':
+        return p => p.toUpperCase();
+    default:
+        return p => p;
+    }
+}
+
+const normalizePath = getNormalizePath();
+
+function pathsEqual(p1, p2)
+{
+    return normalizePath(p1) === normalizePath(p2);
+}
+
+function pathCollectionsEqual(paths1, paths2, ignoreOrder = false)
+{
+    if (paths1.length !== paths2.length)
+        return false;
+
+    const items1 = paths1.map(normalizePath);
+    const items2 = paths2.map(normalizePath);
+
+    if (ignoreOrder)
+    {
+        items1.sort();
+        items2.sort();
+    }
+
+    let i = 0;
+    for (let item of items1)
+    {
+        if (item !== items2[i++])
+            return false;
+    }
+
+    return true;
+}
+
+module.exports = {
+    sleep,
+    waitUntil,
+    waitForExit,
+    normalizePath,
+    pathsEqual,
+    pathCollectionsEqual,
+};

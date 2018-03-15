@@ -3,7 +3,7 @@
 const q = require('qunit');
 const isEqual = require('lodash/isEqual');
 const { client, usePlayer, tracks } = require('./test_context');
-const { waitUntil } = require('./utils');
+const { waitUntil, pathCollectionsEqual } = require('./utils');
 
 q.module('playlists api', usePlayer());
 
@@ -15,15 +15,18 @@ q.test('get playlists', async assert =>
     assert.equal(playlists.length, 1);
 
     const playlist = playlists[0];
-    assert.ok(playlist.id);
+
+    assert.equal(typeof playlist.id, 'string');
+    assert.equal(typeof playlist.title, 'string');
+
     delete playlist.id;
+    delete playlist.title;
 
     assert.deepEqual(playlist, {
-      index: 0,
-      title: 'Default',
-      isCurrent: true,
-      itemCount: 0,
-      totalTime: 0,
+        index: 0,
+        isCurrent: true,
+        itemCount: 0,
+        totalTime: 0,
     });
 });
 
@@ -35,15 +38,15 @@ q.test('add playlist simple', async assert =>
     assert.equal(playlists.length, 2);
 
     const playlist = playlists[1];
-    assert.ok(playlist.id);
+    assert.equal(typeof playlist.id, 'string');
     delete playlist.id;
 
     assert.deepEqual(playlist, {
-      index: 1,
-      title: 'New playlist',
-      isCurrent: false,
-      itemCount: 0,
-      totalTime: 0,
+        index: 1,
+        title: 'New playlist',
+        isCurrent: false,
+        itemCount: 0,
+        totalTime: 0,
     });
 });
 
@@ -55,15 +58,15 @@ q.test('add playlist full', async assert =>
     assert.equal(playlists.length, 2);
 
     const playlist = playlists[0];
-    assert.ok(playlist.id);
+    assert.equal(typeof playlist.id, 'string');
     delete playlist.id;
 
     assert.deepEqual(playlist, {
-      index: 0,
-      title: 'My playlist',
-      isCurrent: false,
-      itemCount: 0,
-      totalTime: 0,
+        index: 0,
+        title: 'My playlist',
+        isCurrent: false,
+        itemCount: 0,
+        totalTime: 0,
     });
 });
 
@@ -121,12 +124,20 @@ q.test('rename playlist', async assert =>
     assert.equal(playlists[0].title, 'My cool list');
 });
 
-q.test('add playlist items simple', async assert =>
+q.test('add playlist items single', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
+});
+
+q.test('add playlist items multiple', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
 
     const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, [tracks.t1, tracks.t2, tracks.t3]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3], true));
 });
 
 q.test('add playlist items to position', async assert =>
@@ -136,7 +147,7 @@ q.test('add playlist items to position', async assert =>
     await client.addPlaylistItems(0, [tracks.t3], { index: 1 });
 
     const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, [tracks.t1, tracks.t3, tracks.t2]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t3, tracks.t2]));
 });
 
 q.test('add playlist items async', async assert =>
@@ -152,7 +163,7 @@ q.test('add playlist items async', async assert =>
         return result.length === 3 ? result : null;
     });
 
-    assert.deepEqual(files, [tracks.t1, tracks.t2, tracks.t3]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3], true));
 });
 
 q.test('sort playlist items asc', async assert =>
@@ -161,7 +172,7 @@ q.test('sort playlist items asc', async assert =>
     await client.sortPlaylistItems(0, { by: '%tracknumber%' });
 
     const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, [tracks.t1, tracks.t2, tracks.t3]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3]));
 });
 
 q.test('sort playlist items desc', async assert =>
@@ -170,20 +181,20 @@ q.test('sort playlist items desc', async assert =>
     await client.sortPlaylistItems(0, { by: '%tracknumber%', desc: true });
 
     const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, [tracks.t3, tracks.t2, tracks.t1]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t3, tracks.t2, tracks.t1]));
 });
 
 q.test('sort playlist items random', async assert =>
 {
-    const initialFiles = [tracks.t1, tracks.t2, tracks.t3];
-    await client.addPlaylistItems(0, initialFiles);
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    const initialFiles = await client.getPlaylistFiles(0);
 
     for (let i = 0; i < 10; i++)
     {
         await client.sortPlaylistItems(0, { random: true });
         const files = await client.getPlaylistFiles(0);
 
-        if (!isEqual(initialFiles, files))
+        if (!pathCollectionsEqual(initialFiles, files))
         {
             assert.ok(true);
             return;
@@ -195,16 +206,22 @@ q.test('sort playlist items random', async assert =>
 
 q.test('remove playlist items', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t3]);
+
     await client.removePlaylistItems(0, [0, 2]);
 
     const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, [tracks.t2]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t2]));
 });
 
 q.test('move playlist items', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t3]);
+
     await client.movePlaylistItems({
         playlist: 0,
         items: [1, 2],
@@ -212,13 +229,15 @@ q.test('move playlist items', async assert =>
     });
 
     const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, [tracks.t2, tracks.t3, tracks.t1]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t2, tracks.t3, tracks.t1]));
 });
 
 q.test('move playlist items between playlists', async assert =>
 {
     await client.addPlaylist();
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t3]);
     await client.addPlaylistItems(1, [tracks.t3]);
     await client.movePlaylistItems({
         from: 0,
@@ -227,15 +246,17 @@ q.test('move playlist items between playlists', async assert =>
     });
 
     const files1 = await client.getPlaylistFiles(0);
-    assert.deepEqual(files1, [tracks.t1]);
+    assert.ok(pathCollectionsEqual(files1, [tracks.t1]));
 
     const files2 = await client.getPlaylistFiles(1);
-    assert.deepEqual(files2, [tracks.t3, tracks.t2, tracks.t3]);
+    assert.ok(pathCollectionsEqual(files2, [tracks.t3, tracks.t2, tracks.t3]));
 });
 
 q.test('copy playlist items', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t3]);
     await client.copyPlaylistItems({
         playlist: 0,
         items: [0, 1],
@@ -243,13 +264,15 @@ q.test('copy playlist items', async assert =>
     });
 
     const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, [tracks.t1, tracks.t1, tracks.t2, tracks.t2, tracks.t3]);
+    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t1, tracks.t2, tracks.t2, tracks.t3]));
 });
 
 q.test('copy playlist items between playlists', async assert =>
 {
     await client.addPlaylist();
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t3]);
     await client.addPlaylistItems(1, [tracks.t3]);
     await client.copyPlaylistItems({
         from: 0,
@@ -258,8 +281,8 @@ q.test('copy playlist items between playlists', async assert =>
     });
 
     const files1 = await client.getPlaylistFiles(0);
-    assert.deepEqual(files1, [tracks.t1, tracks.t2, tracks.t3]);
+    assert.ok(pathCollectionsEqual(files1, [tracks.t1, tracks.t2, tracks.t3]));
 
     const files2 = await client.getPlaylistFiles(1);
-    assert.deepEqual(files2, [tracks.t3, tracks.t1, tracks.t2]);
+    assert.ok(pathCollectionsEqual(files2, [tracks.t3, tracks.t1, tracks.t2]));
 });
