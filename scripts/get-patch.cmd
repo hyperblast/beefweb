@@ -1,21 +1,29 @@
 setlocal
 
+set target_dir=tools\patch
+set pkg_file=patch.zip
+
 cd "%~dp0.."
 
-if exist tools\patch\. rmdir /s /q tools\patch
-mkdir tools\patch
-cd tools\patch
+if exist %target_dir%. (
+    rmdir /s /q %target_dir%
+    if errorlevel 1 goto :end
+)
 
+mkdir %target_dir%
 if errorlevel 1 goto :end
 
-curl --silent --fail --show-error --location -o patch.zip ^
-    "https://hyperblast.org/files/patch/patch.zip"
+cd %target_dir%
 if errorlevel 1 goto :end
 
-7z x patch.zip
+curl --silent --fail --show-error --location -o %pkg_file% ^
+    "https://hyperblast.org/files/patch/%pkg_file%"
 if errorlevel 1 goto :end
 
-del patch.zip
+7z x %pkg_file%
+if errorlevel 1 goto :end
+
+del %pkg_file%
 if errorlevel 1 goto :end
 
 :end
