@@ -77,6 +77,24 @@ class TestApiClient extends ApiClient
 
         return expectation.lastEvent.player;
     }
+    
+    async waitPlaybackMetadata()
+    {
+        await waitUntil(async () =>
+        {
+            const state = await this.getPlayerState(['%artist%']);
+            return state.activeItem.columns[0] === 'Hyperblast';
+        });
+    }
+
+    async waitMetadata(plref, item)
+    {
+        await waitUntil(async () =>
+        {
+            const items = await this.getPlaylistItems(plref, ['%artist%'], item);
+            return items[0].columns[0] === 'Hyperblast';
+        });
+    }
 
     async getPlaylistFiles(plref, range)
     {
