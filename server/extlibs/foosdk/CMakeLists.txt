@@ -8,6 +8,8 @@ ExternalProject_Add(
         https://github.com/hyperblast/foosdk/archive/2bd812bc24b1288f11016e1aaa578d4bd4d9bc60.zip
     DOWNLOAD_DIR
         ${EXTLIB_CACHE_DIR}/foosdk
+    PATCH_COMMAND
+        ${EXTLIB_PATCHER} foosdk
     CMAKE_ARGS
         -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
         -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
