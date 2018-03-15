@@ -30,24 +30,26 @@ SettingsPageInstance::SettingsPageInstance(
       handle_(nullptr),
       callback_(callback)
 {
-    handle_ = CreateDialogW(
+    auto ret = CreateDialogParamW(
         core_api::get_my_instance(),
         MAKEINTRESOURCEW(IDD_SETTINGS),
         parent,
-        dialogProcWrapper);
+        dialogProcWrapper,
+        reinterpret_cast<LPARAM>(this));
 
-    if (!handle_)
-        throwIfFailed("CreateDialogW", handle_ != nullptr);
-
-    SetWindowLongPtrW(handle_, DWLP_USER, reinterpret_cast<LONG_PTR>(this));
-    musicDirsList_ = ListBox(handle_, IDC_MUSIC_DIRS);
-    load();
+    throwIfFailed("CreateDialogParamW", ret != nullptr);
 }
 
 SettingsPageInstance::~SettingsPageInstance()
 {
     if (handle_)
         DestroyWindow(handle_);
+}
+
+void SettingsPageInstance::initialize()
+{
+    musicDirsList_ = ListBox(handle_, IDC_MUSIC_DIRS);
+    load();
 }
 
 t_uint32 SettingsPageInstance::get_state()
@@ -59,8 +61,18 @@ t_uint32 SettingsPageInstance::get_state()
 INT_PTR CALLBACK SettingsPageInstance::dialogProcWrapper(
     HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-    auto instance = reinterpret_cast<SettingsPageInstance*>(
-        GetWindowLongPtrW(window, DWLP_USER));
+    SettingsPageInstance* instance;
+
+    if (message == WM_INITDIALOG)
+    {
+        instance = reinterpret_cast<SettingsPageInstance*>(lparam);
+        instance->handle_ = window;
+        SetWindowLongPtrW(window, DWLP_USER, lparam);
+    }
+    else
+    {
+        instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
+    }
 
     if (instance)
     {
@@ -82,6 +94,10 @@ INT_PTR SettingsPageInstance::dialogProc(UINT message, WPARAM wparam, LPARAM lpa
 {
     switch (message)
     {
+    case WM_INITDIALOG:
+        initialize();
+        return 0;
+
     case WM_COMMAND:
         return handleCommand(LOWORD(wparam), HIWORD(wparam));
 
@@ -154,7 +170,7 @@ void SettingsPageInstance::reset()
 {
     SetDlgItemInt(handle_, IDC_PORT, MSRV_DEFAULT_PORT, 0);
     uButton_SetCheck(handle_, IDC_ALLOW_REMOTE, true);
-    
+
     musicDirs_.clear();
     musicDirsList_.clear();
 

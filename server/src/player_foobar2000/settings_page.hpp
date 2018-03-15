@@ -84,6 +84,7 @@ private:
     INT_PTR dialogProc(UINT message, WPARAM wparam, LPARAM lparam);
     INT_PTR handleCommand(int control, int message);
 
+    void initialize();
     void load();
     bool hasChanges();
     void addMusicDir();
