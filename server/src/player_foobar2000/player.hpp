@@ -101,7 +101,13 @@ private:
         const TitleFormatVector& compiledColumns,
         pfc::string8* buffer);
 
-    std::vector<std::string> evaluatePlaybackColumns(const TitleFormatVector& compiledColumns);
+    std::vector<std::string> evaluatePlaybackColumns(
+        const TitleFormatVector& compiledColumns);
+
+    void makeItemsMask(
+        t_size playlist,
+        const std::vector<int32_t>& indexes,
+        pfc::bit_array_flatIndexList* mask);
 
     service_ptr_t<playback_control> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;
