@@ -78,7 +78,7 @@ private:
     boost::promise<void> result_;
 };
 
-std::vector<t_size> createIndexesVector(t_size count)
+std::vector<t_size> makeIndexes(t_size count)
 {
     std::vector<t_size> indexes;
     indexes.reserve(count);
@@ -89,7 +89,7 @@ std::vector<t_size> createIndexesVector(t_size count)
     return indexes;
 }
 
-std::vector<t_size> createReverseIndexesVector(t_size count)
+std::vector<t_size> makeIndexesReverse(t_size count)
 {
     std::vector<t_size> indexes;
     indexes.reserve(count);
@@ -217,7 +217,7 @@ void PlayerImpl::movePlaylist(const PlaylistRef& playlist, int32_t index)
     if (newIndex == oldIndex)
         return;
 
-    auto indexes = createIndexesVector(count);
+    auto indexes = makeIndexes(count);
     pfc::create_move_item_permutation(indexes.data(), count, oldIndex, newIndex);
     playlistManager_->reorder(indexes.data(), count);
 }
@@ -316,7 +316,7 @@ void PlayerImpl::sortPlaylist(
         return;
     }
 
-    auto reverseOrder = createReverseIndexesVector(count);
+    auto reverseOrder = makeIndexesReverse(count);
     playlistManager_->playlist_reorder_items(playlist, reverseOrder.data(), count);
     playlistManager_->playlist_sort_by_format(playlist, expression.c_str(), false);
     playlistManager_->playlist_reorder_items(playlist, reverseOrder.data(), count);
