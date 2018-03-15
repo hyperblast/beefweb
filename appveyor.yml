@@ -1,6 +1,7 @@
 image: Visual Studio 2015
 
 install:
+- ps: Install-Product node 8
 - cmake --version
 - node --version
 - yarn --version
