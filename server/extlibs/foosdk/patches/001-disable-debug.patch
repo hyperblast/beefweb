@@ -1,0 +1,13 @@
+diff --git a/sdk/foobar2000/foobar2000_component_client/component_client.cpp b/sdk/foobar2000/foobar2000_component_client/component_client.cpp
+index 0d688bb..91e9f73 100644
+--- a/sdk/foobar2000/foobar2000_component_client/component_client.cpp
++++ b/sdk/foobar2000/foobar2000_component_client/component_client.cpp
+@@ -100,7 +100,7 @@ namespace {
+ 		}
+ 
+ 		bool is_debug() {
+-#ifdef _DEBUG
++#if 0
+ 			return true;
+ #else
+ 			return false;
