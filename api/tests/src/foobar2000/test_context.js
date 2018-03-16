@@ -9,6 +9,8 @@ class TestContext extends TestContextBase
 {
     initConfig(config)
     {
+        config.supportsArtwork = false;
+
         config.pluginBuildDir = path.join(
             config.rootDir,
             'server',
