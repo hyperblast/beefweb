@@ -13,6 +13,7 @@ configuration: Release
 
 environment:
   EnableTests: True
+  ServerBuildFlags: -DENABLE_STATIC_STDLIB=ON
 
 test_script:
 - server\build\release\src\tests\Release\core_tests.exe
