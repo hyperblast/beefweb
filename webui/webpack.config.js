@@ -12,7 +12,7 @@ function configCommon(cfg, opts)
     cfg.entry.push('normalize.css');
     cfg.entry.push('event-source-polyfill');
 
-    if (!opts.useReact)
+    if (opts.reactImpl === 'preact')
     {
         cfg.resolve.alias['react'] = 'preact-compat';
         cfg.resolve.alias['react-dom'] = 'preact-compat';
@@ -127,11 +127,19 @@ function configRelease(cfg)
     });
 }
 
+function isValidReactImpl(impl)
+{
+    return impl === 'react' || impl === 'preact';
+}
+
 function makeBuildOpts(env)
 {
     const buildType = env.release ? 'release' : 'debug';
     const enableTests = !!env.tests;
-    const useReact = !!env.react;
+    const reactImpl = env.reactImpl || 'react';
+
+    if (!isValidReactImpl(reactImpl))
+        throw new Error(`Invalid reactImpl value: ${reactImpl}`);
 
     const sourceDir = path.join(__dirname, 'src');
     const outputDir = path.join(__dirname, 'build', buildType);
@@ -140,10 +148,10 @@ function makeBuildOpts(env)
     return {
         buildType,
         enableTests,
-        useReact,
         rootDir,
         sourceDir,
         outputDir,
+        reactImpl,
     };
 }
 
