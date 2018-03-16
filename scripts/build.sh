@@ -196,7 +196,7 @@ function build_pkg()
         strip -s $plugin_file
     fi
 
-    tar czf $pkg_build_dir/$pkg_name-$pkg_version-$git_rev-$server_arch.tar.gz *
+    tar czf $pkg_build_dir/${pkg_name}-${pkg_version}_${git_rev}-${server_arch}.tar.gz *
 
     rm -rf $pkg_tmp_dir
 }

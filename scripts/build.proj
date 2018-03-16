@@ -89,7 +89,7 @@
             SourceFiles="@(WebuiFiles)"
             DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
         <Exec
-            Command="7z a -r -mx9 -tzip ..\$(PackageFile)-$(PackageVersion)-$(GitRevision).fb2k-component *"
+            Command="7z a -r -mx9 -tzip ..\$(PackageFile)-$(PackageVersion)_$(GitRevision).fb2k-component *"
             WorkingDirectory="$(PackageTempDir)" />
         <RemoveDir Directories="$(PackageTempDir)" />
     </Target>
