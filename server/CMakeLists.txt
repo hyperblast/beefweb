@@ -37,8 +37,6 @@ if(OS_WINDOWS)
     local_library_option(zlib   ENABLE_LOCAL_ZLIB "")
 endif()
 
-print_options()
-
 set(COMMON_C_FLAGS    "")
 set(COMMON_CXX_FLAGS  "")
 
@@ -50,6 +48,19 @@ set(COMMON_CXX_FLAGS "${COMMON_C_FLAGS} ${COMMON_CXX_FLAGS}")
 
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMMON_CXX_FLAGS}")
+
+if(CXX_MSVC)
+    if(ENABLE_STATIC_STDLIB)
+        foreach(LANG_NAME C CXX)
+            foreach(BUILD_TYPE DEBUG RELEASE MINSIZEREL RELWITHDEBINFO)
+                set(VAR_NAME CMAKE_${LANG_NAME}_FLAGS_${BUILD_TYPE})
+                string(REPLACE "/MD" "/MT" ${VAR_NAME} "${${VAR_NAME}}")
+            endforeach()
+        endforeach()
+    endif()
+endif()
+
+print_status()
 
 add_custom_target(ext_all)
 
