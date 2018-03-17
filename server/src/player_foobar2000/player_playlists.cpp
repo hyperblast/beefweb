@@ -320,7 +320,7 @@ void PlayerImpl::movePlaylistItems(
     pfc::bit_array_flatIndexList items;
     makeItemsMask(source, sourceItemIndexes, &items);
 
-    if (position != pfc_infinite)
+    if (source == target && position != pfc_infinite)
         position -= items.calc_count(true, 0, position);
 
     pfc::list_t<metadb_handle_ptr> handles;
