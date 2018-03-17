@@ -345,20 +345,25 @@ void PlayerImpl::sortPlaylist(
     bool descending)
 {
     auto playlist = playlists_->resolve(plref);
+
+    titleformat_object::ptr sortBy;
+    if (!titleFormatCompiler_->compile(sortBy, expression.c_str()))
+        throw InvalidRequestException("Invalid title format");
+
     auto count = playlistManager_->playlist_get_item_count(playlist);
     if (count == 0)
         return;
 
-    if (!descending)
-    {
-        playlistManager_->playlist_sort_by_format(playlist, expression.c_str(), false);
-        return;
-    }
+    pfc::list_t<metadb_handle_ptr> items;
+    items.prealloc(count);
+    playlistManager_->playlist_get_items(playlist, items, bit_array_true());
 
-    auto reverseOrder = makeIndexesReverse(count);
-    playlistManager_->playlist_reorder_items(playlist, reverseOrder.data(), count);
-    playlistManager_->playlist_sort_by_format(playlist, expression.c_str(), false);
-    playlistManager_->playlist_reorder_items(playlist, reverseOrder.data(), count);
+    std::vector<t_size> order;
+    order.resize(count);
+    metadb_handle_list_helper::sort_by_format_get_order(
+        items, order.data(), sortBy, nullptr, descending ? -1 : 1);
+
+    playlistManager_->playlist_reorder_items(playlist, order.data(), count);
 }
 
 void PlayerImpl::sortPlaylistRandom(const PlaylistRef& plref)
