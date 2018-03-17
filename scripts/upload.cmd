@@ -6,7 +6,7 @@ msbuild upload.proj
 goto :end
 
 :appveyor
-if "%APPVEYOR_REPO_BRANCH%" neq "foobar2000-port" goto :skip
+if "%APPVEYOR_REPO_BRANCH%" neq "master" goto :skip
 if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" goto :skip
 msbuild upload.proj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 goto :end
