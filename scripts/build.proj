@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0" DefaultTargets="All">
     <Import Project="$(MSBuildProjectDirectory)\config.props" />
+
     <PropertyGroup>
         <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
         <EnableTests Condition="'$(EnableTests)' == ''">False</EnableTests>
