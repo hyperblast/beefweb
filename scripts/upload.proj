@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0" DefaultTargets="Upload">
+    <Import Project="$(MSBuildProjectDirectory)\config.props" />
+
+    <PropertyGroup>
+        <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
+        <PackageBuildDir>$(RootDir)\build\release</PackageBuildDir>
+        <CurlArgs>--silent --fail --show-error --http1.1 --anyauth</CurlArgs>
+    </PropertyGroup>
+
+    <Target Name="FindPackageFile">
+        <ItemGroup>
+            <PackageFile Include="$(PackageBuildDir)\$(PackageFile)-*.fb2k-component" />
+        </ItemGroup>
+        <PropertyGroup>
+            <PackageFilePath>@(PackageFile -> '%(FullPath)')</PackageFilePath>
+        </PropertyGroup>
+        <Error Text="Unable to find package file" Condition="'$(PackageFilePath)' == ''" />
+        <PropertyGroup>
+            <PackageFileTimestamp>@(PackageFile -> '%(ModifiedTime)')</PackageFileTimestamp>
+            <PackageFileDate>$(PackageFileTimestamp.Substring(0, 10))</PackageFileDate> 
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="MakeUploadDirectory" DependsOnTargets="FindPackageFile">
+        <PropertyGroup>
+            <UploadUrl>https://hyperblast.org/uploads/$(ProjectName)/builds/$(PackageFileDate)/</UploadUrl>
+        </PropertyGroup>
+        <Exec
+            Command="secure-curl.cmd $(CurlArgs) -X MKCOL $(UploadUrl)"
+            IgnoreExitCode="True" />
+    </Target>
+    
+    <Target Name="Upload" DependsOnTargets="MakeUploadDirectory">
+        <Exec Command="secure-curl.cmd $(CurlArgs) -T $(PackageFilePath) $(UploadUrl)" />
+    </Target>
+</Project>
