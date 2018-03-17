@@ -312,20 +312,20 @@ void PlayerImpl::movePlaylistItems(
     auto source = playlists_->resolve(sourcePlaylist);
     auto target = playlists_->resolve(targetPlaylist);
 
-    pfc::bit_array_flatIndexList items;
-    makeItemsMask(source, sourceItemIndexes, &items);
-
-    pfc::list_t<metadb_handle_ptr> handles;
-    playlistManager_->playlist_get_items(source, handles, items);
-
-    playlistManager_->playlist_remove_items(source, items);
-
-    // TODO: handle index recalculation if removed items affect new position
     auto position = clampIndex(
         targetIndex,
         playlistManager_->playlist_get_item_count(target),
         pfc_infinite);
 
+    pfc::bit_array_flatIndexList items;
+    makeItemsMask(source, sourceItemIndexes, &items);
+
+    if (position != pfc_infinite)
+        position -= items.calc_count(true, 0, position);
+
+    pfc::list_t<metadb_handle_ptr> handles;
+    playlistManager_->playlist_get_items(source, handles, items);
+    playlistManager_->playlist_remove_items(source, items);
     playlistManager_->playlist_insert_items(target, position, handles, bit_array_false());
 }
 
