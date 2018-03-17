@@ -30,42 +30,31 @@ if [ "$CC" = gcc ]; then
     is_gcc=1
 fi
 
-echo
-echo '=== Downloading deadbeef binaries ==='
-echo
+function banner()
+{
+    echo
+    echo "=== $1 ==="
+    echo
+}
 
+banner 'Downloading deadbeef binaries'
 scripts/get-deadbeef.sh
 
-echo
-echo '=== Downloading cmake binaries ==='
-echo
-
+banner 'Downloading cmake binaries'
 scripts/get-cmake.sh
 export PATH="$(pwd)/tools/cmake/bin:$PATH"
 
-echo
-echo '=== Building everything ==='
-echo
-
+banner 'Building everything'
 scripts/build.sh --all --release --tests --verbose \
     -DENABLE_WERROR=ON -DENABLE_STATIC_STDLIB=ON
 
-echo
-echo '=== Running server tests ==='
-echo
-
+banner 'Running server tests'
 server/build/release/src/tests/core_tests
 
-echo
-echo '=== Running API tests ==='
-echo
-
+banner 'Running API tests'
 (cd api/tests; yarn install; API_TESTS_BUILD_TYPE=release yarn run test)
 
 if [ -n $is_gcc ] && [ "$TRAVIS_BRANCH" = master ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
-    echo
-    echo '=== Uploading artifacts ==='
-    echo
-
+    banner 'Uploading artifacts'
     scripts/upload.sh
 fi

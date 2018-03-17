@@ -104,6 +104,13 @@ server_plugin_file=$server_build_dir/src/player_deadbeef/$plugin_file
 webui_src_dir=$(pwd)/webui
 webui_build_dir=$(pwd)/webui/build/$build_type
 
+function banner()
+{
+    echo
+    echo ">> $1 <<"
+    echo
+}
+
 function detect_server_arch()
 {
     test -e $server_plugin_file
@@ -129,9 +136,7 @@ function show_server_build_logs()
 
 function build_server()
 {
-    echo
-    echo '>> Building server <<'
-    echo
+    banner 'Building server'
 
     rm -rf $server_build_dir
     mkdir -p $server_build_dir
@@ -154,9 +159,7 @@ function build_server()
 
 function build_webui()
 {
-    echo
-    echo '>> Building webui <<'
-    echo
+    banner 'Building webui'
 
     webui_flags=""
 
@@ -176,9 +179,7 @@ function build_webui()
 
 function build_pkg()
 {
-    echo
-    echo '>> Building package <<'
-    echo
+    banner 'Building package'
 
     detect_server_arch
 
