@@ -12,11 +12,11 @@ cd "$(dirname $0)/.."
 
 pkg_file=$(ls build/release/$pkg_name-*.tar.gz)
 build_date=$(date -u -r "$pkg_file" +%F)
-upload_url="https://hyperblast.org/uploads/$pkg_name/builds/$build_date/"
-curl_args="--http1.1 --anyauth --user $UPLOAD_CREDS -o /dev/null"
+upload_url="https://hyperblast.org/uploads/$project_name/builds/$build_date/"
+curl_args="--silent --fail --show-error --http1.1 --anyauth --user $UPLOAD_CREDS"
 
 echo "Creating artifacts directory: $upload_url"
-curl -X MKCOL "$upload_url" $curl_args || true
+curl $curl_args -X MKCOL "$upload_url" || true
 
 echo "Uploading artifact: $pkg_file"
-curl -T "$pkg_file" "$upload_url" $curl_args
+curl $curl_args -T "$pkg_file" "$upload_url"
