@@ -21,5 +21,6 @@ test_script:
 - cd api\tests
 - yarn install
 - yarn test
+- cd %APPVEYOR_BUILD_FOLDER%
 
 deploy_script: scripts\upload.cmd
