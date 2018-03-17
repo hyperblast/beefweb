@@ -21,3 +21,10 @@ test_script:
 - cd api\tests
 - yarn install
 - yarn test
+
+deploy_script: |
+  if "%APPVEYOR_REPO_BRANCH%" == "foobar2000-port" (
+    if "%APPVEYOR_PULL_REQUEST_NUMBER%" == "" (
+      msbuild scripts\upload.proj /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    )
+  )
