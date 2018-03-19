@@ -122,8 +122,11 @@ void PlayerImpl::playItem(const PlaylistRef& plref, int32_t itemIndex)
 {
     auto playlist = playlists_->resolve(plref);
 
-    if (isValidItemIndex(playlist, itemIndex))
-        playlistManager_->playlist_execute_default_action(playlist, itemIndex);
+    if (!isValidItemIndex(playlist, itemIndex))
+        return;
+
+    playlistManager_->set_active_playlist(playlist);
+    playlistManager_->playlist_execute_default_action(playlist, itemIndex);
 }
 
 void PlayerImpl::playRandom()
