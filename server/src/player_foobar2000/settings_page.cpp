@@ -48,7 +48,6 @@ SettingsPageInstance::~SettingsPageInstance()
 
 void SettingsPageInstance::initialize()
 {
-    musicDirsList_ = ListBox(handle_, IDC_MUSIC_DIRS);
     load();
 }
 
@@ -157,7 +156,7 @@ void SettingsPageInstance::load()
     musicDirs_ = SettingVars::getMusicDirs();
 
     for (auto& dir : musicDirs_)
-        musicDirsList_.add(dir.data(), dir.length());
+        uSendDlgItemMessageText(handle_, IDC_MUSIC_DIRS, LB_ADDSTRING, 0, dir.c_str());
 
     uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, SettingVars::authRequired);
     uSetDlgItemText(handle_, IDC_AUTH_USER, SettingVars::authUser.get_ptr());
@@ -172,7 +171,7 @@ void SettingsPageInstance::reset()
     uButton_SetCheck(handle_, IDC_ALLOW_REMOTE, true);
 
     musicDirs_.clear();
-    musicDirsList_.clear();
+    SendDlgItemMessageW(handle_, IDC_MUSIC_DIRS, LB_RESETCONTENT, 0, 0);
 
     uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, false);
     uSetDlgItemText(handle_, IDC_AUTH_USER, "");
@@ -236,19 +235,21 @@ void SettingsPageInstance::addMusicDir()
         return;
 
     musicDirs_.emplace_back(std::move(dir));
-    musicDirsList_.add(path.get_ptr(), path.get_length());
+    uSendDlgItemMessageText(handle_, IDC_MUSIC_DIRS, LB_ADDSTRING, 0, path.get_ptr());
+
     notifyChanged();
 }
 
 void SettingsPageInstance::removeMusicDir()
 {
-    auto index = musicDirsList_.selectedIndex();
+    auto index = SendDlgItemMessageW(handle_, IDC_MUSIC_DIRS, LB_GETCURSEL, 0, 0);
 
     if (index == LB_ERR)
         return;
 
     musicDirs_.erase(musicDirs_.begin() + index);
-    musicDirsList_.remove(index);
+    SendDlgItemMessageW(handle_, IDC_MUSIC_DIRS, LB_DELETESTRING, index, 0);
+
     notifyChanged();
 }
 

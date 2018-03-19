@@ -10,44 +10,6 @@
 namespace msrv {
 namespace player_foobar2000 {
 
-class ListBox
-{
-public:
-    ListBox()
-        : handle_(nullptr)
-    {
-    }
-
-    ListBox(HWND parent, int control)
-        : handle_(GetDlgItem(parent, control))
-    {
-    }
-
-    void add(const char* str, size_t len)
-    {
-        auto wstr = utf8To16(str, len);
-        SendMessageW(handle_, LB_ADDSTRING, 0, reinterpret_cast<LPARAM>(wstr.c_str()));
-    }
-
-    void clear()
-    {
-        SendMessageW(handle_, LB_RESETCONTENT, 0, 0);
-    }
-
-    LONG_PTR selectedIndex()
-    {
-        return SendMessageW(handle_, LB_GETCURSEL, 0, 0);
-    }
-
-    void remove(size_t index)
-    {
-        SendMessageW(handle_, LB_DELETESTRING, index, 0);
-    }
-
-private:
-    HWND handle_;
-};
-
 class SettingsPage : public preferences_page_v3
 {
 public:
@@ -94,7 +56,6 @@ private:
 
     HWND parent_;
     HWND handle_;
-    ListBox musicDirsList_;
     std::vector<std::string> musicDirs_;
     preferences_page_callback::ptr callback_;
 };
