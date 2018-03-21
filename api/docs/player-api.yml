@@ -573,6 +573,8 @@ paths:
           schema:
             type: object
             properties:
+              pathSeparator:
+                type: string
               roots:
                 type: array
                 items:
@@ -594,6 +596,8 @@ paths:
           schema:
             type: object
             properties:
+              pathSeparator:
+                type: string
               entries:
                 type: array
                 items:

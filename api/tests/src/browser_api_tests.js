@@ -21,6 +21,11 @@ function normalizeResult(result)
     );
 }
 
+function isPathSeparator(str)
+{
+    return str === '/' || str === '\\';
+}
+
 async function getFileSystemEntriesDirect(dirPath)
 {
     const names = await readdir(dirPath);
@@ -50,31 +55,34 @@ q.module('browser api', usePlayer());
 
 q.test('get roots', async assert =>
 {
-    const result = normalizeResult(await client.getFileSystemRoots());
-
-    assert.deepEqual(result, [{
+    const result = await client.getFileSystemRoots()
+    const actual = normalizeResult(result.roots);
+    const expected = [{
         name: config.musicDir,
         path: config.musicDir,
         type: 'D',
-    }]);
+    }];
+
+    assert.ok(isPathSeparator(result.pathSeparator));
+    assert.deepEqual(actual, expected);
 });
 
 q.test('get entries root', async assert =>
 {
+    const result = await client.getFileSystemEntries(config.musicDir);
     const expected = await getFileSystemEntriesDirect(config.musicDir);
+    const actual = normalizeResult(result.entries);
 
-    const actual = normalizeResult(
-        await client.getFileSystemEntries(config.musicDir));
-
+    assert.ok(isPathSeparator(result.pathSeparator));
     assert.deepEqual(actual, expected);
 });
 
 q.test('get entries subdir', async assert =>
 {
+    const result = await client.getFileSystemEntries(musicSubdir);
     const expected = await getFileSystemEntriesDirect(musicSubdir);
+    const actual = normalizeResult(result.entries);
 
-    const actual = normalizeResult(
-        await client.getFileSystemEntries(musicSubdir));
-
+    assert.ok(isPathSeparator(result.pathSeparator));
     assert.deepEqual(actual, expected);
 });

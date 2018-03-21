@@ -295,12 +295,12 @@ class ApiClient
 
     getFileSystemRoots()
     {
-        return this.get('api/browser/roots').then(r => r.roots);
+        return this.get('api/browser/roots');
     }
 
     getFileSystemEntries(path)
     {
-        return this.get('api/browser/entries', { path }).then(r => r.entries);
+        return this.get('api/browser/entries', { path });
     }
 
     getArtwork(query)

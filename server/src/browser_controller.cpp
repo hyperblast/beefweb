@@ -37,11 +37,8 @@ const char* getTypeCode(FileType value)
     case FileType::DIRECTORY:
         return "D";
 
-    case FileType::UNKNOWN:
-        return "U";
-
     default:
-        abort();
+        return "O";
     }
 }
 
@@ -52,6 +49,11 @@ void to_json(Json& json, const FileSystemEntry& value)
     json["type"] = getTypeCode(value.type);
     json["timestamp"] = value.timestamp;
     json["size"] = value.size;
+}
+
+inline std::string pathSeparator()
+{
+    return std::string(1, static_cast<char>(Path::preferred_separator));
 }
 
 }
@@ -79,7 +81,10 @@ ResponsePtr BrowserController::getRoots()
             roots.emplace_back(makeFsEntry(path, path, info));
     }
 
-    return Response::json({{ "roots", roots }});
+    return Response::json({
+        { "roots", roots },
+        { "pathSeparator", pathSeparator() }
+    });
 }
 
 ResponsePtr BrowserController::getEntries()
@@ -104,7 +109,10 @@ ResponsePtr BrowserController::getEntries()
             entries.emplace_back(makeFsEntry(path.filename(), path, info));
     }
 
-    return  Response::json({{ "entries", entries }});
+    return  Response::json({
+        { "entries", entries },
+        { "pathSeparator", pathSeparator() }
+    });
 }
 
 void BrowserController::defineRoutes(Router* router, WorkQueue* workQueue, SettingsStore* store)

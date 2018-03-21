@@ -43,13 +43,13 @@ export default class FileBrowserModel extends EventEmitter
         {
             this.client
                 .getFileSystemRoots()
-                .then(result => this.endBrowse(path, result));
+                .then(r => this.endBrowse(path, r.roots));
         }
         else
         {
             this.client
                 .getFileSystemEntries(path)
-                .then(result => this.endBrowse(path, result));
+                .then(r => this.endBrowse(path, r.entries));
         }
     }
 
