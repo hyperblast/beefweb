@@ -43,13 +43,13 @@ export default class FileBrowserModel extends EventEmitter
         {
             this.client
                 .getFileSystemRoots()
-                .then(r => this.endBrowse(path, r.roots));
+                .then(r => this.endBrowse(path, r.roots, r.pathSeparator));
         }
         else
         {
             this.client
                 .getFileSystemEntries(path)
-                .then(r => this.endBrowse(path, r.entries));
+                .then(r => this.endBrowse(path, r.entries, r.pathSeparator));
         }
     }
 
@@ -58,18 +58,18 @@ export default class FileBrowserModel extends EventEmitter
         this.browse(this.currentPath);
     }
 
-    endBrowse(path, entries)
+    endBrowse(path, entries, separator)
     {
         entries = entries.sort(compareEntry);
 
         if (path == rootPath)
         {
-            this.roots = entries.map(e => e.path + '/');
+            this.roots = entries.map(e => e.path + separator);
             this.parentPath = null;
         }
         else
         {
-            this.parentPath = this.getLogicalParentDir(path);
+            this.parentPath = this.getLogicalParentDir(path, separator);
         }
 
         this.currentPath = path;
@@ -77,10 +77,10 @@ export default class FileBrowserModel extends EventEmitter
         this.emit('change');
     }
 
-    getLogicalParentDir(path)
+    getLogicalParentDir(path, separator)
     {
-        var parent = getParentDir(path);
-        var parentWithSeparator = parent + '/';
+        var parent = getParentDir(path, separator);
+        var parentWithSeparator = parent + separator;
 
         for (let root of this.roots)
         {

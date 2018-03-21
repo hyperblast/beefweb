@@ -18,9 +18,9 @@ export function formatTime(value, withHours = false)
     return hoursStr + formatTimePart(minutes) + ':' + formatTimePart(seconds);
 }
 
-export function getParentDir(path)
+export function getParentDir(path, sep)
 {
-    var index = path.lastIndexOf('/');
+    var index = path.lastIndexOf(sep);
 
     if (index < 0)
         return '';
