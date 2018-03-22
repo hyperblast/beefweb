@@ -1,4 +1,7 @@
 import EventEmitter from 'wolfy87-eventemitter'
+import { looseDeepEqual } from './utils'
+
+const eventNames = ['player', 'playlists', 'playlistItems'];
 
 export default class DataSource extends EventEmitter
 {
@@ -10,10 +13,11 @@ export default class DataSource extends EventEmitter
         this.eventSource = null;
         this.isStarted = false;
         this.subscriptions = {};
+        this.previousEvents = {};
         this.handleEvent = this.handleEvent.bind(this);
-        this.defineEvent('player');
-        this.defineEvent('playlists');
-        this.defineEvent('playlistItems');
+
+        for (let event of eventNames)
+            this.defineEvent(event);
     }
 
     start()
@@ -24,19 +28,21 @@ export default class DataSource extends EventEmitter
 
     handleEvent(result)
     {
-        if (result.player)
-            this.emit('player', result.player);
+        for (let event of eventNames)
+        {
+            const value = result[event];
 
-        if (result.playlists)
-            this.emit('playlists', result.playlists);
+            if (!value || looseDeepEqual(value, this.previousEvents[event]))
+                continue;
 
-        if (result.playlistItems)
-            this.emit('playlistItems', result.playlistItems);
+            this.previousEvents[event] = value;
+            this.emit(event, value);
+        }
     }
 
-    watch(eventName, args = null)
+    watch(eventName, args)
     {
-        this.subscriptions[eventName] = args ? Object.assign({}, args) : {};
+        this.subscriptions[eventName] = Object.assign({}, args);
         this.reinitEventSource();
     }
 

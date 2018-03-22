@@ -45,3 +45,42 @@ export function bindHandlers(obj)
         obj[prop] = handler.bind(obj);
     }
 }
+
+export function looseDeepEqual(value1, value2)
+{
+    if (value1 === value2)
+        return true;
+
+    const isArray = Array.isArray(value1);
+
+    if (isArray !== Array.isArray(value2))
+        return false;
+
+    if (isArray)
+    {
+        if (value1.length !== value2.length)
+            return false;
+
+        for (let i = 0; i < value1.length; i++)
+        {
+            if (!looseDeepEqual(value1[i], value2[i]))
+                return false;
+        }
+
+        return true;
+    }
+
+    if (!(value1 instanceof Object) || !(value2 instanceof Object))
+        return false;
+
+    // Skip check for added/removed properties.
+    // Objects returned by API always have the same structure.
+
+    for (let key in value1)
+    {
+        if (!looseDeepEqual(value1[key], value2[key]))
+            return false;
+    }
+
+    return true;
+}
