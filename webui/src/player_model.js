@@ -73,17 +73,14 @@ export default class PlayerModel extends EventEmitter
 
     mute()
     {
-        this.volume = Object.assign(
-            {}, this.volume, { isMuted: !this.volume.isMuted });
-
-        this.emit('change');
-        this.client.setMuted(this.volume.isMuted);
+        const isMuted = !this.volume.isMuted;
+        this.updateState('volume', { isMuted });
+        this.client.setMuted(isMuted);
     }
 
     setVolume(value)
     {
-        this.volume = Object.assign({}, this.volume, { value });
-        this.emit('change');
+        this.updateState('volume', { value });
         this.setVolumeRemote(value);
     }
 
@@ -109,6 +106,12 @@ export default class PlayerModel extends EventEmitter
         this.emit('change');
     }
 
+    updateState(key, value)
+    {
+        this[key] = Object.assign({}, this[key], value);
+        this.emit('change');
+    }
+
     updatePosition(delta)
     {
         const { position, duration } = this.activeItem;
@@ -118,9 +121,6 @@ export default class PlayerModel extends EventEmitter
 
         const newPosition = clamp(position + delta, 0, duration);
 
-        this.activeItem = Object.assign(
-            {}, this.activeItem, { position: newPosition });
-
-        this.emit('change');
+        this.updateState('activeItem', { position: newPosition });
     }
 }
