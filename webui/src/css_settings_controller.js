@@ -1,7 +1,7 @@
 import startsWith from 'lodash/startsWith'
 import SettingsModel, { MediaSize } from './settings_model'
 
-const settingClassPrefix = 'setting-';
+const settingClassPrefix = 'st-';
 
 function makeSettingClass(name, value)
 {
