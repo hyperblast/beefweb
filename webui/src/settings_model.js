@@ -12,7 +12,7 @@ export const SettingType = Object.freeze({
 
 export const FontSize = Object.freeze({
     small: 'small',
-    normal: 'normal',
+    medium: 'medium',
     large: 'large',
 });
 
@@ -71,12 +71,12 @@ export default class SettingsModel extends EventEmitter
             key: 'fontSize',
             type: SettingType.enum,
             version: 2,
-            defaultValue: FontSize.normal,
+            defaultValue: FontSize.medium,
             title: 'Font size',
             enumKeys: FontSize,
             enumNames: {
                 [FontSize.small]: 'Small',
-                [FontSize.normal]: 'Normal',
+                [FontSize.medium]: 'Medium',
                 [FontSize.large]: 'Large'
             },
         });

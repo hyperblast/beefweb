@@ -1,7 +1,7 @@
 /* Variables */
 
 @scale-small: 0.875;
-@scale-normal: 1.0;
+@scale-medium: 1.0;
 @scale-large: 1.125;
 
 @layout-compact-size: 43em;
@@ -50,8 +50,8 @@
         }
     }
 
-    @media (max-width: (@layout-compact-size * @scale-normal)) {
-        .setting-fontsize-normal {
+    @media (max-width: (@layout-compact-size * @scale-medium)) {
+        .setting-fontsize-medium {
             @rules();
         }
     }
@@ -70,8 +70,8 @@
         }
     }
 
-    @media (max-width: (@layout-tiny-size * @scale-normal)) {
-        .setting-fontsize-normal {
+    @media (max-width: (@layout-tiny-size * @scale-medium)) {
+        .setting-fontsize-medium {
             @rules();
         }
     }
@@ -99,8 +99,8 @@ html {
     font-size: percentage(@scale-small);
 }
 
-.setting-fontsize-normal {
-    font-size: percentage(@scale-normal);
+.setting-fontsize-medium {
+    font-size: percentage(@scale-medium);
 }
 
 .setting-fontsize-large {

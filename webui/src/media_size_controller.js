@@ -9,7 +9,7 @@ const MediaSizes = Object.freeze({
 
 const FontScale = Object.freeze({
     small: 0.875,
-    normal: 1.0,
+    medium: 1.0,
     large: 1.125,
 });
 
