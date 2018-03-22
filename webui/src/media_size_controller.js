@@ -83,9 +83,6 @@ export default class MediaSizeController
     {
         const query = this.mediaQueries[this.settingsModel.fontSize];
 
-        console.log(this.settingsModel.mediaSize);
-        console.log(query.getMediaSize());
-
         this.settingsModel.mediaSize = query.getMediaSize();
     }
 }
