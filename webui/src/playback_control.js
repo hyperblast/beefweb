@@ -73,6 +73,7 @@ export default class PlaybackControl extends Component
 
         const modeMenuItems = playbackModes.map((mode, index) => (
             <MenuItem
+                key={index}
                 title={mode}
                 checked={index === playbackMode}
                 onClick={e => this.handleSetMode(e, index)} />
