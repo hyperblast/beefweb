@@ -1,6 +1,7 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import SettingsStore from './settings_store.js'
 import pickBy from 'lodash/pickBy'
+import mapKeys from 'lodash/mapKeys'
 
 const storageKey = 'player_settings';
 
@@ -28,7 +29,8 @@ export const MediaSize = Object.freeze({
 });
 
 const defaultSettingProps = Object.freeze({
-    persistent: true
+    persistent: true,
+    version: 1,
 });
 
 export default class SettingsModel extends EventEmitter
@@ -68,6 +70,7 @@ export default class SettingsModel extends EventEmitter
         this.define({
             key: 'fontSize',
             type: SettingType.enum,
+            version: 2,
             defaultValue: FontSize.normal,
             title: 'Font size',
             enumKeys: FontSize,
@@ -149,7 +152,10 @@ export default class SettingsModel extends EventEmitter
         if (!data)
             return;
 
-        const newValues = JSON.parse(data);
+        const newValues = mapKeys(
+            JSON.parse(data),
+            (value, key) => this.removePersistenceVersion(key));
+
         const pendingEvents = [];
 
         for (let key of Object.keys(newValues))
@@ -177,8 +183,30 @@ export default class SettingsModel extends EventEmitter
 
     save()
     {
-        const values = pickBy(this.values, (value, key) => this.metadata[key].persistent);
+        const values = mapKeys(
+            pickBy(this.values, (value, key) => this.metadata[key].persistent),
+            (value, key) => this.addPersistenceVersion(key));
 
         this.store.setItem(storageKey, JSON.stringify(values));
+    }
+
+    addPersistenceVersion(key)
+    {
+        const metadata = this.metadata[key];
+
+        if (metadata.version === 1)
+            return key;
+
+        return `${key}_v${metadata.version}`;
+    }
+
+    removePersistenceVersion(key)
+    {
+        const index = key.lastIndexOf('_');
+
+        if (index < 0)
+            return key;
+
+        return key.substring(0, index);
     }
 }
