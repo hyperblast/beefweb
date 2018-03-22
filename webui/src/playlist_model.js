@@ -115,7 +115,7 @@ export default class PlaylistModel extends EventEmitter
 
     updateLayout()
     {
-        const newColumns = this.settingsModel.mediaSize === MediaSize.full
+        const newColumns = this.settingsModel.mediaSizeUp(MediaSize.large)
             ? standardPreset
             : compactPreset;
 

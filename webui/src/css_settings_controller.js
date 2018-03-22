@@ -1,5 +1,5 @@
 import startsWith from 'lodash/startsWith'
-import SettingsModel from './settings_model'
+import SettingsModel, { MediaSize } from './settings_model'
 
 const settingClassPrefix = 'setting-';
 
@@ -39,16 +39,34 @@ export default class CssSettingsController
             .split(' ')
             .filter(i => i !== '' && !startsWith(i, settingClassPrefix));
 
-        const values = this.settingsModel.values;
-
-        for (let prop of Object.keys(values))
-        {
-            let value = values[prop];
-
-            if (value !== undefined)
-                classNames.push(makeSettingClass(prop, value));
-        }
+        this.addSettingClasses(classNames);
+        this.addMediaSizeClasses(classNames);
 
         rootElement.className = classNames.join(' ');
+    }
+
+    addSettingClasses(classNames)
+    {
+        const values = this.settingsModel.values;
+
+        for (let key of Object.keys(values))
+        {
+            let value = values[key];
+
+            if (value !== undefined)
+                classNames.push(makeSettingClass(key, value));
+        }
+    }
+
+    addMediaSizeClasses(classNames)
+    {
+        for (let size of Object.keys(MediaSize))
+        {
+            if (this.settingsModel.mediaSizeUp(size))
+                classNames.push(`${settingClassPrefix}mediasize-${size}-up`);
+
+            if (this.settingsModel.mediaSizeDown(size))
+                classNames.push(`${settingClassPrefix}mediasize-${size}-down`);
+        }
     }
 }

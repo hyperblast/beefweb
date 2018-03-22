@@ -23,9 +23,15 @@ export const InputMode = Object.freeze({
 });
 
 export const MediaSize = Object.freeze({
-    full: 'full',
-    compact: 'compact',
-    tiny: 'tiny',
+    small: 'small',
+    medium: 'medium',
+    large: 'large',
+});
+
+export const MediaSizeIndex = Object.freeze({
+    [MediaSize.small]: 0,
+    [MediaSize.medium]: 1,
+    [MediaSize.large]: 2,
 });
 
 const defaultSettingProps = Object.freeze({
@@ -91,7 +97,7 @@ export default class SettingsModel extends EventEmitter
         this.define({
             key: 'mediaSize',
             type: SettingType.enum,
-            defaultValue: MediaSize.full,
+            defaultValue: MediaSize.large,
             enumKeys: MediaSize,
             persistent: false,
         });
@@ -188,6 +194,16 @@ export default class SettingsModel extends EventEmitter
             (value, key) => this.addPersistenceVersion(key));
 
         this.store.setItem(storageKey, JSON.stringify(values));
+    }
+
+    mediaSizeUp(size)
+    {
+        return MediaSizeIndex[this.mediaSize] >= MediaSizeIndex[size];
+    }
+
+    mediaSizeDown(size)
+    {
+        return MediaSizeIndex[this.mediaSize] <= MediaSizeIndex[size];
     }
 
     addPersistenceVersion(key)

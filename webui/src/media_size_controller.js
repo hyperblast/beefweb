@@ -1,10 +1,11 @@
 import mapValues from 'lodash/mapValues'
 import objectValues from 'lodash/values'
-import SettingsModel, { FontSize, MediaSize } from './settings_model'
+import SettingsModel, { FontSize, MediaSize, MediaSizeIndex } from './settings_model'
 
 const MediaSizes = Object.freeze({
-    tiny: 28,
-    compact: 43,
+    small: 0,
+    medium: 29,
+    large: 43,
 });
 
 const FontScale = Object.freeze({
@@ -13,39 +14,48 @@ const FontScale = Object.freeze({
     large: 1.125,
 });
 
-function queryMaxWidth(em)
+function queryMinWidth(em)
 {
-    return window.matchMedia(`(max-width: ${em}em)`);
+    return window.matchMedia(`(min-width: ${em}em)`);
 }
 
 class MediaSizeQuery
 {
     constructor(scale)
     {
-        this.queries = mapValues(MediaSizes, size => queryMaxWidth(size * scale));
+        this.entries = [];
+
+        for (let size of Object.keys(MediaSize))
+        {
+            const query = queryMinWidth(MediaSizes[size] * scale);
+
+            this.entries[MediaSizeIndex[size]] = { size, query };
+        }
+
+        this.entries.reverse();
     }
 
     getMediaSize()
     {
-        if (this.queries.tiny.matches)
-            return MediaSize.tiny;
+        for (let entry of this.entries)
+        {
+            if (entry.query.matches)
+                return entry.size;
+        }
 
-        if (this.queries.compact.matches)
-            return MediaSize.compact;
-
-        return MediaSize.full;
+        throw Error("Internal error: unable to select any media size");
     }
 
     addListener(callback)
     {
-        for (let query of objectValues(this.queries))
-            query.addListener(callback);
+        for (let entry of this.entries)
+            entry.query.addListener(callback);
     }
 
     removeListener(callback)
     {
-        for (let query of objectValues(this.queries))
-            query.removeListener(callback);
+        for (let entry of this.entries)
+            entry.query.removeListener(callback);
     }
 }
 
@@ -72,6 +82,9 @@ export default class MediaSizeController
     update()
     {
         const query = this.mediaQueries[this.settingsModel.fontSize];
+
+        console.log(this.settingsModel.mediaSize);
+        console.log(query.getMediaSize());
 
         this.settingsModel.mediaSize = query.getMediaSize();
     }
