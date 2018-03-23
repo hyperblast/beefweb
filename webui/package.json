@@ -14,7 +14,6 @@
     "detect-it": "^3.0.4",
     "event-source-polyfill": "^0.0.12",
     "lodash": "^4.17.4",
-    "measure-scrollbar": "^1.0.0",
     "navigo": "^7.0.0",
     "normalize.css": "^5.0.0",
     "open-iconic": "^1.1.1",
