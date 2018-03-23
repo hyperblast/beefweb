@@ -1,15 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import throttle from 'lodash/throttle'
-
-let nextElementId = 0;
-
-function getNextElementId()
-{
-    const id = nextElementId++;
-
-    return `dtable${id}`;
-}
+import { once } from './utils'
+import { getScrollBarSize, generateElementId, addStyleSheet } from './dom_utils'
 
 function pixelToRow(px, fontSize, rowHeight)
 {
@@ -20,6 +13,13 @@ function getFontSize()
 {
     return parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
+
+const addGeneratedStyles = once(() =>
+{
+    const margin = getScrollBarSize();
+
+    addStyleSheet(`.dtable-head { margin-right: ${margin}px }`);
+});
 
 export default class DataTable extends React.Component
 {
@@ -34,7 +34,7 @@ export default class DataTable extends React.Component
 
     componentWillMount()
     {
-        this.setState({ elementId: getNextElementId() });
+        this.setState({ elementId: generateElementId('dtable') });
     }
 
     setBodyRef(body)
@@ -105,6 +105,8 @@ export default class DataTable extends React.Component
 
     render()
     {
+        addGeneratedStyles();
+
         const { className, style } = this.props;
         const { elementId } = this.state;
 
