@@ -84,3 +84,20 @@ export function looseDeepEqual(value1, value2)
 
     return true;
 }
+
+export function once(func)
+{
+    let evaluated = false;
+    let result;
+
+    return function()
+    {
+        if (!evaluated)
+        {
+            result = func();
+            evaluated = true;
+        }
+
+        return result;
+    }
+}
