@@ -302,6 +302,25 @@ html {
     margin-right: 0.25rem;
 }
 
+.dtable {
+    display: flex;
+    flex-direction: column;
+}
+
+.dtable-head {
+}
+
+.dtable-body {
+    flex: 1;
+    overflow-y: scroll;
+}
+.dtable-column-header, .dtable-cell {
+    height: 1.25rem;
+    display: inline-block;
+
+    .no-text-overflow();
+}
+
 .table-content {
     position: relative;
     padding: 1.75rem 0.5rem 0.5rem 0.5rem;
