@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import throttle from 'lodash/throttle'
+import range from 'lodash/range'
 import { once } from './utils'
 import { getScrollBarSize, generateElementId, addStyleSheet } from './dom_utils'
 
@@ -21,6 +22,19 @@ const addGeneratedStyles = once(() =>
     addStyleSheet(`.dtable-head { margin-right: ${margin}px }`);
 });
 
+function getDummyUrl()
+{
+    return '#';
+}
+
+const maxColumns = 100;
+
+const cellClassNames = range(0, maxColumns).map(
+    value => `dtable-cell dtable-column${value}`);
+
+const columnHeaderClassNames = range(0, maxColumns).map(
+    value => `dtable-column-header dtable-column${value}`);
+
 export default class DataTable extends React.Component
 {
     constructor(props)
@@ -30,6 +44,8 @@ export default class DataTable extends React.Component
         this.state = { startOffset: 0 };
         this.setBodyRef = this.setBodyRef.bind(this);
         this.handleScroll = throttle(this.handleScroll.bind(this), 50);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleDoubleClick = this.handleDoubleClick.bind(this);
     }
 
     componentWillMount()
@@ -87,6 +103,25 @@ export default class DataTable extends React.Component
         }
     }
 
+    handleClick(e)
+    {
+        if (!this.props.onGetUrl)
+            e.preventDefault();
+    }
+
+    handleDoubleClick(e)
+    {
+        const { onDoubleClick } = this.props;
+
+        if (!onDoubleClick)
+            return;
+
+        const index = e.target.getAttribute('data-idx');
+
+        if (index)
+            onDoubleClick(Number(index));
+    }
+
     movePage(delta)
     {
         if (delta === 0)
@@ -118,7 +153,11 @@ export default class DataTable extends React.Component
                 <div className='dtable-head'>
                     { this.renderColumnHeaders() }
                 </div>
-                <div className='dtable-body' ref={this.setBodyRef}>
+                <div
+                    className='dtable-body'
+                    ref={this.setBodyRef}
+                    onClick={this.handleClick}
+                    onDoubleClick={this.handleDoubleClick}>
                     { this.renderRows() }
                 </div>
             </div>
@@ -137,15 +176,23 @@ export default class DataTable extends React.Component
         );
     }
 
-    renderRow(rowIndex)
+    renderRow(rowIndex, url)
     {
         const data = this.props.onGetRowData(rowIndex);
+        const cells = [];
 
-        const cells = data.map((value, columnIndex) => (
-            <span
-                key={columnIndex}
-                className={'dtable-cell dtable-column' + columnIndex}>{value}</span>
-        ));
+        for (let columnIndex = 0; columnIndex < data.length; columnIndex++)
+        {
+            const value = data[columnIndex];
+
+            cells.push(
+                <a
+                    key={columnIndex}
+                    data-idx={rowIndex}
+                    href={url}
+                    className={cellClassNames[columnIndex]}>{value}</a>
+            );
+        }
 
         return (
             <div key={rowIndex} className='dtable-row'>{ cells }</div>
@@ -154,15 +201,18 @@ export default class DataTable extends React.Component
 
     renderRows()
     {
-        const { totalCount, pageSize } = this.props;
+        const { totalCount, pageSize, onGetUrl } = this.props;
         const { startOffset } = this.state;
+
         const endOffset = startOffset + pageSize;
         const rows = [];
+
+        let getUrl = onGetUrl || getDummyUrl;
 
         rows.push(this.renderSpacer('header', startOffset));
 
         for (let i = startOffset; i < endOffset; i++)
-            rows.push(this.renderRow(i));
+            rows.push(this.renderRow(i, getUrl(i)));
 
         rows.push(this.renderSpacer('footer', totalCount - endOffset));
 
@@ -174,7 +224,7 @@ export default class DataTable extends React.Component
         return this.props.columnNames.map((name, index) => (
             <span
                 key={index}
-                className={'dtable-column-header dtable-column' + index}>{name}</span>
+                className={columnHeaderClassNames[index]}>{name}</span>
         ));
     }
 
@@ -218,6 +268,8 @@ DataTable.propTypes = {
     totalCount: PropTypes.number.isRequired,
     onGetRowData: PropTypes.func.isRequired,
     onLoadPage: PropTypes.func,
+    onDoubleClick: PropTypes.func,
+    onGetUrl: PropTypes.func,
 };
 
 DataTable.defaultProps = {

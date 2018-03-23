@@ -303,22 +303,47 @@ html {
 }
 
 .dtable {
+    padding: 0.5rem;
     display: flex;
     flex-direction: column;
 }
 
 .dtable-head {
+    font-weight: bold;
 }
 
 .dtable-body {
     flex: 1;
     overflow-y: scroll;
 }
+
+.dtable-row {
+    border-radius: 0.125rem;
+
+    &:hover {
+        background: @color-hover;
+    }
+}
+
 .dtable-column-header, .dtable-cell {
     height: 1.25rem;
     display: inline-block;
 
     .no-text-overflow();
+}
+
+.dtable-column-header {
+    padding: 0 0.25rem;
+}
+
+.dtable-cell {
+    text-decoration: none;
+    color: @color-text;
+    padding: 0.25rem;
+
+    &:visited {
+        color: @color-text;
+    }
 }
 
 .table-content {
