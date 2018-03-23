@@ -166,7 +166,7 @@ export default class DataTable extends React.Component
 
     renderSpacer(key, height)
     {
-        if (height < 0)
+        if (height <= 0)
             return null;
 
         const style = { height: `${height * this.props.rowHeight}rem` };
@@ -204,7 +204,11 @@ export default class DataTable extends React.Component
         const { totalCount, pageSize, onGetUrl } = this.props;
         const { startOffset } = this.state;
 
-        const endOffset = startOffset + pageSize;
+        let endOffset = startOffset + pageSize;
+
+        if (endOffset > totalCount)
+            endOffset = totalCount;
+
         const rows = [];
 
         let getUrl = onGetUrl || getDummyUrl;

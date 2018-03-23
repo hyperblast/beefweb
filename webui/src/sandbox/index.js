@@ -34,7 +34,7 @@ class Sandbox extends React.Component
                     style={tableStyle}
                     columnNames={['Artist', 'Album', 'Track', 'Title']}
                     pageSize={100}
-                    totalCount={100000}
+                    totalCount={500}
                     onGetRowData={this.handleGetRowData}
                     onDoubleClick={this.handleDoubleClick} />
             </div>
