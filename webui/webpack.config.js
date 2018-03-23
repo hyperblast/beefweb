@@ -65,6 +65,20 @@ function configTests(cfg, opts)
     }));
 }
 
+function configSandbox(cfg, opts)
+{
+    // Sandbox target configuration
+
+    cfg.output.path = path.join(opts.outputDir, 'sandbox');
+
+    cfg.entry.push('./src/style.less');
+    cfg.entry.push('./src/sandbox/index.js');
+
+    cfg.plugins.push(new HtmlPlugin({
+        template: path.join(opts.sourceDir, 'index.html')
+    }));
+}
+
 function configDebug(cfg)
 {
     // Debug configuration
@@ -180,7 +194,10 @@ module.exports = function(env)
     const allTargets = [makeTarget(configApp, opts)];
 
     if (opts.enableTests)
+    {
         allTargets.push(makeTarget(configTests, opts));
+        allTargets.push(makeTarget(configSandbox, opts));
+    }
 
     return allTargets;
 };
