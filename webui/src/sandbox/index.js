@@ -19,21 +19,25 @@ class Sandbox extends React.Component
             ];
         };
 
-        this.handleLoadPage = (offset, count) => console.log({ offset, count });
+        this.handleGetUrl = index => `#/${index}`;
+        this.handleDoubleClick = index => console.log(index);
     }
 
     render()
     {
-        const style = { height: '100vh', background: 'white', padding: '1rem' };
+        const tableStyle = { marginTop: '0.5rem', marginBottom: '0.5rem' };
 
         return (
-            <DataTable
-                columnNames={['Artist', 'Album', 'Track', 'Title']}
-                pageSize={200}
-                totalCount={100000}
-                onGetRowData={this.handleGetRowData}
-                onLoadPage={this.handleLoadPage}
-                style={style} />
+            <div className='app'>
+                <DataTable
+                    className='panel main-panel'
+                    style={tableStyle}
+                    columnNames={['Artist', 'Album', 'Track', 'Title']}
+                    pageSize={100}
+                    totalCount={100000}
+                    onGetRowData={this.handleGetRowData}
+                    onDoubleClick={this.handleDoubleClick} />
+            </div>
         );
     }
 }
