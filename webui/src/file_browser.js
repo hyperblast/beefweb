@@ -4,12 +4,28 @@ import Component from './component'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import urls from './urls'
+import { getDisplaySize, getDisplayDate } from './utils'
 import Table from './table'
 
 const fileTypes = Object.freeze({
     F: 'File',
     D: 'Directory'
 });
+
+const columnNames = ['Name', 'Type', 'Size', 'Date'];
+
+function getRowData(item)
+{
+    return {
+        url: item.type == 'D' ? urls.browsePath(item.path) : null,
+        columns: [
+            item.name,
+            fileTypes[item.type],
+            getDisplaySize(item.size),
+            getDisplayDate(item.timestamp),
+        ]
+    };
+}
 
 export default class FileBrowser extends Component
 {
@@ -26,12 +42,7 @@ export default class FileBrowser extends Component
     {
         const { entries } = this.props.fileBrowserModel;
 
-        return {
-            rows: entries.map(e => ({
-                url: e.type == 'D' ? urls.browsePath(e.path) : null,
-                columns: [e.name, fileTypes[e.type]]
-            }))
-        };
+        return { rows: entries.map(getRowData) };
     }
 
     handleClick(idx)
@@ -44,7 +55,7 @@ export default class FileBrowser extends Component
     {
         return (
             <div className='panel main-panel table-content file-browser'>
-                <Table columns={['Name', 'Type']} rows={this.state.rows} onClick={this.handleClick} />
+                <Table columns={columnNames} rows={this.state.rows} onClick={this.handleClick} />
             </div>
         )
     }

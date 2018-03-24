@@ -112,3 +112,29 @@ export function mapRange(start, count, func)
 
     return array;
 }
+
+const kbSize = 1024;
+const mbSize = 1024 * kbSize;
+const gbSize = 1024 * mbSize;
+
+export function getDisplaySize(size)
+{
+    if (size < 0)
+        return '';
+
+    if (size < kbSize)
+        return size + ' bytes';
+
+    if (size < mbSize)
+        return (size / kbSize).toFixed(1) + ' KB';
+
+    if (size < gbSize)
+        return (size / mbSize).toFixed(1) + ' MB';
+
+    return (size / gbSize).toFixed(1) + ' GB';
+}
+
+export function getDisplayDate(timestamp)
+{
+    return new Date(timestamp * 1000).toLocaleString();
+}
