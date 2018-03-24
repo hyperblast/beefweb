@@ -36,3 +36,27 @@ export function addStyleSheet(value)
     document.head.appendChild(element);
     return element;
 }
+
+export function makeClassName(classes)
+{
+    const parts = [];
+
+    if (Array.isArray(classes))
+    {
+        for (let cls of classes)
+        {
+            if (cls)
+                parts.push(cls);
+        }
+    }
+    else
+    {
+        for (let cls of Object.keys(classes))
+        {
+            if (classes[cls])
+                parts.push(cls);
+        }
+    }
+
+    return parts.join(' ');
+}

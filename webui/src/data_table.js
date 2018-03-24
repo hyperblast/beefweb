@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import throttle from 'lodash/throttle'
+import { Icon } from './elements';
 import { once, mapRange } from './utils'
-import { getScrollBarSize, generateElementId, addStyleSheet } from './dom_utils'
+import { getScrollBarSize, generateElementId, addStyleSheet, makeClassName } from './dom_utils'
 
 function pixelToRow(px, fontSize, rowHeight)
 {
@@ -129,11 +130,14 @@ export default class DataTable extends React.PureComponent
     {
         addGeneratedStyles();
 
-        const { className, style } = this.props;
+        const { className, style, useIcons } = this.props;
         const { elementId } = this.state;
 
+        const fullClassName = makeClassName(
+            ['dtable', useIcons ? 'dtable-icons' : null, className]);
+
         return (
-            <div id={elementId} className={'dtable ' + className} style={style}>
+            <div id={elementId} className={fullClassName} style={style}>
                 <style>
                     { this.renderStyles() }
                 </style>
@@ -169,6 +173,9 @@ export default class DataTable extends React.PureComponent
 
         const columns = rowData.columns;
         const url = rowData.url || '#';
+
+        if (this.props.useIcons && rowData.icon)
+            cells.push(<Icon name={rowData.icon} className='dtable-icon' />);
 
         for (let columnIndex = 0; columnIndex < columns.length; columnIndex++)
         {
@@ -258,6 +265,7 @@ DataTable.propTypes = {
     totalCount: PropTypes.number.isRequired,
 
     useUrls: PropTypes.bool,
+    useIcons: PropTypes.bool,
     rowHeight: PropTypes.number,
     className: PropTypes.string,
     style: PropTypes.object,
@@ -268,6 +276,7 @@ DataTable.propTypes = {
 
 DataTable.defaultProps = {
     useUrls: false,
+    useIcons: false,
     className: '',
     rowHeight: 1.25,
 };
