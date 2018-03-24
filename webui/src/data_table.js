@@ -98,7 +98,7 @@ export default class DataTable extends React.PureComponent
 
     handleClick(e)
     {
-        if (!this.props.urlMode)
+        if (!this.props.useUrls)
             e.preventDefault();
     }
 
@@ -257,7 +257,7 @@ DataTable.propTypes = {
     pageSize: PropTypes.number.isRequired,
     totalCount: PropTypes.number.isRequired,
 
-    urlMode: PropTypes.bool,
+    useUrls: PropTypes.bool,
     rowHeight: PropTypes.number,
     className: PropTypes.string,
     style: PropTypes.object,
@@ -267,7 +267,7 @@ DataTable.propTypes = {
 };
 
 DataTable.defaultProps = {
-    urlMode: false,
+    useUrls: false,
     className: '',
     rowHeight: 1.25,
 };
