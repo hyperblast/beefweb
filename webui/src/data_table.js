@@ -60,14 +60,32 @@ export default class DataTable extends React.PureComponent
             this.body.addEventListener('scroll', this.handleScroll);
     }
 
+    movePage(delta, offset, endOffset, totalCount)
+    {
+        if (offset + delta < 0)
+            delta = -offset;
+
+        if (endOffset + delta > totalCount)
+            delta = totalCount - endOffset;
+
+        if (delta === 0)
+            return;
+
+        this.props.onLoadPage(offset + delta);
+    }
+
     handleScroll()
     {
         const { offset, pageSize, totalCount, rowHeight, fontScale } = this.props;
 
-        const fontSize = getFontSize();
-        const endOffset = offset + pageSize;
+        let endOffset = offset + pageSize;
+
+        if (endOffset > totalCount)
+            endOffset = totalCount;
+
         const margin = pageSize / 5 | 0;
 
+        const fontSize = getFontSize();
         const visibleOffset = pixelToRow(this.body.scrollTop, fontSize, rowHeight);
         const visibleCount = pixelToRow(this.body.offsetHeight, fontSize, rowHeight);
         const visibleEndOffset = visibleOffset + visibleCount;
@@ -79,10 +97,7 @@ export default class DataTable extends React.PureComponent
             if (delta > -margin)
                 delta = -margin;
 
-            if (offset + delta < 0)
-                delta = -offset;
-
-            this.movePage(delta);
+            this.movePage(delta, offset, endOffset, totalCount);
         }
         else if (visibleEndOffset + margin >= endOffset)
         {
@@ -91,10 +106,7 @@ export default class DataTable extends React.PureComponent
             if (delta < margin)
                 delta = margin;
 
-            if (endOffset + delta > totalCount)
-                delta = totalCount - endOffset;
-
-            this.movePage(delta);
+            this.movePage(delta, offset, endOffset, totalCount);
         }
     }
 
@@ -123,16 +135,6 @@ export default class DataTable extends React.PureComponent
             return;
 
         handler(Number(index));
-    }
-
-    movePage(delta)
-    {
-        if (delta === 0)
-            return;
-
-        const { offset, onLoadPage } = this.props;
-
-        onLoadPage(offset + delta);
     }
 
     render()
