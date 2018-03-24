@@ -310,6 +310,7 @@ html {
 
 .dtable-head {
     font-weight: bold;
+    position: relative;
 }
 
 .dtable-body {
@@ -319,10 +320,22 @@ html {
 
 .dtable-row {
     border-radius: 0.125rem;
+    position: relative;
 
     &:hover {
         background: @color-hover;
     }
+}
+
+.dtable-icons {
+    .dtable-head, .dtable-row {
+        margin-left: 2rem;
+    }
+}
+
+.dtable-icon {
+    position: absolute;
+    left: -2rem;
 }
 
 .dtable-column-header, .dtable-cell {
