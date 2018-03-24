@@ -61,25 +61,25 @@ export default class DataTable extends React.PureComponent
 
     handleScroll()
     {
-        const { startOffset, pageSize, totalCount, rowHeight, fontScale } = this.props;
+        const { offset, pageSize, totalCount, rowHeight, fontScale } = this.props;
 
         const fontSize = getFontSize();
-        const endOffset = startOffset + pageSize;
+        const endOffset = offset + pageSize;
         const margin = pageSize / 5 | 0;
 
-        const visibleStartOffset = pixelToRow(this.body.scrollTop, fontSize, rowHeight);
+        const visibleOffset = pixelToRow(this.body.scrollTop, fontSize, rowHeight);
         const visibleCount = pixelToRow(this.body.offsetHeight, fontSize, rowHeight);
-        const visibleEndOffset = visibleStartOffset + visibleCount;
+        const visibleEndOffset = visibleOffset + visibleCount;
 
-        if (visibleStartOffset - margin <= startOffset)
+        if (visibleOffset - margin <= offset)
         {
-            let delta = visibleStartOffset - startOffset;
+            let delta = visibleOffset - offset;
 
             if (delta > -margin)
                 delta = -margin;
 
-            if (startOffset + delta < 0)
-                delta = -startOffset;
+            if (offset + delta < 0)
+                delta = -offset;
 
             this.movePage(delta);
         }
@@ -121,9 +121,9 @@ export default class DataTable extends React.PureComponent
         if (delta === 0)
             return;
 
-        const { startOffset, onLoadPage } = this.props;
+        const { offset, onLoadPage } = this.props;
 
-        onLoadPage(startOffset + delta);
+        onLoadPage(offset + delta);
     }
 
     render()
@@ -197,19 +197,19 @@ export default class DataTable extends React.PureComponent
 
     renderRows()
     {
-        const { data, startOffset, totalCount, pageSize } = this.props;
+        const { data, offset, totalCount, pageSize } = this.props;
 
-        let endOffset = startOffset + pageSize;
+        let endOffset = offset + pageSize;
 
         if (endOffset > totalCount)
             endOffset = totalCount;
 
         const rows = [];
 
-        rows.push(this.renderSpacer('header', startOffset));
+        rows.push(this.renderSpacer('header', offset));
 
-        for (let i = startOffset; i < endOffset; i++)
-            rows.push(this.renderRow(i, data[i - startOffset]));
+        for (let i = offset; i < endOffset; i++)
+            rows.push(this.renderRow(i, data[i - offset]));
 
         rows.push(this.renderSpacer('footer', totalCount - endOffset));
 
@@ -260,7 +260,7 @@ DataTable.propTypes = {
     columnSizes: PropTypes.arrayOf(PropTypes.number),
 
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    startOffset: PropTypes.number.isRequired,
+    offset: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     totalCount: PropTypes.number.isRequired,
 
