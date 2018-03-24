@@ -38,7 +38,7 @@ class Sandbox extends React.PureComponent
     getState(offset)
     {
         return {
-            startOffset: offset,
+            offset,
             data: mapRange(offset, pageSize, createRow)
         };
     }
@@ -53,7 +53,7 @@ class Sandbox extends React.PureComponent
                     className='panel main-panel'
                     style={tableStyle}
                     columnNames={['Artist', 'Album', 'Track', 'Title']}
-                    startOffset={this.state.startOffset}
+                    offset={this.state.offset}
                     pageSize={pageSize}
                     totalCount={5000}
                     onLoadPage={this.handleLoadPage} />
