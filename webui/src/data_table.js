@@ -6,7 +6,10 @@ import { Icon } from './elements';
 import { once, mapRange } from './utils'
 import { getScrollBarSize, generateElementId, addStyleSheet, makeClassName } from './dom_utils'
 
-function pixelToRow(px, fontSize, rowHeight)
+const maxColumns = 100;
+const rowHeight = 1.5;
+
+function pixelToRow(px, fontSize)
 {
     return (px / (fontSize * rowHeight)) | 0;
 }
@@ -22,8 +25,6 @@ const addGeneratedStyles = once(() =>
 
     addStyleSheet(`.dtable-head { margin-right: ${margin}px }`);
 });
-
-const maxColumns = 100;
 
 const cellClassNames = mapRange(
     0, maxColumns, value => `dtable-cell dtable-column${value}`);
@@ -76,7 +77,7 @@ export default class DataTable extends React.PureComponent
 
     handleScroll()
     {
-        const { offset, pageSize, totalCount, rowHeight, fontScale } = this.props;
+        const { offset, pageSize, totalCount } = this.props;
 
         let endOffset = offset + pageSize;
 
@@ -86,8 +87,8 @@ export default class DataTable extends React.PureComponent
         const margin = pageSize / 5 | 0;
 
         const fontSize = getFontSize();
-        const visibleOffset = pixelToRow(this.body.scrollTop, fontSize, rowHeight);
-        const visibleCount = pixelToRow(this.body.offsetHeight, fontSize, rowHeight);
+        const visibleOffset = pixelToRow(this.body.scrollTop, fontSize);
+        const visibleCount = pixelToRow(this.body.offsetHeight, fontSize);
         const visibleEndOffset = visibleOffset + visibleCount;
 
         if (visibleOffset - margin <= offset)
@@ -171,7 +172,7 @@ export default class DataTable extends React.PureComponent
         if (height <= 0)
             return null;
 
-        const style = { height: `${height * this.props.rowHeight}rem` };
+        const style = { height: `${height * rowHeight}rem` };
 
         return (
             <div key={key} className='dtable-spacer' style={style} />
@@ -285,7 +286,6 @@ DataTable.propTypes = {
     totalCount: PropTypes.number.isRequired,
 
     useIcons: PropTypes.bool,
-    rowHeight: PropTypes.number,
     className: PropTypes.string,
     style: PropTypes.object,
 
@@ -297,5 +297,4 @@ DataTable.propTypes = {
 DataTable.defaultProps = {
     useIcons: false,
     className: '',
-    rowHeight: 1.5,
 };
