@@ -4,23 +4,25 @@ import Component from './component'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import urls from './urls'
-import { getDisplaySize, getDisplayDate } from './utils'
-import Table from './table'
+import { getDisplaySize, getDisplayDate, mapRange } from './utils'
+import DataTable from './data_table'
 
-const fileTypes = Object.freeze({
-    F: 'File',
-    D: 'Directory'
+const iconNames = Object.freeze({
+    D: 'folder',
+    F: 'file',
 });
 
-const columnNames = ['Name', 'Type', 'Size', 'Date'];
+const columnNames = ['Name', 'Size', 'Date'];
+const columnSizes = [5, 1, 2];
+const pageSize = 100;
 
 function getRowData(item)
 {
     return {
+        icon: iconNames[item.type],
         url: item.type == 'D' ? urls.browsePath(item.path) : null,
         columns: [
             item.name,
-            fileTypes[item.type],
             getDisplaySize(item.size),
             getDisplayDate(item.timestamp),
         ]
@@ -34,15 +36,35 @@ export default class FileBrowser extends Component
         super(props);
 
         this.updateOn({ fileBrowserModel: 'change' });
-        this.state = this.getStateFromModel();
+
+        this.state = { offset: 0 };
+        Object.assign(this.state, this.getStateFromModel());
+
         this.handleClick = this.handleClick.bind(this);
+        this.handleLoadPage = this.handleLoadPage.bind(this);
     }
 
-    getStateFromModel()
+    getStateFromModel(offset)
     {
+        if (offset === undefined)
+            offset = this.state.offset;
+
         const { entries } = this.props.fileBrowserModel;
 
-        return { rows: entries.map(getRowData) };
+        const count = offset + pageSize > entries.length
+            ? entries.length - offset
+            : pageSize;
+
+        const data = mapRange(offset, count, i => {
+            return getRowData(entries[i]);
+        });
+
+        return { offset, data, totalCount: entries.length };
+    }
+
+    handleLoadPage(offset)
+    {
+        setTimeout(() => this.setState(this.getStateFromModel(offset)), 0);
     }
 
     handleClick(idx)
@@ -54,9 +76,17 @@ export default class FileBrowser extends Component
     render()
     {
         return (
-            <div className='panel main-panel table-content file-browser'>
-                <Table columns={columnNames} rows={this.state.rows} onClick={this.handleClick} />
-            </div>
+            <DataTable
+                columnNames={columnNames}
+                columnSizes={columnSizes}
+                data={this.state.data}
+                offset={this.state.offset}
+                pageSize={pageSize}
+                totalCount={this.state.totalCount}
+                onClick={this.handleClick}
+                onLoadPage={this.handleLoadPage}
+                useIcons={true}
+                className='panel main-panel file-browser' />
         )
     }
 }
