@@ -7,7 +7,6 @@ function createRow(index)
 {
     return {
         icon: index == 5 ? 'media-play' : null,
-        url: `#/row/${index}`,
         columns: [
             'Artist ' + index,
             'Album ' + index,
@@ -28,6 +27,8 @@ class Sandbox extends React.PureComponent
 
         this.state = this.getState(0);
         this.handleLoadPage = this.handleLoadPage.bind(this);
+        this.handleClick = index => console.log('click', index);
+        this.handleDoubleClick = index => console.log('doubleClick', index);
     }
 
     handleLoadPage(offset)
@@ -56,7 +57,9 @@ class Sandbox extends React.PureComponent
                     offset={this.state.offset}
                     pageSize={pageSize}
                     totalCount={5000}
-                    onLoadPage={this.handleLoadPage} />
+                    onLoadPage={this.handleLoadPage}
+                    onClick={this.handleClick}
+                    onDoubleClick={this.handleDoubleClick} />
             </div>
         );
     }
