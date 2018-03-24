@@ -297,5 +297,5 @@ DataTable.propTypes = {
 DataTable.defaultProps = {
     useIcons: false,
     className: '',
-    rowHeight: 1.25,
+    rowHeight: 1.5,
 };
