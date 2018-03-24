@@ -6,6 +6,7 @@ import DataTable from '../data_table'
 function createRow(index)
 {
     return {
+        url: `#/row/${index}`,
         columns: [
             'Artist ' + index,
             'Album ' + index,
@@ -46,6 +47,7 @@ class Sandbox extends React.PureComponent
         return (
             <div className='app'>
                 <DataTable
+                    urlMode={false}
                     data={this.state.data}
                     className='panel main-panel'
                     style={tableStyle}

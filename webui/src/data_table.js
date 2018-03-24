@@ -21,11 +21,6 @@ const addGeneratedStyles = once(() =>
     addStyleSheet(`.dtable-head { margin-right: ${margin}px }`);
 });
 
-function getDummyUrl()
-{
-    return '#';
-}
-
 const maxColumns = 100;
 
 const cellClassNames = mapRange(
@@ -103,7 +98,7 @@ export default class DataTable extends React.PureComponent
 
     handleClick(e)
     {
-        if (!this.props.onGetUrl)
+        if (!this.props.urlMode)
             e.preventDefault();
     }
 
@@ -168,9 +163,12 @@ export default class DataTable extends React.PureComponent
         );
     }
 
-    renderRow(rowIndex, columns, url)
+    renderRow(rowIndex, rowData)
     {
         const cells = [];
+
+        const columns = rowData.columns;
+        const url = rowData.url || '#';
 
         for (let columnIndex = 0; columnIndex < columns.length; columnIndex++)
         {
@@ -192,7 +190,7 @@ export default class DataTable extends React.PureComponent
 
     renderRows()
     {
-        const { data, startOffset, totalCount, pageSize, onGetUrl } = this.props;
+        const { data, startOffset, totalCount, pageSize } = this.props;
 
         let endOffset = startOffset + pageSize;
 
@@ -201,17 +199,10 @@ export default class DataTable extends React.PureComponent
 
         const rows = [];
 
-        let getUrl = onGetUrl || getDummyUrl;
-
         rows.push(this.renderSpacer('header', startOffset));
 
         for (let i = startOffset; i < endOffset; i++)
-        {
-            const rowData = data[i - startOffset].columns;
-            const url = getUrl(i);
-
-            rows.push(this.renderRow(i, rowData, url));
-        }
+            rows.push(this.renderRow(i, data[i - startOffset]));
 
         rows.push(this.renderSpacer('footer', totalCount - endOffset));
 
@@ -266,16 +257,17 @@ DataTable.propTypes = {
     pageSize: PropTypes.number.isRequired,
     totalCount: PropTypes.number.isRequired,
 
+    urlMode: PropTypes.bool,
     rowHeight: PropTypes.number,
     className: PropTypes.string,
     style: PropTypes.object,
 
     onLoadPage: PropTypes.func.isRequired,
     onDoubleClick: PropTypes.func,
-    onGetUrl: PropTypes.func,
 };
 
 DataTable.defaultProps = {
+    urlMode: false,
     className: '',
     rowHeight: 1.25,
 };
