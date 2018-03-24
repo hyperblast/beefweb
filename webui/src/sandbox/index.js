@@ -1,42 +1,59 @@
 import React from 'react'
 import ReactDom from 'react-dom'
-
+import { mapRange } from '../utils'
 import DataTable from '../data_table'
 
-class Sandbox extends React.Component
+function createRow(index)
+{
+    return {
+        columns: [
+            'Artist ' + index,
+            'Album ' + index,
+            'Track ' + ((index % 10) + 1),
+            'Title ' + index
+        ]
+    };
+}
+
+const pageSize = 100;
+const tableStyle = { marginTop: '0.5rem', marginBottom: '0.5rem' };
+
+class Sandbox extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.handleGetRowData = index =>
-        {
-            return [
-                'Artist ' + index,
-                'Album ' + index,
-                'Track ' + ((index % 10) + 1),
-                'Title ' + index
-            ];
-        };
+        this.state = this.getState(0);
+        this.handleLoadPage = this.handleLoadPage.bind(this);
+    }
 
-        this.handleGetUrl = index => `#/${index}`;
-        this.handleDoubleClick = index => console.log(index);
+    handleLoadPage(offset)
+    {
+        setTimeout(() => this.setState(this.getState(offset, pageSize)), 50);
+    }
+
+    getState(offset)
+    {
+        return {
+            startOffset: offset,
+            data: mapRange(offset, pageSize, createRow)
+        };
     }
 
     render()
     {
-        const tableStyle = { marginTop: '0.5rem', marginBottom: '0.5rem' };
-
         return (
             <div className='app'>
                 <DataTable
+                    data={this.state.data}
                     className='panel main-panel'
                     style={tableStyle}
                     columnNames={['Artist', 'Album', 'Track', 'Title']}
-                    pageSize={100}
-                    totalCount={500}
-                    onGetRowData={this.handleGetRowData}
-                    onDoubleClick={this.handleDoubleClick} />
+                    startOffset={this.state.startOffset}
+                    pageSize={pageSize}
+                    totalCount={5000}
+                    onLoadPage={this.handleLoadPage} />
             </div>
         );
     }
