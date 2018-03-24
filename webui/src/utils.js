@@ -101,3 +101,14 @@ export function once(func)
         return result;
     }
 }
+
+export function mapRange(start, count, func)
+{
+    const array = [];
+    const end = start + count;
+
+    for (let i = start; i < end; i++)
+        array.push(func(i));
+
+    return array;
+}

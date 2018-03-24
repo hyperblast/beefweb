@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import throttle from 'lodash/throttle'
-import range from 'lodash/range'
-import { once } from './utils'
+import { once, mapRange } from './utils'
 import { getScrollBarSize, generateElementId, addStyleSheet } from './dom_utils'
 
 function pixelToRow(px, fontSize, rowHeight)
@@ -29,19 +28,19 @@ function getDummyUrl()
 
 const maxColumns = 100;
 
-const cellClassNames = range(0, maxColumns).map(
-    value => `dtable-cell dtable-column${value}`);
+const cellClassNames = mapRange(
+    0, maxColumns, value => `dtable-cell dtable-column${value}`);
 
-const columnHeaderClassNames = range(0, maxColumns).map(
-    value => `dtable-column-header dtable-column${value}`);
+const columnHeaderClassNames = mapRange(
+    0, maxColumns, value => `dtable-column-header dtable-column${value}`);
 
-export default class DataTable extends React.Component
+export default class DataTable extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.state = { startOffset: 0 };
+        this.state = {};
         this.setBodyRef = this.setBodyRef.bind(this);
         this.handleScroll = throttle(this.handleScroll.bind(this), 50);
         this.handleClick = this.handleClick.bind(this);
@@ -66,8 +65,7 @@ export default class DataTable extends React.Component
 
     handleScroll()
     {
-        const { pageSize, totalCount, rowHeight, fontScale } = this.props;
-        const { startOffset } = this.state;
+        const { startOffset, pageSize, totalCount, rowHeight, fontScale } = this.props;
 
         const fontSize = getFontSize();
         const endOffset = startOffset + pageSize;
@@ -127,15 +125,9 @@ export default class DataTable extends React.Component
         if (delta === 0)
             return;
 
-        const { pageSize, onLoadPage } = this.props;
-        const { startOffset } = this.state;
+        const { startOffset, onLoadPage } = this.props;
 
-        const newStartOffset = startOffset + delta;
-
-        if (onLoadPage)
-            onLoadPage(newStartOffset, pageSize);
-
-        this.setState({ startOffset: newStartOffset });
+        onLoadPage(startOffset + delta);
     }
 
     render()
@@ -176,14 +168,13 @@ export default class DataTable extends React.Component
         );
     }
 
-    renderRow(rowIndex, url)
+    renderRow(rowIndex, columns, url)
     {
-        const data = this.props.onGetRowData(rowIndex);
         const cells = [];
 
-        for (let columnIndex = 0; columnIndex < data.length; columnIndex++)
+        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++)
         {
-            const value = data[columnIndex];
+            const value = columns[columnIndex];
 
             cells.push(
                 <a
@@ -201,8 +192,7 @@ export default class DataTable extends React.Component
 
     renderRows()
     {
-        const { totalCount, pageSize, onGetUrl } = this.props;
-        const { startOffset } = this.state;
+        const { data, startOffset, totalCount, pageSize, onGetUrl } = this.props;
 
         let endOffset = startOffset + pageSize;
 
@@ -216,7 +206,12 @@ export default class DataTable extends React.Component
         rows.push(this.renderSpacer('header', startOffset));
 
         for (let i = startOffset; i < endOffset; i++)
-            rows.push(this.renderRow(i, getUrl(i)));
+        {
+            const rowData = data[i - startOffset].columns;
+            const url = getUrl(i);
+
+            rows.push(this.renderRow(i, rowData, url));
+        }
 
         rows.push(this.renderSpacer('footer', totalCount - endOffset));
 
@@ -265,19 +260,22 @@ export default class DataTable extends React.Component
 DataTable.propTypes = {
     columnNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     columnSizes: PropTypes.arrayOf(PropTypes.number),
+
+    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    startOffset: PropTypes.number.isRequired,
+    pageSize: PropTypes.number.isRequired,
+    totalCount: PropTypes.number.isRequired,
+
     rowHeight: PropTypes.number,
     className: PropTypes.string,
     style: PropTypes.object,
-    pageSize: PropTypes.number,
-    totalCount: PropTypes.number.isRequired,
-    onGetRowData: PropTypes.func.isRequired,
-    onLoadPage: PropTypes.func,
+
+    onLoadPage: PropTypes.func.isRequired,
     onDoubleClick: PropTypes.func,
     onGetUrl: PropTypes.func,
 };
 
 DataTable.defaultProps = {
     className: '',
-    pageSize: 100,
     rowHeight: 1.25,
 };
