@@ -99,21 +99,29 @@ export default class DataTable extends React.PureComponent
 
     handleClick(e)
     {
-        if (!this.props.useUrls)
-            e.preventDefault();
+        if (e.target.getAttribute('href') !== '#')
+            return;
+
+        e.preventDefault();
+        this.callHandler('onClick', e);
     }
 
     handleDoubleClick(e)
     {
-        const { onDoubleClick } = this.props;
+        this.callHandler('onDoubleClick', e);
+    }
 
-        if (!onDoubleClick)
+    callHandler(key, e)
+    {
+        const handler = this.props[key];
+        if (!handler)
             return;
 
         const index = e.target.getAttribute('data-idx');
+        if (!index)
+            return;
 
-        if (index)
-            onDoubleClick(Number(index));
+        handler(Number(index));
     }
 
     movePage(delta)
@@ -264,18 +272,17 @@ DataTable.propTypes = {
     pageSize: PropTypes.number.isRequired,
     totalCount: PropTypes.number.isRequired,
 
-    useUrls: PropTypes.bool,
     useIcons: PropTypes.bool,
     rowHeight: PropTypes.number,
     className: PropTypes.string,
     style: PropTypes.object,
 
     onLoadPage: PropTypes.func.isRequired,
+    onClick: PropTypes.func,
     onDoubleClick: PropTypes.func,
 };
 
 DataTable.defaultProps = {
-    useUrls: false,
     useIcons: false,
     className: '',
     rowHeight: 1.25,
