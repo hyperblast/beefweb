@@ -184,7 +184,14 @@ export default class DataTable extends React.PureComponent
         const url = rowData.url || '#';
 
         if (this.props.useIcons && rowData.icon)
-            cells.push(<Icon name={rowData.icon} className='dtable-icon' />);
+        {
+            cells.push(
+                <Icon
+                    key='icon'
+                    name={rowData.icon}
+                    className='dtable-icon' />
+            );
+        }
 
         for (let columnIndex = 0; columnIndex < columns.length; columnIndex++)
         {
