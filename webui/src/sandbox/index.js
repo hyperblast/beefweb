@@ -10,7 +10,7 @@ function createRow(index)
         columns: [
             'Artist ' + index,
             'Album ' + index,
-            'Track ' + ((index % 10) + 1),
+            '' + ((index % 10) + 1),
             'Title ' + index
         ]
     };
@@ -18,6 +18,8 @@ function createRow(index)
 
 const pageSize = 100;
 const tableStyle = { marginTop: '0.5rem', marginBottom: '0.5rem' };
+const columnNames = ['Artist', 'Album', 'Track', 'Title'];
+const columnSizes = [3, 3, 1, 3];
 
 class Sandbox extends React.PureComponent
 {
@@ -53,7 +55,8 @@ class Sandbox extends React.PureComponent
                     data={this.state.data}
                     className='panel main-panel'
                     style={tableStyle}
-                    columnNames={['Artist', 'Album', 'Track', 'Title']}
+                    columnNames={columnNames}
+                    columnSizes={columnSizes}
                     offset={this.state.offset}
                     pageSize={pageSize}
                     totalCount={5000}

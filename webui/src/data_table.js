@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import throttle from 'lodash/throttle'
+import sum from 'lodash/sum'
 import { Icon } from './elements';
 import { once, mapRange } from './utils'
 import { getScrollBarSize, generateElementId, addStyleSheet, makeClassName } from './dom_utils'
@@ -246,8 +247,10 @@ export default class DataTable extends React.PureComponent
 
         if (columnSizes)
         {
-            styles = this.props.columnSizes.map(
-                (size, index) => this.renderColumnStyle(index, size));
+            const totalSize = sum(columnSizes);
+
+            styles = columnSizes.map((size, index) => (
+                this.renderColumnStyle(index, size / totalSize)));
         }
         else
         {
