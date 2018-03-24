@@ -55,9 +55,7 @@ export default class FileBrowser extends Component
             ? entries.length - offset
             : pageSize;
 
-        const data = mapRange(offset, count, i => {
-            return getRowData(entries[i]);
-        });
+        const data = mapRange(offset, count, i => getRowData(entries[i]));
 
         return { offset, data, totalCount: entries.length };
     }
