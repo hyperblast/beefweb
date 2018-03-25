@@ -41,8 +41,11 @@ export default class PlaylistModel extends EventEmitter
         this.settingsModel = settingsModel;
 
         this.playlists = [];
+        this.playlistsStale = false;
+
         this.playlistItems = { offset: 0, totalCount: 0, items: [] };
         this.playlistRange = { offset: 0, count: 100 };
+
         this.currentPlaylistId = null;
         this.columns = null;
 
@@ -84,19 +87,26 @@ export default class PlaylistModel extends EventEmitter
 
     setCurrentPlaylistId(id)
     {
-        if (id == this.currentPlaylistId)
+        if (id === this.currentPlaylistId)
             return;
 
         this.currentPlaylistId = id;
         this.currentPlaylist = this.playlists.find(p => p.id == id);
-        this.emit('playlistsChange');
+        this.playlistsStale = true;
 
-        this.watchPlaylistItems();
+        this.watchPlaylistItems(true);
     }
 
     setPlaylistItems(playlistItems)
     {
         this.playlistItems = playlistItems;
+
+        if (this.playlistsStale)
+        {
+            this.playlistsStale = false;
+            this.emit('playlistsChange');
+        }
+
         this.emit('itemsChange');
     }
 
@@ -107,7 +117,7 @@ export default class PlaylistModel extends EventEmitter
         this.watchPlaylistItems();
     }
 
-    watchPlaylistItems()
+    watchPlaylistItems(forceUpdate = false)
     {
         if (!this.currentPlaylistId)
             return;
@@ -119,7 +129,7 @@ export default class PlaylistModel extends EventEmitter
             plrange: this.playlistRange,
         };
 
-        this.dataSource.watch('playlistItems', request);
+        this.dataSource.watch('playlistItems', request, forceUpdate);
     }
 
     updateLayout()
