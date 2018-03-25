@@ -30,6 +30,41 @@ q.test('get playlists', async assert =>
     });
 });
 
+q.test('get playlist items', async assert =>
+{
+    const columns = ['%track%'];
+
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t3]);
+
+    const expected = [
+        { columns: ['01'] },
+        { columns: ['02'] },
+        { columns: ['03'] },
+    ];
+
+    const result1 = await client.getPlaylistItems(0, columns, '0:3');
+    assert.equal(result1.offset, 0);
+    assert.equal(result1.totalCount, 3);
+    assert.deepEqual(result1.items, expected);
+
+    const result2 = await client.getPlaylistItems(0, columns, '0:2');
+    assert.equal(result2.offset, 0);
+    assert.equal(result2.totalCount, 3);
+    assert.deepEqual(result2.items, expected.slice(0, 2));
+
+    const result3 = await client.getPlaylistItems(0, columns, '2:2');
+    assert.equal(result3.offset, 2);
+    assert.equal(result3.totalCount, 3);
+    assert.deepEqual(result3.items, expected.slice(2, 3));
+
+    const result4 = await client.getPlaylistItems(0, columns, '4:4');
+    assert.equal(result4.offset, 3);
+    assert.equal(result4.totalCount, 3);
+    assert.deepEqual(result4.items, []);
+});
+
 q.test('add playlist simple', async assert =>
 {
     await client.addPlaylist();
