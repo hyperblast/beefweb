@@ -109,8 +109,19 @@ export default class SettingsModel extends EventEmitter
     {
         const { key, type } = props;
 
-        const metadata = Object.freeze(Object.assign(
-            {}, defaultSettingProps, props, { eventName: key + 'Change' }));
+        const metadata = Object.assign(
+            { }, defaultSettingProps, props);
+
+        metadata.eventName = key + 'Change';
+
+        if (metadata.persistent)
+        {
+            metadata.persistenceKey = metadata.version === 1
+                ? key
+                :`${key}_v${metadata.version}`
+        }
+
+        Object.freeze(metadata);
 
         if (type == SettingType.enum)
             Object.freeze(metadata.enumNames);
@@ -158,22 +169,15 @@ export default class SettingsModel extends EventEmitter
         if (!data)
             return;
 
-        const newValues = mapKeys(
-            JSON.parse(data),
-            (value, key) => this.removePersistenceVersion(key));
-
+        const newValues = JSON.parse(data);
         const pendingEvents = [];
 
-        for (let key of Object.keys(newValues))
+        for (let key of Object.keys(this.metadata))
         {
             const metadata = this.metadata[key];
+            const value = newValues[metadata.persistenceKey];
 
-            if (!metadata)
-                continue;
-
-            const value = newValues[key];
-
-            if (this.values[key] === value)
+            if (value === undefined || this.values[key] === value)
                 continue;
 
             this.values[key] = value;
@@ -191,7 +195,7 @@ export default class SettingsModel extends EventEmitter
     {
         const values = mapKeys(
             pickBy(this.values, (value, key) => this.metadata[key].persistent),
-            (value, key) => this.addPersistenceVersion(key));
+            (value, key) => this.metadata[key].persistenceKey);
 
         this.store.setItem(storageKey, JSON.stringify(values));
     }
@@ -204,25 +208,5 @@ export default class SettingsModel extends EventEmitter
     mediaSizeDown(size)
     {
         return MediaSizeIndex[this.mediaSize] <= MediaSizeIndex[size];
-    }
-
-    addPersistenceVersion(key)
-    {
-        const metadata = this.metadata[key];
-
-        if (metadata.version === 1)
-            return key;
-
-        return `${key}_v${metadata.version}`;
-    }
-
-    removePersistenceVersion(key)
-    {
-        const index = key.lastIndexOf('_');
-
-        if (index < 0)
-            return key;
-
-        return key.substring(0, index);
     }
 }
