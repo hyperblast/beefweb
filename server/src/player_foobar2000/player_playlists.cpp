@@ -183,24 +183,28 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     return playlists;
 }
 
-std::vector<PlaylistItemInfo> PlayerImpl::getPlaylistItems(PlaylistQuery* queryPtr)
+PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* queryPtr)
 {
     auto query = static_cast<PlaylistQueryImpl*>(queryPtr);
     auto playlist = playlists_->resolve(query->plref);
 
-    auto start = static_cast<t_size>(query->range.offset);
+    auto totalCount = playlistManager_->playlist_get_item_count(playlist);
+    auto offset = std::min(static_cast<t_size>(query->range.offset), totalCount);
+    auto endOffset = std::min(static_cast<t_size>(query->range.endOffset()), totalCount);
 
-    auto end = std::min(
-        static_cast<t_size>(query->range.endOffset()),
-        playlistManager_->playlist_get_item_count(playlist));
+    std::vector<PlaylistItemInfo> items;
 
-    std::vector<PlaylistItemInfo> result;
-    pfc::string8 buffer;
+    if (offset < endOffset)
+    {
+        items.reserve(endOffset - offset);
 
-    for (t_size item = start; item < end; item++)
-        result.emplace_back(evaluatePlaylistColumns(playlist, item, query->columns, &buffer));
+        pfc::string8 buffer;
 
-    return result;
+        for (t_size item = offset; item < endOffset; item++)
+            items.emplace_back(evaluatePlaylistColumns(playlist, item, query->columns, &buffer));
+    }
+
+    return PlaylistItemsResult(offset, totalCount, std::move(items));
 }
 
 void PlayerImpl::addPlaylist(int32_t index, const std::string& title)
