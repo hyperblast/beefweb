@@ -205,6 +205,7 @@ export default class DataTable extends React.PureComponent
                     key={columnIndex}
                     data-idx={rowIndex}
                     href={url}
+                    title={value}
                     className={cellClassNames[columnIndex]}>{value}</a>
             );
         }
@@ -240,6 +241,7 @@ export default class DataTable extends React.PureComponent
         return this.props.columnNames.map((name, index) => (
             <span
                 key={index}
+                title={name}
                 className={columnHeaderClassNames[index]}>{name}</span>
         ));
     }
