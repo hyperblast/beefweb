@@ -40,8 +40,11 @@ export default class DataSource extends EventEmitter
         }
     }
 
-    watch(eventName, args)
+    watch(eventName, args, forceUpdate = false)
     {
+        if (forceUpdate)
+            delete this.previousEvents[eventName];
+
         this.subscriptions[eventName] = Object.assign({}, args);
         this.reinitEventSource();
     }
