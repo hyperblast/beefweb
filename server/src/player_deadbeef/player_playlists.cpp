@@ -96,28 +96,43 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     return playlists;
 }
 
-std::vector<PlaylistItemInfo> PlayerImpl::getPlaylistItems(PlaylistQuery* query)
+PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* query)
 {
     PlaylistQueryImpl* queryImpl = static_cast<PlaylistQueryImpl*>(query);
-
-    std::vector<PlaylistItemInfo> items;
-
     PlaylistLockGuard lock(playlistMutex_);
 
     PlaylistPtr playlist = playlists_.resolve(queryImpl->plref);
-    PlaylistItemPtr item = resolvePlaylistItem(playlist.get(), queryImpl->range.offset);
-    int32_t count = queryImpl->range.count;
 
-    while (item && count > 0)
+    int32_t offset = queryImpl->range.offset;
+    int32_t count = queryImpl->range.count;
+    int32_t totalCount = ddbApi->plt_get_item_count(playlist.get(), PL_MAIN);
+
+    if (offset >= totalCount)
+        offset = totalCount;
+
+    if (offset + count > totalCount)
+        count = totalCount - offset;
+
+    std::vector<PlaylistItemInfo> items;
+
+    if (count > 0)
     {
-        PlaylistItemInfo itemInfo;
-        itemInfo.columns = evaluateColumns(playlist.get(), item.get(), queryImpl->formatters);
-        items.emplace_back(std::move(itemInfo));
-        item.reset(ddbApi->pl_get_next(item.get(), PL_MAIN));
-        count--;
+        items.reserve(static_cast<size_t>(count));
+
+        PlaylistItemPtr item = resolvePlaylistItem(playlist.get(), offset);
+
+        while (item && count > 0)
+        {
+            PlaylistItemInfo itemInfo;
+            itemInfo.columns = evaluateColumns(
+                playlist.get(), item.get(), queryImpl->formatters);
+            items.emplace_back(std::move(itemInfo));
+            item.reset(ddbApi->pl_get_next(item.get(), PL_MAIN));
+            count--;
+        }
     }
 
-    return items;
+    return PlaylistItemsResult(offset, totalCount, std::move(items));
 }
 
 void PlayerImpl::addPlaylist(int32_t index, const std::string& title)

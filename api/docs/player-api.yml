@@ -167,9 +167,7 @@ paths:
             type: object
             properties:
               playlists:
-                type: array
-                items:
-                  $ref: '#/definitions/PlaylistInfo'
+                $ref: '#/definitions/PlaylistsResult'
     post:
       operationId: updatePlaylists
       summary: Update playlist collection
@@ -269,9 +267,7 @@ paths:
             type: object
             properties:
               playlistItems:
-                type: array
-                items:
-                  $ref: '#/definitions/PlaylistItemInfo'
+                $ref: '#/definitions/PlaylistItemsResult'
 
   /playlists/{playlistId}:
     post:
@@ -554,13 +550,9 @@ paths:
               player:
                 $ref: '#/definitions/PlayerState'
               playlists:
-                type: array
-                items:
-                  $ref: '#/definitions/PlaylistInfo'
+                $ref: '#/definitions/PlaylistsResult'
               playlistItems:
-                type: array
-                items:
-                  $ref: '#/definitions/PlaylistItemInfo'
+                $ref: '#/definitions/PlaylistItemsResult'
 
   /browser/roots:
     get:
@@ -671,6 +663,11 @@ definitions:
       totalTime:
         type: number
 
+  PlaylistsResult:
+    type: array
+    items:
+      $ref: '#/definitions/PlaylistInfo'
+
   PlaylistItemInfo:
     type: object
     properties:
@@ -678,6 +675,18 @@ definitions:
         type: array
         items:
           type: string
+
+  PlaylistItemsResult:
+    type: object
+    properties:
+      offset:
+        type: number
+      totalCount:
+        type: number
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/PlaylistItemInfo'
 
   AddItemsRequest:
     type: object

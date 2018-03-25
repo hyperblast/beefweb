@@ -40,7 +40,7 @@ public:
         const std::vector<std::string>& columns) override;
 
     virtual std::vector<PlaylistInfo> getPlaylists() override;
-    virtual std::vector<PlaylistItemInfo> getPlaylistItems(PlaylistQuery* query) override;
+    virtual PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) override;
 
     virtual void addPlaylist(int32_t index, const std::string& title) override;
     virtual void removePlaylist(const PlaylistRef& playlist) override;

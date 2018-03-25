@@ -77,7 +77,7 @@ class TestApiClient extends ApiClient
 
         return expectation.lastEvent.player;
     }
-    
+
     async waitPlaybackMetadata()
     {
         await waitUntil(async () =>
@@ -91,15 +91,15 @@ class TestApiClient extends ApiClient
     {
         await waitUntil(async () =>
         {
-            const items = await this.getPlaylistItems(plref, ['%artist%'], item);
-            return items[0].columns[0] === 'Hyperblast';
+            const result = await this.getPlaylistItems(plref, ['%artist%'], item);
+            return result.items[0].columns[0] === 'Hyperblast';
         });
     }
 
     async getPlaylistFiles(plref, range)
     {
-        const items = await this.getPlaylistItems(plref, ['%path%'], range);
-        return items.map(i => i.columns[0]);
+        const result = await this.getPlaylistItems(plref, ['%path%'], range);
+        return result.items.map(i => i.columns[0]);
     }
 
     expectEvent(options, condition, expectationOptions)

@@ -93,9 +93,9 @@ export default class PlaylistModel extends EventEmitter
         this.watchPlaylistItems();
     }
 
-    setPlaylistItems(items)
+    setPlaylistItems(playlistItems)
     {
-        this.playlistItems = items;
+        this.playlistItems = playlistItems.items;
         this.emit('itemsChange');
     }
 
