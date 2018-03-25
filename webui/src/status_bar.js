@@ -6,11 +6,11 @@ import PlaylistModel from './playlist_model'
 import { PlaybackState } from './api_client'
 import { formatTime } from './utils'
 
-var stateToName = {
+var stateToName = Object.freeze({
     [PlaybackState.playing]: 'Playing',
     [PlaybackState.paused]: 'Paused',
     [PlaybackState.stopped]: 'Stopped'
-};
+});
 
 export default class StatusBar extends Component
 {
@@ -20,7 +20,7 @@ export default class StatusBar extends Component
 
         this.updateOn({
             playerModel: 'change',
-            playlistModel: 'playlistsChange',
+            playlistModel: ['playlistsChange', 'itemsChange']
         });
 
         this.state = this.getStateFromModel();
@@ -28,23 +28,27 @@ export default class StatusBar extends Component
 
     getStateFromModel()
     {
-        var playerModel = this.props.playerModel;
-        var playlistModel = this.props.playlistModel;
-        var currentPlaylist = playlistModel.currentPlaylist;
+        const { playerModel, playlistModel } = this.props;
+
+        const totalTime = playlistModel.currentPlaylist
+            ? playlistModel.currentPlaylist.totalTime
+            : 0;
 
         return {
             playbackState: playerModel.playbackState,
-            itemCount: currentPlaylist ? currentPlaylist.itemCount : 0,
-            totalTime: currentPlaylist ? currentPlaylist.totalTime : 0
+            totalCount: playlistModel.playlistItems.totalCount,
+            totalTime
         };
     }
 
     getStatusLine()
     {
+        const { playbackState, totalCount, totalTime } = this.state;
+
         var items = [
-            stateToName[this.state.playbackState],
-            `${this.state.itemCount} track(s)`,
-            `${formatTime(this.state.totalTime, true)} total playtime`
+            stateToName[playbackState],
+            `${totalCount} track(s)`,
+            `${formatTime(totalTime, true)} total playtime`
         ];
 
         return items.join(' | ');
@@ -52,7 +56,7 @@ export default class StatusBar extends Component
 
     render()
     {
-        return <div className='panel status-bar'>{this.getStatusLine()}</div>;
+        return <div className='panel status-bar'>{ this.getStatusLine() }</div>;
     }
 }
 
