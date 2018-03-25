@@ -123,4 +123,11 @@ void to_json(Json& json, const PlaylistItemInfo& value)
     json["columns"] = value.columns;
 }
 
+void to_json(Json& json, const PlaylistItemsResult& value)
+{
+    json["offset"] = value.offset;
+    json["totalCount"] = value.totalCount;
+    json["items"] = value.items;
+}
+
 }

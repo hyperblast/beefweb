@@ -81,12 +81,34 @@ struct PlaylistInfo
 struct PlaylistItemInfo
 {
     PlaylistItemInfo() = default;
+
     PlaylistItemInfo(std::vector<std::string> columnsVal)
         : columns(std::move(columnsVal)) { }
+
     PlaylistItemInfo(PlaylistItemInfo&&) = default;
     PlaylistItemInfo& operator=(PlaylistItemInfo&&) = default;
 
     std::vector<std::string> columns;
+};
+
+struct PlaylistItemsResult
+{
+    PlaylistItemsResult() = default;
+
+    PlaylistItemsResult(
+        int32_t offsetVal,
+        int32_t totalCountVal,
+        std::vector<PlaylistItemInfo> itemsVal)
+        : offset(offsetVal),
+          totalCount(totalCountVal),
+          items(std::move(itemsVal)) { }
+
+    PlaylistItemsResult(PlaylistItemsResult&&) = default;
+    PlaylistItemsResult& operator=(PlaylistItemsResult&&) = default;
+
+    int32_t offset;
+    int32_t totalCount;
+    std::vector<PlaylistItemInfo> items;
 };
 
 enum class PlaylistRefType
@@ -211,7 +233,7 @@ public:
     // Playlists API
 
     virtual std::vector<PlaylistInfo> getPlaylists() = 0;
-    virtual std::vector<PlaylistItemInfo> getPlaylistItems(PlaylistQuery* query) = 0;
+    virtual PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) = 0;
 
     virtual void addPlaylist(int32_t index, const std::string& title) = 0;
     virtual void removePlaylist(const PlaylistRef& playlist) = 0;
