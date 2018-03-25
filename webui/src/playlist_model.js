@@ -41,7 +41,8 @@ export default class PlaylistModel extends EventEmitter
         this.settingsModel = settingsModel;
 
         this.playlists = [];
-        this.playlistItems = [];
+        this.playlistItems = { offset: 0, totalCount: 0, items: [] };
+        this.playlistRange = { offset: 0, count: 100 };
         this.currentPlaylistId = null;
         this.columns = null;
 
@@ -95,8 +96,15 @@ export default class PlaylistModel extends EventEmitter
 
     setPlaylistItems(playlistItems)
     {
-        this.playlistItems = playlistItems.items;
+        this.playlistItems = playlistItems;
         this.emit('itemsChange');
+    }
+
+    setItemsPage(offset, count)
+    {
+        this.playlistRange.offset = offset;
+        this.playlistRange.count = count;
+        this.watchPlaylistItems();
     }
 
     watchPlaylistItems()
@@ -108,6 +116,7 @@ export default class PlaylistModel extends EventEmitter
             playlistItems: true,
             plref: this.currentPlaylistId,
             plcolumns: this.columns.expressions,
+            plrange: this.playlistRange,
         };
 
         this.dataSource.watch('playlistItems', request);

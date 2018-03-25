@@ -1,8 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Component from './component'
+import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
-import Table from './table'
+import DataTable from './data_table'
+import { bindHandlers } from './utils'
+
+const pageSize = 100;
 
 export default class PlaylistContent extends Component
 {
@@ -10,31 +14,85 @@ export default class PlaylistContent extends Component
     {
         super(props);
 
-        this.updateOn({ playlistModel: 'itemsChange' });
+        this.updateOn({
+            playerModel: 'change',
+            playlistModel: ['playlistsChange', 'itemsChange']
+        });
+
         this.state = this.getStateFromModel();
-        this.handleClick = index => this.props.playlistModel.activateItem(index);
+
+        bindHandlers(this);
     }
 
     getStateFromModel()
     {
         const { columns, playlistItems } = this.props.playlistModel;
+        const { offset, totalCount, items } = playlistItems;
 
         return {
-            columns: columns.names,
-            rows: playlistItems
+            columnNames: columns.names,
+            offset,
+            totalCount,
+            items,
+            playingIndex: this.getPlayingItemIndex(),
         };
+    }
+
+    getPlayingItemIndex()
+    {
+        const { playerModel, playlistModel } = this.props;
+        const { activeItem } = playerModel;
+
+        if (activeItem.playlistId && (
+            activeItem.playlistId === playlistModel.currentPlaylistId))
+        {
+            return activeItem.index;
+        }
+
+        return -1;
+    }
+
+    handleDoubleClick(index)
+    {
+        this.props.playlistModel.activateItem(index);
+    }
+
+    handleLoadPage(offset)
+    {
+        this.props.playlistModel.setItemsPage(offset, pageSize);
+    }
+
+    getTableData()
+    {
+        const { offset, items, playingIndex } = this.state;
+
+        return items.map((item, index) =>
+        {
+            const icon = (index + offset) === playingIndex ? 'media-play' : null;
+            const columns = item.columns;
+
+            return { icon, columns };
+        });
     }
 
     render()
     {
         return (
-            <div className='panel main-panel table-content playlist-content'>
-                <Table columns={this.state.columns} rows={this.state.rows} onClick={this.handleClick} />
-            </div>
+            <DataTable
+                useIcons={true}
+                columnNames={this.state.columnNames}
+                data={this.getTableData()}
+                offset={this.state.offset}
+                totalCount={this.state.totalCount}
+                pageSize={pageSize}
+                className='panel main-panel playlist-content'
+                onLoadPage={this.handleLoadPage}
+                onDoubleClick={this.handleDoubleClick} />
         );
     }
 }
 
 PlaylistContent.propTypes = {
+    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired
 };

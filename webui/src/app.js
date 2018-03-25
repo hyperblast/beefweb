@@ -49,6 +49,7 @@ export default class App extends Component
                 ),
                 main:
                     <PlaylistContent
+                        playerModel={playerModel}
                         playlistModel={playlistModel} />
             };
         }

@@ -16,6 +16,9 @@ const initialPlayerInfo = Object.freeze({
         isMuted: false,
     },
     activeItem: {
+        playlistId: '',
+        playlistIndex: -1,
+        index: -1,
         position: -1,
         duration: -1,
         columns: [],
