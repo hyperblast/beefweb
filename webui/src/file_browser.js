@@ -37,8 +37,7 @@ export default class FileBrowser extends Component
 
         this.updateOn({ fileBrowserModel: 'change' });
 
-        this.state = { offset: 0 };
-        Object.assign(this.state, this.getStateFromModel());
+        this.state = this.getStateFromModel(0);
 
         this.handleClick = this.handleClick.bind(this);
         this.handleLoadPage = this.handleLoadPage.bind(this);
