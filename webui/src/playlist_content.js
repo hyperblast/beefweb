@@ -31,6 +31,7 @@ export default class PlaylistContent extends Component
 
         return {
             columnNames: columns.names,
+            columnSizes: columns.sizes,
             offset,
             totalCount,
             items,
@@ -81,6 +82,7 @@ export default class PlaylistContent extends Component
             <DataTable
                 useIcons={true}
                 columnNames={this.state.columnNames}
+                columnSizes={this.state.columnSizes}
                 data={this.getTableData()}
                 offset={this.state.offset}
                 totalCount={this.state.totalCount}

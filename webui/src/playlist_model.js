@@ -16,6 +16,9 @@ const standardPreset = Object.freeze({
         '%track%',
         '%title%',
         '%length%'
+    ],
+    sizes: [
+        3, 3, 2, 3, 2
     ]
 });
 
@@ -27,6 +30,9 @@ const compactPreset = Object.freeze({
     expressions: [
         '%artist%',
         '%title%'
+    ],
+    sizes: [
+        1, 1
     ]
 });
 
