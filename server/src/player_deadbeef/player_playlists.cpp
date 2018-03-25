@@ -103,15 +103,10 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* query)
 
     PlaylistPtr playlist = playlists_.resolve(queryImpl->plref);
 
-    int32_t offset = queryImpl->range.offset;
-    int32_t count = queryImpl->range.count;
     int32_t totalCount = ddbApi->plt_get_item_count(playlist.get(), PL_MAIN);
-
-    if (offset >= totalCount)
-        offset = totalCount;
-
-    if (offset + count > totalCount)
-        count = totalCount - offset;
+    int32_t offset = std::min(queryImpl->range.offset, totalCount);
+    int32_t endOffset = std::min(queryImpl->range.endOffset(), totalCount);
+    int32_t count = endOffset - offset;
 
     std::vector<PlaylistItemInfo> items;
 
