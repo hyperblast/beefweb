@@ -47,13 +47,13 @@ export default class CssSettingsController
 
     addSettingClasses(classNames)
     {
-        const values = this.settingsModel.values;
+        const { values, metadata } = this.settingsModel;
 
         for (let key of Object.keys(values))
         {
-            let value = values[key];
+            const value = values[key];
 
-            if (value !== undefined)
+            if (metadata[key].cssVisible && value !== undefined)
                 classNames.push(makeSettingClass(key, value));
         }
     }

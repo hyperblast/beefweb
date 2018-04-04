@@ -35,7 +35,8 @@ export const MediaSizeIndex = Object.freeze({
 });
 
 const defaultSettingProps = Object.freeze({
-    persistent: true,
+    persistent: false,
+    cssVisible: false,
     version: 1,
 });
 
@@ -58,6 +59,8 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.bool,
             defaultValue: false,
             title: 'Use full screen width',
+            persistent: true,
+            cssVisible: true,
         });
 
         this.define({
@@ -65,6 +68,7 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.enum,
             defaultValue: InputMode.auto,
             title: 'Input mode',
+            persistent: true,
             enumKeys: InputMode,
             enumNames: {
                 [InputMode.auto]: 'Auto',
@@ -79,6 +83,8 @@ export default class SettingsModel extends EventEmitter
             version: 2,
             defaultValue: FontSize.medium,
             title: 'Font size',
+            persistent: true,
+            cssVisible: true,
             enumKeys: FontSize,
             enumNames: {
                 [FontSize.small]: 'Small',
@@ -91,7 +97,6 @@ export default class SettingsModel extends EventEmitter
             key: 'touchMode',
             type: SettingType.bool,
             defaultValue: false,
-            persistent: false,
         });
 
         this.define({
@@ -99,7 +104,7 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.enum,
             defaultValue: MediaSize.large,
             enumKeys: MediaSize,
-            persistent: false,
+            cssVisible: true,
         });
 
         Object.freeze(this.metadata);
