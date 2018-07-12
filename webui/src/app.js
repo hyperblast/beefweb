@@ -41,6 +41,7 @@ export default class App extends Component
                 header: (
                     <div className='panel-header'>
                         <PlaylistSwitcher
+                            playerModel={playerModel}
                             playlistModel={playlistModel}
                             settingsModel={settingsModel} />
                         <PlaylistMenu

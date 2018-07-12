@@ -12,7 +12,7 @@ const pageSize = 100;
 const playbackStateIcons = {
     [PlaybackState.playing]: 'media-play',
     [PlaybackState.paused]: 'media-pause',
-    [PlaybackState.stopped]: null,
+    [PlaybackState.stopped]: 'none',
 };
 
 export default class PlaylistContent extends Component

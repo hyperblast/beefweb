@@ -129,6 +129,28 @@ html {
     .no-text-overflow();
 }
 
+.header-tab-with-icon > a {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.header-tab-icon {
+    position: absolute;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.5rem;
+    margin-left: 0.25rem;
+    padding: 0.0625rem;
+}
+
+.header-tab-icon > use {
+    fill: @color-border;
+}
+
+.header-tab.active .header-tab-icon > use {
+    fill: @color-text;
+}
+
 .header-tab:after {
     content: " ";
     display: inline-block;
