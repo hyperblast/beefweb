@@ -33,7 +33,7 @@ const PlaylistTab = SortableElement(props => {
     const className = makeClassName({
         'header-tab': true,
         'header-tab-with-icon': true,
-        'active': p.id === currentPlaylistId
+        'header-tab-active': p.id === currentPlaylistId
     });
 
     const handle = drawHandle
