@@ -5,8 +5,15 @@ import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import DataTable from './data_table'
 import { bindHandlers } from './utils'
+import { PlaybackState } from './api_client'
 
 const pageSize = 100;
+
+const playbackStateIcons = {
+    [PlaybackState.playing]: 'media-play',
+    [PlaybackState.paused]: 'media-pause',
+    [PlaybackState.stopped]: null,
+};
 
 export default class PlaylistContent extends Component
 {
@@ -26,20 +33,22 @@ export default class PlaylistContent extends Component
 
     getStateFromModel()
     {
+        const { playbackState } = this.props.playerModel;
         const { columns, playlistItems } = this.props.playlistModel;
         const { offset, totalCount, items } = playlistItems;
 
         return {
+            playbackState,
             columnNames: columns.names,
             columnSizes: columns.sizes,
             offset,
             totalCount,
             items,
-            playingIndex: this.getPlayingItemIndex(),
+            activeItemIndex: this.getActiveItemIndex(),
         };
     }
 
-    getPlayingItemIndex()
+    getActiveItemIndex()
     {
         const { playerModel, playlistModel } = this.props;
         const { activeItem } = playerModel;
@@ -65,11 +74,14 @@ export default class PlaylistContent extends Component
 
     getTableData()
     {
-        const { offset, items, playingIndex } = this.state;
+        const { playbackState, offset, items, activeItemIndex } = this.state;
 
         return items.map((item, index) =>
         {
-            const icon = (index + offset) === playingIndex ? 'media-play' : null;
+            const icon = (index + offset) === activeItemIndex
+                ? playbackStateIcons[playbackState]
+                : null;
+
             const columns = item.columns;
 
             return { icon, columns };
