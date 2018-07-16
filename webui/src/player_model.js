@@ -5,6 +5,12 @@ import Timer from './timer'
 import { SwitchParam, PlaybackState } from './api_client'
 
 const initialPlayerInfo = Object.freeze({
+    info: {
+        name: '',
+        title: '',
+        version: '0.0',
+        pluginVersion: '0.0',
+    },
     playbackState: PlaybackState.stopped,
     playbackMode: 0,
     playbackModes: ['Default'],

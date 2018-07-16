@@ -9,6 +9,7 @@ void from_json(const Json& json, PlaylistRef& value);
 void to_json(Json& json, const PlaylistRef& value);
 
 void to_json(Json& json, const PlaybackState& value);
+void to_json(Json& json, const PlayerInfo& value);
 void to_json(Json& json, const VolumeInfo& value);
 void to_json(Json& json, const ActiveItemInfo& value);
 void to_json(Json& json, const PlayerState& value);

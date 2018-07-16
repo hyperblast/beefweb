@@ -1,6 +1,7 @@
 #include "player.hpp"
 #include "../log.hpp"
 #include "artwork_request.hpp"
+#include <stdlib.h>
 
 namespace msrv {
 namespace player_deadbeef {
@@ -20,6 +21,20 @@ WorkQueue* PlayerImpl::workQueue()
 
 void PlayerImpl::connect()
 {
+    TitleFormatPtr versionFormat(ddbApi->tf_compile("%_deadbeef_version%"));
+
+    if (versionFormat)
+    {
+        ddb_tf_context_t context;
+        memset(&context, 0, sizeof(context));
+        context._size = sizeof(context);
+
+        char buffer[64];
+        int ret = ddbApi->tf_eval(&context, versionFormat.get(), buffer, sizeof(buffer));
+        if (ret >= 0)
+            version_ = buffer;
+    }
+
     auto artwork = ddbApi->plug_get_for_id("artwork");
 
     if (artwork && PLUG_TEST_COMPAT(artwork, 1, DDB_ARTWORK_VERSION))

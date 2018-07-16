@@ -59,8 +59,8 @@ export default class WindowController
         var playbackState = model.playbackState;
 
         var title = playbackState != PlaybackState.stopped
-            ? model.activeItem.columns[0] + ' - DeaDBeeF'
-            : 'DeaDBeeF'
+            ? model.activeItem.columns[0] + ' - ' + model.info.title
+            : model.info.title;
 
         return { title, playbackState };
     }

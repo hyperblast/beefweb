@@ -80,6 +80,14 @@ void to_json(Json& json, const VolumeType& type)
     }
 }
 
+void to_json(Json& json, const PlayerInfo& value)
+{
+    json["name"] = value.name;
+    json["title"] = value.title;
+    json["version"] = value.version;
+    json["pluginVersion"] = value.pluginVersion;
+}
+
 void to_json(Json& json, const VolumeInfo& value)
 {
     json["type"] = value.type;
@@ -101,6 +109,7 @@ void to_json(Json& json, const ActiveItemInfo& value)
 
 void to_json(Json& json, const PlayerState& value)
 {
+    json["info"] = value.info;
     json["playbackState"] = value.playbackState;
     json["volume"] = value.volume;
     json["activeItem"] = value.activeItem;

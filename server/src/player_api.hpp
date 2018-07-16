@@ -45,6 +45,14 @@ struct VolumeInfo
     bool isMuted;
 };
 
+struct PlayerInfo
+{
+    std::string name;
+    std::string title;
+    std::string version;
+    std::string pluginVersion;
+};
+
 struct ActiveItemInfo
 {
     int32_t playlistIndex;
@@ -57,6 +65,7 @@ struct ActiveItemInfo
 
 struct PlayerState
 {
+    PlayerInfo info;
     PlaybackState playbackState;
     VolumeInfo volume;
     ActiveItemInfo activeItem;
