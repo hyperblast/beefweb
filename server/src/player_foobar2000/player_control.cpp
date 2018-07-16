@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "../project_info.hpp"
 
 namespace msrv {
 namespace player_foobar2000 {
@@ -62,6 +63,16 @@ PlaybackState PlayerImpl::getPlaybackState()
     return PlaybackState::STOPPED;
 }
 
+void PlayerImpl::queryInfo(PlayerInfo* info)
+{
+    auto versionInfo = core_version_info_v2::get();
+
+    info->name = "foobar2000";
+    info->title = versionInfo->get_name();
+    info->version = versionInfo->get_version_as_text();
+    info->pluginVersion = MSRV_VERSION_STRING;
+}
+
 void PlayerImpl::queryVolume(VolumeInfo* volume)
 {
     volume->type = VolumeType::DB;
@@ -105,6 +116,7 @@ PlayerStatePtr PlayerImpl::queryPlayerState(TrackQuery* activeItemQuery)
     auto state = std::make_unique<PlayerState>();
 
     state->playbackState = getPlaybackState();
+    queryInfo(&state->info);
     queryVolume(&state->volume);
     queryActiveItem(&state->activeItem, activeItemQuery);
     state->playbackMode = playlistManager_->playback_order_get_active();

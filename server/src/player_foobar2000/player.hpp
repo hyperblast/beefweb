@@ -89,6 +89,7 @@ private:
     }
 
     PlaybackState getPlaybackState();
+    void queryInfo(PlayerInfo* info);
     void queryVolume(VolumeInfo* volume);
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
     void initPlaybackModes();
