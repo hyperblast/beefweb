@@ -1,4 +1,5 @@
 #include "player.hpp"
+#include "../project_info.hpp"
 #include "../string_utils.hpp"
 
 namespace msrv {
@@ -41,12 +42,21 @@ std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(TrackQuery* activeItem
     playlists_.ensureInitialized();
 
     state->playbackState = getPlaybackState();
+    queryInfo(&state->info);
     queryActiveItem(&state->activeItem, activeItemQuery);
     queryVolume(&state->volume);
     state->playbackMode = getPlaybackMode();
     state->playbackModes = &playbackModes_;
 
     return state;
+}
+
+void PlayerImpl::queryInfo(PlayerInfo* info)
+{
+    info->name = "deadbeef";
+    info->title = "DeaDBeeF";
+    info->version = version_;
+    info->pluginVersion = MSRV_VERSION_STRING;
 }
 
 PlaybackState PlayerImpl::getPlaybackState()

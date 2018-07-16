@@ -92,6 +92,7 @@ private:
     PlaybackState getPlaybackState();
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
     void queryVolume(VolumeInfo* info);
+    void queryInfo(PlayerInfo* info);
     void initPlaybackModes();
     void setModes(int order, int loop);
     int32_t getPlaybackMode();
@@ -103,6 +104,7 @@ private:
     PlaylistMapping playlists_;
     std::vector<std::string> playbackModes_;
     DB_artwork_plugin_t* artworkPlugin_;
+    std::string version_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };

@@ -11,7 +11,13 @@ q.test('get state', async assert =>
     const state = await client.getPlayerState();
     assert.ok(state);
 
-    const { activeItem, playbackState, volume, playbackMode, playbackModes } = state;
+    const { info, activeItem, playbackState, volume, playbackMode, playbackModes } = state;
+
+    assert.ok(info);
+    assert.ok(info.name);
+    assert.ok(info.title);
+    assert.ok(info.version);
+    assert.ok(info.pluginVersion);
 
     assert.ok(activeItem);
     const { playlistId, playlistIndex, index, position, duration } = activeItem;

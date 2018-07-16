@@ -608,6 +608,8 @@ definitions:
   PlayerState:
     type: object
     properties:
+      info:
+        $ref: '#/definitions/PlayerInfo'
       activeItem:
         type: object
         properties:
@@ -646,6 +648,18 @@ definitions:
             type: number
           isMuted:
             type: boolean
+
+  PlayerInfo:
+    type: object
+    properties:
+      name:
+        type: string
+      title:
+        type: string
+      version:
+        type: string
+      pluginVersion:
+        type: string
 
   PlaylistInfo:
     type: object
