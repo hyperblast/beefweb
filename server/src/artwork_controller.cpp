@@ -10,8 +10,8 @@
 
 namespace msrv {
 
-ArtworkController::ArtworkController(Request* request, Player* player, SettingsStore* store, ContentTypeMap* ctmap)
-    : ControllerBase(request), player_(player), store_(store), ctmap_(ctmap)
+ArtworkController::ArtworkController(Request* request, Player* player, ContentTypeMap* ctmap)
+    : ControllerBase(request), player_(player), ctmap_(ctmap)
 {
 }
 
@@ -42,13 +42,13 @@ ResponsePtr ArtworkController::getArtwork()
 }
 
 void ArtworkController::defineRoutes(
-    Router* router, Player* player, SettingsStore* store, ContentTypeMap* ctmap)
+    Router* router, Player* player, ContentTypeMap* ctmap)
 {
     auto routes = router->defineRoutes<ArtworkController>();
 
     routes.createWith([=](Request* request)
     {
-        return new ArtworkController(request, player, store, ctmap);
+        return new ArtworkController(request, player, ctmap);
     });
 
     routes.useWorkQueue(player->workQueue());
