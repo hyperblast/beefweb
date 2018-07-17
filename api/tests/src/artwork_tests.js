@@ -19,7 +19,7 @@ function getArtwork(playlist, item)
     });
 }
 
-q.module('artwork', usePlayer());
+q.module('artwork 1', usePlayer());
 
 q.test('get from folder', async assert =>
 {
@@ -32,6 +32,8 @@ q.test('get from folder', async assert =>
     assert.ok(response.data.equals(expected));
 });
 
+q.module('artwork 2', usePlayer());
+
 q.test('get from tag', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t2]);
@@ -42,6 +44,8 @@ q.test('get from tag', async assert =>
     assert.equal(response.status, 200);
     assert.ok(response.data.equals(expected));
 });
+
+q.module('artwork 3', usePlayer());
 
 q.test('missing', async assert =>
 {
