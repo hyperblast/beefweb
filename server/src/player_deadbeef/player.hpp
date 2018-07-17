@@ -5,6 +5,7 @@
 #include "../work_queue.hpp"
 #include "../player_api.hpp"
 
+#include "artwork_request.hpp"
 #include "utils.hpp"
 #include "playlist_mapping.hpp"
 
@@ -97,6 +98,9 @@ private:
     void setModes(int order, int loop);
     int32_t getPlaybackMode();
     void endModifyPlaylist(ddb_playlist_t* playlist);
+    void readVersion();
+    void initArtwork();
+    boost::intrusive_ptr<ArtworkRequest> buildArtworkRequest(const ArtworkQuery& query);
 
     ThreadWorkQueue workQueue_;
     PlaylistMutex playlistMutex_;
@@ -105,6 +109,7 @@ private:
     std::vector<std::string> playbackModes_;
     DB_artwork_plugin_t* artworkPlugin_;
     std::string version_;
+    std::vector<TitleFormatPtr> artworkRequestColumns_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };
