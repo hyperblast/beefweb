@@ -598,7 +598,7 @@ paths:
                   $ref: '#/definitions/FileSystemEntry'
 
   /artwork/{playlistId}/{index}:
-    post:
+    get:
       operationId: getArtwork
       summary: Get artwork for specific playlist item
       tags: [ artwork ]
