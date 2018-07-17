@@ -24,7 +24,7 @@ ServerHost::ServerHost(Player* player)
     PlayerController::defineRoutes(&router_, player_);
     PlaylistsController::defineRoutes(&router_, player_, this);
     QueryController::defineRoutes(&router_, player_, &dispatcher_);
-    ArtworkController::defineRoutes(&router_, player_, this, &ctmap_);
+    ArtworkController::defineRoutes(&router_, player_, &ctmap_);
 
     BrowserController::defineRoutes(&router_, &utilityQueue_, this);
     StaticController::defineRoutes(&router_, &utilityQueue_, this, &ctmap_);
