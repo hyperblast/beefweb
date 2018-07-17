@@ -45,7 +45,9 @@ using TitleFormatPtr = std::unique_ptr<char, TitleFormatDeleter>;
 
 PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index);
 
-std::vector<TitleFormatPtr> compileColumns(const std::vector<std::string>& columns);
+std::vector<TitleFormatPtr> compileColumns(
+    const std::vector<std::string>& columns,
+    bool throwOnError = true);
 
 std::vector<std::string> evaluateColumns(
     ddb_playlist_t* playlist,

@@ -303,9 +303,9 @@ class ApiClient
         return this.get('api/browser/entries', { path });
     }
 
-    getArtwork(query)
+    getArtwork(playlist, item)
     {
-        return this.get('api/artwork', query);
+        return this.get(`api/artwork/${playlist}/${item}`);
     }
 
     query(options)

@@ -19,6 +19,8 @@ tags:
   description: Query APIs
 - name: browser
   description: File browser APIs
+- name: artwork
+  description: Artwork metadata APIs
 
 paths:
 
@@ -594,6 +596,26 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/FileSystemEntry'
+
+  /artwork/{playlistId}/{index}:
+    post:
+      operationId: getArtwork
+      summary: Get artwork for specific playlist item
+      tags: [ artwork ]
+      parameters:
+      - name: playlistId
+        description: Playlist id or index
+        in: path
+        required: true
+        type: string
+      - name: index
+        description: Item index
+        in: path
+        required: true
+        type: string
+      responses:
+        200:
+          description: Success
 
 definitions:
 

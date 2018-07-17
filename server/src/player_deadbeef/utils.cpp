@@ -1,6 +1,7 @@
 #include "utils.hpp"
 
 #include "../core_types.hpp"
+#include "../string_utils.hpp"
 #include "../log.hpp"
 
 #include <string.h>
@@ -15,7 +16,8 @@ PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index)
         : PlaylistItemPtr();
 }
 
-std::vector<TitleFormatPtr> compileColumns(const std::vector<std::string>& columns)
+std::vector<TitleFormatPtr> compileColumns(
+    const std::vector<std::string>& columns, bool throwOnError)
 {
     std::vector<TitleFormatPtr> formatters;
 
@@ -24,7 +26,12 @@ std::vector<TitleFormatPtr> compileColumns(const std::vector<std::string>& colum
         TitleFormatPtr formatter(ddbApi->tf_compile(column.c_str()));
 
         if (!formatter)
-            throw InvalidRequestException("failed to compile expression: " + column);
+        {
+            if (throwOnError)
+                throw InvalidRequestException("Failed to compile expression: " + column);
+
+            return std::vector<TitleFormatPtr>();
+        }
 
         formatters.emplace_back(std::move(formatter));
     }
@@ -47,14 +54,16 @@ std::vector<std::string> evaluateColumns(
     context.plt = playlist;
     context.it = item;
 
+    int index = 0;
     for (auto& formatter : formatters)
     {
         char buffer[1024];
         int size = ddbApi->tf_eval(&context, formatter.get(), buffer, sizeof(buffer));
-        if (size >= 0)
-            results.emplace_back(buffer, size);
-        else
-            results.emplace_back("<err>", 5);
+        if (size < 0)
+            throw std::runtime_error("Failed to evaluate expression at index " + toString(index));
+
+        results.emplace_back(buffer, size);
+        index++;
     }
 
     return results;

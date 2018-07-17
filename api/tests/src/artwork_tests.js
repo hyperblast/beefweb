@@ -4,7 +4,6 @@ const path = require('path');
 const { promisify } = require('util');
 const readFile = promisify(require('fs').readFile);
 const q = require('qunit');
-
 const { client, usePlayer, config, tracks } = require('./test_context');
 
 function getFile(name)
@@ -12,12 +11,11 @@ function getFile(name)
     return readFile(path.join(config.musicDir, name), null);
 }
 
-function getArtwork(params)
+function getArtwork(playlist, item)
 {
-    return client.handler.axios.get('api/artwork', {
+    return client.handler.axios.get(`api/artwork/${playlist}/${item}`, {
         responseType: 'arraybuffer',
         validateStatus: () => true,
-        params,
     });
 }
 
@@ -25,8 +23,10 @@ q.module('artwork', usePlayer());
 
 q.test('get from folder', async assert =>
 {
+    await client.addPlaylistItems(0, [tracks.t1]);
+
     const expected = await getFile('cover-black.png');
-    const response = await getArtwork({ file: tracks.t1 });
+    const response = await getArtwork(0, 0);
 
     assert.equal(response.status, 200);
     assert.ok(response.data.equals(expected));
@@ -34,8 +34,10 @@ q.test('get from folder', async assert =>
 
 q.test('get from tag', async assert =>
 {
+    await client.addPlaylistItems(0, [tracks.t2]);
+
     const expected = await getFile('cover-white.png.hidden');
-    const response = await getArtwork({ file: tracks.t2 });
+    const response = await getArtwork(0, 0);
 
     assert.equal(response.status, 200);
     assert.ok(response.data.equals(expected));
@@ -43,6 +45,7 @@ q.test('get from tag', async assert =>
 
 q.test('missing', async assert =>
 {
-    const response = await getArtwork({ file: tracks.t3 });
+    await client.addPlaylistItems(0, [tracks.t3]);
+    const response = await getArtwork(0, 0);
     assert.equal(response.status, 404);
 });

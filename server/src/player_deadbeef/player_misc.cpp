@@ -19,26 +19,40 @@ WorkQueue* PlayerImpl::workQueue()
     return &workQueue_;
 }
 
-void PlayerImpl::connect()
+void PlayerImpl::initArtwork()
+{
+    auto artwork = ddbApi->plug_get_for_id("artwork");
+    if (!artwork || !PLUG_TEST_COMPAT(artwork, 1, DDB_ARTWORK_VERSION))
+        return;
+
+    artworkRequestColumns_ = compileColumns({ "%artist%", "%album%", "%path%" }, false);
+    if (artworkRequestColumns_.empty())
+        return;
+
+    artworkPlugin_ = reinterpret_cast<DB_artwork_plugin_t*>(artwork);
+}
+
+void PlayerImpl::readVersion()
 {
     TitleFormatPtr versionFormat(ddbApi->tf_compile("%_deadbeef_version%"));
 
-    if (versionFormat)
-    {
-        ddb_tf_context_t context;
-        memset(&context, 0, sizeof(context));
-        context._size = sizeof(context);
+    if (!versionFormat)
+        return;
 
-        char buffer[64];
-        int ret = ddbApi->tf_eval(&context, versionFormat.get(), buffer, sizeof(buffer));
-        if (ret >= 0)
-            version_ = buffer;
-    }
+    ddb_tf_context_t context;
+    memset(&context, 0, sizeof(context));
+    context._size = sizeof(context);
 
-    auto artwork = ddbApi->plug_get_for_id("artwork");
+    char buffer[64];
+    int ret = ddbApi->tf_eval(&context, versionFormat.get(), buffer, sizeof(buffer));
+    if (ret >= 0)
+        version_ = buffer;
+}
 
-    if (artwork && PLUG_TEST_COMPAT(artwork, 1, DDB_ARTWORK_VERSION))
-        artworkPlugin_ = reinterpret_cast<DB_artwork_plugin_t*>(artwork);
+void PlayerImpl::connect()
+{
+    readVersion();
+    initArtwork();
 }
 
 void PlayerImpl::disconnect()
@@ -49,10 +63,28 @@ void PlayerImpl::disconnect()
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)
 {
-    if (!artworkPlugin_)
-        return boost::make_future(ArtworkResult());
+    return artworkPlugin_
+        ? buildArtworkRequest(query)->execute()
+        : boost::make_future(ArtworkResult());
+}
 
-    return ArtworkRequest::create(artworkPlugin_)->execute(query);
+boost::intrusive_ptr<ArtworkRequest> PlayerImpl::buildArtworkRequest(const ArtworkQuery& query)
+{
+    PlaylistLockGuard lock(playlistMutex_);
+
+    auto playlist = playlists_.resolve(query.playlist);
+
+    auto item = resolvePlaylistItem(playlist.get(), query.index);
+    if (!item)
+        throw InvalidRequestException("Playlist item index is out of range");
+
+    auto columns = evaluateColumns(playlist.get(), item.get(), artworkRequestColumns_);
+
+    return ArtworkRequest::create(
+        artworkPlugin_,
+        std::move(columns[0]),
+        std::move(columns[1]),
+        std::move(columns[2]));
 }
 
 void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)

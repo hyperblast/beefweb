@@ -191,9 +191,8 @@ public:
 
 struct ArtworkQuery
 {
-    std::string file;
-    std::string artist;
-    std::string album;
+    PlaylistRef playlist;
+    int32_t index;
 };
 
 struct ArtworkResult

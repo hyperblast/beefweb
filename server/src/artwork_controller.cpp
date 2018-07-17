@@ -4,6 +4,8 @@
 #include "log.hpp"
 #include "router.hpp"
 #include "player_api.hpp"
+#include "player_api_parsers.hpp"
+#include "player_api_json.hpp"
 #include "content_type_map.hpp"
 
 namespace msrv {
@@ -21,22 +23,8 @@ ResponsePtr ArtworkController::getArtwork()
 {
     ArtworkQuery query;
 
-    if (auto path = optionalParam<std::string>("file"))
-    {
-        auto normalizedPath = pathToUtf8(pathFromUtf8(*path).lexically_normal().make_preferred());
-        auto settings = store_->settings();
-
-        if (!settings->isAllowedPath(normalizedPath))
-            return Response::error(HttpStatus::S_403_FORBIDDEN);
-
-        query.file = std::move(normalizedPath);
-    }
-
-    if (auto artist = optionalParam<std::string>("artist"))
-        query.artist = std::move(*artist);
-
-    if (auto album = optionalParam<std::string>("album"))
-        query.album = std::move(*album);
+    query.playlist = param<PlaylistRef>("plref");
+    query.index = param<int32_t>("index");
 
     auto responseFuture = player_->fetchArtwork(query).then(
         boost::launch::sync, [this] (boost::unique_future<ArtworkResult> resultFuture)
@@ -64,7 +52,7 @@ void ArtworkController::defineRoutes(
     });
 
     routes.useWorkQueue(player->workQueue());
-    routes.setPrefix("api/artwork");
+    routes.setPrefix("api/artwork/:plref/:index");
     routes.get("", &ArtworkController::getArtwork);
 }
 
