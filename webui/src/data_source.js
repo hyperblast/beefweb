@@ -1,4 +1,5 @@
 import EventEmitter from 'wolfy87-eventemitter'
+import Timer from './timer'
 import { looseDeepEqual } from './utils'
 
 const eventNames = ['player', 'playlists', 'playlistItems'];
@@ -14,7 +15,9 @@ export default class DataSource extends EventEmitter
         this.isStarted = false;
         this.subscriptions = {};
         this.previousEvents = {};
+
         this.handleEvent = this.handleEvent.bind(this);
+        this.reconnectTimer = new Timer(this.reinitEventSource.bind(this), 5000);
 
         for (let event of eventNames)
             this.defineEvent(event);
@@ -28,6 +31,8 @@ export default class DataSource extends EventEmitter
 
     handleEvent(result)
     {
+        this.reconnectTimer.restart();
+
         for (let event of eventNames)
         {
             const value = result[event];
@@ -80,6 +85,8 @@ export default class DataSource extends EventEmitter
         }
 
         const request = this.createRequest();
+
         this.eventSource = this.client.queryUpdates(request, this.handleEvent);
+        this.reconnectTimer.restart();
     }
 }
