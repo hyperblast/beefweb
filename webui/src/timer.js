@@ -28,7 +28,7 @@ export default class Timer
     update()
     {
         const now = Date.now();
-        const delta = (now - this.lastTick) / 1000;
+        const delta = now - this.lastTick;
         this.lastTick = now;
         this.callback(delta);
     }

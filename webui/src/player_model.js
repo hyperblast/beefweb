@@ -128,7 +128,7 @@ export default class PlayerModel extends EventEmitter
         if (position < 0 || duration < 0)
             return;
 
-        const newPosition = clamp(position + delta, 0, duration);
+        const newPosition = clamp(position + delta / 1000, 0, duration);
 
         this.updateState('activeItem', { position: newPosition });
     }
