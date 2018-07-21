@@ -24,7 +24,8 @@ q.module('artwork 1', usePlayer());
 q.test('get from folder', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
-
+    await client.waitPlaybackMetadata();
+    
     const expected = await getFile('cover-black.png');
     const response = await getArtwork(0, 0);
 
@@ -37,6 +38,7 @@ q.module('artwork 2', usePlayer());
 q.test('get from tag', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t2]);
+    await client.waitPlaybackMetadata();
 
     const expected = await getFile('cover-white.png.hidden');
     const response = await getArtwork(0, 0);
@@ -50,6 +52,8 @@ q.module('artwork 3', usePlayer());
 q.test('missing', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t3]);
+    await client.waitPlaybackMetadata();
+
     const response = await getArtwork(0, 0);
     assert.equal(response.status, 404);
 });
