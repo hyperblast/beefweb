@@ -19,8 +19,6 @@ ServerHost::ServerHost(Player* player)
     filters_.addFilter(std::make_unique<CacheSupportFilter>());
     filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
-    ctmap_.addDefaults();
-
     PlayerController::defineRoutes(&router_, player_);
     PlaylistsController::defineRoutes(&router_, player_, this);
     QueryController::defineRoutes(&router_, player_, &dispatcher_);
