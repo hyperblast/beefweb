@@ -30,15 +30,42 @@ ResponsePtr ArtworkController::getArtwork()
         boost::launch::sync, [this] (boost::unique_future<ArtworkResult> resultFuture)
         {
             auto result = resultFuture.get();
-
-            if (result.path.empty())
-                return ResponsePtr(Response::error(HttpStatus::S_404_NOT_FOUND, "no artwork found"));
-
-            auto path = pathFromUtf8(result.path);
-            return Response::file(std::move(path), ctmap_->byFilePath(path));
+            return getResponse(&result);
         });
 
     return Response::async(std::move(responseFuture));
+}
+
+ResponsePtr ArtworkController::getResponse(ArtworkResult* result)
+{
+    if (!result->filePath.empty())
+    {
+        auto filePath = pathFromUtf8(result->filePath);
+        auto fileHandle = openFile(filePath);
+
+        if (!fileHandle)
+            return getNotFoundResponse();
+
+        auto fileData = readFileToEnd(fileHandle.get(), 64);
+
+        return Response::file(
+            std::move(filePath),
+            std::move(fileHandle),
+            ctmap_->byHeader(fileData));
+    }
+
+    if (!result->fileData.empty())
+    {
+        const auto& contentType = ctmap_->byHeader(result->fileData);
+        return Response::data(std::move(result->fileData), contentType);
+    }
+
+    return getNotFoundResponse();
+}
+
+ResponsePtr ArtworkController::getNotFoundResponse()
+{
+    return Response::error(HttpStatus::S_404_NOT_FOUND, "no artwork found");
 }
 
 void ArtworkController::defineRoutes(

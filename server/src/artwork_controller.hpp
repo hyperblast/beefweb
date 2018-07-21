@@ -2,6 +2,7 @@
 
 #include "defines.hpp"
 #include "controller.hpp"
+#include "player_api.hpp"
 
 namespace msrv {
 
@@ -21,6 +22,9 @@ public:
     static void defineRoutes(Router* router, Player* player, ContentTypeMap* ctmap);
 
 private:
+    ResponsePtr getResponse(ArtworkResult* result);
+    ResponsePtr getNotFoundResponse();
+
     Player* player_;
     ContentTypeMap* ctmap_;
 

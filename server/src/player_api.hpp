@@ -198,9 +198,21 @@ struct ArtworkQuery
 struct ArtworkResult
 {
     ArtworkResult() { }
-    ArtworkResult(std::string pathVal) : path(std::move(pathVal)) { }
 
-    std::string path;
+    ArtworkResult(std::string filePathVal) : filePath(std::move(filePathVal)) { }
+    ArtworkResult(std::vector<uint8_t> fileDataVal) : fileData(std::move(fileDataVal)) { }
+
+    ArtworkResult(const void* data, size_t size)
+    {
+        fileData.resize(size);
+        memcpy(fileData.data(), data, size);
+    }
+
+    ArtworkResult(ArtworkResult&&) = default;
+    ArtworkResult& operator=(ArtworkResult&&) = default;
+
+    std::string filePath;
+    std::vector<uint8_t> fileData;
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
