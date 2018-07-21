@@ -113,6 +113,7 @@ private:
     service_ptr_t<playback_control> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;
     service_ptr_t<playlist_incoming_item_filter_v3> incomingItemFilter_;
+    service_ptr_t<album_art_manager_v3> albumArtManager_;
     service_ptr_t<titleformat_compiler> titleFormatCompiler_;
     service_ptr_t<Fb2kWorkQueue> workQueue_;
 

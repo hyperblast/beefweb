@@ -1,8 +1,6 @@
 const { config } = require('./test_context');
 
-if (config.supportsArtwork)
-    require('./artwork_tests');
-
+require('./artwork_tests');
 require('./authentication_tests');
 require('./browser_api_tests');
 require('./player_api_tests');
