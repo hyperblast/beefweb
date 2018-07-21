@@ -25,11 +25,12 @@ q.test('get from folder', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
     await client.waitPlaybackMetadata();
-    
+
     const expected = await getFile('cover-black.png');
     const response = await getArtwork(0, 0);
 
     assert.equal(response.status, 200);
+    assert.equal(response.headers['content-type'], 'image/png');
     assert.ok(response.data.equals(expected));
 });
 
@@ -44,6 +45,7 @@ q.test('get from tag', async assert =>
     const response = await getArtwork(0, 0);
 
     assert.equal(response.status, 200);
+    assert.equal(response.headers['content-type'], 'image/png');
     assert.ok(response.data.equals(expected));
 });
 
