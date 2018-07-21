@@ -30,7 +30,7 @@ ResponsePtr StaticController::getFile()
         path += "index.html";
 
     auto filePath = pathFromUtf8(staticDir) / pathFromUtf8(path);
-    return Response::file(filePath, ctmap_->get(filePath));
+    return Response::file(filePath, ctmap_->byFilePath(filePath));
 }
 
 void StaticController::defineRoutes(
