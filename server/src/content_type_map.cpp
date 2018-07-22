@@ -11,8 +11,9 @@ const uint8_t GIF_HEADER[] = { 0x47, 0x49, 0x46, 0x38 };
 const uint8_t BMP_HEADER[] = { 0x42, 0x4D };
 
 inline bool matchHeader(
-    const std::vector<uint8_t> fileData,
-    const uint8_t* header, size_t size)
+    const std::vector<uint8_t>& fileData,
+    const uint8_t* header,
+    size_t size)
 {
     return fileData.size() >= size
         && memcmp(fileData.data(), header, size) == 0;
