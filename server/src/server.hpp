@@ -30,6 +30,7 @@ struct ServerConfig
 {
     bool allowRemote;
     int port;
+    ServerBackend backend;
     const Router* router;
     const RequestFilterChain* filters;
 };

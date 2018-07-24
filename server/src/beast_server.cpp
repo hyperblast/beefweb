@@ -4,6 +4,11 @@
 
 namespace msrv {
 
+ServerCorePtr ServerCore::createBeast()
+{
+    return std::make_unique<BeastServer>();
+}
+
 BeastServer::BeastServer()
     : context_(),
       workQueue_(&context_),

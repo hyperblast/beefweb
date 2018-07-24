@@ -60,6 +60,7 @@ void ServerHost::reconfigure(const SettingsData& settings)
 
     config->allowRemote = settings.allowRemote;
     config->port = settings.port;
+    config->backend = ServerBackend::STANDARD;
     config->filters = &filters_;
     config->router = &router_;
 

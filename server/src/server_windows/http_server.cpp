@@ -4,7 +4,7 @@
 
 namespace msrv {
 
-ServerCorePtr ServerCore::create()
+ServerCorePtr ServerCore::createStandard()
 {
     return std::make_unique<server_windows::HttpServer>();
 }
