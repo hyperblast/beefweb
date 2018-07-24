@@ -36,7 +36,7 @@ public:
 
 private:
     void schedule(DurationMs delay);
-    void onComplete(const boost::system::error_code& error);
+    void handleTimeout(const boost::system::error_code& error);
 
     asio::deadline_timer timer_;
     TimerState state_;
@@ -47,7 +47,7 @@ private:
 class AsioTimerFactory final : public TimerFactory
 {
 public:
-    AsioTimerFactory(boost::asio::io_context* context);
+    AsioTimerFactory(asio::io_context* context);
     virtual ~AsioTimerFactory();
     virtual TimerPtr createTimer() override;
 
