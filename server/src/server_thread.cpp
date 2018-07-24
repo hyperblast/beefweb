@@ -74,8 +74,8 @@ void ServerThread::runOnce(ServerConfigPtr config)
 
     tryCatchLog([&config, &server]
     {
-        server = std::make_shared<Server>(
-            ServerCore::create(), std::move(config));
+        auto serverCore = ServerCore::create(config->backend);
+        server = std::make_shared<Server>(std::move(serverCore), std::move(config));
     });
 
     if (!server)

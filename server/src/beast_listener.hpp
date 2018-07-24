@@ -5,8 +5,7 @@
 
 namespace msrv {
 
-class BeastListener
-        : public std::enable_shared_from_this<BeastListener>
+class BeastListener : public std::enable_shared_from_this<BeastListener>
 {
 public:
     BeastListener(
@@ -20,8 +19,9 @@ public:
 
 private:
     void accept();
-    void onAccept(const boost::system::error_code& error);
+    void handleAccept(const boost::system::error_code& error);
 
+    asio::io_context* context_;
     asio::ip::tcp::acceptor acceptor_;
     asio::ip::tcp::socket peerSocket_;
     asio::ip::tcp::endpoint peerEndpoint_;

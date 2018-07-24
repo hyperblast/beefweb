@@ -101,6 +101,7 @@ public:
 
         config->allowRemote = allowRemote;
         config->port = PORT;
+        config->backend = ServerBackend::BEAST;
         config->router = &router_;
         config->filters = &filters_;
 
