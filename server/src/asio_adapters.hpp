@@ -1,29 +1,28 @@
 #pragma once
 
+#include "asio.hpp"
 #include "work_queue.hpp"
 #include "timers.hpp"
-
-#include <boost/asio.hpp>
 
 namespace msrv {
 
 class AsioWorkQueue final : public ExternalWorkQueue
 {
 public:
-    AsioWorkQueue(boost::asio::io_context* context);
+    AsioWorkQueue(asio::io_context* context);
     virtual ~AsioWorkQueue();
 
 protected:
     virtual void schedule() override;
 
 private:
-    boost::asio::io_context* context_;
+    asio::io_context* context_;
 };
 
 class AsioTimer final : public Timer
 {
 public:
-    AsioTimer(boost::asio::io_context* context);
+    AsioTimer(asio::io_context* context);
     virtual ~AsioTimer();
 
     virtual TimerState state() const override { return state_; }
@@ -39,7 +38,7 @@ private:
     void schedule(DurationMs delay);
     void onComplete(const boost::system::error_code& error);
 
-    boost::asio::deadline_timer timer_;
+    asio::deadline_timer timer_;
     TimerState state_;
     DurationMs period_;
     TimerCallback callback_;
@@ -53,7 +52,7 @@ public:
     virtual TimerPtr createTimer() override;
 
 private:
-    boost::asio::io_context* context_;
+    asio::io_context* context_;
 };
 
 }

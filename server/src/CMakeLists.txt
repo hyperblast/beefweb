@@ -57,6 +57,7 @@ include_directories(
 set(
     CORE_SOURCES
     artwork_controller.cpp artwork_controller.hpp
+    asio.hpp
     asio_adapters.cpp asio_adapters.hpp
     base64.cpp base64.hpp
     basic_auth_filter.cpp basic_auth_filter.hpp
