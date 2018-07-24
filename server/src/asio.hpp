@@ -6,8 +6,4 @@
 #include "safe_windows.h"
 #endif
 
-namespace msrv {
-
-namespace asio = boost::asio;
-
-}
+namespace msrv { namespace asio = boost::asio; }
