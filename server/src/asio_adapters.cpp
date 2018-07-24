@@ -58,10 +58,10 @@ void AsioTimer::stop()
 void AsioTimer::schedule(DurationMs delay)
 {
     timer_.expires_from_now(boost::posix_time::millisec(delay.count()));
-    timer_.async_wait([this] (const boost::system::error_code& error) { onComplete(error); });
+    timer_.async_wait([this] (const boost::system::error_code& error) { handleTimeout(error); });
 }
 
-void AsioTimer::onComplete(const boost::system::error_code& error)
+void AsioTimer::handleTimeout(const boost::system::error_code& error)
 {
     if (error == asio::error::operation_aborted)
         return;
