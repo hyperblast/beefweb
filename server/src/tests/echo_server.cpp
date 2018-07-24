@@ -143,7 +143,7 @@ int testMain(int argc, char** argv)
 
     EchoServer server(allowRemote, []
     {
-        logInfo("server is running");
+        logInfo("server is running on port %d", EchoServer::PORT);
         logInfo("press q<ENTER> to stop, press e<ENTER> to dispatch events");
     });
 

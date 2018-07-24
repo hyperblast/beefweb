@@ -10,25 +10,37 @@ ServerCorePtr ServerCore::createBeast()
 }
 
 BeastServer::BeastServer()
-    : context_(),
-      workQueue_(&context_),
-      timerFactory_(&context_),
-      listener_(nullptr)
+    : ioContext_(),
+      connectionContext_(),
+      workQueue_(&ioContext_),
+      timerFactory_(&ioContext_)
 {
 }
 
 BeastServer::~BeastServer() = default;
 
+void BeastServer::setEventListener(RequestEventListener* listener)
+{
+    connectionContext_.eventListener = listener;
+};
+
 std::shared_ptr<BeastListener> BeastServer::createListener(const asio::ip::tcp::endpoint& endpoint)
 {
     try
     {
-        return std::make_shared<BeastListener>(&context_, endpoint, listener_);
+        auto listener = std::make_shared<BeastListener>(&ioContext_, &connectionContext_, endpoint);
+
+        logInfo(
+            "listening on [%s]:%d",
+            endpoint.address().to_string().c_str(),
+            static_cast<int>(endpoint.port()));
+
+        return listener;
     }
     catch (std::exception& ex)
     {
         logError(
-            "failed to start listener on address %s port %d: %s",
+            "failed to bind to address [%s]:%d: %s",
             endpoint.address().to_string().c_str(),
             static_cast<int>(endpoint.port()),
             ex.what());
@@ -39,8 +51,6 @@ std::shared_ptr<BeastListener> BeastServer::createListener(const asio::ip::tcp::
 
 void BeastServer::bind(int port, bool allowRemote)
 {
-    assert(listener_ != nullptr);
-
     using namespace asio::ip;
 
     tcp::endpoint endpointV4(
@@ -66,12 +76,12 @@ void BeastServer::bind(int port, bool allowRemote)
 
 void BeastServer::run()
 {
-    context_.run();
+    ioContext_.run();
 }
 
 void BeastServer::exit()
 {
-    context_.stop();
+    ioContext_.stop();
 }
 
 }

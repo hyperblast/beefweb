@@ -15,7 +15,7 @@ public:
 
     virtual WorkQueue* workQueue() override { return &workQueue_; }
     virtual TimerFactory* timerFactory() override { return &timerFactory_; }
-    virtual void setEventListener(RequestEventListener* listener) override { listener_ = listener; }
+    virtual void setEventListener(RequestEventListener* listener) override;
 
     virtual void bind(int port, bool allowRemote) override;
     virtual void run() override;
@@ -24,10 +24,10 @@ public:
 private:
     std::shared_ptr<BeastListener> createListener(const asio::ip::tcp::endpoint& endpoint);
 
-    asio::io_context context_;
+    asio::io_context ioContext_;
+    BeastConnectionContext connectionContext_;
     AsioWorkQueue workQueue_;
     AsioTimerFactory timerFactory_;
-    RequestEventListener* listener_;
 };
 
 }

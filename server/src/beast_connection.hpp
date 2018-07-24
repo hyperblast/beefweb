@@ -3,15 +3,30 @@
 #include "beast.hpp"
 #include "server_core.hpp"
 #include "beast_request.hpp"
+#include <unordered_set>
 
 namespace msrv {
+
+class BeastConnection;
+
+struct BeastConnectionContext
+{
+    BeastConnectionContext()
+        : idleConnections(),
+          eventListener(nullptr) { }
+
+    std::unordered_set<std::shared_ptr<BeastConnection>> idleConnections;
+    RequestEventListener* eventListener;
+
+    MSRV_NO_COPY_AND_ASSIGN(BeastConnectionContext);
+};
 
 class BeastConnection : public std::enable_shared_from_this<BeastConnection>
 {
 public:
     BeastConnection(
-        asio::ip::tcp::socket socket,
-        RequestEventListener* listener);
+        BeastConnectionContext* context,
+        asio::ip::tcp::socket socket);
 
     ~BeastConnection();
 
@@ -40,8 +55,9 @@ private:
     void handleReadRequest(const boost::system::error_code& error);
     void handleWriteResponse(const boost::system::error_code& error, bool close);
 
+    BeastConnectionContext* context_;
     asio::ip::tcp::socket socket_;
-    RequestEventListener* listener_;
+
     beast::flat_buffer buffer_;
     beast::http::request<beast::http::string_body> request_;
     std::unique_ptr<BeastRequest> coreReq_;

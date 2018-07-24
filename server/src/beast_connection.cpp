@@ -4,10 +4,10 @@
 namespace msrv {
 
 BeastConnection::BeastConnection(
-    asio::ip::tcp::socket socket,
-    RequestEventListener* listener)
-    : socket_(std::move(socket)),
-      listener_(listener)
+    BeastConnectionContext* context,
+    asio::ip::tcp::socket socket)
+    : context_(context),
+      socket_(std::move(socket))
 {
 }
 
@@ -64,12 +64,14 @@ void BeastConnection::handleReadRequest(const boost::system::error_code& error)
     }
 
     coreReq_ = std::make_unique<BeastRequest>(this, &request_);
-    listener_->onRequestReady(coreReq_.get());
+    context_->eventListener->onRequestReady(coreReq_.get());
+    context_->idleConnections.emplace(shared_from_this());
 }
 
 void BeastConnection::handleWriteResponse(const boost::system::error_code& error, bool close)
 {
-    listener_->onRequestDone(coreReq_.get());
+    context_->idleConnections.erase(shared_from_this());
+    context_->eventListener->onRequestDone(coreReq_.get());
 
     response_.reset();
     coreReq_.reset();

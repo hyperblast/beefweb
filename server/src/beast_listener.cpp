@@ -5,13 +5,13 @@
 namespace msrv {
 
 BeastListener::BeastListener(
-    asio::io_context* context,
-    const asio::ip::tcp::endpoint& endpoint,
-    RequestEventListener* listener)
-    : context_(context),
-      acceptor_(*context),
-      peerSocket_(*context),
-      listener_(listener)
+    asio::io_context* ioContext,
+    BeastConnectionContext* connectionContext,
+    const asio::ip::tcp::endpoint& endpoint)
+    : ioContext_(ioContext),
+      connectionContext_(connectionContext),
+      acceptor_(*ioContext),
+      peerSocket_(*ioContext)
 {
     acceptor_.open(endpoint.protocol());
     acceptor_.set_option(asio::socket_base::reuse_address(true));
@@ -46,11 +46,11 @@ void BeastListener::handleAccept(const boost::system::error_code& error)
     }
     else
     {
-        auto connection = std::make_shared<BeastConnection>(std::move(peerSocket_), listener_);
+        auto connection = std::make_shared<BeastConnection>(connectionContext_, std::move(peerSocket_));
         connection->run();
     }
 
-    if (!context_->stopped())
+    if (!ioContext_->stopped())
         accept();
 }
 
