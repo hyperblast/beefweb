@@ -97,18 +97,21 @@ public:
         filters_.addFilter(std::make_unique<EchoHeadersFilter>());
         filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
-        auto config = std::make_unique<ServerConfig>();
+        config_.allowRemote = allowRemote;
+        config_.port = PORT;
+        config_.backend = ServerBackend::BEAST;
+        config_.router = &router_;
+        config_.filters = &filters_;
 
-        config->allowRemote = allowRemote;
-        config->port = PORT;
-        config->backend = ServerBackend::BEAST;
-        config->router = &router_;
-        config->filters = &filters_;
-
-        thread_.restart(std::move(config));
+        restart();
     }
 
     ~EchoServer() = default;
+
+    void restart()
+    {
+        thread_.restart(std::make_unique<ServerConfig>(config_));
+    }
 
     void dispatchEvents()
     {
@@ -119,6 +122,7 @@ private:
     Router router_;
     RequestFilterChain filters_;
     ThreadWorkQueue workQueue_;
+    ServerConfig config_;
     ServerThread thread_;
 
     MSRV_NO_COPY_AND_ASSIGN(EchoServer);
@@ -144,7 +148,9 @@ int testMain(int argc, char** argv)
     EchoServer server(allowRemote, []
     {
         logInfo("server is running on port %d", EchoServer::PORT);
-        logInfo("press q<ENTER> to stop, press e<ENTER> to dispatch events");
+        logInfo("press q<ENTER> to stop");
+        logInfo("press e<ENTER> to dispatch events");
+        logInfo("press r<ENTER> to restart server");
     });
 
     while (true)
@@ -154,6 +160,11 @@ int testMain(int argc, char** argv)
         case 'q':
         case 'Q':
             return 0;
+
+        case 'r':
+        case 'R':
+            server.restart();
+            break;
 
         case 'e':
         case 'E':
