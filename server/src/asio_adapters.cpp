@@ -3,17 +3,17 @@
 
 namespace msrv {
 
-AsioWorkQueue::AsioWorkQueue(boost::asio::io_context* context)
+AsioWorkQueue::AsioWorkQueue(asio::io_context* context)
     : context_(context) { }
 
 AsioWorkQueue::~AsioWorkQueue() = default;
 
 void AsioWorkQueue::schedule()
 {
-    boost::asio::post(context_->get_executor(), [this] { execute(); });
+    asio::post(context_->get_executor(), [this] { execute(); });
 }
 
-AsioTimer::AsioTimer(boost::asio::io_context* context)
+AsioTimer::AsioTimer(asio::io_context* context)
     : timer_(*context)
 {
 }
@@ -63,7 +63,7 @@ void AsioTimer::schedule(DurationMs delay)
 
 void AsioTimer::onComplete(const boost::system::error_code& error)
 {
-    if (error == boost::asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
     state_ = isPeriodic() ? TimerState::WILL_RESTART : TimerState::STOPPED;
@@ -75,7 +75,7 @@ void AsioTimer::onComplete(const boost::system::error_code& error)
         schedule(period_);
 }
 
-AsioTimerFactory::AsioTimerFactory(boost::asio::io_context* context)
+AsioTimerFactory::AsioTimerFactory(asio::io_context* context)
     : context_(context) { }
 
 AsioTimerFactory::~AsioTimerFactory() = default;
