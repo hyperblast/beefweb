@@ -3,7 +3,7 @@
 #include "request_filter.hpp"
 #include "router.hpp"
 #include "log.hpp"
-#include "response_formatter.hpp"
+#include "response_sender.hpp"
 
 namespace msrv {
 
