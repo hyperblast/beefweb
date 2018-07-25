@@ -6,10 +6,10 @@ namespace msrv {
 
 namespace {
 
-class ResponseSender : public boost::static_visitor<>
+class ResponseCoreSender : public boost::static_visitor<>
 {
 public:
-    ResponseSender(
+    ResponseCoreSender(
         BeastConnection* connection,
         beast::http::request<beast::http::string_body>* request,
         ResponseCore* response)
@@ -181,7 +181,7 @@ void BeastRequest::sendResponse(ResponseCorePtr response)
     assert(!response_);
 
     response_ = std::move(response);
-    ResponseSender sender(connection_, request_, response_.get());
+    ResponseCoreSender sender(connection_, request_, response_.get());
     sender.send();
 }
 

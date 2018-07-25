@@ -2,21 +2,21 @@
 
 namespace msrv {
 
-void ResponseFormatter::initResponse(Response* response)
+void ResponseSender::initResponse(Response* response)
 {
     responseCore_ = std::make_unique<ResponseCore>();
     responseCore_->status = response->status;
     responseCore_->headers = std::move(response->headers);
 }
 
-void ResponseFormatter::format(Response* response)
+void ResponseSender::send(Response* response)
 {
     initResponse(response);
     response->process(this);
     requestCore_->sendResponse(std::move(responseCore_));
 }
 
-void ResponseFormatter::formatEventStream(EventStreamResponse* response, Json event)
+void ResponseSender::sendEventStream(EventStreamResponse* response, Json event)
 {
     initResponse(response);
     setHeader(HttpHeader::CONTENT_TYPE, "text/event-stream");
@@ -24,18 +24,18 @@ void ResponseFormatter::formatEventStream(EventStreamResponse* response, Json ev
     requestCore_->sendResponseBegin(std::move(responseCore_));
 }
 
-void ResponseFormatter::formatEvent(Json event)
+void ResponseSender::sendEvent(Json event)
 {
     requestCore_->sendResponseBody(eventToString(event));
 }
 
-void ResponseFormatter::handleResponse(SimpleResponse*)
+void ResponseSender::handleResponse(SimpleResponse*)
 {
     setHeader(HttpHeader::CONTENT_TYPE, "text/plain");
     setHeader(HttpHeader::CONTENT_LENGTH, "0");
 }
 
-void ResponseFormatter::handleResponse(DataResponse* response)
+void ResponseSender::handleResponse(DataResponse* response)
 {
     setHeader(HttpHeader::CONTENT_TYPE, response->contentType);
     setHeader(HttpHeader::CONTENT_LENGTH, toString(response->data.size()));
@@ -43,7 +43,7 @@ void ResponseFormatter::handleResponse(DataResponse* response)
     responseCore_->body = std::move(response->data);
 }
 
-void ResponseFormatter::handleResponse(FileResponse* response)
+void ResponseSender::handleResponse(FileResponse* response)
 {
     setHeader(HttpHeader::CONTENT_TYPE, response->contentType);
     setHeader(HttpHeader::CONTENT_LENGTH, toString(response->info.size));
@@ -52,27 +52,27 @@ void ResponseFormatter::handleResponse(FileResponse* response)
         std::move(response->handle), response->info.size);
 }
 
-void ResponseFormatter::handleResponse(JsonResponse* response)
+void ResponseSender::handleResponse(JsonResponse* response)
 {
-    formatJson(response->value);
+    setJsonBody(response->value);
 }
 
-void ResponseFormatter::handleResponse(ErrorResponse* response)
+void ResponseSender::handleResponse(ErrorResponse* response)
 {
-    formatJson(Json(*response));
+    setJsonBody(Json(*response));
 }
 
-void ResponseFormatter::handleResponse(EventStreamResponse*)
-{
-    assert(false);
-}
-
-void ResponseFormatter::handleResponse(AsyncResponse*)
+void ResponseSender::handleResponse(EventStreamResponse*)
 {
     assert(false);
 }
 
-void ResponseFormatter::formatJson(const Json& value)
+void ResponseSender::handleResponse(AsyncResponse*)
+{
+    assert(false);
+}
+
+void ResponseSender::setJsonBody(const Json& value)
 {
     auto str = value.dump();
     setHeader(HttpHeader::CONTENT_TYPE, "application/json");
@@ -80,7 +80,7 @@ void ResponseFormatter::formatJson(const Json& value)
     responseCore_->body = std::move(str);
 }
 
-std::string ResponseFormatter::eventToString(const Json& value)
+std::string ResponseSender::eventToString(const Json& value)
 {
     std::string buffer;
 
