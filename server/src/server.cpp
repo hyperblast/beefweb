@@ -115,7 +115,7 @@ void Server::sendEvent(RequestContextPtr context)
     if (!context->isAlive())
         return;
 
-    ResponseFormatter(context->corereq).formatEvent(std::move(context->lastEvent));
+    ResponseSender(context->corereq).sendEvent(std::move(context->lastEvent));
 }
 
 void Server::sendResponse(RequestContextPtr context)
@@ -125,7 +125,7 @@ void Server::sendResponse(RequestContextPtr context)
     if (!context->isAlive())
         return;
 
-    ResponseFormatter(context->corereq).format(context->response());
+    ResponseSender(context->corereq).send(context->response());
 }
 
 void Server::processResponse(RequestContextPtr context)
@@ -176,7 +176,7 @@ void Server::beginSendEventStream(RequestContextPtr context)
 
     eventStreamContexts_.emplace(context->corereq, context);
 
-    ResponseFormatter(context->corereq).formatEventStream(
+    ResponseSender(context->corereq).sendEventStream(
         context->eventStreamResponse, std::move(context->lastEvent));
 }
 

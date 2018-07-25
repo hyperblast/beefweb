@@ -7,17 +7,17 @@ namespace msrv {
 
 class RequestCore;
 
-class ResponseFormatter : private ResponseHandler
+class ResponseSender : private ResponseHandler
 {
 public:
-    explicit ResponseFormatter(RequestCore* corereq)
+    explicit ResponseSender(RequestCore* corereq)
         : requestCore_(corereq) { }
 
-    ~ResponseFormatter() = default;
+    ~ResponseSender() = default;
 
-    void format(Response* response);
-    void formatEvent(Json event);
-    void formatEventStream(EventStreamResponse* response, Json event);
+    void send(Response* response);
+    void sendEvent(Json event);
+    void sendEventStream(EventStreamResponse* response, Json event);
 
 private:
     static std::string eventToString(const Json& value);
@@ -32,7 +32,7 @@ private:
     virtual void handleResponse(EventStreamResponse*) override;
     virtual void handleResponse(AsyncResponse*) override;
 
-    void formatJson(const Json& value);
+    void setJsonBody(const Json& value);
 
     void setHeader(std::string key, std::string value)
     {
