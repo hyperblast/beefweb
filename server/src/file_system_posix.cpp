@@ -36,11 +36,6 @@ Path getModulePath(void* symbol)
     return Path(info.dli_fname);
 }
 
-FileHandle openFile(const Path& path)
-{
-    return FileHandle(::open(path.c_str(), O_RDONLY | O_CLOEXEC));
-}
-
 FileInfo queryFileInfo(const Path& path)
 {
     struct ::stat st;
@@ -65,11 +60,22 @@ FileInfo queryFileInfo(FileHandle::Type handle)
     return info;
 }
 
+FileHandle openFile(const Path& path)
+{
+    return FileHandle(::open(path.c_str(), O_RDONLY | O_CLOEXEC));
+}
+
 size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes)
 {
     auto bytesRead = ::read(handle, buffer, bytes);
     throwIfFailed("read", bytesRead >= 0);
-    return bytesRead;
+    return static_cast<size_t>(bytesRead);
+}
+
+void setFilePosition(FileHandle::Type handle, int64_t position)
+{
+    auto ret = ::lseek64(handle, position, SEEK_SET);
+    throwIfFailed("lseek64", ret >= 0);
 }
 
 }

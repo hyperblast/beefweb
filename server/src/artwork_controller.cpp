@@ -47,6 +47,7 @@ ResponsePtr ArtworkController::getResponse(ArtworkResult* result)
             return getNotFoundResponse();
 
         auto fileData = readFileToEnd(fileHandle.get(), 64);
+        setFilePosition(fileHandle.get(), 0);
 
         return Response::file(
             std::move(filePath),
