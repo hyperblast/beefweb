@@ -5,7 +5,7 @@
 
 namespace msrv {
 
-class BeastConnectionContext;
+struct BeastConnectionContext;
 
 class BeastListener : public std::enable_shared_from_this<BeastListener>
 {
