@@ -99,7 +99,6 @@ public:
 
         config_.allowRemote = allowRemote;
         config_.port = PORT;
-        config_.backend = ServerBackend::BEAST;
         config_.router = &router_;
         config_.filters = &filters_;
 
