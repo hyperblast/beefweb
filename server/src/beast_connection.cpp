@@ -22,7 +22,8 @@ void BeastConnection::run()
 
 void BeastConnection::abort()
 {
-    handleWriteResponse(boost::system::error_code(), true);
+    releaseCoreRequest();
+    release();
 }
 
 void BeastConnection::release()

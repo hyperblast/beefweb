@@ -79,7 +79,7 @@ public:
             *serializer,
             [thisPtr, close] (const boost::system::error_code& error, size_t)
             {
-                thisPtr->busy_ = true;
+                thisPtr->busy_ = false;
                 thisPtr->handleWriteResponseBody(error, close);
             });
     }
