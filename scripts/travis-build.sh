@@ -52,7 +52,9 @@ banner 'Running server tests'
 server/build/release/src/tests/core_tests
 
 banner 'Running API tests'
-(cd api/tests; yarn install; API_TESTS_BUILD_TYPE=release yarn run test)
+export API_TESTS_BUILD_TYPE=release
+export BEEFWEB_USE_BEAST=1
+(cd api/tests; yarn install; yarn run test)
 
 if [ -n $is_gcc ] && [ "$TRAVIS_BRANCH" = master ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
     banner 'Uploading artifacts'
