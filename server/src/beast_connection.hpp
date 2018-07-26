@@ -8,18 +8,7 @@
 namespace msrv {
 
 class BeastConnection;
-
-struct BeastConnectionContext
-{
-    BeastConnectionContext()
-        : activeConnections(),
-          eventListener(nullptr) { }
-
-    std::unordered_set<std::shared_ptr<BeastConnection>> activeConnections;
-    RequestEventListener* eventListener;
-
-    MSRV_NO_COPY_AND_ASSIGN(BeastConnectionContext);
-};
+struct BeastConnectionContext;
 
 class BeastConnection : public std::enable_shared_from_this<BeastConnection>
 {
@@ -104,6 +93,18 @@ private:
 
     std::unique_ptr<BeastRequest> coreRequest_;
     bool busy_;
+};
+
+struct BeastConnectionContext
+{
+    BeastConnectionContext()
+        : activeConnections(),
+          eventListener(nullptr) { }
+
+    std::unordered_set<std::shared_ptr<BeastConnection>> activeConnections;
+    RequestEventListener* eventListener;
+
+    MSRV_NO_COPY_AND_ASSIGN(BeastConnectionContext);
 };
 
 }
