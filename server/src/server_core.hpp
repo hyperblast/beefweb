@@ -22,16 +22,10 @@ class RequestEventListener;
 using ServerCorePtr = std::unique_ptr<ServerCore>;
 using ResponseCorePtr = std::unique_ptr<ResponseCore>;
 
-enum class ServerBackend
-{
-    STANDARD,
-    BEAST,
-};
-
 class ServerCore
 {
 public:
-    static ServerCorePtr create(ServerBackend backend);
+    static ServerCorePtr create();
 
     ServerCore() = default;
     virtual ~ServerCore();
