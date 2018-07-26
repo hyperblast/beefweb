@@ -81,17 +81,22 @@ private:
     template<typename Body>
     std::shared_ptr<beast::http::response<Body>> createResponse() const
     {
-        auto status = beast::http::int_to_status(static_cast<unsigned>(response_->status));
-        return std::make_shared<beast::http::response<Body>>(status, request_->version());
+        using namespace beast::http;
+
+        auto status = int_to_status(static_cast<unsigned>(response_->status));
+        auto resp = std::make_shared<response<Body>>(status, request_->version());
+
+        for (auto& header : response_->headers)
+            resp->set(header.first, header.second);
+
+        resp->keep_alive(request_->keep_alive());
+
+        return resp;
     }
 
     template<typename Response>
     void doSend(std::shared_ptr<Response> response) const
     {
-        for (auto& header : response_->headers)
-            response->set(header.first, header.second);
-
-        response->keep_alive(request_->keep_alive());
         response->prepare_payload();
         connection_->sendResponse(std::move(response));
     }
