@@ -44,18 +44,6 @@ Path getModulePath(void* symbol)
     return Path(std::move(path));
 }
 
-FileHandle openFile(const Path& path)
-{
-    return FileHandle(::CreateFileW(
-        path.c_str(),
-        GENERIC_READ,
-        FILE_SHARE_READ,
-        nullptr,
-        OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL,
-        nullptr));
-}
-
 FileInfo queryFileInfo(FileHandle::Type handle)
 {
     ::BY_HANDLE_FILE_INFORMATION data;
@@ -84,6 +72,18 @@ FileInfo queryFileInfo(const Path& path)
     return info;
 }
 
+FileHandle openFile(const Path& path)
+{
+    return FileHandle(::CreateFileW(
+        path.c_str(),
+        GENERIC_READ,
+        FILE_SHARE_READ,
+        nullptr,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL,
+        nullptr));
+}
+
 size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes)
 {
     DWORD bytesRead;
@@ -92,5 +92,9 @@ size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes)
     return bytesRead;
 }
 
+void setFilePosition(FileHandle::Type handle, int64_t position)
+{
+    throw std::runtime_error("setFilePosition: not implemented");
+}
 
 }
