@@ -38,44 +38,49 @@ public:
     template<typename Response>
     void writeResponse(Response* response)
     {
-        auto needEof = response->need_eof();
+        auto thisPtr = shared_from_this();
+        auto close = response->need_eof();
 
         busy_ = true;
         beast::http::async_write(
             socket_,
             *response,
-            [this, needEof] (const boost::system::error_code& error, size_t)
+            [thisPtr, close] (const boost::system::error_code& error, size_t)
             {
-                busy_ = false;
-                handleWriteResponse(error, needEof);
+                thisPtr->busy_ = false;
+                thisPtr->handleWriteResponse(error, close);
             });
     }
 
     template<typename Serializer>
     void writeResponseHeader(Serializer* serializer)
     {
+        auto thisPtr = shared_from_this();
+
         busy_ = true;
         beast::http::async_write_header(
             socket_,
             *serializer,
-            [this] (const boost::system::error_code& error, size_t)
+            [thisPtr] (const boost::system::error_code& error, size_t)
             {
-                busy_ = false;
-                handleWriteResponseHeader(error);
+                thisPtr->busy_ = false;
+                thisPtr->handleWriteResponseHeader(error);
             });
     }
 
     template<typename Serializer>
     void writeResponseBody(Serializer* serializer, bool close)
     {
+        auto thisPtr = shared_from_this();
+
         busy_ = true;
         beast::http::async_write(
             socket_,
             *serializer,
-            [this, close] (const boost::system::error_code& error, size_t)
+            [thisPtr, close] (const boost::system::error_code& error, size_t)
             {
-                busy_ = true;
-                handleWriteResponseBody(error, close);
+                thisPtr->busy_ = true;
+                thisPtr->handleWriteResponseBody(error, close);
             });
     }
 

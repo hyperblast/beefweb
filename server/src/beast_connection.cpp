@@ -44,15 +44,17 @@ void BeastConnection::readRequest()
 {
     request_ = {};
 
+    auto thisPtr = shared_from_this();
+
     busy_= true;
     beast::http::async_read(
         socket_,
         buffer_,
         request_,
-        [this] (const boost::system::error_code& error, size_t)
+        [thisPtr] (const boost::system::error_code& error, size_t)
         {
-            busy_ = false;
-            handleReadRequest(error);
+            thisPtr->busy_ = false;
+            thisPtr->handleReadRequest(error);
         });
 }
 
