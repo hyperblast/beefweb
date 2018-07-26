@@ -57,10 +57,13 @@ void ServerHost::reconfigure(const SettingsData& settings)
     }
 
     auto config = std::make_unique<ServerConfig>();
+    auto useBeast = getenv("BEEFWEB_USE_BEAST");
 
     config->allowRemote = settings.allowRemote;
     config->port = settings.port;
-    config->backend = ServerBackend::STANDARD;
+    config->backend = useBeast && strcmp(useBeast, "0") != 0
+        ? ServerBackend::BEAST
+        : ServerBackend::STANDARD;
     config->filters = &filters_;
     config->router = &router_;
 
