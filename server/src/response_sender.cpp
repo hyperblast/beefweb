@@ -48,7 +48,7 @@ void ResponseSender::handleResponse(FileResponse* response)
     setHeader(HttpHeader::CONTENT_TYPE, response->contentType);
     setHeader(HttpHeader::CONTENT_LENGTH, toString(response->info.size));
 
-    responseCore_->body = ResponseCore::File(
+    responseCore_->body = ResponseCore::FileBody(
         std::move(response->handle), response->info.size);
 }
 

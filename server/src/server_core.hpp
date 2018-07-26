@@ -54,25 +54,25 @@ private:
 class ResponseCore
 {
 public:
-    struct File
+    struct FileBody
     {
-        File()
+        FileBody()
             : handle(), size(0) { }
 
-        File(FileHandle handleVal, int64_t sizeVal)
+        FileBody(FileHandle handleVal, int64_t sizeVal)
             : handle(std::move(handleVal)), size(sizeVal) { }
 
-        File(const File&) = delete;
-        File(File&&) = default;
+        FileBody(const FileBody&) = delete;
+        FileBody(FileBody&&) = default;
 
-        File& operator=(const File&) = delete;
-        File& operator=(File&&) = default;
+        FileBody& operator=(const FileBody&) = delete;
+        FileBody& operator=(FileBody&&) = default;
 
         FileHandle handle;
         int64_t size;
     };
 
-    using Body = boost::variant<bool, std::string, std::vector<uint8_t>, File>;
+    using Body = boost::variant<bool, std::string, std::vector<uint8_t>, FileBody>;
 
     ResponseCore()
         : status(HttpStatus::UNDEFINED), headers(), body(false) { }

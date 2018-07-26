@@ -49,7 +49,7 @@ public:
         return true;
     }
 
-    bool operator()(ResponseCore::File& file) const
+    bool operator()(ResponseCore::FileBody& file) const
     {
         if (file.size == 0)
             return false;

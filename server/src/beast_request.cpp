@@ -53,7 +53,7 @@ public:
         doSend(std::move(resp));
     }
 
-    void operator()(ResponseCore::File& fileResponse) const
+    void operator()(ResponseCore::FileBody& fileResponse) const
     {
         if (fileResponse.size == 0)
         {
