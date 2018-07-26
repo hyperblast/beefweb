@@ -61,17 +61,10 @@ public:
     void setEndOfStream();
 
 private:
-    using Response = boost::beast::http::response<
-        boost::beast::http::buffer_body>;
-
-    using Serializer = boost::beast::http::response_serializer<
-        boost::beast::http::buffer_body,
-        boost::beast::http::fields>;
-
     BeastConnection* connection_;
 
-    Response response_;
-    Serializer serializer_;
+    beast::http::response<beast::http::buffer_body> response_;
+    beast::http::response_serializer<beast::http::buffer_body, beast::http::fields> serializer_;
 
     ResponseCore::Body currentChunk_;
     std::queue<ResponseCore::Body> pendingChunks_;

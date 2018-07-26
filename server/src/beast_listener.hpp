@@ -1,10 +1,11 @@
 #pragma once
 
 #include "beast.hpp"
-#include "beast_connection.hpp"
 #include "server_core.hpp"
 
 namespace msrv {
+
+class BeastConnectionContext;
 
 class BeastListener : public std::enable_shared_from_this<BeastListener>
 {

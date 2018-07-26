@@ -3,6 +3,7 @@
 #include "server_core.hpp"
 #include "beast.hpp"
 #include "asio_adapters.hpp"
+#include "beast_connection.hpp"
 #include "beast_listener.hpp"
 
 namespace msrv {
