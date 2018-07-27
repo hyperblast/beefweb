@@ -18,6 +18,7 @@ environment:
 test_script:
 - server\build\release\src\tests\Release\core_tests.exe
 - set API_TESTS_BUILD_TYPE=release
+- set BEEFWEB_USE_BEAST=1
 - cd api\tests
 - yarn install
 - yarn test
