@@ -53,13 +53,17 @@ inline Path pathFromUtf8(const std::string& path)
 
 Path getModulePath(void* symbol);
 
-FileInfo queryFileInfo(FileHandle::Type handle);
-FileInfo queryFileInfo(const Path& path);
+namespace file_io {
 
-FileHandle openFile(const Path& path);
-void setFilePosition(FileHandle::Type handle, int64_t position);
-size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes);
+FileInfo queryInfo(FileHandle::Type handle);
+FileInfo queryInfo(const Path& path);
 
-std::vector<uint8_t> readFileToEnd(FileHandle::Type handle, int64_t maxBytes = -1);
+FileHandle open(const Path& path);
+void setPosition(FileHandle::Type handle, int64_t position);
+size_t read(FileHandle::Type handle, void* buffer, size_t bytes);
+
+std::vector<uint8_t> readToEnd(FileHandle::Type handle, int64_t maxBytes = -1);
+
+}
 
 }

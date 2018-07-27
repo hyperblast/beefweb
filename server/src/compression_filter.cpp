@@ -112,7 +112,7 @@ void CompressionHandler::handleResponse(FileResponse* response)
     if (!shouldUseCompression(response->contentType))
         return;
 
-    auto data = readFileToEnd(response->handle.get(), response->info.size);
+    auto data = file_io::readToEnd(response->handle.get(), response->info.size);
     makeCompressedResponse(data.data(), data.size(), response->contentType);
 }
 
