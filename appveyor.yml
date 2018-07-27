@@ -16,7 +16,7 @@ environment:
   ServerBuildFlags: -DENABLE_STATIC_STDLIB=ON
 
 test_script:
-- set API_TESTS_BUILD_TYPE=release
+- set BEEFWEB_TEST_BUILD_TYPE=release
 - set BEEFWEB_USE_BEAST=1
 - server\build\release\src\tests\Release\core_tests.exe
 - cd api\tests
