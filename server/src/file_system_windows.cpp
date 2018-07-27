@@ -44,7 +44,9 @@ Path getModulePath(void* symbol)
     return Path(std::move(path));
 }
 
-FileInfo queryFileInfo(FileHandle::Type handle)
+namespace file_io {
+
+FileInfo queryInfo(FileHandle::Type handle)
 {
     ::BY_HANDLE_FILE_INFORMATION data;
     auto ret = ::GetFileInformationByHandle(handle, &data);
@@ -58,7 +60,7 @@ FileInfo queryFileInfo(FileHandle::Type handle)
     return info;
 }
 
-FileInfo queryFileInfo(const Path& path)
+FileInfo queryInfo(const Path& path)
 {
     ::WIN32_FILE_ATTRIBUTE_DATA data;
     auto ret = ::GetFileAttributesExW(path.native().c_str(), GetFileExInfoStandard, &data);
@@ -72,7 +74,7 @@ FileInfo queryFileInfo(const Path& path)
     return info;
 }
 
-FileHandle openFile(const Path& path)
+FileHandle open(const Path& path)
 {
     return FileHandle(::CreateFileW(
         path.c_str(),
@@ -84,7 +86,7 @@ FileHandle openFile(const Path& path)
         nullptr));
 }
 
-size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes)
+size_t read(FileHandle::Type handle, void* buffer, size_t bytes)
 {
     DWORD bytesRead;
     auto ret = ::ReadFile(handle, buffer, static_cast<DWORD>(bytes), &bytesRead, nullptr);
@@ -92,9 +94,14 @@ size_t readFile(FileHandle::Type handle, void* buffer, size_t bytes)
     return bytesRead;
 }
 
-void setFilePosition(FileHandle::Type handle, int64_t position)
+void setPosition(FileHandle::Type handle, int64_t position)
 {
-    throw std::runtime_error("setFilePosition: not implemented");
+    LARGE_INTEGER pos;
+    pos.QuadPart = position;
+    auto ret = ::SetFilePointerEx(handle, pos, nullptr, FILE_BEGIN);
+    throwIfFailed("SetFilePointerEx", ret != 0);
+}
+
 }
 
 }
