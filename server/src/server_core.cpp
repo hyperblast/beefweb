@@ -8,8 +8,8 @@ namespace {
 bool shouldUseBeast()
 {
     auto env = getenv("BEEFWEB_USE_BEAST");
-    auto result = env && strcmp(env, "") != 0 && strcmp(env, "0") != 0;
-    logDebug("using %s backend", result ? "beast" : "standard");
+    auto result = env && strcmp(env, "0") != 0;
+    logInfo("using %s backend", result ? "beast" : "standard");
     return result;
 }
 
