@@ -66,7 +66,6 @@ set(
     beast_listener.cpp beast_listener.hpp
     beast_request.cpp beast_request.hpp
     beast_server.cpp beast_server.hpp
-    boost_locks_compat.hpp
     browser_controller.cpp browser_controller.hpp
     cache_support_filter.cpp cache_support_filter.hpp
     charset.hpp
