@@ -8,7 +8,7 @@ namespace {
 bool shouldUseBeast()
 {
     auto env = getenv("BEEFWEB_USE_BEAST");
-    auto result = env && strcmp(env, "0") != 0;
+    auto result = env ? strcmp(env, "0") != 0 : MSRV_DEBUG_MODE;
     logInfo("using %s backend", result ? "beast" : "standard");
     return result;
 }
