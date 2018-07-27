@@ -48,7 +48,7 @@ banner 'Building everything'
 scripts/build.sh --all --release --tests --verbose \
     -DENABLE_WERROR=ON -DENABLE_STATIC_STDLIB=ON
 
-export API_TESTS_BUILD_TYPE=release
+export BEEFWEB_TEST_BUILD_TYPE=release
 export BEEFWEB_USE_BEAST=1
 
 banner 'Running server tests'

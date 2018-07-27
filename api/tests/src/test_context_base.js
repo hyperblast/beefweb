@@ -8,12 +8,12 @@ class TestContextBase
 {
     constructor()
     {
-        const { API_TESTS_BUILD_TYPE, API_TESTS_PORT } = process.env;
+        const { BEEFWEB_TEST_BUILD_TYPE, BEEFWEB_TEST_PORT } = process.env;
 
         const testsRootDir = path.dirname(__dirname);
         const rootDir = path.dirname(path.dirname(testsRootDir));
-        const buildType = API_TESTS_BUILD_TYPE  || 'debug';
-        const port = parseInt(API_TESTS_PORT) || 8879;
+        const buildType = BEEFWEB_TEST_BUILD_TYPE || 'debug';
+        const port = parseInt(BEEFWEB_TEST_PORT) || 8879;
         const serverUrl = `http://localhost:${port}`;
 
         const toolsDir = path.join(rootDir, 'tools');
