@@ -75,7 +75,7 @@ ResponsePtr BrowserController::getRoots()
     for (auto& dir : settings->musicDirs)
     {
         auto path = pathFromUtf8(dir);
-        auto info = queryFileInfo(path);
+        auto info = file_io::queryInfo(path);
 
         if (info.type == FileType::DIRECTORY)
             roots.emplace_back(makeFsEntry(path, path, info));
@@ -103,7 +103,7 @@ ResponsePtr BrowserController::getEntries()
         ++iter)
     {
         auto& path = iter->path();
-        auto info = queryFileInfo(path);
+        auto info = file_io::queryInfo(path);
 
         if (info.type != FileType::UNKNOWN)
             entries.emplace_back(makeFsEntry(path.filename(), path, info));

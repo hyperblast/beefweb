@@ -23,7 +23,7 @@ std::unique_ptr<SimpleResponse> Response::custom(HttpStatus status)
 
 std::unique_ptr<Response> Response::file(Path path, std::string contentType)
 {
-    auto handle = openFile(path);
+    auto handle = file_io::open(path);
     if (!handle)
         return error(HttpStatus::S_404_NOT_FOUND, "requested file is not found");
 
@@ -32,7 +32,7 @@ std::unique_ptr<Response> Response::file(Path path, std::string contentType)
 
 std::unique_ptr<FileResponse> Response::file(Path path, FileHandle handle, std::string contentType)
 {
-    auto info = queryFileInfo(handle.get());
+    auto info = file_io::queryInfo(handle.get());
 
     return std::make_unique<FileResponse>(
         std::move(path), std::move(handle), std::move(contentType), std::move(info));

@@ -41,13 +41,13 @@ ResponsePtr ArtworkController::getResponse(ArtworkResult* result)
     if (!result->filePath.empty())
     {
         auto filePath = pathFromUtf8(result->filePath);
-        auto fileHandle = openFile(filePath);
+        auto fileHandle = file_io::open(filePath);
 
         if (!fileHandle)
             return getNotFoundResponse();
 
-        auto fileData = readFileToEnd(fileHandle.get(), 64);
-        setFilePosition(fileHandle.get(), 0);
+        auto fileData = file_io::readToEnd(fileHandle.get(), 64);
+        file_io::setPosition(fileHandle.get(), 0);
 
         return Response::file(
             std::move(filePath),

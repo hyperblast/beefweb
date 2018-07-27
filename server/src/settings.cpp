@@ -92,11 +92,11 @@ bool SettingsData::isAllowedPath(const std::string& path) const
 
 bool SettingsData::load(const Path& path)
 {
-    auto file = openFile(path);
+    auto file = file_io::open(path);
     if (!file)
         return false;
 
-    auto data = readFileToEnd(file.get());
+    auto data = file_io::readToEnd(file.get());
     auto json = Json::parse(data);
     parse(this, json);
     return true;
