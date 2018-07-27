@@ -10,3 +10,9 @@
 #define MSRV_NO_COPY_AND_ASSIGN(type) \
     type(const type&) = delete; \
     type& operator=(const type&) = delete
+
+#ifdef NDEBUG
+#define MSRV_DEBUG_MODE false
+#else
+#define MSRV_DEBUG_MODE true
+#endif
