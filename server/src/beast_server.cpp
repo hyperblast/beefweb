@@ -53,25 +53,29 @@ void BeastServer::bind(int port, bool allowRemote)
 {
     using namespace asio::ip;
 
-    tcp::endpoint endpointV4(
-        make_address(allowRemote ? "0.0.0.0" : "127.0.0.1"),
+    tcp::endpoint endpointV6(
+        allowRemote ? address_v6::any() : address_v6::loopback(),
         static_cast<unsigned short>(port));
 
-    tcp::endpoint endpointV6(
-        make_address(allowRemote ? "::0" : "::1"),
+    auto listenerV6 = createListener(endpointV6);
+    if (listenerV6)
+    {
+        listenerV6->run();
+        return;
+    }
+
+    tcp::endpoint endpointV4(
+        allowRemote ? address_v4::any() : address_v4::loopback(),
         static_cast<unsigned short>(port));
 
     auto listenerV4 = createListener(endpointV4);
-    auto listenerV6 = createListener(endpointV6);
-
-    if (!listenerV4 && !listenerV6)
-        throw std::runtime_error("failed to bind to any address");
-
     if (listenerV4)
+    {
         listenerV4->run();
+        return;
+    }
 
-    if (listenerV6)
-        listenerV6->run();
+    throw std::runtime_error("failed to bind to any address");
 }
 
 void BeastServer::run()
