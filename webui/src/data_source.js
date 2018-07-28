@@ -17,7 +17,7 @@ export default class DataSource extends EventEmitter
         this.previousEvents = {};
 
         this.handleEvent = this.handleEvent.bind(this);
-        this.reconnectTimer = new Timer(this.reinitEventSource.bind(this), 5000);
+        this.reconnectTimer = new Timer(this.reinitEventSource.bind(this), 20000);
 
         for (let event of eventNames)
             this.defineEvent(event);
