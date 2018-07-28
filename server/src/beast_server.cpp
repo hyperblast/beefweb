@@ -4,6 +4,18 @@
 
 namespace msrv {
 
+namespace {
+
+template<typename Address>
+asio::ip::tcp::endpoint makeEndpoint(int port, bool allowRemote)
+{
+    return asio::ip::tcp::endpoint(
+        allowRemote ? Address::any() : Address::loopback(),
+        static_cast<unsigned short>(port));
+}
+
+}
+
 ServerCorePtr ServerCore::createBeast()
 {
     return std::make_unique<BeastServer>();
@@ -24,18 +36,20 @@ void BeastServer::setEventListener(RequestEventListener* listener)
     connectionContext_.eventListener = listener;
 };
 
-std::shared_ptr<BeastListener> BeastServer::createListener(const asio::ip::tcp::endpoint& endpoint)
+bool BeastServer::startListener(const asio::ip::tcp::endpoint& endpoint)
 {
     try
     {
-        auto listener = std::make_shared<BeastListener>(&ioContext_, &connectionContext_, endpoint);
+        auto listener = std::make_shared<BeastListener>(
+            &ioContext_, &connectionContext_, endpoint);
 
         logInfo(
             "listening on [%s]:%d",
             endpoint.address().to_string().c_str(),
             static_cast<int>(endpoint.port()));
 
-        return listener;
+        listener->run();
+        return true;
     }
     catch (std::exception& ex)
     {
@@ -45,37 +59,17 @@ std::shared_ptr<BeastListener> BeastServer::createListener(const asio::ip::tcp::
             static_cast<int>(endpoint.port()),
             ex.what());
 
-        return std::shared_ptr<BeastListener>();
+        return false;
     }
 }
 
 void BeastServer::bind(int port, bool allowRemote)
 {
-    using namespace asio::ip;
+    bool runningV4 = startListener(makeEndpoint<asio::ip::address_v4>(port, allowRemote));
+    bool runningV6 = startListener(makeEndpoint<asio::ip::address_v6>(port, allowRemote));
 
-    tcp::endpoint endpointV6(
-        allowRemote ? address_v6::any() : address_v6::loopback(),
-        static_cast<unsigned short>(port));
-
-    auto listenerV6 = createListener(endpointV6);
-    if (listenerV6)
-    {
-        listenerV6->run();
-        return;
-    }
-
-    tcp::endpoint endpointV4(
-        allowRemote ? address_v4::any() : address_v4::loopback(),
-        static_cast<unsigned short>(port));
-
-    auto listenerV4 = createListener(endpointV4);
-    if (listenerV4)
-    {
-        listenerV4->run();
-        return;
-    }
-
-    throw std::runtime_error("failed to bind to any address");
+    if (!runningV4 && !runningV6)
+        throw std::runtime_error("failed to bind to any address");
 }
 
 void BeastServer::run()

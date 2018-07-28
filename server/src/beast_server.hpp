@@ -23,7 +23,7 @@ public:
     virtual void exit() override;
 
 private:
-    std::shared_ptr<BeastListener> createListener(const asio::ip::tcp::endpoint& endpoint);
+    bool startListener(const asio::ip::tcp::endpoint& endpoint);
 
     asio::io_context ioContext_;
     BeastConnectionContext connectionContext_;

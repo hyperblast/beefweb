@@ -14,7 +14,12 @@ BeastListener::BeastListener(
       peerSocket_(*ioContext)
 {
     acceptor_.open(endpoint.protocol());
+
     acceptor_.set_option(asio::socket_base::reuse_address(true));
+
+    if (endpoint.protocol() == asio::ip::tcp::v6())
+        acceptor_.set_option(asio::ip::v6_only(true));
+
     acceptor_.bind(endpoint);
     acceptor_.listen(asio::socket_base::max_listen_connections);
 }
