@@ -18,7 +18,7 @@ public:
 
     virtual const char * get_name() override { return MSRV_PROJECT_NAME; }
     virtual GUID get_guid() override { return guid_; }
-    virtual GUID get_parent_guid() override { return preferences_page::guid_root; }
+    virtual GUID get_parent_guid() override { return preferences_page::guid_tools; }
     virtual bool get_help_url(pfc::string_base & p_out) override { return false;  }
     virtual double get_sort_priority() override { return 1; }
     virtual preferences_page_instance::ptr instantiate(
