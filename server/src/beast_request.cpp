@@ -254,6 +254,7 @@ void BeastRequest::sendResponseEnd()
 
 void BeastRequest::requestBodyData()
 {
+    responseStream_->releaseBuffer();
     responseStream_->writeNextChunk();
 }
 
@@ -315,6 +316,12 @@ void BeastResponseStream::writeNextChunk()
     auto close = pendingChunks_.empty() && endOfStream_;
     response_.body().more = !close;
     connection_->writeResponseBody(&serializer_, close);
+}
+
+void BeastResponseStream::releaseBuffer()
+{
+    std::string temp;
+    currentChunk_ = std::move(temp);
 }
 
 }
