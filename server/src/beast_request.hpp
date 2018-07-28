@@ -56,6 +56,7 @@ public:
 
     void writeHeader();
     void writeNextChunk();
+    void releaseBuffer();
 
     void addChunk(ResponseCore::Body chunk);
     void setEndOfStream();
