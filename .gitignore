@@ -1,11 +1,14 @@
 build/*
 tools/*
 
+api/tests/.idea/*
 api/tests/node_modules/*
 
+server/.idea/*
 server/build/*
 server/extlibs/.cache/*
 
+webui/.idea/*
 webui/build/*
 webui/node_modules/*
 
