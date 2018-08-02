@@ -33,9 +33,15 @@ export default class App extends Component
     {
         const view = this.state.view;
         const { appModel } = this.props;
-        const { playerModel, playlistModel, fileBrowserModel, settingsModel } = appModel;
+        const {
+            playerModel,
+            playlistModel,
+            fileBrowserModel,
+            settingsModel,
+            notificationModel
+        } = appModel;
 
-        if (view == ViewId.playlist)
+        if (view === ViewId.playlist)
         {
             return {
                 header: (
@@ -55,22 +61,24 @@ export default class App extends Component
             };
         }
 
-        if (view == ViewId.fileBrowser)
+        if (view === ViewId.fileBrowser)
         {
             return {
                 header:
                     <FileBrowserHeader
                         fileBrowserModel={fileBrowserModel}
-                        playlistModel={playlistModel} />,
+                        playlistModel={playlistModel}
+                        notificationModel={notificationModel} />,
 
                 main:
                     <FileBrowser
                         fileBrowserModel={fileBrowserModel}
-                        playlistModel={playlistModel} />
+                        playlistModel={playlistModel}
+                        notificationModel={notificationModel} />
             };
         }
 
-        if (view == ViewId.settings)
+        if (view === ViewId.settings)
         {
             return {
                 header: <PanelHeader title='Settings' />,

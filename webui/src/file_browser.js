@@ -6,6 +6,7 @@ import FileBrowserModel from './file_browser_model'
 import urls from './urls'
 import { getDisplaySize, getDisplayDate, mapRange } from './utils'
 import DataTable from './data_table'
+import NotificationModel from './notification_model';
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -64,10 +65,12 @@ export default class FileBrowser extends Component
         setTimeout(() => this.setState(this.getStateFromModel(offset)), 0);
     }
 
-    handleClick(idx)
+    handleClick(index)
     {
-        var itemPath = this.props.fileBrowserModel.entries[idx].path;
-        this.props.playlistModel.addItems([itemPath]);
+        const { playlistModel, fileBrowserModel, notificationModel } = this.props;
+        const itemPath = fileBrowserModel.entries[index].path;
+        playlistModel.addItems([itemPath]);
+        notificationModel.notifyAddItem(itemPath);
     }
 
     render()
@@ -90,5 +93,6 @@ export default class FileBrowser extends Component
 
 FileBrowser.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired
+    fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired,
+    notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
 };

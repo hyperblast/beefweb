@@ -287,6 +287,29 @@ html {
     text-align: center;
 }
 
+.notification-group {
+    position: fixed;
+    width: 30rem;
+    right: 1rem;
+    bottom: 1rem;
+    max-width: 95vw;
+}
+
+.notification-box {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: row;
+
+    .dropdown-box();
+}
+
+.notification-text {
+    flex: 1;
+    display: inline-block;
+
+    .no-text-overflow();
+}
+
 .dialog {
     position: fixed;
     left: 50%;

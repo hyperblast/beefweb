@@ -22,12 +22,11 @@ const mediaSizeController = new MediaSizeController(settingsModel);
 const touchModeController = new TouchModeController(settingsModel);
 const cssSettingsController = new CssSettingsController(settingsModel);
 const windowController = new WindowController(playerModel);
-
 const router = new Navigo(null, true);
 
 function navigateToCurrentPlaylist()
 {
-    if (appModel.currentView != ViewId.playlist)
+    if (appModel.currentView !== ViewId.playlist)
         return;
 
     router.pause();

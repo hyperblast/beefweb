@@ -4,6 +4,7 @@ import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import SettingsModel from './settings_model'
+import NotificationModel from './notification_model';
 
 export const ViewId = Object.freeze({
     playlist: 'playlist',
@@ -26,6 +27,7 @@ export default class AppModel extends EventEmitter
         this.playerModel = new PlayerModel(client, this.dataSource);
         this.playlistModel = new PlaylistModel(client, this.dataSource, this.settingsModel);
         this.fileBrowserModel = new FileBrowserModel(client);
+        this.notificationModel = new NotificationModel();
 
         this.defineEvent('currentViewChange');
     }
@@ -33,6 +35,7 @@ export default class AppModel extends EventEmitter
     load()
     {
         this.settingsModel.load();
+        this.notificationModel.load();
     }
 
     start()
@@ -41,11 +44,12 @@ export default class AppModel extends EventEmitter
         this.playlistModel.start();
         this.dataSource.start();
         this.fileBrowserModel.reload();
+        this.notificationModel.start();
     }
 
     setCurrentView(view)
     {
-        if (view == this.currentView)
+        if (view === this.currentView)
             return;
 
         this.currentView = view;
