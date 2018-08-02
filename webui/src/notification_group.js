@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Icon } from './elements';
+import { Button } from './elements';
 
 function smartSplit(message)
 {
@@ -9,12 +9,12 @@ function smartSplit(message)
         message.lastIndexOf('\\'));
 
     if (position === -1)
-        return { start: message, end: ''};
+        return { start: message, end: '' };
 
     return {
         start: message.substr(0, position),
         end: message.substr(position),
-    }
+    };
 }
 
 export default class NotificationGroup extends React.Component
@@ -31,12 +31,12 @@ export default class NotificationGroup extends React.Component
         this.props.onCloseQuery(index);
     }
 
-    renderBox(key, item)
+    renderBox(index, item)
     {
         const { start, end } = smartSplit(item.message);
 
         return (
-            <div key={key} className='notification-box'>
+            <div key={index} className='notification-box'>
                 <div className='notification-content'>
                     <div className='notification-header'>{ item.title }</div>
                     <div className='notification-text' title={item.message}>
@@ -46,6 +46,7 @@ export default class NotificationGroup extends React.Component
                 </div>
                 <Button
                     name='x'
+                    title='Dismiss'
                     className='notification-close-button'
                     onClick={e => this.handleCloseClick(e, index)}/>
             </div>
