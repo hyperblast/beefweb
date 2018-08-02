@@ -303,11 +303,34 @@ html {
     .dropdown-box();
 }
 
-.notification-text {
+.notification-content {
     flex: 1;
+    min-width: 0;
     display: inline-block;
+}
+
+.notification-header {
+    font-weight: bold;
+}
+
+.notification-text {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+}
+
+.notification-text-start {
+    flex-shrink: 1;
 
     .no-text-overflow();
+}
+
+.notification-text-end {
+    white-space: nowrap;
+    flex-basis: content;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .dialog {

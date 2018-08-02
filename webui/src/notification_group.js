@@ -2,6 +2,21 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, Icon } from './elements';
 
+function smartSplit(message)
+{
+    const position = Math.max(
+        message.lastIndexOf('/'),
+        message.lastIndexOf('\\'));
+
+    if (position === -1)
+        return { start: message, end: ''};
+
+    return {
+        start: message.substr(0, position),
+        end: message.substr(position),
+    }
+}
+
 export default class NotificationGroup extends React.Component
 {
     constructor(props)
@@ -16,21 +31,34 @@ export default class NotificationGroup extends React.Component
         this.props.onCloseQuery(index);
     }
 
+    renderBox(key, item)
+    {
+        const { start, end } = smartSplit(item.message);
+
+        return (
+            <div key={key} className='notification-box'>
+                <div className='notification-content'>
+                    <div className='notification-header'>{ item.title }</div>
+                    <div className='notification-text' title={item.message}>
+                        <span className='notification-text-start'>{ start }</span>
+                        <span className='notification-text-end'>{ end }</span>
+                    </div>
+                </div>
+                <Button
+                    name='x'
+                    className='notification-close-button'
+                    onClick={e => this.handleCloseClick(e, index)}/>
+            </div>
+        );
+    }
+
     render()
     {
         if (this.props.items.length === 0)
             return null;
 
-        const items = this.props.items.map((item, index) => (
-            <div id={index} className='notification-box'>
-                <div className='notification-text'>
-                    { item.title }<br/>{ item.message }
-                </div>
-                <Button
-                    name='x'
-                    onClick={e => this.handleCloseClick(e, index)}/>
-            </div>
-        ));
+        const items = this.props.items.map(
+            (item, index) => this.renderBox(index, item));
 
         return (
             <div className='notification-group'>
