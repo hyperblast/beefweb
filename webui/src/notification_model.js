@@ -20,20 +20,20 @@ export default class NotificationModel
 
     notifyAddItem(path)
     {
-        this.notify(`Adding track ${path}`);
+        this.notify('Adding track:', path);
     }
 
     notifyAddDirectory(path)
     {
-        this.notify(`Adding directory ${path}`);
+        this.notify('Adding directory:', path);
     }
 
-    notify(message)
+    notify(title, message)
     {
         if (this.items.length >= maxNotifications)
             this.items.splice(0, 1);
 
-        this.items.push({ message, timeout: Date.now() + timeToLive });
+        this.items.push({ title, message, timeout: Date.now() + timeToLive });
         this.update();
     }
 
@@ -66,11 +66,9 @@ export default class NotificationModel
 
     update()
     {
-        const items = this.items.map(i => i.message);
-
         const box = (
             <NotificationGroup
-                items={items}
+                items={this.items}
                 onCloseQuery={this.handleCloseQuery} />
         );
 
