@@ -30,6 +30,6 @@ export default class Timer
         const now = Date.now();
         const delta = now - this.lastTick;
         this.lastTick = now;
-        this.callback(delta);
+        this.callback(delta, now);
     }
 }

@@ -5,6 +5,7 @@ import FileBrowserModel, { rootPath } from './file_browser_model'
 import PlaylistModel from './playlist_model'
 import { Button } from './elements'
 import urls from './urls'
+import NotificationModel from './notification_model';
 
 export default class FileBrowserHeader extends Component
 {
@@ -25,7 +26,7 @@ export default class FileBrowserHeader extends Component
 
     getParentLink()
     {
-        var parentPath = this.state.parentPath;
+        const parentPath = this.state.parentPath;
 
         if (parentPath)
         {
@@ -41,17 +42,22 @@ export default class FileBrowserHeader extends Component
     {
         e.preventDefault();
 
-        var currentPath = this.props.fileBrowserModel.currentPath;
-        if (currentPath == rootPath)
+        const { playlistModel, fileBrowserModel, notificationModel } = this.props;
+        const { currentPath } = fileBrowserModel;
+
+        if (currentPath === rootPath)
             return;
 
-        this.props.playlistModel.addItems([currentPath]);
+        playlistModel.addItems([currentPath]);
+        notificationModel.notifyAddDirectory(currentPath);
     }
 
     render()
     {
-        var parentLink = this.getParentLink();
-        var title = this.state.currentPath == rootPath ? 'Music directories' : this.state.currentPath;
+        const parentLink = this.getParentLink();
+        const title = this.state.currentPath === rootPath
+            ? 'Music directories'
+            : this.state.currentPath;
 
         return (
             <div className='panel-header'>
@@ -82,6 +88,7 @@ export default class FileBrowserHeader extends Component
 
 FileBrowserHeader.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired
+    fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired,
+    notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
 };
 
