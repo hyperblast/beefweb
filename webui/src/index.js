@@ -24,29 +24,16 @@ const cssSettingsController = new CssSettingsController(settingsModel);
 const windowController = new WindowController(playerModel);
 const router = new Navigo(null, true);
 
-function navigateToCurrentPlaylist()
-{
-    if (appModel.currentView !== ViewId.playlist)
-        return;
-
-    router.pause();
-
-    if (playlistModel.currentPlaylistId)
-        router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
-    else
-        router.navigate(urls.viewCurrentPlaylist);
-
-    router.resume();
-}
-
 router.on({
     '/': () => {
         router.navigate(urls.viewCurrentPlaylist);
     },
 
     '/playlists': () => {
-        appModel.setCurrentView(ViewId.playlist);
-        navigateToCurrentPlaylist();
+        if (playlistModel.currentPlaylistId)
+            router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
+        else
+            appModel.setCurrentView(ViewId.playlist);
     },
 
     '/playlists/:id': params => {
@@ -55,16 +42,12 @@ router.on({
     },
 
     '/files': () => {
-        fileBrowserModel.reload();
-        appModel.setCurrentView(ViewId.fileBrowser);
-        router.pause();
         router.navigate(urls.browsePath(fileBrowserModel.currentPath));
-        router.resume();
     },
 
-    '/files/!*': params => {
+    '/files/!*': () => {
         appModel.setCurrentView(ViewId.fileBrowser);
-        var path = getPathFromUrl(router.lastRouteResolved().url);
+        const path = getPathFromUrl(router.lastRouteResolved().url);
         fileBrowserModel.browse(path);
     },
 
@@ -77,7 +60,16 @@ router.notFound(() => {
     appModel.setCurrentView(ViewId.notFound);
 });
 
-playlistModel.on('playlistsChange', navigateToCurrentPlaylist);
+playlistModel.on('playlistsChange', () => {
+
+    if (appModel.currentView !== ViewId.playlist)
+        return;
+
+    if (playlistModel.currentPlaylistId)
+        router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
+    else
+        router.navigate(urls.viewCurrentPlaylist);
+});
 
 appModel.load();
 mediaSizeController.start();
