@@ -6,7 +6,9 @@
 #include <stddef.h>
 #include <string>
 #include <vector>
+
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace msrv {
 
@@ -49,6 +51,15 @@ inline Path pathFromUtf8(const std::string& path)
 #ifdef MSRV_OS_WINDOWS
     return Path(utf8To16(path));
 #endif
+}
+
+template<typename T>
+bool isSubpath(const T& parentPath, const T& childPath)
+{
+    return !parentPath.empty()
+        && boost::starts_with(childPath, parentPath)
+        && (childPath.length() == parentPath.length()
+            || static_cast<int32_t>(childPath[parentPath.length()]) == static_cast<int32_t>(Path::preferred_separator));
 }
 
 Path getModulePath(void* symbol);

@@ -109,3 +109,27 @@ q.test('disable compression', async assert =>
     const contentLength = parseInt(result.headers['content-length']);
     assert.equal(contentLength, expectedData.length);
 });
+
+q.test('get via parent directory', async assert =>
+{
+    const expectedData = await getFileData('file.txt');
+
+    const result1 = await getFile('/test/../file.txt');
+    assert.equal(result1.data, expectedData);
+
+    const result2 = await getFile('/test/%2E%2E/file.txt');
+    assert.equal(result2.data, expectedData);
+});
+
+q.test('escape root dir', async assert =>
+{
+    const ignoreStatus = {
+        validateStatus: () => true,
+    };
+
+    const result1 = await getFile('/../package.json', ignoreStatus);
+    assert.equal(result1.status, 404);
+
+    const result2 = await getFile('/%2E%2E/package.json', ignoreStatus);
+    assert.equal(result2.status, 404);
+});

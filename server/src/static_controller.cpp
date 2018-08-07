@@ -4,6 +4,8 @@
 #include "router.hpp"
 #include "settings.hpp"
 
+#include <boost/algorithm/string.hpp>
+
 namespace msrv {
 
 StaticController::StaticController(
@@ -19,18 +21,23 @@ StaticController::~StaticController()
 ResponsePtr StaticController::getFile()
 {
     auto settings = store_->settings();
-    const auto& staticDir = settings->staticDir;
+    const auto& rootDirUtf8 = settings->staticDir;
 
-    if (staticDir.empty())
+    if (rootDirUtf8.empty())
         return Response::error(HttpStatus::S_404_NOT_FOUND);
 
-    std::string path = request()->path;
+    std::string pathUtf8 = request()->path;
 
-    if (!path.empty() && path.back() == '/')
-        path += "index.html";
+    if (!pathUtf8.empty() && pathUtf8.back() == '/')
+        pathUtf8 += "index.html";
 
-    auto filePath = pathFromUtf8(staticDir) / pathFromUtf8(path);
-    return Response::file(filePath, ctmap_->byFilePath(filePath));
+    auto rootDir = pathFromUtf8(rootDirUtf8);
+    auto fullPath = (rootDir / pathFromUtf8(pathUtf8)).lexically_normal();
+
+    if (!isSubpath(rootDir.native(), fullPath.native()))
+        return Response::error(HttpStatus::S_404_NOT_FOUND);
+
+    return Response::file(fullPath, ctmap_->byFilePath(fullPath));
 }
 
 void StaticController::defineRoutes(

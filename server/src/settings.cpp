@@ -11,14 +11,6 @@ namespace {
 
 int dummySymbol;
 
-bool isSubpath(const std::string& path, const std::string& childPath)
-{
-    return !path.empty()
-        && boost::starts_with(childPath, path)
-        && (childPath.length() == path.length()
-            || childPath[path.length()] == static_cast<char>(Path::preferred_separator));
-}
-
 inline Path thisModuleDir()
 {
     return getModulePath(&dummySymbol).parent_path();
