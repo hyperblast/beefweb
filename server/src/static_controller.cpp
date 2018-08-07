@@ -31,7 +31,7 @@ ResponsePtr StaticController::getFile()
     if (!pathUtf8.empty() && pathUtf8.back() == '/')
         pathUtf8 += "index.html";
 
-    auto rootDir = pathFromUtf8(rootDirUtf8);
+    auto rootDir = pathFromUtf8(rootDirUtf8).lexically_normal();
     auto fullPath = (rootDir / pathFromUtf8(pathUtf8)).lexically_normal();
 
     if (!isSubpath(rootDir.native(), fullPath.native()))
