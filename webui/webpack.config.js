@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 function configCommon(cfg, opts)
 {
@@ -49,6 +50,15 @@ function configApp(cfg, opts)
     cfg.plugins.push(new HtmlPlugin({
         template: path.join(opts.sourceDir, 'index.html')
     }));
+
+    if (opts.analyze)
+    {
+        cfg.plugins.push(new BundleAnalyzerPlugin({
+           analyzerMode: 'static',
+           reportFilename: path.join('stats', 'bundle-size.html'),
+           openAnalyzer: false,
+        }));
+    }
 }
 
 function configTests(cfg, opts)
@@ -150,6 +160,7 @@ function makeBuildOpts(env)
 {
     const buildType = env.release ? 'release' : 'debug';
     const enableTests = !!env.tests;
+    const analyze = !!env.analyze;
     const reactImpl = env.reactImpl || 'react';
 
     if (!isValidReactImpl(reactImpl))
@@ -162,6 +173,7 @@ function makeBuildOpts(env)
     return {
         buildType,
         enableTests,
+        analyze,
         rootDir,
         sourceDir,
         outputDir,
