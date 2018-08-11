@@ -24,20 +24,6 @@ export default class FileBrowserHeader extends Component
         return { currentPath, parentPath, pathStack };
     }
 
-    getParentLink()
-    {
-        const parentPath = this.state.parentPath;
-
-        if (parentPath)
-        {
-            return { url:  urls.browsePath(parentPath), onClick: null };
-        }
-        else
-        {
-            return { url: null, onClick: e => e.preventDefault() };
-        }
-    }
-
     handleAddClick(e)
     {
         e.preventDefault();
@@ -52,56 +38,48 @@ export default class FileBrowserHeader extends Component
         notificationModel.notifyAddDirectory(currentPath);
     }
 
-    renderBreadcrumb()
+    renderBreadcrumbs()
     {
-        const items = [];
-        let i = 0;
+       return this.state.pathStack.map((item, index) => (
+            <li className='header-tab header-tab-active'>
+                <a key={index} href={urls.browsePath(item.path)} title={item.path}>
+                    {item.title}
+                </a>
+            </li>
+       ));
+    }
 
-        for (let item of this.state.pathStack)
-        {
-            items.push(
-                <li className='header-tab header-tab-active'>
-                    <a key={i} href={urls.browsePath(item.path)} title={item.path}>
-                        {item.title}
-                    </a>
-                </li>
-            );
+    renderButtons()
+    {
+        const { parentPath } = this.state;
 
-            i++;
-        }
+        if (!parentPath)
+            return null;
 
-        return items;
+        return (
+            <div className='header-block'>
+                <div className='button-bar'>
+                    <Button
+                        name='data-transfer-download'
+                        onClick={this.handleAddClick}
+                        title='Add current directory' />
+                    <Button
+                        name='arrow-thick-top'
+                        href={urls.browsePath(parentPath)}
+                        title='Navigate to parent directory' />
+                </div>
+            </div>
+        );
     }
 
     render()
     {
-        const parentLink = this.getParentLink();
-        const title = this.state.currentPath === rootPath
-            ? 'Music directories'
-            : this.state.currentPath;
-
         return (
             <div className='panel-header'>
                 <ul className='header-block header-block-primary'>
-                    { this.renderBreadcrumb() }
+                    { this.renderBreadcrumbs() }
                 </ul>
-                <div className='header-block'>
-                    <div className='button-bar'>
-                        <Button
-                            name='data-transfer-download'
-                            onClick={this.handleAddClick}
-                            title='Add current directory' />
-                        <Button
-                            name='home'
-                            href={urls.browsePath(rootPath)}
-                            title='Navigate to list of music directories' />
-                        <Button
-                            name='arrow-thick-top'
-                            href={parentLink.url}
-                            onClick={parentLink.onClick}
-                            title='Navigate to parent directory' />
-                    </div>
-                </div>
+                { this.renderButtons() }
             </div>
         );
     }
