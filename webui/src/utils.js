@@ -3,7 +3,7 @@ import isFunction from 'lodash/isFunction'
 
 function formatTimePart(value)
 {
-    var str = '' + value;
+    const str = '' + value;
     return str.length >= 2 ? str : '0' + str;
 }
 
@@ -20,12 +20,28 @@ export function formatTime(value, withHours = false)
 
 export function getParentDir(path, sep)
 {
-    var index = path.lastIndexOf(sep);
+    const index = path.lastIndexOf(sep);
 
     if (index < 0)
         return '';
 
     return path.substr(0, index);
+}
+
+export function getBaseName(path, sep)
+{
+    const index = path.lastIndexOf(sep);
+
+    if (index < 0)
+        return path;
+
+    return path.substr(index + 1);
+}
+
+export function isSubpath(parentPath, childPath, sep)
+{
+    return childPath.startsWith(parentPath)
+        && (parentPath.length === childPath.length || childPath[parentPath.length] === sep);
 }
 
 export function bindHandlers(obj)

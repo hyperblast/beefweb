@@ -20,8 +20,8 @@ export default class FileBrowserHeader extends Component
 
     getStateFromModel()
     {
-        const { currentPath, parentPath } = this.props.fileBrowserModel;
-        return { currentPath, parentPath };
+        const { currentPath, parentPath, pathStack, pathSeparator } = this.props.fileBrowserModel;
+        return { currentPath, parentPath, pathStack, pathSeparator };
     }
 
     getParentLink()
@@ -52,6 +52,33 @@ export default class FileBrowserHeader extends Component
         notificationModel.notifyAddDirectory(currentPath);
     }
 
+    renderBreadcrumb()
+    {
+        const items = [];
+        let i = 0;
+
+        for (let item of this.state.pathStack)
+        {
+            items.push(
+                <a key={i} href={urls.browsePath(item.path)} title={item.path}>
+                    {item.title}
+                </a>
+            );
+
+            items.push(
+                <span key={i + 1}>
+                    { this.state.pathSeparator }
+                </span>
+            );
+
+            i += 2;
+        }
+
+        items.pop();
+
+        return items;
+    }
+
     render()
     {
         const parentLink = this.getParentLink();
@@ -62,7 +89,9 @@ export default class FileBrowserHeader extends Component
         return (
             <div className='panel-header'>
                 <div className='header-block header-block-primary'>
-                    <span className='header-label header-label-primary' title={title}>{title}</span>
+                    <div className='header-label header-label-primary'>
+                        { this.renderBreadcrumb() }
+                    </div>
                 </div>
                 <div className='header-block'>
                     <div className='button-bar'>
