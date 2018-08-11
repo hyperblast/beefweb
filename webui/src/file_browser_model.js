@@ -1,7 +1,12 @@
 import EventEmitter from 'wolfy87-eventemitter'
-import { getParentDir } from './utils'
+import { getBaseName, getParentDir, isSubpath } from './utils'
 
 export const rootPath = 'roots';
+
+const rootEntry = Object.freeze({
+    title: 'Music directories',
+    path: rootPath,
+});
 
 const fileTypeOrder = Object.freeze({
     D: 1,
@@ -15,7 +20,7 @@ function getFileTypeOrder(type)
 
 function compareEntry(x, y)
 {
-    var order = getFileTypeOrder(x.type) - getFileTypeOrder(y.type);
+    const order = getFileTypeOrder(x.type) - getFileTypeOrder(y.type);
 
     if (order)
         return order;
@@ -34,12 +39,14 @@ export default class FileBrowserModel extends EventEmitter
         this.entries = [];
         this.parentPath = null;
         this.roots = [];
+        this.pathSeparator = '/';
+        this.pathStack = [];
         this.defineEvent('change');
     }
 
     browse(path)
     {
-        if (path == rootPath)
+        if (path === rootPath)
         {
             this.client
                 .getFileSystemRoots()
@@ -60,34 +67,45 @@ export default class FileBrowserModel extends EventEmitter
 
     endBrowse(path, entries, separator)
     {
-        entries = entries.sort(compareEntry);
+        this.pathSeparator = separator;
+        this.currentPath = path;
+        this.entries = entries.sort(compareEntry);
 
-        if (path == rootPath)
+        if (path === rootPath)
         {
-            this.roots = entries.map(e => e.path + separator);
+            this.roots = this.entries;
+            this.pathStack = [rootEntry];
             this.parentPath = null;
         }
         else
         {
-            this.parentPath = this.getLogicalParentDir(path, separator);
+            this.pathStack = this.buildPathStack(path);
+            this.parentPath = this.pathStack[this.pathStack.length - 2].path;
         }
 
-        this.currentPath = path;
-        this.entries = entries;
         this.emit('change');
     }
 
-    getLogicalParentDir(path, separator)
+    buildPathStack(path)
     {
-        var parent = getParentDir(path, separator);
-        var parentWithSeparator = parent + separator;
+        const items = [];
 
-        for (let root of this.roots)
+        do
         {
-            if (parentWithSeparator.indexOf(root) == 0)
-                return parent;
+            items.push({ title: getBaseName(path, this.pathSeparator), path });
+            path = getParentDir(path, this.pathSeparator);
         }
+        while (this.isUnderRootPath(path));
 
-        return rootPath;
+        const lastItem = items[items.length - 1];
+        lastItem.title = lastItem.path;
+
+        items.push(rootEntry);
+        return items.reverse();
+    }
+
+    isUnderRootPath(path)
+    {
+        return this.roots.some(root => isSubpath(root.path, path, this.pathSeparator));
     }
 }
