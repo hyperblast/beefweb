@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 function configCommon(cfg, opts)
@@ -120,7 +121,7 @@ function configRelease(cfg)
         minimize: true
     }));
 
-    cfg.plugins.push(new webpack.optimize.UglifyJsPlugin());
+    cfg.plugins.push(new UglifyJsPlugin());
 
     cfg.plugins.push(new webpack.DefinePlugin({
         'process.env.NODE_ENV': '"production"'
