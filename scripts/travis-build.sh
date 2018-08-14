@@ -55,7 +55,7 @@ banner 'Running server tests'
 server/build/release/src/tests/core_tests
 
 banner 'Running API tests'
-(cd api/tests; yarn install; yarn run test)
+(cd js/api_tests; yarn install; yarn run test)
 
 if [ -n $is_gcc ] && [ "$TRAVIS_BRANCH" = master ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
     banner 'Uploading artifacts'

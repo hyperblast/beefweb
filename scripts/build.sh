@@ -98,11 +98,11 @@ pkg_build_dir=$(pwd)/build/$build_type
 pkg_tmp_dir=$pkg_build_dir/tmp
 
 server_src_dir=$(pwd)/server
-server_build_dir=$(pwd)/server/build/$build_type
+server_build_dir=$server_src_dir/build/$build_type
 server_plugin_file=$server_build_dir/src/player_deadbeef/$plugin_file
 
-webui_src_dir=$(pwd)/webui
-webui_build_dir=$(pwd)/webui/build/$build_type
+webui_src_dir=$(pwd)/js/webui
+webui_build_dir=$webui_src_dir/build/$build_type
 
 function banner()
 {

@@ -11,7 +11,7 @@
         <ServerSourceDir>$(RootDir)\server</ServerSourceDir>
         <ServerBuildDir>$(ServerSourceDir)\build\$(ConfigLower)</ServerBuildDir>
 
-        <WebuiSourceDir>$(RootDir)\webui</WebuiSourceDir>
+        <WebuiSourceDir>$(RootDir)\js\webui</WebuiSourceDir>
         <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigLower)</WebuiBuildDir>
 
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>

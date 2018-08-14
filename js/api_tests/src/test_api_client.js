@@ -1,6 +1,6 @@
 'use strict';
 
-const { ApiClient } = require('../../client/api_client');
+const { ApiClient } = require('../client/api_client');
 const EventExpectation = require('./event_expectation');
 const { waitUntil } = require('./utils');
 
