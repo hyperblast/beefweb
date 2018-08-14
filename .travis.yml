@@ -12,6 +12,7 @@ script:
 deploy:
   provider: script
   script: scripts/upload.sh
+  skip_cleanup: true
   on:
     branch: master
     condition: $CC = gcc
