@@ -6,22 +6,6 @@ install:
 - scripts\install\foobar2000.cmd
 - set PATH=%cd%\tools\patch;%PATH%
 
-build:
-  project: scripts\build.proj
-
-configuration: Release
-
-environment:
-  EnableTests: True
-  ServerBuildFlags: -DENABLE_STATIC_STDLIB=ON
-
-test_script:
-- set BEEFWEB_TEST_BUILD_TYPE=release
-- set BEEFWEB_USE_BEAST=1
-- server\build\release\src\tests\Release\core_tests.exe
-- cd js\api_tests
-- yarn install
-- yarn test
-- cd %APPVEYOR_BUILD_FOLDER%
-
-deploy_script: scripts\upload.cmd
+build_script: scripts\appveyor\build.cmd
+test_script: scripts\appveyor\test.cmd
+deploy_script: scripts\appveyor\upload.cmd
