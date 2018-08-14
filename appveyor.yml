@@ -2,8 +2,8 @@ image: Visual Studio 2015
 
 install:
 - ps: Install-Product node 8
-- scripts\get-patch.cmd
-- scripts\get-foobar2000.cmd
+- scripts\install-patch.cmd
+- scripts\install-foobar2000.cmd
 - set PATH=%cd%\tools\patch;%PATH%
 
 build:
