@@ -24,7 +24,7 @@ function configCommon(cfg, opts)
         test: /\.js$/,
         include: [
             opts.sourceDir,
-            path.join(opts.rootDir, 'api', 'client')
+            path.join(opts.rootDir, 'client')
         ],
         loader: 'babel-loader',
     });
