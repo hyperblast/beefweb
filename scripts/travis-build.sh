@@ -21,13 +21,9 @@ case "$TARGET_ARCH" in
         ;;
 esac
 
-
-is_gcc=
-
 if [ "$CC" = gcc ]; then
     export CC=gcc-6
     export CXX=g++-6
-    is_gcc=1
 fi
 
 function banner()
@@ -37,15 +33,9 @@ function banner()
     echo
 }
 
-banner 'Downloading deadbeef binaries'
-scripts/get-deadbeef.sh
-
-banner 'Downloading cmake binaries'
-scripts/get-cmake.sh
-export PATH="$(pwd)/tools/cmake/bin:$PATH"
-
 banner 'Building everything'
-scripts/build.sh --all --release --tests --verbose \
+scripts/build.sh \
+    --all --release --tests --verbose \
     -DENABLE_WERROR=ON -DENABLE_STATIC_STDLIB=ON
 
 export BEEFWEB_TEST_BUILD_TYPE=release
@@ -55,9 +45,4 @@ banner 'Running server tests'
 server/build/release/src/tests/core_tests
 
 banner 'Running API tests'
-(cd js/api_tests; yarn install; yarn run test)
-
-if [ -n $is_gcc ] && [ "$TRAVIS_BRANCH" = master ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then
-    banner 'Uploading artifacts'
-    scripts/upload.sh
-fi
+(cd js/api_tests; yarn install; yarn test)

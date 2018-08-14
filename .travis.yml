@@ -1,13 +1,28 @@
 dist: trusty
 sudo: false
 language: cpp
-script: scripts/travis-build.sh
+
+install:
+- scripts/install-deadbeef.sh
+
+script:
+- scripts/travis-build.sh
+
+deploy:
+  provider: script
+  script: scripts/upload.sh
+  on:
+    branch: master
+    condition: $CC = gcc
+
 compiler:
 - gcc
 - clang
+
 env:
 - TARGET_ARCH=x86
 - TARGET_ARCH=x86_64
+
 addons:
   apt:
     sources:
