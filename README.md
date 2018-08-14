@@ -46,7 +46,7 @@ The following command will build server, ui and `.tar.gz` package:
 
     $ scripts/build.sh --all --release
 
-Get `beefweb-*.tar.gz` from `build/release` directory.
+Get `ddb_beefweb-*.tar.gz` from `build/release` directory.
 
 You could also build debug version by switching `--release` to `--debug`.
 
