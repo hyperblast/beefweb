@@ -6,7 +6,8 @@ install:
 - scripts/install/deadbeef.sh
 
 script:
-- scripts/travis-build.sh
+- scripts/travis/build.sh
+- scripts/travis/test.sh
 
 deploy:
   provider: script
