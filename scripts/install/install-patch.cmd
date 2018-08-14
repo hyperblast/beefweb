@@ -1,9 +1,9 @@
 setlocal
 
-set target_dir=tools\foobar2000
-set pkg_file=foobar2000_v1.3.17.exe
+set target_dir=tools\patch
+set pkg_file=patch.zip
 
-cd "%~dp0.."
+cd "%~dp0..\.."
 
 if exist %target_dir%. (
     rmdir /s /q %target_dir%
@@ -17,19 +17,13 @@ cd %target_dir%
 if errorlevel 1 goto :end
 
 curl --silent --fail --show-error --location -o %pkg_file% ^
-    "https://hyperblast.org/files/foobar2000/%pkg_file%"
+    "https://hyperblast.org/files/patch/%pkg_file%"
 if errorlevel 1 goto :end
 
-echo.>portable_mode_enabled
-if errorlevel 1 goto :end
-
-%pkg_file% /S /D=%cd%
+7z x %pkg_file%
 if errorlevel 1 goto :end
 
 del %pkg_file%
-if errorlevel 1 goto :end
-
-xcopy /E /F /Y "%~dp0foobar2000" .
 if errorlevel 1 goto :end
 
 :end
