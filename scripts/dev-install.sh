@@ -24,7 +24,7 @@ function install
 {
     plugin_dir="$HOME/.local/lib/deadbeef"
     server_build_dir="$(pwd)/server/build/$1/src/player_deadbeef"
-    webui_build_dir="$(pwd)/webui/build/$1"
+    webui_build_dir="$(pwd)/js/webui/build/$1"
 
     if [ ! -e "$plugin_dir" ]; then
         mkdir -p "$plugin_dir"

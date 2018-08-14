@@ -1,16 +1,15 @@
 build/*
 tools/*
 
-api/tests/.idea/*
-api/tests/node_modules/*
+js/api_tests/.idea/*
+js/api_tests/node_modules/*
+js/webui/.idea/*
+js/webui/build/*
+js/webui/node_modules/*
 
 server/.idea/*
 server/build/*
 server/extlibs/.cache/*
-
-webui/.idea/*
-webui/build/*
-webui/node_modules/*
 
 *.user
 *.orig
