@@ -3,7 +3,7 @@ sudo: false
 language: cpp
 
 install:
-- scripts/install-deadbeef.sh
+- scripts/install/deadbeef.sh
 
 script:
 - scripts/travis-build.sh

@@ -13,7 +13,7 @@ fi
 
 file="${url##*/}"
 
-cd "$(dirname $0)/.."
+cd "$(dirname $0)/../.."
 
 rm -rf "tools/$name"
 mkdir -p "tools/$name"
