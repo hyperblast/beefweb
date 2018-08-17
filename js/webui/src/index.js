@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDom from 'react-dom'
 import Navigo from 'navigo'
-import { ApiClient } from 'beefweb-client'
+import { PlayerClient } from 'beefweb-client'
 import App from './app'
 import RequestHandler from './request_handler'
 import SettingsStore from './settings_store'
@@ -12,7 +12,7 @@ import WindowController from './window_controller'
 import CssSettingsController from './css_settings_controller'
 import urls, { getPathFromUrl } from './urls'
 
-const client = new ApiClient(new RequestHandler());
+const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();
 const appModel = new AppModel(client, settingsStore);
 
