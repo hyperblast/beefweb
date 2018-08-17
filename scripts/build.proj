@@ -13,7 +13,7 @@
 
         <JsSourceDir>$(RootDir)\js</JsSourceDir>
 
-        <JsClientSourceDir>$(JsSourceDir)\client</ClientSourceDir>
+        <JsClientSourceDir>$(JsSourceDir)\client</JsClientSourceDir>
 
         <WebuiSourceDir>$(JsSourceDir)\webui</WebuiSourceDir>
         <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigLower)</WebuiBuildDir>
