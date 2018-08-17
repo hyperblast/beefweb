@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { PlaybackState } from 'beefweb-client'
 import Component from './component'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import DataTable from './data_table'
 import { bindHandlers } from './utils'
-import { PlaybackState } from './api_client'
 
 const pageSize = 100;
 

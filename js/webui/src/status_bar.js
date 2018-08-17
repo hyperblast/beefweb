@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { PlaybackState } from 'beefweb-client'
 import Component from './component'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
-import { PlaybackState } from './api_client'
 import { formatTime } from './utils'
 
 var stateToName = Object.freeze({
