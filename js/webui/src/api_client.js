@@ -3,7 +3,7 @@ const {
     SwitchParam,
     PlaybackState,
     ApiClient
-} = require('../../client/api_client');
+} = require('../../client');
 
 export {
     ErrorType,
