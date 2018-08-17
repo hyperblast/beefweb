@@ -13,12 +13,6 @@ server\build\release\src\tests\Release\core_tests.exe
 @pushd js\api_tests
 
 @echo.
-@echo === Installing packages for API tests ===
-@echo.
-cmd /c yarn install
-@if errorlevel 1 goto :end
-
-@echo.
 @echo === Running API tests ===
 @echo.
 cmd /c yarn test

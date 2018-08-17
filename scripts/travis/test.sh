@@ -18,4 +18,4 @@ banner 'Running server tests'
 server/build/release/src/tests/core_tests
 
 banner 'Running API tests'
-(cd js/api_tests; yarn install; yarn test)
+(cd js/api_tests; yarn test)

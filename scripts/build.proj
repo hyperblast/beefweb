@@ -11,13 +11,17 @@
         <ServerSourceDir>$(RootDir)\server</ServerSourceDir>
         <ServerBuildDir>$(ServerSourceDir)\build\$(ConfigLower)</ServerBuildDir>
 
-        <WebuiSourceDir>$(RootDir)\js\webui</WebuiSourceDir>
+        <JsSourceDir>$(RootDir)\js</JsSourceDir>
+
+        <JsClientSourceDir>$(JsSourceDir)\client</ClientSourceDir>
+
+        <WebuiSourceDir>$(JsSourceDir)\webui</WebuiSourceDir>
         <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigLower)</WebuiBuildDir>
 
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
-        <PackageDependsOn>PackageClean;DetectGitRevision</PackageDependsOn>
-        <PackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(PackageDependsOn);Server;Webui</PackageDependsOn>
+        <PackageDependsOn>CleanPackage;DetectGitRevision</PackageDependsOn>
+        <PackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(PackageDependsOn);BuildServer;BuildWebui</PackageDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -29,11 +33,11 @@
         <WebuiBuildFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
-    <Target Name="ServerClean">
+    <Target Name="CleanServer">
         <RemoveDir Directories="$(ServerBuildDir)" />
     </Target>
 
-    <Target Name="ServerInit" DependsOnTargets="ServerClean">
+    <Target Name="InitServer" DependsOnTargets="CleanServer">
         <CreateItem Include="$(ServerBuildFlags)">
             <Output TaskParameter="Include" ItemName="ServerBuildFlags" />
         </CreateItem>
@@ -43,25 +47,31 @@
             WorkingDirectory="$(ServerBuildDir)" />
     </Target>
 
-    <Target Name="Server" DependsOnTargets="ServerInit">
+    <Target Name="BuildServer" DependsOnTargets="InitServer">
         <MSBuild
             Projects="$(ServerBuildDir)\beefweb.sln"
             Properties="Configuration=$(Configuration)" />
     </Target>
 
-    <Target Name="WebuiClean">
+    <Target Name="InitJs">
+        <Exec
+            Command="yarn install"
+            WorkingDirectory="$(JsSourceDir)" />
+    </Target>
+
+    <Target Name="BuildJsClient" DependsOnTargets="InitJs">
+        <Exec
+            Command="yarn build"
+            WorkingDirectory="$(JsClientSourceDir)" />
+    </Target>
+
+    <Target Name="CleanWebui">
         <RemoveDir Directories="$(WebuiBuildDir)" />
     </Target>
 
-    <Target Name="WebuiInit" DependsOnTargets="WebuiClean">
+    <Target Name="BuildWebui" DependsOnTargets="InitJs;BuildJsClient;CleanWebui">
         <Exec
-            Command="yarn install"
-            WorkingDirectory="$(WebuiSourceDir)" />
-    </Target>
-
-    <Target Name="Webui" DependsOnTargets="WebuiInit">
-        <Exec
-            Command="yarn run build @(WebuiBuildFlags -> '%(Identity)', ' ')"
+            Command="yarn build @(WebuiBuildFlags -> '%(Identity)', ' ')"
             WorkingDirectory="$(WebuiSourceDir)" />
     </Target>
 
@@ -74,7 +84,7 @@
         </Exec>
     </Target>
 
-    <Target Name="PackageClean">
+    <Target Name="CleanPackage">
         <RemoveDir Directories="$(PackageBuildDir)" />
     </Target>
 
@@ -95,5 +105,5 @@
         <RemoveDir Directories="$(PackageTempDir)" />
     </Target>
 
-    <Target Name="All" DependsOnTargets="Server;Webui;Package" />
+    <Target Name="All" DependsOnTargets="BuildServer;BuildWebui;BuildPackage" />
 </Project>

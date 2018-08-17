@@ -101,7 +101,10 @@ server_src_dir=$(pwd)/server
 server_build_dir=$server_src_dir/build/$build_type
 server_plugin_file=$server_build_dir/src/player_deadbeef/$plugin_file
 
-webui_src_dir=$(pwd)/js/webui
+js_src_dir=$(pwd)/js
+js_client_src_dir=$js_src_dir/client
+
+webui_src_dir=$js_src_dir/webui
 webui_build_dir=$webui_src_dir/build/$build_type
 
 function banner()
@@ -171,10 +174,14 @@ function build_webui()
         webui_flags="$webui_flags --env.tests"
     fi
 
-    cd $webui_src_dir
-
+    cd $js_src_dir
     yarn install
-    yarn run build $webui_flags
+
+    cd $js_client_src_dir
+    yarn build
+
+    cd $webui_src_dir
+    yarn build $webui_flags
 }
 
 function build_pkg()
