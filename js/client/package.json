@@ -8,7 +8,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "rimraf dist && webpack-cli && babel src -d dist/cjs"
+    "build": "rimraf dist && webpack-cli && babel src -d dist/cjs",
+    "build:cjs": "rimraf dist/cjs && babel src -d dist/cjs",
+    "build:umd": "rimraf dist/umd && webpack-cli"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
