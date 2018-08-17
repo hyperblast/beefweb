@@ -20,8 +20,8 @@
 
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
-        <PackageDependsOn>CleanPackage;DetectGitRevision</PackageDependsOn>
-        <PackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(PackageDependsOn);BuildServer;BuildWebui</PackageDependsOn>
+        <BuildPackageDependsOn>CleanPackage;DetectGitRevision</BuildPackageDependsOn>
+        <BuildPackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(PackageDependsOn);BuildServer;BuildWebui</BuildPackageDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -88,7 +88,7 @@
         <RemoveDir Directories="$(PackageBuildDir)" />
     </Target>
 
-    <Target Name="Package" DependsOnTargets="$(PackageDependsOn)">
+    <Target Name="BuildPackage" DependsOnTargets="$(BuildPackageDependsOn)">
         <ItemGroup>
             <ServerFiles Include="$(ServerBuildDir)\src\player_foobar2000\$(Configuration)\$(PluginFile)" />
             <WebuiFiles Include="$(WebuiBuildDir)\*.*" />
