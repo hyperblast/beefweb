@@ -1,8 +1,9 @@
 {
-  "name": "api-tests",
+  "name": "beefweb-api-tests",
   "version": "0.1.0",
-  "description": "Player API tests",
-  "main": "index.js",
+  "description": "Beefweb API tests",
+  "main": "src/main.js",
+  "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
   "license": "MIT",
   "private": true,
@@ -10,7 +11,7 @@
     "test": "qunit src/main.js"
   },
   "dependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.18.0",
     "eventsource": "^1.0.5",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
