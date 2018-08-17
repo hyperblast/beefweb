@@ -7,23 +7,23 @@
   "author": "Hyperblast",
   "license": "MIT",
   "scripts": {
-    "build": "webpack",
-    "watch": "webpack --watch"
+    "build": "webpack-cli",
+    "watch": "webpack-cli --watch"
   },
   "dependencies": {
     "detect-it": "^3.0.4",
     "event-source-polyfill": "^0.0.12",
     "lodash": "^4.17.4",
     "navigo": "^7.0.0",
-    "normalize.css": "^5.0.0",
+    "normalize.css": "^8.0.0",
     "open-iconic": "^1.1.1",
-    "preact": "^8.2.7",
-    "preact-compat": "^3.17.0",
+    "preact": "^8.3.1",
+    "preact-compat": "^3.18.3",
     "prop-types": "^15.5.10",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-modal": "^3.1.10",
-    "react-sortable-hoc": "^0.6.8",
+    "react-sortable-hoc": "^0.8.3",
     "wolfy87-eventemitter": "^5.2.2"
   },
   "devDependencies": {
@@ -31,17 +31,17 @@
     "babel-loader": "^7.1.1",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
-    "css-loader": "^0.28.8",
-    "extract-text-webpack-plugin": "^3.0.0",
+    "css-loader": "^1.0.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^1.1.6",
-    "html-webpack-plugin": "^2.30.1",
-    "less": "^2.7.3",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.8.1",
     "less-loader": "^4.0.5",
     "qunit": "^2.4.1",
-    "style-loader": "^0.19.1",
-    "uglifyjs-webpack-plugin": "^1.2.7",
-    "url-loader": "^0.6.2",
-    "webpack": "^3.5.1",
-    "webpack-bundle-analyzer": "^2.13.1"
+    "style-loader": "^0.22.1",
+    "url-loader": "^1.1.1",
+    "webpack": "^4.16.5",
+    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack-cli": "^3.1.0"
   }
 }
