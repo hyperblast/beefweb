@@ -10,6 +10,7 @@ function configCommon(cfg, opts)
     // Common configuration
 
     cfg.output.filename = 'bundle.js';
+    cfg.performance.hints = false;
 
     cfg.entry.push('normalize.css');
     cfg.entry.push('event-source-polyfill');
@@ -95,18 +96,14 @@ function configDebug(cfg)
     // Debug configuration
 
     cfg.devtool = 'source-map';
+    cfg.mode = 'none';
 
     cfg.plugins.push(new webpack.LoaderOptionsPlugin({
         debug: true
     }));
 
     cfg.module.rules.push({
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-    });
-
-    cfg.module.rules.push({
-        test: /\.less$/,
+        test: /\.(css|less)$/,
         use: ['style-loader', 'css-loader', 'less-loader']
     });
 }
@@ -115,19 +112,12 @@ function configRelease(cfg)
 {
     // Release configuration
 
+    cfg.mode = 'production';
     cfg.node.process = false;
 
     cfg.plugins.push(new webpack.LoaderOptionsPlugin({
         minimize: true
     }));
-
-    cfg.plugins.push(new UglifyJsPlugin());
-
-    cfg.plugins.push(new webpack.DefinePlugin({
-        'process.env.NODE_ENV': '"production"'
-    }));
-
-    cfg.plugins.push(new webpack.optimize.ModuleConcatenationPlugin());
 
     const styleExtractor = new ExtractTextPlugin({
         filename: 'bundle.css'
@@ -136,15 +126,7 @@ function configRelease(cfg)
     cfg.plugins.push(styleExtractor);
 
     cfg.module.rules.push({
-        test: /\.css$/,
-        use: styleExtractor.extract({
-            use: 'css-loader',
-            fallback: 'style-loader'
-        })
-    });
-
-    cfg.module.rules.push({
-        test: /\.less$/,
+        test: /\.(css|less)$/,
         use: styleExtractor.extract({
             use: ['css-loader', 'less-loader'],
             fallback: 'style-loader'
@@ -191,6 +173,7 @@ function makeTarget(configTarget, opts)
         module: { rules: [] },
         resolve: { alias: {} },
         node: {},
+        performance: {},
     };
 
     configCommon(cfg, opts);
