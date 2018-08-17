@@ -48,7 +48,7 @@ export function bindHandlers(obj)
 {
     const proto = Object.getPrototypeOf(obj);
 
-    for (let prop of Object.keys(proto))
+    for (let prop of Object.getOwnPropertyNames(proto))
     {
         if (!startsWith(prop, 'handle'))
             continue;
