@@ -4,8 +4,13 @@ tools/*
 
 js/.idea/*
 js/node_modules/*
+
 js/api_tests/.idea/*
 js/api_tests/node_modules/*
+
+js/client/dist/*
+js/client/node_modules/*
+
 js/webui/.idea/*
 js/webui/build/*
 js/webui/node_modules/*

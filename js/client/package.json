@@ -2,9 +2,22 @@
   "name": "beefweb-client",
   "version": "0.1.0",
   "description": "Beefweb client library for browser and node",
-  "main": "src/api_client.js",
+  "main": "dist/cjs/index.js",
   "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "rimraf dist && webpack-cli && babel src -d dist/cjs"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.7.0",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.16.5",
+    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack-cli": "^3.1.0"
+  }
 }
