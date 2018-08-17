@@ -2,8 +2,11 @@ export function skipUndefined(params)
 {
     const result = {};
 
-    for (let key of Object.keys(params))
+    for (let key in params)
     {
+        if (!params.hasOwnProperty(key))
+            continue;
+
         const value = params[key];
 
         if (typeof value !== 'undefined')
