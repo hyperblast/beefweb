@@ -1,6 +1,6 @@
 'use strict';
 
-const { ApiClient } = require('../../client');
+const { ApiClient } = require('beefweb-client');
 const EventExpectation = require('./event_expectation');
 const { waitUntil } = require('./utils');
 
