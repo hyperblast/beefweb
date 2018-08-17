@@ -2,7 +2,7 @@ import EventEmitter from 'wolfy87-eventemitter'
 import debounce from 'lodash/debounce'
 import clamp from 'lodash/clamp'
 import Timer from './timer'
-import { SwitchParam, PlaybackState } from './api_client'
+import { SwitchParam, PlaybackState } from 'beefweb-client'
 
 const initialPlayerInfo = Object.freeze({
     info: {
