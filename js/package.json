@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "workspaces": [
+    "api_tests",
+    "client",
+    "webui"
+  ]
+}

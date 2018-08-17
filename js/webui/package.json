@@ -1,9 +1,10 @@
 {
-  "name": "webui",
+  "name": "beefweb-webui",
   "version": "0.1.0",
-  "description": "Player web UI",
+  "description": "Beefweb user interface",
   "main": "src/index.js",
   "private": true,
+  "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
   "license": "MIT",
   "scripts": {
