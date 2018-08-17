@@ -17,10 +17,7 @@ function configCommon(cfg, opts)
 
     cfg.module.rules.push({
         test: /\.js$/,
-        include: [
-            opts.sourceDir,
-            path.join(opts.rootDir, 'client')
-        ],
+        include: opts.sourceDir,
         loader: 'babel-loader',
     });
 
