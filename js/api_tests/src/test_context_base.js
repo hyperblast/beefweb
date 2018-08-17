@@ -2,7 +2,7 @@
 
 const path = require('path');
 const RequestHandler = require('./request_handler');
-const TestApiClient = require('./test_api_client');
+const TestPlayerClient = require('./test_player_client');
 
 class TestContextBase
 {
@@ -42,7 +42,7 @@ class TestContextBase
         this.initConfig(config);
         this.config = Object.freeze(config);
 
-        this.client = new TestApiClient(new RequestHandler(serverUrl));
+        this.client = new TestPlayerClient(new RequestHandler(serverUrl));
         this.player = this.createController(config);
 
         this.tracks = Object.freeze({

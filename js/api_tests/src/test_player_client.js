@@ -1,6 +1,6 @@
 'use strict';
 
-const { ApiClient } = require('beefweb-client');
+const { PlayerClient } = require('beefweb-client');
 const EventExpectation = require('./event_expectation');
 const { waitUntil } = require('./utils');
 
@@ -23,7 +23,7 @@ function createStateMatcher(condition)
     }
 }
 
-class TestApiClient extends ApiClient
+class TestPlayerClient extends PlayerClient
 {
     constructor(handler)
     {
@@ -119,4 +119,4 @@ class TestApiClient extends ApiClient
     }
 }
 
-module.exports = TestApiClient;
+module.exports = TestPlayerClient;
