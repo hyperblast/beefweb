@@ -5,23 +5,23 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-function configCommon(cfg, opts)
+function configCommon(config, params)
 {
     // Common configuration
 
-    cfg.output.filename = 'bundle.js';
-    cfg.performance.hints = false;
+    config.output.filename = 'bundle.js';
+    config.performance.hints = false;
 
-    cfg.entry.push('normalize.css');
-    cfg.entry.push('event-source-polyfill');
+    config.entry.push('normalize.css');
+    config.entry.push('event-source-polyfill');
 
-    cfg.module.rules.push({
+    config.module.rules.push({
         test: /\.js$/,
-        include: opts.sourceDir,
+        include: params.sourceDir,
         loader: 'babel-loader',
     });
 
-    cfg.module.rules.push({
+    config.module.rules.push({
         test: /(\.svg|\.png)$/,
         loader: 'url-loader',
         options: {
@@ -31,22 +31,22 @@ function configCommon(cfg, opts)
     });
 }
 
-function configApp(cfg, opts)
+function configApp(config, params)
 {
     // App target configuration
 
-    cfg.output.path = opts.outputDir;
+    config.output.path = params.outputDir;
 
-    cfg.entry.push('./src/style.less');
-    cfg.entry.push('./src/index.js');
+    config.entry.push('./src/style.less');
+    config.entry.push('./src/index.js');
 
-    cfg.plugins.push(new HtmlPlugin({
-        template: path.join(opts.sourceDir, 'index.html')
+    config.plugins.push(new HtmlPlugin({
+        template: path.join(params.sourceDir, 'index.html')
     }));
 
-    if (opts.analyze)
+    if (params.analyze)
     {
-        cfg.plugins.push(new BundleAnalyzerPlugin({
+        config.plugins.push(new BundleAnalyzerPlugin({
            analyzerMode: 'static',
            reportFilename: path.join('stats', 'bundle-size.html'),
            openAnalyzer: false,
@@ -54,59 +54,59 @@ function configApp(cfg, opts)
     }
 }
 
-function configTests(cfg, opts)
+function configTests(config, params)
 {
     // Tests target configuration
 
-    cfg.output.path = path.join(opts.outputDir, 'tests');
+    config.output.path = path.join(params.outputDir, 'tests');
 
-    cfg.entry.push('qunit/qunit/qunit.css');
-    cfg.entry.push('./src/tests/index.js');
+    config.entry.push('qunit/qunit/qunit.css');
+    config.entry.push('./src/tests/index.js');
 
-    cfg.plugins.push(new HtmlPlugin({
-        template: path.join(opts.sourceDir, 'tests', 'index.html')
+    config.plugins.push(new HtmlPlugin({
+        template: path.join(params.sourceDir, 'tests', 'index.html')
     }));
 }
 
-function configSandbox(cfg, opts)
+function configSandbox(config, params)
 {
     // Sandbox target configuration
 
-    cfg.output.path = path.join(opts.outputDir, 'sandbox');
+    config.output.path = path.join(params.outputDir, 'sandbox');
 
-    cfg.entry.push('./src/style.less');
-    cfg.entry.push('./src/sandbox/index.js');
+    config.entry.push('./src/style.less');
+    config.entry.push('./src/sandbox/index.js');
 
-    cfg.plugins.push(new HtmlPlugin({
-        template: path.join(opts.sourceDir, 'index.html')
+    config.plugins.push(new HtmlPlugin({
+        template: path.join(params.sourceDir, 'index.html')
     }));
 }
 
-function configDebug(cfg)
+function configDebug(config)
 {
     // Debug configuration
 
-    cfg.devtool = 'source-map';
-    cfg.mode = 'none';
+    config.devtool = 'source-map';
+    config.mode = 'none';
 
-    cfg.plugins.push(new webpack.LoaderOptionsPlugin({
+    config.plugins.push(new webpack.LoaderOptionsPlugin({
         debug: true
     }));
 
-    cfg.module.rules.push({
+    config.module.rules.push({
         test: /\.(css|less)$/,
         use: ['style-loader', 'css-loader', 'less-loader']
     });
 }
 
-function configRelease(cfg)
+function configRelease(config)
 {
     // Release configuration
 
-    cfg.mode = 'production';
-    cfg.node.process = false;
+    config.mode = 'production';
+    config.node.process = false;
 
-    cfg.plugins.push(new webpack.LoaderOptionsPlugin({
+    config.plugins.push(new webpack.LoaderOptionsPlugin({
         minimize: true
     }));
 
@@ -114,9 +114,9 @@ function configRelease(cfg)
         filename: 'bundle.css'
     });
 
-    cfg.plugins.push(styleExtractor);
+    config.plugins.push(styleExtractor);
 
-    cfg.module.rules.push({
+    config.module.rules.push({
         test: /\.(css|less)$/,
         use: styleExtractor.extract({
             use: ['css-loader', 'less-loader'],
@@ -125,7 +125,7 @@ function configRelease(cfg)
     });
 }
 
-function makeBuildOpts(env)
+function makeBuildParams(env)
 {
     const buildType = env.release ? 'release' : 'debug';
     const enableTests = !!env.tests;
@@ -145,9 +145,9 @@ function makeBuildOpts(env)
     };
 }
 
-function makeTarget(configTarget, opts)
+function makeTarget(configTarget, params)
 {
-    const cfg = {
+    const config = {
         entry: [],
         output: {},
         plugins: [],
@@ -157,23 +157,23 @@ function makeTarget(configTarget, opts)
         performance: {},
     };
 
-    configCommon(cfg, opts);
-    configTarget(cfg, opts);
+    configCommon(config, params);
+    configTarget(config, params);
 
-    (opts.buildType === 'release' ? configRelease : configDebug)(cfg, opts);
+    (params.buildType === 'release' ? configRelease : configDebug)(config, params);
 
-    return cfg;
+    return config;
 }
 
 module.exports = function(env)
 {
-    const opts = makeBuildOpts(env || {});
-    const allTargets = [makeTarget(configApp, opts)];
+    const params = makeBuildParams(env || {});
+    const allTargets = [makeTarget(configApp, params)];
 
-    if (opts.enableTests)
+    if (params.enableTests)
     {
-        allTargets.push(makeTarget(configTests, opts));
-        allTargets.push(makeTarget(configSandbox, opts));
+        allTargets.push(makeTarget(configTests, params));
+        allTargets.push(makeTarget(configSandbox, params));
     }
 
     return allTargets;
