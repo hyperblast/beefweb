@@ -3,7 +3,7 @@ const {
     SwitchParam,
     PlaybackState,
     ApiClient
-} = require('../../client');
+} = require('beefweb-client');
 
 export {
     ErrorType,
