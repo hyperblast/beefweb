@@ -3,7 +3,8 @@ image: Visual Studio 2015
 install:
 - ps: Install-Product node 8
 - scripts\install\patch.cmd
-- scripts\install\foobar2000.cmd
+- scripts\install\foobar2000.cmd v1.3
+- scripts\install\foobar2000.cmd v1.4
 - set PATH=%cd%\tools\patch;%PATH%
 
 build_script: scripts\appveyor\build.cmd
