@@ -9,8 +9,9 @@ class TestContext extends TestContextBase
 {
     initConfig(config)
     {
-        config.supportsArtwork = false;
-
+        const { BEEFWEB_TEST_FOOBAR2000_VERSION } = process.env;
+        const version = BEEFWEB_TEST_FOOBAR2000_VERSION || 'v1.3';
+ 
         config.pluginBuildDir = path.join(
             config.rootDir,
             'server',
@@ -21,7 +22,7 @@ class TestContext extends TestContextBase
             config.buildType);
 
         config.pluginFile = 'foo_beefweb.dll';
-        config.playerDir = path.join(config.toolsDir, 'foobar2000');
+        config.playerDir = path.join(config.toolsDir, `foobar2000-${version}`);
     }
 
     createController(config)

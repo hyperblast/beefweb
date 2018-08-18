@@ -13,8 +13,16 @@ server\build\release\src\tests\Release\core_tests.exe
 @pushd js\api_tests
 
 @echo.
-@echo === Running API tests ===
+@echo === Running API tests on foobar2000 v1.3 ===
 @echo.
+set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.3
+cmd /c yarn test
+@if errorlevel 1 goto :end
+
+@echo.
+@echo === Running API tests on foobar2000 v1.4 ===
+@echo.
+set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.4
 cmd /c yarn test
 @if errorlevel 1 goto :end
 
