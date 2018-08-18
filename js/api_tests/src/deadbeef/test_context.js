@@ -15,7 +15,7 @@ class TestContext extends TestContextBase
             'build',
             config.buildType,
             'src',
-            'player_deadbeef');
+            'deadbeef');
 
         config.pluginFiles = [
             'beefweb.so',

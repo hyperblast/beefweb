@@ -11,14 +11,14 @@ class TestContext extends TestContextBase
     {
         const { BEEFWEB_TEST_FOOBAR2000_VERSION } = process.env;
         const version = BEEFWEB_TEST_FOOBAR2000_VERSION || 'v1.3';
- 
+
         config.pluginBuildDir = path.join(
             config.rootDir,
             'server',
             'build',
             config.buildType,
             'src',
-            'player_foobar2000',
+            'foobar2000',
             config.buildType);
 
         config.pluginFile = 'foo_beefweb.dll';
