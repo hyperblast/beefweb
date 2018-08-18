@@ -21,7 +21,7 @@
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
         <BuildPackageDependsOn>CleanPackage;DetectGitRevision</BuildPackageDependsOn>
-        <BuildPackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(PackageDependsOn);BuildServer;BuildWebui</BuildPackageDependsOn>
+        <BuildPackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(BuildPackageDependsOn);BuildServer;BuildWebui</BuildPackageDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
