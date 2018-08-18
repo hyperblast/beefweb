@@ -22,7 +22,6 @@ add_executable(
     core_tests
     ${RUNNER_SOURCES}
     $<TARGET_OBJECTS:core>
-    $<TARGET_OBJECTS:core_server>
 )
 
 target_link_libraries(
@@ -34,7 +33,6 @@ add_executable(
     echo_server
     ${ECHO_SERVER_SOURCES}
     $<TARGET_OBJECTS:core>
-    $<TARGET_OBJECTS:core_server>
 )
 
 target_link_libraries(

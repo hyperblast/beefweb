@@ -35,7 +35,6 @@ foreach(BUILD_TYPE DEBUG RELEASE MINSIZEREL RELWITHDEBINFO)
 endforeach()
 
 option_dependency_check(ENABLE_STATIC_STDLIB ENABLE_LOCAL_BOOST)
-option_dependency_check(ENABLE_LOCAL_LIBEVENT ENABLE_LOCAL_LIBEVHTP)
 
 if(ENABLE_LOCAL_BOOST)
     add_subdirectory(boost)
@@ -43,14 +42,6 @@ endif()
 
 if(ENABLE_LOCAL_LIBB64)
     add_subdirectory(libb64)
-endif()
-
-if(ENABLE_LOCAL_LIBEVENT)
-    add_subdirectory(libevent)
-endif()
-
-if(ENABLE_LOCAL_LIBEVHTP)
-    add_subdirectory(libevhtp)
 endif()
 
 if(ENABLE_LOCAL_NLJSON)

@@ -24,7 +24,6 @@ add_library(
     deadbeef_plugin MODULE
     ${DEADBEEF_PLUGIN_SOURCES}
     $<TARGET_OBJECTS:core>
-    $<TARGET_OBJECTS:core_server>
 )
 
 target_link_libraries(

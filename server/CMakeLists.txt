@@ -22,8 +22,6 @@ local_library_option(catch  ENABLE_LOCAL_CATCH "ENABLE_TESTS")
 if(OS_POSIX)
     option(ENABLE_PLAYER_DEADBEEF   "Build plugin for deadbeef player" ON)
 
-    local_library_option(libevent   ENABLE_LOCAL_LIBEVENT "")
-    local_library_option(libevhtp   ENABLE_LOCAL_LIBEVHTP "")
     local_library_option(deadbeef   ENABLE_LOCAL_DEADBEEF "ENABLE_PLAYER_DEADBEEF")
 endif()
 

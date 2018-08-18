@@ -142,14 +142,6 @@ set(
 add_library(core OBJECT ${CORE_SOURCES})
 add_dependencies(core ext_all)
 
-if(OS_POSIX)
-    add_subdirectory(server_evhtp)
-endif()
-
-if(OS_WINDOWS)
-    add_subdirectory(server_windows)
-endif()
-
 if(ENABLE_PLAYER_DEADBEEF)
     add_subdirectory(player_deadbeef)
 endif()

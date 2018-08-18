@@ -16,7 +16,7 @@ asio::ip::tcp::endpoint makeEndpoint(int port, bool allowRemote)
 
 }
 
-ServerCorePtr ServerCore::createBeast()
+ServerCorePtr ServerCore::create()
 {
     return std::make_unique<BeastServer>();
 }

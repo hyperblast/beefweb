@@ -27,7 +27,6 @@ add_library(
     foobar2000_plugin MODULE
     ${FOOBAR2000_PLUGIN_SOURCES}
     $<TARGET_OBJECTS:core>
-    $<TARGET_OBJECTS:core_server>
 )
 
 target_link_libraries(

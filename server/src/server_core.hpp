@@ -39,9 +39,6 @@ public:
     virtual void exit() = 0;
 
 private:
-    static ServerCorePtr createStandard();
-    static ServerCorePtr createBeast();
-
     MSRV_NO_COPY_AND_ASSIGN(ServerCore);
 };
 
