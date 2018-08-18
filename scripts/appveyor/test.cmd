@@ -2,7 +2,6 @@ setlocal
 cd "%~dp0..\.."
 
 set BEEFWEB_TEST_BUILD_TYPE=release
-set BEEFWEB_USE_BEAST=1
 
 @echo.
 @echo === Running server tests ===
