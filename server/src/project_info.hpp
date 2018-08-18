@@ -4,7 +4,7 @@
 #define MSRV_STRINGIFY(v)       MSRV_STRINGIFY_(v)
 
 #define MSRV_PROJECT_ID         "beefweb"
-#define MSRV_PROJECT_NAME       "Beefweb"
+#define MSRV_PROJECT_NAME       "Beefweb Remote Control"
 #define MSRV_WEB_ROOT           "beefweb.root"
 #define MSRV_CONFIG_FILE        "beefweb.config.json"
 #define MSRV_PROJECT_DESC       "Provides web UI and HTTP API for controlling player remotely"
