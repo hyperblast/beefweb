@@ -23,7 +23,7 @@ function relink
 function install
 {
     plugin_dir="$HOME/.local/lib/deadbeef"
-    server_build_dir="$(pwd)/server/build/$1/src/player_deadbeef"
+    server_build_dir="$(pwd)/server/build/$1/src/deadbeef"
     webui_build_dir="$(pwd)/js/webui/build/$1"
 
     if [ ! -e "$plugin_dir" ]; then

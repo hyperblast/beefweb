@@ -99,7 +99,7 @@ pkg_tmp_dir=$pkg_build_dir/tmp
 
 server_src_dir=$(pwd)/server
 server_build_dir=$server_src_dir/build/$build_type
-server_plugin_file=$server_build_dir/src/player_deadbeef/$plugin_file
+server_plugin_file=$server_build_dir/src/deadbeef/$plugin_file
 
 js_src_dir=$(pwd)/js
 js_client_src_dir=$js_src_dir/client

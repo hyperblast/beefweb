@@ -90,7 +90,7 @@
 
     <Target Name="BuildPackage" DependsOnTargets="$(BuildPackageDependsOn)">
         <ItemGroup>
-            <ServerFiles Include="$(ServerBuildDir)\src\player_foobar2000\$(Configuration)\$(PluginFile)" />
+            <ServerFiles Include="$(ServerBuildDir)\src\foobar2000\$(Configuration)\$(PluginFile)" />
             <WebuiFiles Include="$(WebuiBuildDir)\*.*" />
         </ItemGroup>
         <Copy
