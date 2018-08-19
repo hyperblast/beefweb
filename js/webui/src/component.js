@@ -66,14 +66,14 @@ export default class Component extends React.PureComponent
         });
     }
 
-    componentWillReceiveProps(nextProps)
+    componentDidUpdate(prevProps)
     {
         let wantUpdate = false;
 
         forEachEvent(this, (modelKey, event) =>
         {
-            const oldModel = this.props[modelKey];
-            const newModel = nextProps[modelKey];
+            const oldModel = prevProps[modelKey];
+            const newModel = this.props[modelKey];
 
             if (oldModel === newModel)
                 return;
