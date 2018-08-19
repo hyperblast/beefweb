@@ -17,45 +17,65 @@ const playbackStateIcons = {
     [PlaybackState.stopped]: 'none',
 };
 
-const PlaylistTabHandle = SortableHandle(() => (
-    <Icon name='ellipses' className='drag-handle' />
-));
-
-const PlaylistTab = SortableElement(props => {
-    const {
-        playlist: p,
-        playbackState,
-        activePlaylistId,
-        currentPlaylistId,
-        drawHandle
-    } = props;
-
-    const className = makeClassName({
-        'header-tab': true,
-        'header-tab-with-icon': true,
-        'header-tab-active': p.id === currentPlaylistId
-    });
-
-    const handle = drawHandle
-        ? <PlaylistTabHandle />
-        : null;
-
-    const icon = p.id === activePlaylistId
-        ? playbackStateIcons[playbackState]
-        : 'none';
-
+function PlaylistTabHandleInner()
+{
     return (
-        <li className={className}>
-            { handle }
-            <Icon name={icon} className='header-tab-icon' />
-            <a href={urls.viewPlaylist(p.id)} title={p.title}>
-                {p.title}
-            </a>
-        </li>
+        <Icon name='ellipses' className='drag-handle' />
     );
-});
+}
 
-const PlaylistTabList = SortableContainer(props => {
+const PlaylistTabHandle = SortableHandle(PlaylistTabHandleInner);
+
+class PlaylistTabInner extends React.PureComponent
+{
+    componentDidMount()
+    {
+        const { playlist, currentPlaylistId} = this.props;
+
+        if (playlist.id === currentPlaylistId)
+            this.element.scrollIntoView();
+    }
+
+    render()
+    {
+        const {
+            playlist: p,
+            playbackState,
+            activePlaylistId,
+            currentPlaylistId,
+            drawHandle
+        } = this.props;
+
+        const className = makeClassName({
+            'header-tab': true,
+            'header-tab-with-icon': true,
+            'header-tab-active': p.id === currentPlaylistId
+        });
+
+        const handle = drawHandle
+            ? <PlaylistTabHandle />
+            : null;
+
+        const icon = p.id === activePlaylistId
+            ? playbackStateIcons[playbackState]
+            : 'none';
+
+        return (
+            <li className={className} ref={el => this.element = el}>
+                {handle}
+                <Icon name={icon} className='header-tab-icon' />
+                <a href={urls.viewPlaylist(p.id)} title={p.title}>
+                    {p.title}
+                </a>
+            </li>
+        );
+    }
+}
+
+const PlaylistTab = SortableElement(PlaylistTabInner);
+
+function PlaylistTabListInner(props)
+{
     const {
         playbackState,
         activePlaylistId,
@@ -66,21 +86,23 @@ const PlaylistTabList = SortableContainer(props => {
 
     return (
         <ul className='header-block header-block-primary'>
-        {
-            playlists.map(p => (
-                <PlaylistTab
-                    key={p.id}
-                    index={p.index}
-                    playlist={p}
-                    playbackState={playbackState}
-                    activePlaylistId={activePlaylistId}
-                    currentPlaylistId={currentPlaylistId}
-                    drawHandle={drawHandle} />
-            ))
-        }
+            {
+                playlists.map(p => (
+                    <PlaylistTab
+                        key={p.id}
+                        index={p.index}
+                        playlist={p}
+                        playbackState={playbackState}
+                        activePlaylistId={activePlaylistId}
+                        currentPlaylistId={currentPlaylistId}
+                        drawHandle={drawHandle} />
+                ))
+            }
         </ul>
     );
-});
+}
+
+const PlaylistTabList = SortableContainer(PlaylistTabListInner);
 
 export default class PlaylistSwitcher extends Component
 {
