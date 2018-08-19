@@ -34,7 +34,7 @@ export default class PlaylistContent extends Component
     getStateFromModel()
     {
         const { playbackState } = this.props.playerModel;
-        const { columns, playlistItems } = this.props.playlistModel;
+        const { columns, playlistItems, currentPlaylistId } = this.props.playlistModel;
         const { offset, totalCount, items } = playlistItems;
 
         return {
@@ -44,6 +44,7 @@ export default class PlaylistContent extends Component
             offset,
             totalCount,
             items,
+            currentPlaylistId,
             activeItemIndex: this.getActiveItemIndex(),
         };
     }
@@ -90,6 +91,8 @@ export default class PlaylistContent extends Component
 
     render()
     {
+        const stateKey = `Playlists.${this.state.currentPlaylistId}`;
+
         return (
             <DataTable
                 useIcons={true}
@@ -99,6 +102,8 @@ export default class PlaylistContent extends Component
                 offset={this.state.offset}
                 totalCount={this.state.totalCount}
                 pageSize={pageSize}
+                stateKey={stateKey}
+                stateStore={this.props.stateStore}
                 className='panel main-panel playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick} />
@@ -108,5 +113,6 @@ export default class PlaylistContent extends Component
 
 PlaylistContent.propTypes = {
     playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired
+    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
+    stateStore: PropTypes.object.isRequired,
 };

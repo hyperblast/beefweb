@@ -21,7 +21,7 @@ function getRowData(item)
 {
     return {
         icon: iconNames[item.type],
-        url: item.type == 'D' ? urls.browsePath(item.path) : null,
+        url: item.type === 'D' ? urls.browsePath(item.path) : null,
         columns: [
             item.name,
             getDisplaySize(item.size),
@@ -83,6 +83,8 @@ export default class FileBrowser extends Component
                 offset={this.state.offset}
                 pageSize={pageSize}
                 totalCount={this.state.totalCount}
+                stateKey='FileBrowser'
+                stateStore={this.props.stateStore}
                 onClick={this.handleClick}
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
@@ -95,4 +97,5 @@ FileBrowser.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
     fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired,
     notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
+    stateStore: PropTypes.object.isRequired,
 };

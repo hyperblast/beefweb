@@ -32,22 +32,58 @@ const cellClassNames = mapRange(
 const columnHeaderClassNames = mapRange(
     0, maxColumns, value => `dtable-column-header dtable-column${value}`);
 
+function getScrollTopKey(stateKey)
+{
+    return `${stateKey}.DataTable.ScrollTop`;
+}
+
 export default class DataTable extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.state = {};
+        this.state = { elementId: generateElementId('dtable') };
         this.setBodyRef = this.setBodyRef.bind(this);
         this.handleScroll = throttle(this.handleScroll.bind(this), 50);
         this.handleClick = this.handleClick.bind(this);
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
     }
 
-    componentWillMount()
+    componentDidMount()
     {
-        this.setState({ elementId: generateElementId('dtable') });
+        this.restoreScrollPosition();
+    }
+
+    componentDidUpdate(prevProps)
+    {
+        if (prevProps.stateKey !== this.props.stateKey ||
+            prevProps.stateStore !== this.props.stateStore)
+        {
+            this.restoreScrollPosition();
+        }
+    }
+
+    saveScrollPosition()
+    {
+        const { stateKey, stateStore } = this.props;
+
+        if (stateKey && stateStore)
+            stateStore[getScrollTopKey(stateKey)] = this.body.scrollTop;
+    }
+
+    restoreScrollPosition()
+    {
+        const { stateKey, stateStore } = this.props;
+
+        if (stateKey && stateStore)
+        {
+            const scrollTopKey = getScrollTopKey(stateKey);
+            const scrollTop = stateStore[scrollTopKey];
+
+            if (scrollTop !== undefined)
+                this.body.scrollTop = scrollTop;
+        }
     }
 
     setBodyRef(body)
@@ -77,6 +113,8 @@ export default class DataTable extends React.PureComponent
 
     handleScroll()
     {
+        this.saveScrollPosition();
+
         const { offset, pageSize, totalCount } = this.props;
 
         let endOffset = offset + pageSize;
@@ -281,6 +319,9 @@ export default class DataTable extends React.PureComponent
 DataTable.propTypes = {
     columnNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     columnSizes: PropTypes.arrayOf(PropTypes.number),
+
+    stateKey: PropTypes.string,
+    stateStore: PropTypes.object,
 
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     offset: PropTypes.number.isRequired,

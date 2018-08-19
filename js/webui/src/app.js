@@ -38,7 +38,8 @@ export default class App extends Component
             playlistModel,
             fileBrowserModel,
             settingsModel,
-            notificationModel
+            notificationModel,
+            stateStore
         } = appModel;
 
         if (view === ViewId.playlist)
@@ -57,7 +58,8 @@ export default class App extends Component
                 main:
                     <PlaylistContent
                         playerModel={playerModel}
-                        playlistModel={playlistModel} />
+                        playlistModel={playlistModel}
+                        stateStore={stateStore} />
             };
         }
 
@@ -74,7 +76,8 @@ export default class App extends Component
                     <FileBrowser
                         fileBrowserModel={fileBrowserModel}
                         playlistModel={playlistModel}
-                        notificationModel={notificationModel} />
+                        notificationModel={notificationModel}
+                        stateStore={stateStore} />
             };
         }
 

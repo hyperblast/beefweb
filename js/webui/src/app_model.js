@@ -28,6 +28,7 @@ export default class AppModel extends EventEmitter
         this.playlistModel = new PlaylistModel(client, this.dataSource, this.settingsModel);
         this.fileBrowserModel = new FileBrowserModel(client);
         this.notificationModel = new NotificationModel();
+        this.stateStore = {};
 
         this.defineEvent('currentViewChange');
     }
