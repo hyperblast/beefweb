@@ -41,8 +41,8 @@ export default class FileBrowserHeader extends Component
     renderBreadcrumbs()
     {
        return this.state.pathStack.map((item, index) => (
-            <li className='header-tab header-tab-active'>
-                <a key={index} href={urls.browsePath(item.path)} title={item.path}>
+            <li key={index} className='header-tab header-tab-active'>
+                <a href={urls.browsePath(item.path)} title={item.path}>
                     {item.title}
                 </a>
             </li>
