@@ -81,8 +81,7 @@ export default class DataTable extends React.PureComponent
             const scrollTopKey = getScrollTopKey(stateKey);
             const scrollTop = stateStore[scrollTopKey];
 
-            if (scrollTop !== undefined)
-                this.body.scrollTop = scrollTop;
+            this.body.scrollTop = scrollTop !== undefined ? scrollTop : 0;
         }
     }
 
