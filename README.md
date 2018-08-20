@@ -38,8 +38,13 @@ specify music directories in plugin configuration screen.
 For DeaDBeeF multiple music directories should be separated with `;`.
 
 ### Screenshots
-![Main web interface](https://user-images.githubusercontent.com/19171756/34213888-b205be72-e5b1-11e7-9f77-5657979d0587.png)
-![Configuration screen](https://user-images.githubusercontent.com/19171756/34526667-40ce832a-f0b4-11e7-8918-16180b6a66ad.png)
+![Main web interface on Linux](https://user-images.githubusercontent.com/19171756/44335589-a3286180-a47d-11e8-8db4-fd7708e262c6.png)
+
+![Configuration screen for DeaDBeeF](https://user-images.githubusercontent.com/19171756/34526667-40ce832a-f0b4-11e7-8918-16180b6a66ad.png)
+
+![Main web interface on Windows](https://user-images.githubusercontent.com/19171756/44335572-93108200-a47d-11e8-9ab4-7e51771353cf.png)
+
+![Configuration screen for foobar2000](https://user-images.githubusercontent.com/19171756/44335583-9c015380-a47d-11e8-9934-639503538f8e.png)
 
 ### How to build
 #### DeaDBeeF
