@@ -7,19 +7,6 @@ namespace msrv {
 
 WorkQueue::~WorkQueue() = default;
 
-ImmediateWorkQueue::ImmediateWorkQueue()
-{
-}
-
-ImmediateWorkQueue::~ImmediateWorkQueue()
-{
-}
-
-void ImmediateWorkQueue::enqueue(WorkCallback callback)
-{
-    callback();
-}
-
 ThreadWorkQueue::ThreadWorkQueue()
     : shutdown_(false)
 {
@@ -70,38 +57,51 @@ void ThreadWorkQueue::run()
     }
 }
 
-
 ExternalWorkQueue::ExternalWorkQueue()
+    : state_(std::make_shared<State>())
 {
 }
 
-ExternalWorkQueue::~ExternalWorkQueue() = default;
+ExternalWorkQueue::~ExternalWorkQueue()
+{
+    auto stateDestroyed = state_->destroyed.get_future();
+    state_.reset();
+    stateDestroyed.wait();
+}
 
 void ExternalWorkQueue::enqueue(WorkCallback callback)
 {
     bool willSchedule;
 
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        willSchedule = enqueued_.empty();
-        enqueued_.emplace_back(std::move(callback));
+        std::lock_guard<std::mutex> lock(state_->mutex);
+        willSchedule = state_->enqueued.empty();
+        state_->enqueued.emplace_back(std::move(callback));
     }
 
-    if (willSchedule)
-        schedule();
+    if (!willSchedule)
+        return;
+
+    std::weak_ptr<State> stateWeak = state_;
+
+    schedule([stateWeak]
+    {
+        if (auto state =  stateWeak.lock())
+            execute(state.get());
+    });
 }
 
-void ExternalWorkQueue::execute()
+void ExternalWorkQueue::execute(State* state)
 {
     {
-        std::unique_lock<std::mutex> lock(mutex_);
-        std::swap(executing_, enqueued_);
+        std::unique_lock<std::mutex> lock(state->mutex);
+        std::swap(state->executing, state->enqueued);
     }
 
-    for (auto& item : executing_)
+    for (auto& item : state->executing)
         tryCatchLog([&]{ item(); });
 
-    executing_.clear();
+    state->executing.clear();
 }
 
 }

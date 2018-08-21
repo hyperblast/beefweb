@@ -84,7 +84,7 @@ void PlayerController::togglePause()
     player_->togglePause();
 }
 
-void PlayerController::defineRoutes(Router* router, Player* player)
+void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player)
 {
     auto routes = router->defineRoutes<PlayerController>();
 
@@ -93,7 +93,7 @@ void PlayerController::defineRoutes(Router* router, Player* player)
         return new PlayerController(request, player);
     });
 
-    routes.useWorkQueue(player->workQueue());
+    routes.useWorkQueue(workQueue);
 
     routes.setPrefix("api/player");
 

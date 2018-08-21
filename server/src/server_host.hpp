@@ -29,14 +29,19 @@ private:
     void handleServerReady();
 
     Player* player_;
-    EventDispatcher dispatcher_;
+
     Router router_;
     RequestFilterChain filters_;
-    ThreadWorkQueue utilityQueue_;
+    EventDispatcher dispatcher_;
+    ContentTypeMap ctmap_;
+
     SettingsDataPtr currentSettings_;
     SettingsDataPtr nextSettings_;
     std::mutex settingsMutex_;
-    ContentTypeMap ctmap_;
+
+    std::unique_ptr<WorkQueue> playerWorkQueue_;
+    ThreadWorkQueue utilityQueue_;
+
     std::unique_ptr<ServerThread> serverThread_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerHost);

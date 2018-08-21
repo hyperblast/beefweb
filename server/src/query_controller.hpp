@@ -20,7 +20,7 @@ public:
     ResponsePtr getEvents();
     ResponsePtr getUpdates();
 
-    static void defineRoutes(Router* router, Player* player, EventDispatcher* dispatcher);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, EventDispatcher* dispatcher);
 
 private:
     EventSet readEventMask();

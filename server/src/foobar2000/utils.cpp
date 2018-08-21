@@ -19,14 +19,9 @@ void Fb2kLogger::log(LogLevel, const char* fmt, va_list va)
 Fb2kWorkQueue::Fb2kWorkQueue() = default;
 Fb2kWorkQueue::~Fb2kWorkQueue() = default;
 
-void Fb2kWorkQueue::callback_run()
+void Fb2kWorkQueue::schedule(WorkCallback callback)
 {
-    execute();
-}
-
-void Fb2kWorkQueue::schedule()
-{
-    callback_enqueue();
+    fb2k::inMainThread(std::move(callback));
 }
 
 PlayerEventAdapter::PlayerEventAdapter()

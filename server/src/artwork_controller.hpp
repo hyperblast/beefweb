@@ -19,7 +19,7 @@ public:
 
     ResponsePtr getArtwork();
 
-    static void defineRoutes(Router* router, Player* player, ContentTypeMap* ctmap);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, ContentTypeMap* ctmap);
 
 private:
     ResponsePtr getResponse(ArtworkResult* result);

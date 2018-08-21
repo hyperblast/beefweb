@@ -13,7 +13,7 @@ public:
     virtual ~AsioWorkQueue();
 
 protected:
-    virtual void schedule() override;
+    virtual void schedule(WorkCallback callback) override;
 
 private:
     asio::io_context* context_;
