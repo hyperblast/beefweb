@@ -21,4 +21,25 @@ ExternalProject_Add(
     LOG_DOWNLOAD 1 LOG_UPDATE 0 LOG_CONFIGURE 1 LOG_BUILD 1 LOG_INSTALL 1
 )
 
+if(CXX_MSVC)
+    if(${CMAKE_SIZEOF_VOID_P} STREQUAL 4)
+        set(LIB_MACHINE "x86")
+    elseif(${CMAKE_SIZEOF_VOID_P} STREQUAL 8)
+        set(LIB_MACHINE "x64")
+    else()
+        message(SEND_ERROR "Unknown pointer size, unable to provide /machine option for lib.exe" )
+    endif()
+
+    ExternalProject_Add_Step(
+        ext_zlib make_import_lib
+        COMMAND
+            ${CMAKE_CURRENT_SOURCE_DIR}/make-import-lib.cmd ${LIB_MACHINE} <SOURCE_DIR> <INSTALL_DIR>
+        COMMENT
+            "Creating import library for zlib1.dll"
+        DEPENDEES
+            install
+        LOG 1
+    )
+endif()
+
 add_dependencies(ext_all ext_zlib)

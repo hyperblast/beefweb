@@ -23,6 +23,16 @@ set(
     utils.cpp utils.hpp
 )
 
+set(
+    CORE_LIBRARIES_FOOBAR2000
+    ${CORE_LIBRARIES}
+)
+
+if(ZLIB_DLL_LIBRARIES)
+    list(REMOVE_ITEM CORE_LIBRARIES_FOOBAR2000 "${ZLIB_LIBRARIES}")
+    list(APPEND CORE_LIBRARIES_FOOBAR2000 "${ZLIB_DLL_LIBRARIES}")
+endif()
+
 add_library(
     foobar2000_plugin MODULE
     ${FOOBAR2000_PLUGIN_SOURCES}
@@ -31,7 +41,7 @@ add_library(
 
 target_link_libraries(
     foobar2000_plugin
-    "${CORE_LIBRARIES};${FOOSDK_LIBRARIES};shlwapi.lib"
+    "${CORE_LIBRARIES_FOOBAR2000};${FOOSDK_LIBRARIES};shlwapi.lib"
 )
 
 set_target_properties(
