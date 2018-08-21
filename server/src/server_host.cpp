@@ -14,16 +14,17 @@ namespace msrv {
 ServerHost::ServerHost(Player* player)
     : player_(player)
 {
+    playerWorkQueue_ = player_->createWorkQueue();
+
     filters_.addFilter(std::make_unique<BasicAuthFilter>(static_cast<SettingsStore*>(this)));
     filters_.addFilter(std::make_unique<CompressionFilter>());
     filters_.addFilter(std::make_unique<CacheSupportFilter>());
     filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
-    PlayerController::defineRoutes(&router_, player_);
-    PlaylistsController::defineRoutes(&router_, player_, this);
-    QueryController::defineRoutes(&router_, player_, &dispatcher_);
-    ArtworkController::defineRoutes(&router_, player_, &ctmap_);
-
+    PlayerController::defineRoutes(&router_, playerWorkQueue_.get(), player_);
+    PlaylistsController::defineRoutes(&router_, playerWorkQueue_.get(), player_, this);
+    QueryController::defineRoutes(&router_, playerWorkQueue_.get(), player_, &dispatcher_);
+    ArtworkController::defineRoutes(&router_, playerWorkQueue_.get(), player_, &ctmap_);
     BrowserController::defineRoutes(&router_, &utilityQueue_, this);
     StaticController::defineRoutes(&router_, &utilityQueue_, this, &ctmap_);
 

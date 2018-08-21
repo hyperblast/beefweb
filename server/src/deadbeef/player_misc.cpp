@@ -14,9 +14,9 @@ PlayerImpl::PlayerImpl()
 
 PlayerImpl::~PlayerImpl() = default;
 
-WorkQueue* PlayerImpl::workQueue()
+std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 {
-    return &workQueue_;
+    return std::make_unique<ThreadWorkQueue>();
 }
 
 void PlayerImpl::initArtwork()

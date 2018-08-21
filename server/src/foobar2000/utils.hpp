@@ -21,17 +21,14 @@ private:
     std::string prefix_;
 };
 
-class Fb2kWorkQueue
-    : public main_thread_callback,
-      public ExternalWorkQueue
+class Fb2kWorkQueue : public ExternalWorkQueue
 {
 public:
     Fb2kWorkQueue();
     virtual ~Fb2kWorkQueue();
-    virtual void callback_run() override;
 
 protected:
-    virtual void schedule() override;
+    virtual void schedule(WorkCallback callback) override;
 };
 
 class PlayerEventAdapter : private play_callback

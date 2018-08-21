@@ -14,7 +14,7 @@ public:
     PlayerImpl();
     virtual ~PlayerImpl();
 
-    virtual WorkQueue* workQueue() override;
+    virtual std::unique_ptr<WorkQueue> createWorkQueue() override;
 
     virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
 
@@ -115,7 +115,6 @@ private:
     service_ptr_t<playlist_incoming_item_filter_v3> incomingItemFilter_;
     service_ptr_t<album_art_manager_v3> albumArtManager_;
     service_ptr_t<titleformat_compiler> titleFormatCompiler_;
-    service_ptr_t<Fb2kWorkQueue> workQueue_;
 
     std::shared_ptr<PlaylistMapping> playlists_;
     PlayerEventAdapter playerEventAdapter_;

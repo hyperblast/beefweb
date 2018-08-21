@@ -9,8 +9,7 @@ PlayerImpl::PlayerImpl()
       incomingItemFilter_(playlist_incoming_item_filter_v3::get()),
       albumArtManager_(album_art_manager_v3::get()),
       titleFormatCompiler_(titleformat_compiler::get()),
-      playlists_(std::make_shared<PlaylistMapping>()),
-      workQueue_(new service_impl_t<Fb2kWorkQueue>)
+      playlists_(std::make_shared<PlaylistMapping>())
 {
     auto callback = [this] (PlayerEvent ev) { emitEvent(ev); };
 
@@ -24,9 +23,9 @@ PlayerImpl::~PlayerImpl()
 {
 }
 
-WorkQueue* PlayerImpl::workQueue()
+std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 {
-    return workQueue_.get_ptr();
+    return std::make_unique<Fb2kWorkQueue>();
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)

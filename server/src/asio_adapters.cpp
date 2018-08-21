@@ -8,13 +8,14 @@ AsioWorkQueue::AsioWorkQueue(asio::io_context* context)
 
 AsioWorkQueue::~AsioWorkQueue() = default;
 
-void AsioWorkQueue::schedule()
+void AsioWorkQueue::schedule(WorkCallback callback)
 {
-    asio::post(context_->get_executor(), [this] { execute(); });
+    asio::post(context_->get_executor(), std::move(callback));
 }
 
 AsioTimer::AsioTimer(asio::io_context* context)
-    : timer_(*context)
+    : timer_(*context),
+      state_(TimerState::STOPPED)
 {
 }
 

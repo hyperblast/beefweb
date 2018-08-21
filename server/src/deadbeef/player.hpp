@@ -18,7 +18,7 @@ public:
     PlayerImpl();
     ~PlayerImpl();
 
-    virtual WorkQueue* workQueue() override;
+    virtual std::unique_ptr<WorkQueue> createWorkQueue() override;
 
     virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
 
@@ -102,7 +102,6 @@ private:
     void initArtwork();
     boost::intrusive_ptr<ArtworkRequest> buildArtworkRequest(const ArtworkQuery& query);
 
-    ThreadWorkQueue workQueue_;
     PlaylistMutex playlistMutex_;
     ConfigMutex configMutex_;
     PlaylistMapping playlists_;

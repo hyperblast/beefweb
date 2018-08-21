@@ -38,7 +38,7 @@ public:
 
     void sortItems();
 
-    static void defineRoutes(Router* router, Player* player, SettingsStore* store);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsStore* store);
 
 private:
     Player* player_;

@@ -70,7 +70,7 @@ ResponsePtr ArtworkController::getNotFoundResponse()
 }
 
 void ArtworkController::defineRoutes(
-    Router* router, Player* player, ContentTypeMap* ctmap)
+    Router* router, WorkQueue* workQueue, Player* player, ContentTypeMap* ctmap)
 {
     auto routes = router->defineRoutes<ArtworkController>();
 
@@ -79,7 +79,7 @@ void ArtworkController::defineRoutes(
         return new ArtworkController(request, player, ctmap);
     });
 
-    routes.useWorkQueue(player->workQueue());
+    routes.useWorkQueue(workQueue);
     routes.setPrefix("api/artwork/:plref/:index");
     routes.get("", &ArtworkController::getArtwork);
 }

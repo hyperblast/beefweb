@@ -127,7 +127,7 @@ Json QueryController::stateToJson(const EventSet& changeSet)
     return obj;
 }
 
-void QueryController::defineRoutes(Router* router, Player* player, EventDispatcher* dispatcher)
+void QueryController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player, EventDispatcher* dispatcher)
 {
     auto routes = router->defineRoutes<QueryController>();
 
@@ -136,7 +136,7 @@ void QueryController::defineRoutes(Router* router, Player* player, EventDispatch
         return new QueryController(request, player, dispatcher);
     });
 
-    routes.useWorkQueue(player->workQueue());
+    routes.useWorkQueue(workQueue);
 
     routes.setPrefix("api/query");
 

@@ -226,7 +226,7 @@ public:
     Player() = default;
     virtual ~Player();
 
-    virtual WorkQueue* workQueue() = 0;
+    virtual std::unique_ptr<WorkQueue> createWorkQueue() = 0;
 
     // Player control and query API
 

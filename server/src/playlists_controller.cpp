@@ -196,7 +196,7 @@ void PlaylistsController::sortItems()
         optionalParam<bool>("desc", false));
 }
 
-void PlaylistsController::defineRoutes(Router* router, Player* player, SettingsStore* store)
+void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsStore* store)
 {
     auto routes = router->defineRoutes<PlaylistsController>();
 
@@ -205,7 +205,7 @@ void PlaylistsController::defineRoutes(Router* router, Player* player, SettingsS
         return new PlaylistsController(request, player, store);
     });
 
-    routes.useWorkQueue(player->workQueue());
+    routes.useWorkQueue(workQueue);
 
     routes.setPrefix("api/playlists");
 
