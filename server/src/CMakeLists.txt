@@ -42,6 +42,10 @@ if(OS_WINDOWS)
     )
 endif()
 
+if(ENABLE_GIT_REV)
+    add_definitions(-DMSRV_GIT_REV=${GIT_REV})
+endif()
+
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Libb64 REQUIRED)
 find_package(Nljson REQUIRED)

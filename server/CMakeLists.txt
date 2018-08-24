@@ -10,6 +10,7 @@ include(EnvInfo)
 include(Utils)
 
 option(ENABLE_TESTS             "Build tests" OFF)
+option(ENABLE_GIT_REV           "Include Git revision in produced binaries" OFF)
 option(ENABLE_WERROR            "Treat warnings as errors" OFF)
 option(ENABLE_LOCAL_LIBS        "Build with local libraries" ON)
 option(ENABLE_STATIC_STDLIB     "Build with static libstdc++" OFF)
@@ -56,6 +57,10 @@ if(CXX_MSVC)
             endforeach()
         endforeach()
     endif()
+endif()
+
+if(ENABLE_GIT_REV)
+    detect_git_revision(GIT_REV)
 endif()
 
 print_status()
