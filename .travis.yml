@@ -11,7 +11,7 @@ script:
 
 deploy:
   provider: script
-  script: scripts/upload.sh
+  script: scripts/upload.sh release
   skip_cleanup: true
   on:
     branch: master
