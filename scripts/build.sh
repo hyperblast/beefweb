@@ -189,7 +189,7 @@ function build_webui
 {
     banner 'Building webui'
 
-    if [ "$build_type" = release ]; then
+    if [ "$build_type" != debug ]; then
         webui_flags="$webui_flags --env.release"
     fi
 
