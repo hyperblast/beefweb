@@ -35,6 +35,14 @@
 #define MSRV_VERSION_STRING_DETAILED \
     "v" MSRV_VERSION_STRING " " MSRV_VERSION_TYPE " (" MSRV_STRINGIFY(MSRV_GIT_REV) ")"
 
+#ifdef MSRV_OS_POSIX
+#define MSRV_ARCHIVE_SUFFIX "tar.gz"
+#endif
+
+#ifdef MSRV_OS_WINDOWS
+#define MSRV_ARCHIVE_SUFFIX "zip"
+#endif
+
 #define MSRV_LICENSE_TEXT \
     "Copyright 2015-2018 Hyperblast\n" \
     "\n" \
@@ -54,4 +62,7 @@
     "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER " \
     "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, " \
     "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN " \
-    "THE SOFTWARE.\n"
+    "THE SOFTWARE.\n" \
+    "\n" \
+    "See provided file beefweb.licenses." MSRV_ARCHIVE_SUFFIX \
+    " for details about third-party libraries used and their licensing conditions.\n"
