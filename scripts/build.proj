@@ -27,7 +27,8 @@
 
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
-        <BuildPackageDependsOn>CleanPackage;DetectGitRevision</BuildPackageDependsOn>
+        <BuildPackageDependsOn>CleanPackage</BuildPackageDependsOn>
+        <BuildPackageDependsOn Condition="'$(PackageVersionFinal)' == 'False'">$(BuildPackageDependsOn);DetectGitRevision</BuildPackageDependsOn>
         <BuildPackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(BuildPackageDependsOn);BuildServer;BuildWebui</BuildPackageDependsOn>
     </PropertyGroup>
 
@@ -97,7 +98,8 @@
 
     <Target Name="BuildPackage" DependsOnTargets="$(BuildPackageDependsOn)">
         <PropertyGroup>
-            <PackageFullName>$(PackageFile)-$(PackageVersion)_$(GitRevision)</PackageFullName>
+            <PackageFullName>$(PackageFile)-$(PackageVersion)</PackageFullName>
+            <PackageFullName Condition="'$(PackageVersionFinal)' == 'False'">$(PackageFullName)_$(GitRevision)</PackageFullName>
             <ServerFilesDir>$(ServerBuildDir)\src\foobar2000\$(Configuration)</ServerFilesDir>
             <PluginDebugInfoFile>$([System.IO.Path]::ChangeExtension($(PluginFile), '.pdb'))</PluginDebugInfoFile>
         </PropertyGroup>
@@ -121,7 +123,7 @@
             WorkingDirectory="$(PackageTempDir)" />
         <Exec
             Condition="'$(EnableDebugInfo)' == 'True'"
-            Command="7z a -r -mx9 $(PackageBuildDir)\$(PackageFullName).debug.7z $(PluginFileDebugInfo)"
+            Command="7z a -r -mx9 $(PackageBuildDir)\$(PackageFullName).debug.7z $(PluginDebugInfoFile)"
             WorkingDirectory="$(PackageTempDir)" />
         <RemoveDir Directories="$(PackageTempDir)" />
     </Target>
