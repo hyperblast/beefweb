@@ -210,9 +210,13 @@ function build_pkg()
 {
     banner 'Building package'
 
-    detect_server_arch
+    if [ "$pkg_version_final" -ne 0 ]; then
+        git_rev_suffix=""
+    else
+        git_rev_suffix="_$(git rev-parse --short HEAD)"
+    fi
 
-    git_rev=$(git rev-parse --short HEAD)
+    detect_server_arch
 
     rm -rf $pkg_build_dir
     mkdir -p $pkg_tmp_dir/$webui_root
@@ -235,7 +239,7 @@ function build_pkg()
             ;;
     esac
 
-    pkg_full_name=${pkg_name}-${pkg_version}_${git_rev}-${server_arch}
+    pkg_full_name=${pkg_name}-${pkg_version}${git_rev_suffix}-${server_arch}
 
     tar cfa $pkg_build_dir/$pkg_full_name.tar.gz $plugin_file $webui_root
 
