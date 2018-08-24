@@ -231,7 +231,6 @@ function build_pkg()
     (cd $webui_src_dir; yarn licenses generate-disclaimer | grep -v '^info ') > webui-licenses.txt
 
     tar cfa $pkg_licenses_file *-licenses.txt
-    rm -rf *-licenses.txt
 
     case "$build_type" in
         release|minsizerel)
