@@ -61,6 +61,7 @@ if(CXX_MSVC)
     foreach(TARGET EXE SHARED MODULE)
         set(VAR_NAME CMAKE_${TARGET}_LINKER_FLAGS_RELWITHDEBINFO)
         string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO" ${VAR_NAME} "${${VAR_NAME}}")
+        set(${VAR_NAME} "${${VAR_NAME}} /OPT:REF /OPT:ICF")
     endforeach()
 endif()
 
