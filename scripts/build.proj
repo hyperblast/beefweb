@@ -100,15 +100,18 @@
         <PropertyGroup>
             <PackageFullName>$(PackageFile)-$(PackageVersion)</PackageFullName>
             <PackageFullName Condition="'$(PackageVersionFinal)' == 'False'">$(PackageFullName)_$(GitRevision)</PackageFullName>
-            <ServerFilesDir>$(ServerBuildDir)\src\foobar2000\$(Configuration)</ServerFilesDir>
+            <PluginBuildDir>$(ServerBuildDir)\src\foobar2000\$(Configuration)</PluginBuildDir>
             <PluginDebugInfoFile>$([System.IO.Path]::ChangeExtension($(PluginFile), '.pdb'))</PluginDebugInfoFile>
+            <PackageLicensesFile>$(ProjectName).licenses.zip</PackageLicensesFile>
         </PropertyGroup>
         <ItemGroup>
             <ServerFiles
-                Include="$(ServerFilesDir)\$(PluginFile)" />
+                Include="$(PluginBuildDir)\$(PluginFile)" />
             <ServerFiles
                 Condition="'$(EnableDebugInfo)' == 'True'"
-                Include="$(ServerFilesDir)\$(PluginDebugInfoFile)" />
+                Include="$(PluginBuildDir)\$(PluginDebugInfoFile)" />
+            <ServerFiles
+                Include="$(ServerSourceDir)\extlibs\server-licenses.txt" />
             <WebuiFiles
                 Include="$(WebuiBuildDir)\*.*" />
         </ItemGroup>
@@ -119,7 +122,13 @@
             SourceFiles="@(WebuiFiles)"
             DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
         <Exec
-            Command="7z a -r -mx9 -tzip $(PackageBuildDir)\$(PackageFullName).fb2k-component $(PluginFile) $(WebuiRoot)"
+            Command="yarn licenses generate-disclaimer | find /v &quot;info &quot; > $(PackageTempDir)\webui-licenses.txt"
+            WorkingDirectory="$(WebuiSourceDir)" />
+        <Exec
+            Command="7z a -r -mx9 $(PackageLicensesFile) *-licenses.txt"
+            WorkingDirectory="$(PackageTempDir)" />
+        <Exec
+            Command="7z a -r -mx9 -tzip $(PackageBuildDir)\$(PackageFullName).fb2k-component $(PluginFile) $(WebuiRoot) $(PackageLicensesFile)"
             WorkingDirectory="$(PackageTempDir)" />
         <Exec
             Condition="'$(EnableDebugInfo)' == 'True'"
