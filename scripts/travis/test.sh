@@ -11,10 +11,10 @@ function banner
     echo
 }
 
-export BEEFWEB_TEST_BUILD_TYPE=release
+export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
 
 banner 'Running server tests'
-server/build/release/src/tests/core_tests
+server/build/$BUILD_TYPE/src/tests/core_tests
 
 banner 'Running API tests'
 (cd js/api_tests; yarn test)
