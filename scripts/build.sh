@@ -8,6 +8,8 @@ usage="Usage: $(basename $0) options
 Options:
   --debug           build in debug mode
   --release         build in release mode
+  --relwithdebinfo  build in release-with-debug-info mode
+  --minsizerel      build in minimal-size-release mode
   --server          build server
   --webui           build webui
   --pkg             build binary package
@@ -15,13 +17,16 @@ Options:
   --tests           also build corresponding tests
   --verbose         generate more debug messages
   -DKEY=VALUE       set cmake option when building server
+  --env.option      set webui build option
 
-Build mode option (--debug or --release) is required.
+Build type option (--debug or --release) is required.
 At least one build target (--server, --ui, --pkg or --all) is required.
+For web UI build types 'relwithdebinfo' and 'minsizerel' are aliases for 'release'
 "
 
 build_type=
 build_type_cmake=
+build_type_webui=
 has_targets=OFF
 verbose=OFF
 enable_server=OFF
@@ -29,6 +34,7 @@ enable_webui=OFF
 enable_pkg=OFF
 enable_tests=OFF
 cmake_options=
+webui_flags=
 
 for arg in "$@"; do
     case "$arg" in
@@ -54,18 +60,32 @@ for arg in "$@"; do
             enable_pkg=ON
             ;;
 
+        --tests)
+            enable_tests=ON
+            ;;
+
         --debug)
             build_type=debug
             build_type_cmake=Debug
+            build_type_webui=debug
             ;;
 
         --release)
             build_type=release
             build_type_cmake=Release
+            build_type_webui=release
             ;;
 
-        --tests)
-            enable_tests=ON
+        --relwithdebinfo)
+            build_type=relwithdebinfo
+            build_type_cmake=RelWithDebInfo
+            build_type_webui=release
+            ;;
+
+        --minsizerel)
+            build_type=minsizerel
+            build_type_cmake=MinSizeRel
+            build_type_webui=release
             ;;
 
         --verbose)
@@ -74,6 +94,10 @@ for arg in "$@"; do
 
         -D*)
             cmake_options="$cmake_options $arg"
+            ;;
+
+        --env.*)
+            webui_flags="$webui_flags $arg"
             ;;
 
         --help)
@@ -105,16 +129,16 @@ js_src_dir=$(pwd)/js
 js_client_src_dir=$js_src_dir/client
 
 webui_src_dir=$js_src_dir/webui
-webui_build_dir=$webui_src_dir/build/$build_type
+webui_build_dir=$webui_src_dir/build/$build_type_webui
 
-function banner()
+function banner
 {
     echo
     echo ">> $1 <<"
     echo
 }
 
-function detect_server_arch()
+function detect_server_arch
 {
     test -e $server_plugin_file
     server_plugin_info=$(file $server_plugin_file)
@@ -128,7 +152,7 @@ function detect_server_arch()
     fi
 }
 
-function show_server_build_logs()
+function show_server_build_logs
 {
     for log_file in extlibs-root/src/*-stamp/*.log; do
         echo "$log_file:"
@@ -137,7 +161,7 @@ function show_server_build_logs()
     done
 }
 
-function build_server()
+function build_server
 {
     banner 'Building server'
 
@@ -160,11 +184,9 @@ function build_server()
     fi
 }
 
-function build_webui()
+function build_webui
 {
     banner 'Building webui'
-
-    webui_flags=""
 
     if [ "$build_type" = release ]; then
         webui_flags="$webui_flags --env.release"
@@ -199,12 +221,27 @@ function build_pkg()
     cp -v -t . $server_plugin_file
     cp -v -t $webui_root $webui_build_dir/*.*
 
-    if [ "$build_type" = release ]; then
-        echo "Stripping release binary: $plugin_file"
-        strip -s $plugin_file
-    fi
+    case "$build_type" in
+        release|minsizerel)
+            echo "Stripping release binary: $plugin_file"
+            strip -s $plugin_file
+            ;;
 
-    tar czf $pkg_build_dir/${pkg_name}-${pkg_version}_${git_rev}-${server_arch}.tar.gz *
+        relwithdebinfo)
+            echo "Extracting debug info from binary: $plugin_file"
+            objcopy --only-keep-debug "$plugin_file" "$plugin_file.debug"
+            strip -s "$plugin_file"
+            objcopy --add-gnu-debuglink="$plugin_file.debug" "$plugin_file"
+            ;;
+    esac
+
+    pkg_full_name=${pkg_name}-${pkg_version}_${git_rev}-${server_arch}
+
+    tar cfa $pkg_build_dir/$pkg_full_name.tar.gz $plugin_file $webui_root
+
+    if [ "$build_type" = relwithdebinfo ]; then
+        tar cfa $pkg_build_dir/$pkg_full_name.debug.tar.xz $plugin_file.debug
+    fi
 
     rm -rf $pkg_tmp_dir
 }
