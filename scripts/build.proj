@@ -110,8 +110,6 @@
             <ServerFiles
                 Condition="'$(EnableDebugInfo)' == 'True'"
                 Include="$(PluginBuildDir)\$(PluginDebugInfoFile)" />
-            <ServerFiles
-                Include="$(ServerSourceDir)\extlibs\server-licenses.txt" />
             <WebuiFiles
                 Include="$(WebuiBuildDir)\*.*" />
         </ItemGroup>
@@ -121,6 +119,9 @@
         <Copy
             SourceFiles="@(WebuiFiles)"
             DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
+        <Exec
+            Command="type server-licenses.txt | find /v &quot;ThisLineDoesNotExistInInputFile&quot; > $(PackageTempDir)\server-licenses.txt"
+            WorkingDirectory="$(ServerSourceDir)\extlibs" />
         <Exec
             Command="yarn licenses generate-disclaimer | find /v &quot;info &quot; > $(PackageTempDir)\webui-licenses.txt"
             WorkingDirectory="$(WebuiSourceDir)" />
