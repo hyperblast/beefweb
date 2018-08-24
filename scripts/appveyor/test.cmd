@@ -1,12 +1,12 @@
 setlocal
 cd "%~dp0..\.."
 
-set BEEFWEB_TEST_BUILD_TYPE=release
+set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 
 @echo.
 @echo === Running server tests ===
 @echo.
-server\build\release\src\tests\Release\core_tests.exe
+server\build\%BUILD_TYPE%\src\tests\%BUILD_TYPE%\core_tests.exe
 @if errorlevel 1 goto :end
 
 @pushd js\api_tests

@@ -7,6 +7,9 @@ install:
 - scripts\install\foobar2000.cmd v1.4
 - set PATH=%cd%\tools\patch;%PATH%
 
-build_script: scripts\appveyor\build.cmd
+build_script:
+- set BUILD_TYPE=RelWithDebInfo
+- scripts\appveyor\build.cmd
+
 test_script: scripts\appveyor\test.cmd
 deploy_script: scripts\appveyor\upload.cmd
