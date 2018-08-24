@@ -120,6 +120,7 @@ cd "$(dirname $0)/.."
 
 pkg_build_dir=$(pwd)/build/$build_type
 pkg_tmp_dir=$pkg_build_dir/tmp
+pkg_licenses_file=$project_name.licenses.tar.gz
 
 server_src_dir=$(pwd)/server
 server_build_dir=$server_src_dir/build/$build_type
@@ -222,8 +223,15 @@ function build_pkg()
     mkdir -p $pkg_tmp_dir/$webui_root
 
     cd $pkg_tmp_dir
+
     cp -v -t . $server_plugin_file
+    cp -v -t . $server_src_dir/extlibs/server-licenses.txt
+
     cp -v -t $webui_root $webui_build_dir/*.*
+    (cd $webui_src_dir; yarn licenses generate-disclaimer | grep -v '^info ') > webui-licenses.txt
+
+    tar cfa $pkg_licenses_file *-licenses.txt
+    rm -rf *-licenses.txt
 
     case "$build_type" in
         release|minsizerel)
@@ -241,7 +249,8 @@ function build_pkg()
 
     pkg_full_name=${pkg_name}-${pkg_version}${git_rev_suffix}-${server_arch}
 
-    tar cfa $pkg_build_dir/$pkg_full_name.tar.gz $plugin_file $webui_root
+    tar cfa $pkg_build_dir/$pkg_full_name.tar.gz \
+        $plugin_file $webui_root $pkg_licenses_file
 
     if [ "$build_type" = relwithdebinfo ]; then
         tar cfa $pkg_build_dir/$pkg_full_name.debug.tar.xz $plugin_file.debug
