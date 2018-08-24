@@ -3,17 +3,22 @@
     <Import Project="$(MSBuildProjectDirectory)\config.props" />
 
     <PropertyGroup>
+        <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+        <ConfigLower>$(Configuration.ToLowerInvariant())</ConfigLower>
+
         <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
-        <PackageBuildDir>$(RootDir)\build\release</PackageBuildDir>
+        <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <CurlArgs>--silent --fail --show-error --http1.1 --anyauth</CurlArgs>
     </PropertyGroup>
 
     <Target Name="FindPackageFile">
         <ItemGroup>
             <PackageFile Include="$(PackageBuildDir)\$(PackageFile)-*.fb2k-component" />
+            <DebugInfoFile Include="$(PackageBuildDir)\$(PackageFile)-*.debug.7z" />
         </ItemGroup>
         <PropertyGroup>
             <PackageFilePath>@(PackageFile -> '%(FullPath)')</PackageFilePath>
+            <DebugInfoFilePath>@(DebugInfoFile -> '%(FullPath)')</DebugInfoFilePath>
         </PropertyGroup>
         <Error Text="Unable to find package file" Condition="'$(PackageFilePath)' == ''" />
         <PropertyGroup>
@@ -32,6 +37,10 @@
     </Target>
     
     <Target Name="Upload" DependsOnTargets="MakeUploadDirectory">
-        <Exec Command="curl-auth.cmd $(CurlArgs) -T $(PackageFilePath) $(UploadUrl)" />
+        <Exec
+            Command="curl-auth.cmd $(CurlArgs) -T $(PackageFilePath) $(UploadUrl)" />
+        <Exec
+            Condition="'$(DebugInfoFilePath)' != ''"
+            Command="curl-auth.cmd $(CurlArgs) -T $(DebugInfoFilePath) $(UploadUrl)"/>
     </Target>
 </Project>

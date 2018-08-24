@@ -4,10 +4,17 @@
 
     <PropertyGroup>
         <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-        <EnableTests Condition="'$(EnableTests)' == ''">False</EnableTests>
         <ConfigLower>$(Configuration.ToLowerInvariant())</ConfigLower>
-        <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
 
+        <ConfigWebui>release</ConfigWebui>
+        <ConfigWebui Condition="'$(ConfigLower)' == 'debug'">debug</ConfigWebui>
+
+        <EnableTests Condition="'$(EnableTests)' == ''">False</EnableTests>
+        <EnableDebugInfo>False</EnableDebugInfo>
+        <EnableDebugInfo Condition="'$(Configuration)' == 'Debug'">True</EnableDebugInfo>
+        <EnableDebugInfo Condition="'$(Configuration)' == 'RelWithDebInfo'">True</EnableDebugInfo>
+
+        <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
         <ServerSourceDir>$(RootDir)\server</ServerSourceDir>
         <ServerBuildDir>$(ServerSourceDir)\build\$(ConfigLower)</ServerBuildDir>
 
@@ -16,7 +23,7 @@
         <JsClientSourceDir>$(JsSourceDir)\client</JsClientSourceDir>
 
         <WebuiSourceDir>$(JsSourceDir)\webui</WebuiSourceDir>
-        <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigLower)</WebuiBuildDir>
+        <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigWebui)</WebuiBuildDir>
 
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
@@ -29,7 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <WebuiBuildFlags Include="--env.release" Condition="'$(Configuration)' == 'Release'" />
+        <WebuiBuildFlags Include="--env.release" Condition="'$(ConfigWebui)' == 'release'" />
         <WebuiBuildFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
@@ -89,9 +96,19 @@
     </Target>
 
     <Target Name="BuildPackage" DependsOnTargets="$(BuildPackageDependsOn)">
+        <PropertyGroup>
+            <PackageFullName>$(PackageFile)-$(PackageVersion)_$(GitRevision)</PackageFullName>
+            <ServerFilesDir>$(ServerBuildDir)\src\foobar2000\$(Configuration)</ServerFilesDir>
+            <PluginDebugInfoFile>$([System.IO.Path]::ChangeExtension($(PluginFile), '.pdb'))</PluginDebugInfoFile>
+        </PropertyGroup>
         <ItemGroup>
-            <ServerFiles Include="$(ServerBuildDir)\src\foobar2000\$(Configuration)\$(PluginFile)" />
-            <WebuiFiles Include="$(WebuiBuildDir)\*.*" />
+            <ServerFiles
+                Include="$(ServerFilesDir)\$(PluginFile)" />
+            <ServerFiles
+                Condition="'$(EnableDebugInfo)' == 'True'"
+                Include="$(ServerFilesDir)\$(PluginDebugInfoFile)" />
+            <WebuiFiles
+                Include="$(WebuiBuildDir)\*.*" />
         </ItemGroup>
         <Copy
             SourceFiles="@(ServerFiles)"
@@ -100,10 +117,14 @@
             SourceFiles="@(WebuiFiles)"
             DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
         <Exec
-            Command="7z a -r -mx9 -tzip ..\$(PackageFile)-$(PackageVersion)_$(GitRevision).fb2k-component *"
+            Command="7z a -r -mx9 -tzip $(PackageBuildDir)\$(PackageFullName).fb2k-component $(PluginFile) $(WebuiRoot)"
+            WorkingDirectory="$(PackageTempDir)" />
+        <Exec
+            Condition="'$(EnableDebugInfo)' == 'True'"
+            Command="7z a -r -mx9 $(PackageBuildDir)\$(PackageFullName).debug.7z $(PluginFileDebugInfo)"
             WorkingDirectory="$(PackageTempDir)" />
         <RemoveDir Directories="$(PackageTempDir)" />
     </Target>
 
-    <Target Name="All" DependsOnTargets="BuildServer;BuildWebui;BuildPackage" />
+    <Target Name="All" DependsOnTargets="BuildPackage" />
 </Project>
