@@ -64,3 +64,12 @@ function(print_status)
         endif()
     endforeach()
 endfunction()
+
+macro(detect_git_revision VAR)
+    execute_process(
+        COMMAND git rev-parse --short HEAD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE ${VAR}
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+endmacro()

@@ -126,7 +126,7 @@ void PluginWrapper::initDef()
     p.type = DB_PLUGIN_MISC;
     p.id = MSRV_PROJECT_ID;
     p.name = MSRV_PROJECT_NAME;
-    p.descr = MSRV_PROJECT_DESC;
+    p.descr = MSRV_PROJECT_DESC "\n\n" MSRV_VERSION_STRING_DETAILED;
     p.copyright = MSRV_LICENSE_TEXT;
     p.website = MSRV_PROJECT_URL;
     p.start = start;
