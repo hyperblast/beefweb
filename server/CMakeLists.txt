@@ -57,6 +57,11 @@ if(CXX_MSVC)
             endforeach()
         endforeach()
     endif()
+
+    foreach(TARGET EXE SHARED MODULE)
+        set(VAR_NAME CMAKE_${TARGET}_LINKER_FLAGS_RELWITHDEBINFO)
+        string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO" ${VAR_NAME} "${${VAR_NAME}}")
+    endforeach()
 endif()
 
 if(ENABLE_GIT_REV)
