@@ -16,7 +16,7 @@ and [foobar2000](https://foobar2000.org/) music players.
 - REST-like API for controlling player from your application
 
 ### Downloads
-Check out [releases section](releases).
+Check out [releases section](https://github.com/hyperblast/beefweb/releases).
 If you want to try development builds instead you could [download them here](https://hyperblast.org/beefweb/builds).
 Choose latest available date and pick the file specific to your CPU architecture.
 
