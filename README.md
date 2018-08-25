@@ -1,5 +1,5 @@
 # beefweb
-Web interface and HTTP API plugin for [DeaDBeeF](https://deadbeef.sourceforge.net/)
+Web interface plugin for [DeaDBeeF](https://deadbeef.sourceforge.net/)
 and [foobar2000](https://foobar2000.org/) music players.
 
 [![License](https://img.shields.io/github/license/hyperblast/beefweb.svg)](LICENSE)
@@ -12,13 +12,12 @@ and [foobar2000](https://foobar2000.org/) music players.
 - Playlist management
 - Music directory browser
 - Realtime UI updates
-- Responsive layouts with support for screen sizes down to 320px
-- The same HTTP/JSON API is available for controlling player from your application
+- Mobile-friendly responsive design
+- REST-like API for controlling player from your application
 
 ### Downloads
-There are no official releases yet.
-However development builds should be stable enought for general use.
-You could [download them here](https://hyperblast.org/beefweb/builds).
+Check out [releases section](releases).
+If you want to try development builds instead you could [download them here](https://hyperblast.org/beefweb/builds).
 Choose latest available date and pick the file specific to your CPU architecture.
 
 ### How to install
