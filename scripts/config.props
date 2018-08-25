@@ -3,8 +3,8 @@
     <PropertyGroup>
         <ProjectName>beefweb</ProjectName>
         <PackageFile>foo_beefweb</PackageFile>
-        <PackageVersion>0.2</PackageVersion>
-        <PackageVersionFinal>True</PackageVersionFinal>
+        <PackageVersion>0.3</PackageVersion>
+        <PackageVersionFinal>False</PackageVersionFinal>
         <PluginFile>foo_beefweb.dll</PluginFile>
         <WebuiRoot>beefweb.root</WebuiRoot>
     </PropertyGroup>
