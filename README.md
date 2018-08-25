@@ -11,7 +11,7 @@ and [foobar2000](https://foobar2000.org/) music players.
 - Playback control
 - Playlist management
 - Music directory browser
-- Realtime UI updates
+- Real-time UI updates
 - Mobile-friendly responsive design
 - REST-like API for controlling player from your application
 
