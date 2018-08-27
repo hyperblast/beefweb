@@ -5,6 +5,7 @@ import sum from 'lodash/sum'
 import { Icon } from './elements';
 import { once, mapRange } from './utils'
 import { getScrollBarSize, generateElementId, addStyleSheet, makeClassName } from './dom_utils'
+import ScrollManager from './scroll_manager';
 
 const maxColumns = 100;
 const rowHeight = 1.5;
@@ -12,6 +13,11 @@ const rowHeight = 1.5;
 function pixelToRow(px, fontSize)
 {
     return (px / (fontSize * rowHeight)) | 0;
+}
+
+function rowToPixel(row, fontSize)
+{
+    return (row * rowHeight * fontSize) | 0;
 }
 
 function getFontSize()
@@ -32,11 +38,6 @@ const cellClassNames = mapRange(
 const columnHeaderClassNames = mapRange(
     0, maxColumns, value => `dtable-column-header dtable-column${value}`);
 
-function getScrollTopKey(stateKey)
-{
-    return `${stateKey}.DataTable.ScrollTop`;
-}
-
 export default class DataTable extends React.PureComponent
 {
     constructor(props)
@@ -52,37 +53,66 @@ export default class DataTable extends React.PureComponent
 
     componentDidMount()
     {
+        this.registerInScrollManager(this.props);
         this.restoreScrollPosition();
+    }
+
+    componentWillUnmount()
+    {
+        this.unregisterInScrollManager(this.props);
     }
 
     componentDidUpdate(prevProps)
     {
-        if (prevProps.stateKey !== this.props.stateKey ||
-            prevProps.stateStore !== this.props.stateStore)
+        if (prevProps.globalKey !== this.props.globalKey ||
+            prevProps.scrollManager !== this.props.scrollManager)
         {
+            this.unregisterInScrollManager(prevProps);
+            this.registerInScrollManager(this.props);
             this.restoreScrollPosition();
         }
     }
 
     saveScrollPosition()
     {
-        const { stateKey, stateStore } = this.props;
+        const { globalKey, scrollManager } = this.props;
 
-        if (stateKey && stateStore)
-            stateStore[getScrollTopKey(stateKey)] = this.body.scrollTop;
+        if (globalKey && scrollManager)
+            scrollManager.savePosition(globalKey, this.body.scrollTop);
     }
 
     restoreScrollPosition()
     {
-        const { stateKey, stateStore } = this.props;
+        const { globalKey, scrollManager } = this.props;
 
-        if (stateKey && stateStore)
-        {
-            const scrollTopKey = getScrollTopKey(stateKey);
-            const scrollTop = stateStore[scrollTopKey];
+        if (globalKey && scrollManager)
+            this.scrollToPosition(scrollManager.getPosition(globalKey));
+    }
 
-            this.body.scrollTop = scrollTop !== undefined ? scrollTop : 0;
-        }
+    scrollToPosition(position)
+    {
+        const { offset, offsetItem } = position;
+
+        if (offset !== undefined)
+            this.body.scrollTop = offset;
+        else if (offsetItem !== undefined)
+            this.body.scrollTop = rowToPixel(offsetItem, getFontSize());
+    }
+
+    registerInScrollManager(props)
+    {
+        const { globalKey, scrollManager } = props;
+
+        if (globalKey && scrollManager)
+            scrollManager.registerComponent(globalKey, this);
+    }
+
+    unregisterInScrollManager(props)
+    {
+        const { globalKey, scrollManager } = props;
+
+        if (globalKey && scrollManager)
+            scrollManager.unregisterComponent(globalKey, this);
     }
 
     setBodyRef(body)
@@ -319,8 +349,8 @@ DataTable.propTypes = {
     columnNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     columnSizes: PropTypes.arrayOf(PropTypes.number),
 
-    stateKey: PropTypes.string,
-    stateStore: PropTypes.object,
+    globalKey: PropTypes.string,
+    scrollManager: PropTypes.instanceOf(ScrollManager),
 
     data: PropTypes.arrayOf(PropTypes.object).isRequired,
     offset: PropTypes.number.isRequired,

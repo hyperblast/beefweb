@@ -6,6 +6,7 @@ import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import DataTable from './data_table'
 import { bindHandlers } from './utils'
+import ScrollManager from './scroll_manager';
 
 const pageSize = 100;
 
@@ -91,7 +92,7 @@ export default class PlaylistContent extends Component
 
     render()
     {
-        const stateKey = `Playlists.${this.state.currentPlaylistId}`;
+        const globalKey = `Playlists.${this.state.currentPlaylistId}`;
 
         return (
             <DataTable
@@ -102,8 +103,8 @@ export default class PlaylistContent extends Component
                 offset={this.state.offset}
                 totalCount={this.state.totalCount}
                 pageSize={pageSize}
-                stateKey={stateKey}
-                stateStore={this.props.stateStore}
+                globalKey={globalKey}
+                scrollManager={this.props.scrollManager}
                 className='panel main-panel playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick} />
@@ -114,5 +115,5 @@ export default class PlaylistContent extends Component
 PlaylistContent.propTypes = {
     playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    stateStore: PropTypes.object.isRequired,
+    scrollManager: PropTypes.instanceOf(ScrollManager).isRequired,
 };

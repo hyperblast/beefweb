@@ -7,6 +7,7 @@ import urls from './urls'
 import { getDisplaySize, getDisplayDate, mapRange } from './utils'
 import DataTable from './data_table'
 import NotificationModel from './notification_model';
+import ScrollManager from './scroll_manager';
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -83,8 +84,8 @@ export default class FileBrowser extends Component
                 offset={this.state.offset}
                 pageSize={pageSize}
                 totalCount={this.state.totalCount}
-                stateKey='FileBrowser'
-                stateStore={this.props.stateStore}
+                globalKey='FileBrowser'
+                scrollManager={this.props.scrollManager}
                 onClick={this.handleClick}
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
@@ -97,5 +98,5 @@ FileBrowser.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
     fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired,
     notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
-    stateStore: PropTypes.object.isRequired,
+    scrollManager: PropTypes.instanceOf(ScrollManager).isRequired,
 };
