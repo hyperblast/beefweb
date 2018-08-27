@@ -60,3 +60,8 @@ export function makeClassName(classes)
 
     return parts.join(' ');
 }
+
+export function getFontSize()
+{
+    return parseFloat(getComputedStyle(document.documentElement).fontSize);
+}

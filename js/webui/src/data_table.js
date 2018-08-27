@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import throttle from 'lodash/throttle'
 import sum from 'lodash/sum'
 import { Icon } from './elements';
-import { once, mapRange } from './utils'
-import { getScrollBarSize, generateElementId, addStyleSheet, makeClassName } from './dom_utils'
+import { mapRange, once } from './utils'
+import { addStyleSheet, generateElementId, getFontSize, getScrollBarSize, makeClassName } from './dom_utils'
 import ScrollManager from './scroll_manager';
 
 const maxColumns = 100;
@@ -18,11 +18,6 @@ function pixelToRow(px, fontSize)
 function rowToPixel(row, fontSize)
 {
     return (row * rowHeight * fontSize) | 0;
-}
-
-function getFontSize()
-{
-    return parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
 const addGeneratedStyles = once(() =>
