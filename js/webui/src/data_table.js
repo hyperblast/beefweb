@@ -48,6 +48,8 @@ export default class DataTable extends React.PureComponent
 
     componentDidMount()
     {
+        addGeneratedStyles();
+
         this.registerInScrollManager(this.props);
         this.restoreScrollPosition();
     }
