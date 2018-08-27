@@ -1,6 +1,5 @@
-### v0.3 (not released)
+### Changes in v0.3 (not released)
+- Added button that locates currently played track
 
-
-### v0.2 (released 2018-08-25)
-
+### Changes in v0.2 (released 2018-08-25)
 - First official release
