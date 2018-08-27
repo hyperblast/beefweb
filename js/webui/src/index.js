@@ -11,12 +11,14 @@ import TouchModeController from './touch_mode_controller'
 import WindowController from './window_controller'
 import CssSettingsController from './css_settings_controller'
 import urls, { getPathFromUrl } from './urls'
+import PlaylistContent from './playlist_content';
+import { PlaybackState } from 'beefweb-client/src';
 
 const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();
 const appModel = new AppModel(client, settingsStore);
 
-const { playerModel, playlistModel, fileBrowserModel, settingsModel } = appModel;
+const { playerModel, playlistModel, fileBrowserModel, settingsModel, scrollManager } = appModel;
 
 const mediaSizeController = new MediaSizeController(settingsModel);
 const touchModeController = new TouchModeController(settingsModel);
@@ -54,6 +56,30 @@ router.on({
     '/settings': () => {
         appModel.setCurrentView(ViewId.settings);
     },
+
+    '/now-playing': () => {
+        if (playerModel.playbackState === PlaybackState.stopped)
+        {
+            router.navigate(urls.viewCurrentPlaylist);
+            return;
+        }
+
+        const { playlistId, index } = playerModel.activeItem;
+
+        if (playlistId && index >= 0)
+        {
+            scrollManager.scrollToItem(PlaylistContent.tableKey(playlistId), index);
+            router.navigate(urls.viewPlaylist(playlistId));
+        }
+        else if (playlistId)
+        {
+            router.navigate(urls.viewPlaylist(playlistId));
+        }
+        else
+        {
+            router.navigate(urls.viewCurrentPlaylist);
+        }
+    }
 });
 
 router.notFound(() => {
