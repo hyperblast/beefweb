@@ -4,6 +4,7 @@ import Component from './component'
 import PlayerModel from './player_model'
 import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { bindHandlers, mapObject } from './utils'
+import urls from './urls';
 
 export default class PlaybackControl extends Component
 {
@@ -12,10 +13,12 @@ export default class PlaybackControl extends Component
         super(props);
 
         this.state = Object.assign(this.getStateFromModel(), {
-            audioMenuOpen: false
+            audioMenuOpen: false,
+            navigationMenuOpen: false,
         });
 
         this.updateOn({ playerModel: 'change' });
+
         bindHandlers(this);
     }
 
@@ -66,9 +69,14 @@ export default class PlaybackControl extends Component
         this.setState({ audioMenuOpen: value });
     }
 
+    handleNavigationMenuToggle(value)
+    {
+        this.setState({ navigationMenuOpen: value });
+    }
+
     render()
     {
-        const { playbackMode, playbackModes, audioMenuOpen } = this.state;
+        const { playbackMode, playbackModes, audioMenuOpen, navigationMenuOpen } = this.state;
 
         const modeMenuItems = playbackModes.map((mode, index) => (
             <MenuItem
@@ -108,6 +116,15 @@ export default class PlaybackControl extends Component
                     <Menu>
                         <MenuLabel title='Mode' />
                         { modeMenuItems }
+                    </Menu>
+                </Dropdown>
+                <Dropdown
+                    iconName='share'
+                    title='Navigation menu'
+                    isOpen={navigationMenuOpen}
+                    onRequestToggle={this.handleNavigationMenuToggle}>
+                    <Menu>
+                        <MenuItem title='Locate current track' href={urls.nowPlaying} />
                     </Menu>
                 </Dropdown>
             </div>

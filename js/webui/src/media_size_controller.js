@@ -4,7 +4,7 @@ import SettingsModel, { FontSize, MediaSize, MediaSizeIndex } from './settings_m
 
 const MediaSizes = Object.freeze({
     small: 0,
-    medium: 29,
+    medium: 31,
     large: 43,
 });
 
