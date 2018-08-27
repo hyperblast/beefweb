@@ -1,22 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Component from './component'
 import PlayerModel from './player_model'
 import { Button, Dropdown } from './elements'
 import { bindHandlers } from './utils'
+import ModelBinding from './model_binding';
 
 function volumeIcon(isMuted)
 {
     return isMuted ? 'volume-off' : 'volume-high';
 }
 
-class VolumeControlPanel extends Component
+class VolumeControlPanelInner extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.updateOn({ playerModel: 'change' });
         this.state = this.getStateFromModel();
         bindHandlers(this);
     }
@@ -68,18 +67,18 @@ class VolumeControlPanel extends Component
     }
 }
 
-VolumeControlPanel.propTypes = {
+VolumeControlPanelInner.propTypes = {
     playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
     onAfterMuteClick: PropTypes.func,
 };
 
-export default class VolumeControl extends Component
+const VolumeControlPanel = ModelBinding(VolumeControlPanelInner, { playerModel: 'change' });
+
+class VolumeControl extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
-
-        this.updateOn({ playerModel: 'change' });
 
         this.state = Object.assign(this.getStateFromModel(), {
            panelOpen: false
@@ -138,3 +137,5 @@ export default class VolumeControl extends Component
 VolumeControl.propTypes = {
     playerModel: PropTypes.instanceOf(PlayerModel).isRequired
 };
+
+export default ModelBinding(VolumeControl, { playerModel: 'change' });

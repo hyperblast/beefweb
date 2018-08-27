@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
-import Component from './component'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import DataTable from './data_table'
 import { bindHandlers } from './utils'
 import ScrollManager from './scroll_manager';
+import ModelBinding from './model_binding';
 
 const pageSize = 100;
 
@@ -16,16 +16,16 @@ const playbackStateIcons = {
     [PlaybackState.stopped]: 'none',
 };
 
-export default class PlaylistContent extends Component
+export function playlistTableKey(id)
+{
+    return `Playlists.${id}`;
+}
+
+class PlaylistContent extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
-
-        this.updateOn({
-            playerModel: 'change',
-            playlistModel: ['playlistsChange', 'itemsChange']
-        });
 
         this.state = this.getStateFromModel();
 
@@ -101,17 +101,12 @@ export default class PlaylistContent extends Component
                 offset={this.state.offset}
                 totalCount={this.state.totalCount}
                 pageSize={pageSize}
-                globalKey={PlaylistContent.tableKey(this.state.currentPlaylistId)}
+                globalKey={playlistTableKey(this.state.currentPlaylistId)}
                 scrollManager={this.props.scrollManager}
                 className='panel main-panel playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick} />
         );
-    }
-
-    static tableKey(id)
-    {
-        return `Playlists.${id}`;
     }
 }
 
@@ -120,3 +115,8 @@ PlaylistContent.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
     scrollManager: PropTypes.instanceOf(ScrollManager).isRequired,
 };
+
+export default ModelBinding(PlaylistContent, {
+    playerModel: 'change',
+    playlistModel: ['playlistsChange', 'itemsChange']
+});

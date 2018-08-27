@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Component from './component'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import urls from './urls'
@@ -8,6 +7,7 @@ import { getDisplaySize, getDisplayDate, mapRange } from './utils'
 import DataTable from './data_table'
 import NotificationModel from './notification_model';
 import ScrollManager from './scroll_manager';
+import ModelBinding from './model_binding';
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -31,13 +31,11 @@ function getRowData(item)
     };
 }
 
-export default class FileBrowser extends Component
+class FileBrowser extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
-
-        this.updateOn({ fileBrowserModel: 'change' });
 
         this.state = this.getStateFromModel(0);
 
@@ -100,3 +98,5 @@ FileBrowser.propTypes = {
     notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
     scrollManager: PropTypes.instanceOf(ScrollManager).isRequired,
 };
+
+export default ModelBinding(FileBrowser, { fileBrowserModel: 'change' });

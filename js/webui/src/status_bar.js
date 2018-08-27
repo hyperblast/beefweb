@@ -1,27 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
-import Component from './component'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import { formatTime } from './utils'
+import ModelBinding from './model_binding';
 
-var stateToName = Object.freeze({
+const stateToName = Object.freeze({
     [PlaybackState.playing]: 'Playing',
     [PlaybackState.paused]: 'Paused',
     [PlaybackState.stopped]: 'Stopped'
 });
 
-export default class StatusBar extends Component
+class StatusBar extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
-
-        this.updateOn({
-            playerModel: 'change',
-            playlistModel: ['playlistsChange', 'itemsChange']
-        });
 
         this.state = this.getStateFromModel();
     }
@@ -64,3 +59,8 @@ StatusBar.propTypes = {
     playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired
 };
+
+export default ModelBinding(StatusBar, {
+    playerModel: 'change',
+    playlistModel: ['playlistsChange', 'itemsChange']
+});

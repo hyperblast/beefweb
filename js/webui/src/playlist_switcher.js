@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { PlaybackState } from 'beefweb-client'
-import Component from './component'
 import PlayerModel from './player_model'
 import PlaylistModel from './playlist_model'
 import SettingsModel from './settings_model'
@@ -10,6 +9,7 @@ import { Icon } from './elements'
 import urls from './urls'
 import { bindHandlers } from './utils'
 import { makeClassName } from './dom_utils'
+import ModelBinding from './model_binding';
 
 const playbackStateIcons = {
     [PlaybackState.playing]: 'media-play',
@@ -104,17 +104,11 @@ function PlaylistTabListInner(props)
 
 const PlaylistTabList = SortableContainer(PlaylistTabListInner);
 
-export default class PlaylistSwitcher extends Component
+class PlaylistSwitcher extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
-
-        this.updateOn({
-            playerModel: 'change',
-            playlistModel: 'playlistsChange',
-            settingsModel: 'touchModeChange',
-        });
 
         this.state = this.getStateFromModel();
         bindHandlers(this);
@@ -174,3 +168,9 @@ PlaylistSwitcher.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
     settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
 };
+
+export default ModelBinding(PlaylistSwitcher, {
+    playerModel: 'change',
+    playlistModel: 'playlistsChange',
+    settingsModel: 'touchModeChange',
+});

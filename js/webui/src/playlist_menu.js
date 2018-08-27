@@ -1,18 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Component from './component'
 import PlaylistModel from './playlist_model'
-import { Icon, Button, Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
+import { Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
 import { ConfirmDialog, InputDialog } from './dialogs'
 import { bindHandlers } from './utils'
+import ModelBinding from './model_binding';
 
-export default class PlaylistMenu extends Component
+class PlaylistMenu extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
-
-        this.updateOn({ playlistModel: 'playlistsChange' });
 
         this.state = Object.assign(this.getStateFromModel(), {
             menuOpen: false,
@@ -217,3 +215,5 @@ export default class PlaylistMenu extends Component
 PlaylistMenu.propTypes = {
     playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired
 };
+
+export default ModelBinding(PlaylistMenu, { playlistModel: 'playlistsChange' });

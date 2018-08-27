@@ -118,7 +118,7 @@ Dropdown.propTypes = {
 Dropdown.defaultProps = {
     autoHide: true,
     direction: 'right'
-}
+};
 
 export function Menu(props)
 {

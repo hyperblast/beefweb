@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Component from './component'
 import PlayerModel from './player_model'
 import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
-import { bindHandlers, mapObject } from './utils'
+import { bindHandlers } from './utils'
 import urls from './urls';
+import ModelBinding from './model_binding';
 
-export default class PlaybackControl extends Component
+class PlaybackControl extends React.PureComponent
 {
     constructor(props)
     {
@@ -16,8 +16,6 @@ export default class PlaybackControl extends Component
             audioMenuOpen: false,
             navigationMenuOpen: false,
         });
-
-        this.updateOn({ playerModel: 'change' });
 
         bindHandlers(this);
     }
@@ -135,3 +133,5 @@ export default class PlaybackControl extends Component
 PlaybackControl.propTypes = {
     playerModel: PropTypes.instanceOf(PlayerModel).isRequired
 };
+
+export default ModelBinding(PlaybackControl, { playerModel: 'change' });

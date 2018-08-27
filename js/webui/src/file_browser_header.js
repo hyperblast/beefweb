@@ -1,19 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Component from './component'
 import FileBrowserModel, { rootPath } from './file_browser_model'
 import PlaylistModel from './playlist_model'
 import { Button } from './elements'
 import urls from './urls'
 import NotificationModel from './notification_model';
+import ModelBinding from './model_binding';
 
-export default class FileBrowserHeader extends Component
+class FileBrowserHeader extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.updateOn({ fileBrowserModel: 'change' });
         this.state = this.getStateFromModel();
         this.handleAddClick = this.handleAddClick.bind(this);
     }
@@ -91,3 +90,4 @@ FileBrowserHeader.propTypes = {
     notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
 };
 
+export default ModelBinding(FileBrowserHeader, { fileBrowserModel: 'change' });

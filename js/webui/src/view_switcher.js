@@ -1,17 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Component from './component'
 import AppModel, { ViewId } from './app_model'
 import { Button } from './elements'
 import urls from './urls'
+import ModelBinding from './model_binding';
 
-export default class ViewSwitcher extends Component
+class ViewSwitcher extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.updateOn({ appModel: 'currentViewChange' });
         this.state = this.getStateFromModel();
     }
 
@@ -50,3 +49,5 @@ export default class ViewSwitcher extends Component
 ViewSwitcher.propTypes = {
     appModel: PropTypes.instanceOf(AppModel).isRequired
 };
+
+export default ModelBinding(ViewSwitcher, { appModel: 'currentViewChange' });

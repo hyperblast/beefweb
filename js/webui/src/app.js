@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Component from './component'
 import AppModel, { ViewId } from './app_model'
 import { PanelHeader } from './elements'
 import ControlBar from './control_bar'
@@ -11,14 +10,14 @@ import FileBrowser from './file_browser'
 import FileBrowserHeader from './file_browser_header'
 import Settings from './settings'
 import StatusBar from './status_bar'
+import ModelBinding from './model_binding';
 
-export default class App extends Component
+class App extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.updateOn({ appModel: 'currentViewChange' });
         this.state = this.getStateFromModel();
     }
 
@@ -115,3 +114,5 @@ export default class App extends Component
 App.propTypes = {
     appModel: PropTypes.instanceOf(AppModel).isRequired
 };
+
+export default ModelBinding(App, { appModel: 'currentViewChange' });

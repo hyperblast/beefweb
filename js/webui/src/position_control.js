@@ -1,40 +1,35 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import clamp from 'lodash/clamp'
-import Component from './component'
 import PlayerModel from './player_model'
 import { formatTime } from './utils'
+import ModelBinding from './model_binding';
 
-export default class PositionControl extends Component
+class PositionControl extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
-        this.updateOn({ playerModel: 'change' });
         this.state = this.getStateFromModel();
         this.handleClick = this.handleClick.bind(this);
     }
 
     getStateFromModel()
     {
-        var playerModel = this.props.playerModel;
-        var activeItem = playerModel.activeItem;
+        const { position, duration } = this.props.playerModel.activeItem;
 
-        return {
-            position: activeItem.position,
-            duration: activeItem.duration
-        };
+        return { duration, position };
     }
 
     handleClick(e)
     {
-        if (e.button != 0)
+        if (e.button !== 0)
             return;
 
-        var rect = e.target.getBoundingClientRect();
-        var positionPercent = (e.clientX - rect.left) / rect.width;
-        var newPosition = this.state.duration * positionPercent;
+        const rect = e.target.getBoundingClientRect();
+        const positionPercent = (e.clientX - rect.left) / rect.width;
+        const newPosition = this.state.duration * positionPercent;
 
         if (newPosition >= 0)
             this.props.playerModel.setPosition(newPosition);
@@ -67,3 +62,5 @@ export default class PositionControl extends Component
 PositionControl.propTypes = {
     playerModel: PropTypes.instanceOf(PlayerModel).isRequired
 };
+
+export default ModelBinding(PositionControl, { playerModel: 'change' });

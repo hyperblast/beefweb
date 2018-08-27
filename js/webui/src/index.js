@@ -11,7 +11,7 @@ import TouchModeController from './touch_mode_controller'
 import WindowController from './window_controller'
 import CssSettingsController from './css_settings_controller'
 import urls, { getPathFromUrl } from './urls'
-import PlaylistContent from './playlist_content';
+import { playlistTableKey } from './playlist_content';
 import { PlaybackState } from 'beefweb-client/src';
 
 const client = new PlayerClient(new RequestHandler());
@@ -68,7 +68,7 @@ router.on({
 
         if (playlistId && index >= 0)
         {
-            scrollManager.scrollToItem(PlaylistContent.tableKey(playlistId), index);
+            scrollManager.scrollToItem(playlistTableKey(playlistId), index);
             router.navigate(urls.viewPlaylist(playlistId));
         }
         else if (playlistId)

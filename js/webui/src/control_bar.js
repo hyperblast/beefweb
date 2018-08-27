@@ -23,4 +23,4 @@ export default function ControlBar(props)
 
 ControlBar.propTypes = {
     appModel: PropTypes.instanceOf(AppModel).isRequired
-}
+};
