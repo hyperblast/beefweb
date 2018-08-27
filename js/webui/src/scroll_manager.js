@@ -34,7 +34,7 @@ export default class ScrollManager
         const position = Object.freeze({ offsetItem });
 
         if (component)
-            component.scrollToItem(position);
+            component.scrollTo(position);
         else
             this.positions[key] = position;
     }

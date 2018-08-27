@@ -92,8 +92,6 @@ export default class PlaylistContent extends Component
 
     render()
     {
-        const globalKey = `Playlists.${this.state.currentPlaylistId}`;
-
         return (
             <DataTable
                 useIcons={true}
@@ -103,12 +101,17 @@ export default class PlaylistContent extends Component
                 offset={this.state.offset}
                 totalCount={this.state.totalCount}
                 pageSize={pageSize}
-                globalKey={globalKey}
+                globalKey={PlaylistContent.tableKey(this.state.currentPlaylistId)}
                 scrollManager={this.props.scrollManager}
                 className='panel main-panel playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick} />
         );
+    }
+
+    static tableKey(id)
+    {
+        return `Playlists.${id}`;
     }
 }
 

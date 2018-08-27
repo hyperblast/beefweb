@@ -86,17 +86,22 @@ export default class DataTable extends React.PureComponent
         const { globalKey, scrollManager } = this.props;
 
         if (globalKey && scrollManager)
-            this.scrollToPosition(scrollManager.getPosition(globalKey));
+            this.scrollTo(scrollManager.getPosition(globalKey));
     }
 
-    scrollToPosition(position)
+    scrollTo(position)
     {
-        const { offset, offsetItem } = position;
+        setTimeout(() => {
+            if (!this.body)
+                return;
 
-        if (offset !== undefined)
-            this.body.scrollTop = offset;
-        else if (offsetItem !== undefined)
-            this.body.scrollTop = rowToPixel(offsetItem, getFontSize());
+            const { offset, offsetItem } = position;
+
+            if (offset !== undefined)
+                this.body.scrollTop = offset;
+            else if (offsetItem !== undefined)
+                this.body.scrollTop = rowToPixel(offsetItem, getFontSize());
+        }, 30);
     }
 
     registerInScrollManager(props)
