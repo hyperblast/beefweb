@@ -13,7 +13,9 @@ const urls = Object.freeze({
         return `#/files/!${encodeURIComponent(path)}`;
     },
 
-    viewSettings: '#/settings'
+    viewSettings: '#/settings',
+
+    nowPlaying: '#/now-playing',
 });
 
 export default urls;
