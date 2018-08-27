@@ -8,7 +8,7 @@ import { getScrollBarSize, generateElementId, addStyleSheet, makeClassName } fro
 import ScrollManager from './scroll_manager';
 
 const maxColumns = 100;
-const rowHeight = 1.5;
+const rowHeight = 1.75;
 
 function pixelToRow(px, fontSize)
 {
