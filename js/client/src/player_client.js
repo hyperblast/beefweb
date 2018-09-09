@@ -126,11 +126,6 @@ export default class PlayerClient
         return this.post(`api/playlists/move/${plref}/${index}`);
     }
 
-    removePlaylist(plref)
-    {
-        return this.post(`api/playlists/remove/${plref}`);
-    }
-
     clearPlaylist(plref)
     {
         return this.post(`api/playlists/${plref}/clear`)
