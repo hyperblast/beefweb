@@ -174,3 +174,33 @@ q.test('expect playlist items updates', async assert =>
 
     assert.deepEqual(actual, expected);
 });
+
+q.test('expect volume updates', async assert =>
+{
+    const { volume } = await client.getPlayerState();
+
+    const targetVolume = (volume.min + volume.max) / 2;
+
+    const expectation = client.expectUpdate(
+        { player: true },
+        e => e.player && e.player.volume.value === targetVolume);
+
+    await expectation.ready;
+    await client.setVolume(targetVolume);
+    await expectation.done;
+
+    assert.ok(true);
+});
+
+q.test('expect mute state updates', async assert =>
+{
+    const expectation = client.expectUpdate(
+        { player: true },
+        e => e.player && e.player.volume.isMuted);
+
+    await expectation.ready;
+    await client.setMuted(true);
+    await expectation.done;
+
+    assert.ok(true);
+});
