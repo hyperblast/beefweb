@@ -26,7 +26,10 @@ void Fb2kWorkQueue::schedule(WorkCallback callback)
 
 PlayerEventAdapter::PlayerEventAdapter()
 {
-    const auto flags = flag_on_playback_all & ~(flag_on_playback_dynamic_info | flag_on_playback_time);
+    const auto flags = flag_on_playback_all
+        & ~(flag_on_playback_dynamic_info | flag_on_playback_time)
+        | flag_on_volume_change;
+
     play_callback_manager::get()->register_callback(this, flags, false);
 }
 
