@@ -64,6 +64,13 @@ export default class SettingsModel extends EventEmitter
         });
 
         this.define({
+            key: 'cursorFollowsPlayback',
+            type: SettingType.bool,
+            defaultValue: false,
+            persistent: true,
+        });
+
+        this.define({
             key: 'inputMode',
             type: SettingType.enum,
             defaultValue: InputMode.auto,
@@ -128,7 +135,7 @@ export default class SettingsModel extends EventEmitter
 
         Object.freeze(metadata);
 
-        if (type == SettingType.enum)
+        if (type === SettingType.enum)
             Object.freeze(metadata.enumNames);
 
         this.metadata[key] = metadata;

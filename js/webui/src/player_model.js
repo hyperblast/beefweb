@@ -29,6 +29,7 @@ const initialPlayerInfo = Object.freeze({
         duration: -1,
         columns: [],
     },
+    activeItemId: '',
 });
 
 export default class PlayerModel extends EventEmitter
@@ -44,6 +45,8 @@ export default class PlayerModel extends EventEmitter
         Object.assign(this, initialPlayerInfo);
 
         this.defineEvent('change');
+        this.defineEvent('trackSwitch');
+
         this.setVolumeRemote = debounce(value => this.client.setVolume(value), 80);
     }
 
@@ -105,6 +108,8 @@ export default class PlayerModel extends EventEmitter
 
     update(playerInfo)
     {
+        const wasPlaying = this.playbackState === PlaybackState.playing;
+
         Object.assign(this, playerInfo);
 
         if (this.playbackState === PlaybackState.playing)
@@ -113,6 +118,7 @@ export default class PlayerModel extends EventEmitter
             this.positionTimer.stop();
 
         this.emit('change');
+        this.notifyTrackSwitch(wasPlaying);
     }
 
     updateState(key, value)
@@ -131,5 +137,20 @@ export default class PlayerModel extends EventEmitter
         const newPosition = clamp(position + delta / 1000, 0, duration);
 
         this.updateState('activeItem', { position: newPosition });
+    }
+
+    notifyTrackSwitch(wasPlaying)
+    {
+        const previousItemId = this.activeItemId;
+        const { playlistId, index } = this.activeItem;
+
+        this.activeItemId = `${playlistId}:${index}`;
+
+        if (wasPlaying &&
+            this.playbackState === PlaybackState.playing &&
+            this.activeItemId !== previousItemId)
+        {
+            this.emit('trackSwitch');
+        }
     }
 }

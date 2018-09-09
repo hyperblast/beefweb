@@ -5,6 +5,7 @@ import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './el
 import { bindHandlers } from './utils'
 import urls from './urls';
 import ModelBinding from './model_binding';
+import SettingsModel from './settings_model';
 
 class PlaybackControl extends React.PureComponent
 {
@@ -23,7 +24,8 @@ class PlaybackControl extends React.PureComponent
     getStateFromModel()
     {
         const { playbackMode, playbackModes } = this.props.playerModel;
-        return { playbackMode, playbackModes };
+        const { cursorFollowsPlayback } = this.props.settingsModel;
+        return { playbackMode, playbackModes, cursorFollowsPlayback };
     }
 
     handleStop(e)
@@ -72,9 +74,22 @@ class PlaybackControl extends React.PureComponent
         this.setState({ navigationMenuOpen: value });
     }
 
+    handleCursorFollowsPlaybackClick(e)
+    {
+        e.preventDefault();
+        const { settingsModel } = this.props;
+        settingsModel.cursorFollowsPlayback = !settingsModel.cursorFollowsPlayback;
+    }
+
     render()
     {
-        const { playbackMode, playbackModes, audioMenuOpen, navigationMenuOpen } = this.state;
+        const {
+            playbackMode,
+            playbackModes,
+            cursorFollowsPlayback,
+            audioMenuOpen,
+            navigationMenuOpen
+        } = this.state;
 
         const modeMenuItems = playbackModes.map((mode, index) => (
             <MenuItem
@@ -122,7 +137,14 @@ class PlaybackControl extends React.PureComponent
                     isOpen={navigationMenuOpen}
                     onRequestToggle={this.handleNavigationMenuToggle}>
                     <Menu>
-                        <MenuItem title='Locate current track' href={urls.nowPlaying} />
+                        <MenuItem
+                            title='Locate current track'
+                            checked={false}
+                            href={urls.nowPlaying} />
+                        <MenuItem
+                            title='Cursor follows playback'
+                            checked={cursorFollowsPlayback}
+                            onClick={this.handleCursorFollowsPlaybackClick} />
                     </Menu>
                 </Dropdown>
             </div>
@@ -131,7 +153,11 @@ class PlaybackControl extends React.PureComponent
 }
 
 PlaybackControl.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired
+    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
 };
 
-export default ModelBinding(PlaybackControl, { playerModel: 'change' });
+export default ModelBinding(PlaybackControl, {
+    playerModel: 'change',
+    settingsModel: 'cursorFollowsPlaybackChange',
+});

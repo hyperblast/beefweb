@@ -8,12 +8,12 @@ import ViewSwitcher from './view_switcher'
 
 export default function ControlBar(props)
 {
-    var appModel = props.appModel;
-    var playerModel = appModel.playerModel;
+    const { appModel } = props;
+    const { playerModel, settingsModel } = appModel;
 
     return (
         <div key='control-bar' className='panel control-bar'>
-            <PlaybackControl playerModel={playerModel} />
+            <PlaybackControl playerModel={playerModel} settingsModel={settingsModel} />
             <PositionControl playerModel={playerModel} />
             <VolumeControl playerModel={playerModel} />
             <ViewSwitcher appModel={appModel} />

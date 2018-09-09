@@ -86,6 +86,16 @@ router.notFound(() => {
     appModel.setCurrentView(ViewId.notFound);
 });
 
+playerModel.on('trackSwitch', () => {
+    if (!settingsModel.cursorFollowsPlayback)
+        return;
+
+    const { playlistId, index } = playerModel.activeItem;
+
+    if (playlistId !== '' && index >= 0)
+        scrollManager.scrollToItem(playlistTableKey(playlistId), index);
+});
+
 playlistModel.on('playlistsChange', () => {
 
     if (appModel.currentView !== ViewId.playlist)
