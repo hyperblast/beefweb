@@ -47,6 +47,7 @@ set(
     src/modp_json.h
     src/modp_numtoa.h
     src/modp_qsiter.h
+    src/modp_stdint.h
     src/modp_utf8.h
     src/modp_xml.h
 )
