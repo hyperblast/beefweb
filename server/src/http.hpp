@@ -55,6 +55,8 @@ inline bool isSuccessStatus(HttpStatus status)
     return code >= 200 && code <= 299;
 }
 
+std::string urlDecode(StringView str);
+
 bool tryUnescapeUrl(StringView str, std::string& outVal);
 
 HttpKeyValueMap parseQueryString(StringView str);
