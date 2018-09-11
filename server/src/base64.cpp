@@ -1,23 +1,25 @@
 #include "base64.hpp"
 
-extern "C" {
-#include <b64/cdecode.h>
-}
+#include <modp_b64.h>
 
 namespace msrv {
 
 std::string base64Decode(const std::string& input)
 {
     std::string output;
-    output.resize((input.size() / 4 + 1) * 3);
 
-    base64_decodestate state;
-    base64_init_decodestate(&state);
+    output.resize(modp_b64_decode_len(input.size()));
 
-    int outputSize = base64_decode_block(
-        input.data(), static_cast<int>(input.size()), &output[0], &state);
+    auto outputSize = modp_b64_decode(&output[0], input.data(), input.size());
 
-    output.resize(static_cast<size_t>(outputSize));
+    if (outputSize == static_cast<size_t>(-1))
+    {
+        output.resize(0);
+        output.shrink_to_fit();
+    }
+    else
+        output.resize(outputSize);
+
     return output;
 }
 
