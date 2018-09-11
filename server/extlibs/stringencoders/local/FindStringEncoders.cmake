@@ -1,0 +1,7 @@
+set(STRINGENCODERS_INCLUDE_DIRS ${EXTLIB_INSTALL_DIR}/include)
+
+if(MSVC)
+    set(STRINGENCODERS_LIBRARIES ${EXTLIB_INSTALL_DIR}/lib/modpbase64.lib)
+else()
+    set(STRINGENCODERS_LIBRARIES ${EXTLIB_INSTALL_DIR}/lib/libmodpbase64.a)
+endif()

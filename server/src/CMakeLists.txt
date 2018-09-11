@@ -49,12 +49,14 @@ endif()
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Libb64 REQUIRED)
 find_package(Nljson REQUIRED)
+find_package(StringEncoders REQUIRED)
 find_package(ZLIB REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
     ${LIBB64_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
+    ${STRINGENCODERS_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIRS}
 )
 
@@ -140,7 +142,7 @@ endif()
 
 set(
     CORE_LIBRARIES
-    "${SYSTEM_LIBRARIES};${Boost_LIBRARIES};${LIBB64_LIBRARIES};${ZLIB_LIBRARIES}"
+    "${SYSTEM_LIBRARIES};${Boost_LIBRARIES};${LIBB64_LIBRARIES};${STRINGENCODERS_LIBRARIES};${ZLIB_LIBRARIES}"
 )
 
 add_library(core OBJECT ${CORE_SOURCES})
