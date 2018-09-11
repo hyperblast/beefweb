@@ -57,8 +57,6 @@ inline bool isSuccessStatus(HttpStatus status)
 
 std::string urlDecode(StringView str);
 
-bool tryUnescapeUrl(StringView str, std::string& outVal);
-
 HttpKeyValueMap parseQueryString(StringView str);
 
 }
