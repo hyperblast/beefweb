@@ -196,9 +196,7 @@ HttpMethod BeastRequest::method()
 
 std::string BeastRequest::path()
 {
-    std::string path;
-    tryUnescapeUrl(path_, path);
-    return path;
+    return urlDecode(path_);
 }
 
 HttpKeyValueMap BeastRequest::headers()

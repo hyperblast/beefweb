@@ -1,4 +1,5 @@
 #include "http.hpp"
+#include "modp_burl.h"
 
 namespace msrv {
 
@@ -85,6 +86,17 @@ std::string toString(HttpStatus status)
     default:
         return toString(static_cast<int>(status)) + "Status code";
     }
+}
+
+std::string urlDecode(StringView str)
+{
+    std::string output;
+    output.resize(modp_burl_decode_len(str.length()));
+
+    auto outputSize = modp_burl_decode(&output[0], str.data(), str.length());
+    output.resize(outputSize);
+
+    return output;
 }
 
 bool tryUnescapeUrl(StringView str, std::string& outVal)
