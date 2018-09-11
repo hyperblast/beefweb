@@ -56,6 +56,10 @@ if(ENABLE_LOCAL_CATCH)
     add_subdirectory(catch)
 endif()
 
+if(ENABLE_LOCAL_STRINGENCODERS)
+    add_subdirectory(stringencoders)
+endif()
+
 if(ENABLE_LOCAL_ZLIB)
     add_subdirectory(zlib)
 endif()
