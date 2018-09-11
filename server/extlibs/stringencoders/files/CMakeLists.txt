@@ -16,13 +16,13 @@ set(
     # src/modp_b64r_data.h
     # src/modp_b64w.c
     # src/modp_b64w_data.h
-    src/modp_b85.c
-    src/modp_b85_data.h
+    # src/modp_b85.c
+    # src/modp_b85_data.h
     src/modp_bjavascript.c
     src/modp_bjavascript_data.h
     src/modp_burl.c
     src/modp_burl_data.h
-    src/modp_html.c
+    # src/modp_html.c
     src/modp_json.c
     src/modp_numtoa.c
     src/modp_qsiter.c
@@ -40,10 +40,10 @@ set(
     src/modp_b64.h
     # src/modp_b64r.h
     # src/modp_b64w.h
-    src/modp_b85.h
+    # src/modp_b85.h
     src/modp_bjavascript.h
     src/modp_burl.h
-    src/modp_html.h
+    # src/modp_html.h
     src/modp_json.h
     src/modp_numtoa.h
     src/modp_qsiter.h
