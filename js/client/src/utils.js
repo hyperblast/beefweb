@@ -56,6 +56,31 @@ export function formatQueryOptions(arg)
         return arg;
 }
 
+export function formatQueryStringValue(value)
+{
+    if (!Array.isArray(value))
+        return String(value);
+
+    const items = [];
+
+    for (let item of value)
+        items.push(String(item).replace(/\\/g, '\\\\').replace(/,/g, '\\,'));
+
+    return items.join(',');
+}
+
+export function formatQueryString(params)
+{
+    return Object
+        .keys(params)
+        .map(p => {
+            const key = encodeURIComponent(p);
+            const value = encodeURIComponent(formatQueryStringValue(params[p]));
+            return `${key}=${value}`;
+        })
+        .join('&');
+}
+
 export function isTransferBetweenPlaylists(options)
 {
     const { playlist, from, to } = options;
