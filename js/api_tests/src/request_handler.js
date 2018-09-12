@@ -3,11 +3,7 @@
 const { URL, URLSearchParams } = require('url');
 const axios = require('axios');
 const EventSource = require('eventsource');
-
-function formatParams(params)
-{
-    return new URLSearchParams(params).toString();
-}
+const { formatQueryString } = require('beefweb-client');
 
 class TrackedEventSource extends EventSource
 {
@@ -46,7 +42,7 @@ class RequestHandler
         const fullConfig = Object.assign({
             baseURL: this.baseUrl,
             timeout: 5000,
-            paramsSerializer: formatParams,
+            paramsSerializer: formatQueryString,
             cancelToken: this.cancelSource.token
         }, config);
 
@@ -96,7 +92,7 @@ class RequestHandler
         const urlObj = new URL(url, this.baseUrl);
 
         if (params)
-            urlObj.search = formatParams(params);
+            urlObj.search = formatQueryString(params);
 
         const source = new TrackedEventSource(
             this, urlObj.toString(), this.getEventSourceConfig());

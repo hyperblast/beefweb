@@ -1,12 +1,5 @@
 import startsWith from 'lodash/startsWith'
-
-function formatParams(params)
-{
-    return Object
-        .keys(params)
-        .map(p => encodeURIComponent(p) + '=' + encodeURIComponent(params[p]))
-        .join('&');
-}
+import { formatQueryString } from 'beefweb-client'
 
 function buildUrl(url, params)
 {
@@ -19,7 +12,7 @@ function buildUrl(url, params)
 
     if (params)
     {
-        const paramsString = formatParams(params);
+        const paramsString = formatQueryString(params);
 
         if (paramsString)
             result = result + '?' + paramsString;

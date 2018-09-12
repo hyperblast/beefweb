@@ -56,7 +56,8 @@ q.test('query current track', async assert =>
         '%album%',
         '%tracknumber%',
         '%title%',
-        '%length%'
+        '%length%',
+        ' %artist% \\\\ %album%, %title% ',
     ]);
 
     assert.deepEqual(state.activeItem.columns, [
@@ -66,6 +67,7 @@ q.test('query current track', async assert =>
         '03',
         'Silence Rocks - Part 3',
         '1:10',
+        ' Hyperblast \\ Silence Rocks, Silence Rocks - Part 3 '
     ]);
 });
 
