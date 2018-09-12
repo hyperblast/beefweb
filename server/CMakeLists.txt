@@ -16,7 +16,6 @@ option(ENABLE_LOCAL_LIBS        "Build with local libraries" ON)
 option(ENABLE_STATIC_STDLIB     "Build with static libstdc++" OFF)
 
 local_library_option(boost ENABLE_LOCAL_BOOST "")
-local_library_option(libb64 ENABLE_LOCAL_LIBB64 "")
 local_library_option(nljson ENABLE_LOCAL_NLJSON "")
 local_library_option(catch ENABLE_LOCAL_CATCH "ENABLE_TESTS")
 local_library_option(stringencoders ENABLE_LOCAL_STRINGENCODERS "")
