@@ -58,14 +58,6 @@ SOFTWARE.
 
 -----
 
-libb64: Base64 Encoding/Decoding Routines
-
-http://libb64.sourceforge.net/
-
-Public Domain
-
------
-
 Catch
 A modern, C++-native, header-only, test framework
 
