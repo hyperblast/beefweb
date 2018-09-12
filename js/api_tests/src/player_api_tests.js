@@ -2,7 +2,7 @@
 
 const q = require('qunit');
 const isArray = require('lodash/isArray');
-const { client, usePlayer, tracks } = require('./test_context');
+const { config, client, usePlayer, tracks } = require('./test_context');
 
 q.module('player api', usePlayer());
 
@@ -50,6 +50,11 @@ q.test('query current track', async assert =>
     await client.waitForState('playing');
     await client.waitPlaybackMetadata();
 
+    let backslash = '\\';
+
+    if (config.playerId === 'deadbeef')
+        backslash = '\\\\';
+
     const state = await client.getPlayerState([
         '%genre%',
         '%artist%',
@@ -57,7 +62,7 @@ q.test('query current track', async assert =>
         '%tracknumber%',
         '%title%',
         '%length%',
-        ' %artist% \\\\ %album%, %title% ',
+        ` %artist% ${backslash} %album%, %title% `,
     ]);
 
     assert.deepEqual(state.activeItem.columns, [

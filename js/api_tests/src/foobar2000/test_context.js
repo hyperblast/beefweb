@@ -9,6 +9,8 @@ class TestContext extends TestContextBase
 {
     initConfig(config)
     {
+        config.playerId = 'foobar2000';
+
         const { BEEFWEB_TEST_FOOBAR2000_VERSION } = process.env;
         const version = BEEFWEB_TEST_FOOBAR2000_VERSION || 'v1.3';
 
