@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlayerModel from './player_model'
-import { Button, Dropdown } from './elements'
+import { Button, DropdownButton } from './elements'
 import { bindHandlers } from './utils'
 import ModelBinding from './model_binding';
 
@@ -94,7 +94,7 @@ class VolumeControl extends React.PureComponent
         };
     }
 
-    handlePanelToggle(value)
+    handlePanelRequestOpen(value)
     {
         this.setState({ panelOpen: value });
     }
@@ -113,17 +113,17 @@ class VolumeControl extends React.PureComponent
             <div className='volume-control'>
                 <div className='volume-control-mini'>
                     <div className='button-bar'>
-                        <Dropdown
+                        <DropdownButton
                             title='Show volume panel'
                             iconName={volumeIcon(isMuted)}
                             autoHide={false}
                             direction='center'
                             isOpen={panelOpen}
-                            onRequestToggle={this.handlePanelToggle}>
+                            onRequestOpen={this.handlePanelRequestOpen}>
                             <VolumeControlPanel
                                 playerModel={playerModel}
                                 onAfterMuteClick={this.handleMuteClick} />
-                        </Dropdown>
+                        </DropdownButton>
                     </div>
                 </div>
                 <div className='volume-control-full'>

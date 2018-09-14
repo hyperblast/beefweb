@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlaylistModel, { sortableColumns } from './playlist_model'
-import { Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
+import { DropdownButton, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { ConfirmDialog, InputDialog } from './dialogs'
 import { appendArray, bindHandlers } from './utils'
 import ModelBinding from './model_binding';
@@ -35,7 +35,7 @@ class PlaylistMenu extends React.PureComponent
         };
     }
 
-    handleMenuToggle(value)
+    handleMenuRequestOpen(value)
     {
         this.setState({ menuOpen: value });
     }
@@ -183,16 +183,16 @@ class PlaylistMenu extends React.PureComponent
         appendArray(menuItems, menuSortItems);
 
         const menu = (
-            <Dropdown
+            <DropdownButton
                 title='Playlist menu'
                 iconName='menu'
                 direction='left'
                 isOpen={menuOpen}
-                onRequestToggle={this.handleMenuToggle}>
+                onRequestOpen={this.handleMenuRequestOpen}>
                 <Menu>
                     { menuItems }
                 </Menu>
-            </Dropdown>
+            </DropdownButton>
         );
 
         const dialogs = (

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlayerModel from './player_model'
-import { Button, Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
+import { Button, DropdownButton, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { bindHandlers } from './utils'
 import urls from './urls';
 import ModelBinding from './model_binding';
@@ -64,12 +64,12 @@ class PlaybackControl extends React.PureComponent
         this.props.playerModel.setPlaybackMode(value);
     }
 
-    handleAudioMenuToggle(value)
+    handleAudioMenuRequestOpen(value)
     {
         this.setState({ audioMenuOpen: value });
     }
 
-    handleNavigationMenuToggle(value)
+    handleNavigationMenuRequestOpen(value)
     {
         this.setState({ navigationMenuOpen: value });
     }
@@ -121,21 +121,21 @@ class PlaybackControl extends React.PureComponent
                     name='media-step-forward'
                     title='Next'
                     onClick={this.handleNext} />
-                <Dropdown
+                <DropdownButton
                     iconName='audio'
                     title='Audio menu'
                     isOpen={audioMenuOpen}
-                    onRequestToggle={this.handleAudioMenuToggle}>
+                    onRequestOpen={this.handleAudioMenuRequestOpen}>
                     <Menu>
                         <MenuLabel title='Mode' />
                         { modeMenuItems }
                     </Menu>
-                </Dropdown>
-                <Dropdown
+                </DropdownButton>
+                <DropdownButton
                     iconName='share'
                     title='Navigation menu'
                     isOpen={navigationMenuOpen}
-                    onRequestToggle={this.handleNavigationMenuToggle}>
+                    onRequestOpen={this.handleNavigationMenuRequestOpen}>
                     <Menu>
                         <MenuItem
                             title='Locate current track'
@@ -146,7 +146,7 @@ class PlaybackControl extends React.PureComponent
                             checked={cursorFollowsPlayback}
                             onClick={this.handleCursorFollowsPlaybackClick} />
                     </Menu>
-                </Dropdown>
+                </DropdownButton>
             </div>
         );
     }

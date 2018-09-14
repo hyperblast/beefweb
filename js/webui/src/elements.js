@@ -47,7 +47,7 @@ Button.propTypes = {
     active: PropTypes.bool,
 };
 
-export class Dropdown extends React.PureComponent
+export class DropdownButton extends React.PureComponent
 {
     constructor(props)
     {
@@ -62,13 +62,13 @@ export class Dropdown extends React.PureComponent
         e.preventDefault();
         e.stopPropagation();
 
-        this.props.onRequestToggle(!this.props.isOpen);
+        this.props.onRequestOpen(!this.props.isOpen);
     }
 
     handleWindowClick()
     {
         if (this.props.autoHide)
-            this.props.onRequestToggle(false);
+            this.props.onRequestOpen(false);
     }
 
     componentDidMount()
@@ -106,16 +106,16 @@ export class Dropdown extends React.PureComponent
     }
 }
 
-Dropdown.propTypes = {
+DropdownButton.propTypes = {
     title: PropTypes.string.isRequired,
     iconName: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired,
-    onRequestToggle: PropTypes.func.isRequired,
+    onRequestOpen: PropTypes.func.isRequired,
     autoHide: PropTypes.bool,
     direction: PropTypes.oneOf(['left', 'center', 'right']),
 };
 
-Dropdown.defaultProps = {
+DropdownButton.defaultProps = {
     autoHide: true,
     direction: 'right'
 };
