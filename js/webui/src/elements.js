@@ -23,29 +23,39 @@ Icon.propTypes = {
     className: PropTypes.string,
 };
 
-export function Button(props)
+function defineButton()
 {
-    const { name, title, className, href, onClick, active } = props;
+    function Button(props, ref)
+    {
+        const { name, title, className, href, onClick, active } = props;
 
-    const fullClassName = 'button'
-        + (className ? ' ' + className : '')
-        + (active ? ' active' : '');
+        const fullClassName = 'button'
+            + (className ? ' ' + className : '')
+            + (active ? ' active' : '');
 
-    return (
-        <a href={href || '#'} title={title} className={fullClassName} onClick={onClick}>
-            <Icon name={name} />
-        </a>
-    );
+        return (
+            <a ref={ref} href={href || '#'} title={title} className={fullClassName} onClick={onClick}>
+                <Icon name={name} />
+            </a>
+        );
+    }
+
+    Button.propTypes = {
+        name: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+        className: PropTypes.string,
+        href: PropTypes.string,
+        onClick: PropTypes.func,
+        active: PropTypes.bool
+    };
+
+    return Button;
+
 }
 
-Button.propTypes = {
-    name: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    className: PropTypes.string,
-    href: PropTypes.string,
-    onClick: PropTypes.func,
-    active: PropTypes.bool,
-};
+export const Button = React.forwardRef(defineButton());
+
+const DropdownSource = Symbol('DropdownSource');
 
 export class DropdownButton extends React.PureComponent
 {
@@ -54,21 +64,40 @@ export class DropdownButton extends React.PureComponent
         super(props);
 
         this.state = { };
+        this.setButtonRef = this.setButtonRef.bind(this);
+
         bindHandlers(this);
     }
 
-    handleDropdownClick(e)
+    handleButtonClick(e)
     {
+        if (e.button !== 0)
+            return;
+
         e.preventDefault();
-        e.stopPropagation();
+        e[DropdownSource] = this;
 
         this.props.onRequestOpen(!this.props.isOpen);
     }
 
-    handleWindowClick()
+    handleWindowClick(e)
     {
-        if (this.props.autoHide)
+        if (e.button !== 0)
+            return;
+
+        if (this.props.autoHide && this !== e[DropdownSource])
             this.props.onRequestOpen(false);
+    }
+
+    setButtonRef(button)
+    {
+        if (this.button)
+            this.button.removeEventListener('click', this.handleButtonClick);
+
+        this.button = button;
+
+        if (this.button)
+            this.button.addEventListener('click', this.handleButtonClick);
     }
 
     componentDidMount()
@@ -94,10 +123,10 @@ export class DropdownButton extends React.PureComponent
         return (
             <div className='dropdown'>
                 <Button
+                    ref={this.setButtonRef}
                     name={iconName}
                     title={title}
-                    active={isOpen}
-                    onClick={this.handleDropdownClick} />
+                    active={isOpen} />
                 <div className={contentClass}>
                     { children }
                 </div>
