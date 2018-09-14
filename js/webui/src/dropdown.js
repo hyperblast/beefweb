@@ -3,16 +3,28 @@ import { bindHandlers } from './utils';
 import PropTypes from 'prop-types';
 import { Button } from './elements';
 
-const DropdownSource = Symbol('DropdownSource');
+const dropdownTarget = Symbol('dropdownTarget');
 
-export class DropdownButton extends React.PureComponent
+const basePropTypes = Object.freeze({
+    isOpen: PropTypes.bool.isRequired,
+    onRequestOpen: PropTypes.func.isRequired,
+    autoHide: PropTypes.bool,
+    direction: PropTypes.oneOf(['left', 'center', 'right']),
+});
+
+const baseDefaultProps = Object.freeze({
+    autoHide: true,
+    direction: 'right'
+});
+
+export class Dropdown extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
         this.state = {};
-        this.setButtonRef = this.setButtonRef.bind(this);
+        this.setElementRef = this.setElementRef.bind(this);
 
         bindHandlers(this);
     }
@@ -23,7 +35,7 @@ export class DropdownButton extends React.PureComponent
             return;
 
         e.preventDefault();
-        e[DropdownSource] = this;
+        e[dropdownTarget] = this;
 
         this.props.onRequestOpen(!this.props.isOpen);
     }
@@ -33,19 +45,19 @@ export class DropdownButton extends React.PureComponent
         if (e.button !== 0)
             return;
 
-        if (this.props.autoHide && this !== e[DropdownSource])
+        if (this.props.autoHide && this !== e[dropdownTarget])
             this.props.onRequestOpen(false);
     }
 
-    setButtonRef(button)
+    setElementRef(element)
     {
-        if (this.button)
-            this.button.removeEventListener('click', this.handleButtonClick);
+        if (this.element)
+            this.element.removeEventListener('click', this.handleButtonClick);
 
-        this.button = button;
+        this.element = element;
 
-        if (this.button)
-            this.button.addEventListener('click', this.handleButtonClick);
+        if (this.element)
+            this.element.addEventListener('click', this.handleButtonClick);
     }
 
     componentDidMount()
@@ -60,7 +72,7 @@ export class DropdownButton extends React.PureComponent
 
     render()
     {
-        const { isOpen, title, iconName, children, direction } = this.props;
+        const { isOpen, children, direction, onRenderElement } = this.props;
 
         const contentClass = (
             'dropdown-content dropdown-'
@@ -68,13 +80,11 @@ export class DropdownButton extends React.PureComponent
             + (isOpen ? ' active' : '')
         );
 
+        const element = onRenderElement(this.setElementRef, isOpen);
+
         return (
             <div className='dropdown'>
-                <Button
-                    ref={this.setButtonRef}
-                    name={iconName}
-                    title={title}
-                    active={isOpen} />
+                { element }
                 <div className={contentClass}>
                     {children}
                 </div>
@@ -83,16 +93,57 @@ export class DropdownButton extends React.PureComponent
     }
 }
 
-DropdownButton.propTypes = {
-    title: PropTypes.string.isRequired,
-    iconName: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool.isRequired,
-    onRequestOpen: PropTypes.func.isRequired,
-    autoHide: PropTypes.bool,
-    direction: PropTypes.oneOf(['left', 'center', 'right']),
-};
+Dropdown.propTypes = Object.assign(
+    { onRenderElement: PropTypes.func.isRequired },
+    basePropTypes
+);
 
-DropdownButton.defaultProps = {
-    autoHide: true,
-    direction: 'right'
-};
+Dropdown.defaultProps = baseDefaultProps;
+
+export class DropdownButton extends React.PureComponent
+{
+    constructor(props)
+    {
+        super(props);
+
+        this.state = {};
+        this.renderElement = this.renderElement.bind(this);
+    }
+
+    renderElement(ref, isOpen)
+    {
+        return (
+            <Button
+                ref={ref}
+                name={this.props.iconName}
+                title={this.props.title}
+                active={isOpen} />
+        );
+    }
+
+    render()
+    {
+        const { isOpen, onRequestOpen, autoHide, direction, children } = this.props;
+
+        return (
+            <Dropdown
+                onRenderElement={this.renderElement}
+                onRequestOpen={onRequestOpen}
+                isOpen={isOpen}
+                autoHide={autoHide}
+                direction={direction}>
+                { children }
+            </Dropdown>
+        );
+    }
+}
+
+DropdownButton.propTypes = Object.assign(
+    {
+        title: PropTypes.string.isRequired,
+        iconName: PropTypes.string.isRequired,
+    },
+    basePropTypes
+);
+
+DropdownButton.defaultProps = baseDefaultProps;
