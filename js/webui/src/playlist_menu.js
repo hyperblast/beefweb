@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlaylistModel, { sortableColumns } from './playlist_model'
-import { DropdownButton, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
+import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { ConfirmDialog, InputDialog } from './dialogs'
 import { appendArray, bindHandlers } from './utils'
 import ModelBinding from './model_binding';
+import { DropdownButton } from './dropdown';
 
 class PlaylistMenu extends React.PureComponent
 {

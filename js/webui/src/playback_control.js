@@ -1,11 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import PlayerModel from './player_model'
-import { Button, DropdownButton, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
+import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { bindHandlers } from './utils'
 import urls from './urls';
 import ModelBinding from './model_binding';
 import SettingsModel from './settings_model';
+import { DropdownButton } from './dropdown';
 
 class PlaybackControl extends React.PureComponent
 {
