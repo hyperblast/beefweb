@@ -22,37 +22,29 @@ Icon.propTypes = {
     className: PropTypes.string,
 };
 
-function defineButton()
+export const Button = React.forwardRef(function Button(props, ref)
 {
-    function Button(props, ref)
-    {
-        const { name, title, className, href, onClick, active } = props;
+    const { name, title, className, href, onClick, active } = props;
 
-        const fullClassName = 'button'
-            + (className ? ' ' + className : '')
-            + (active ? ' active' : '');
+    const fullClassName = 'button'
+        + (className ? ' ' + className : '')
+        + (active ? ' active' : '');
 
-        return (
-            <a ref={ref} href={href || '#'} title={title} className={fullClassName} onClick={onClick}>
-                <Icon name={name} />
-            </a>
-        );
-    }
+    return (
+        <a ref={ref} href={href || '#'} title={title} className={fullClassName} onClick={onClick}>
+            <Icon name={name} />
+        </a>
+    );
+});
 
-    Button.propTypes = {
-        name: PropTypes.string.isRequired,
-        title: PropTypes.string.isRequired,
-        className: PropTypes.string,
-        href: PropTypes.string,
-        onClick: PropTypes.func,
-        active: PropTypes.bool
-    };
-
-    return Button;
-
-}
-
-export const Button = React.forwardRef(defineButton());
+Button.propTypes = {
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    href: PropTypes.string,
+    onClick: PropTypes.func,
+    active: PropTypes.bool
+};
 
 export function Menu(props)
 {
