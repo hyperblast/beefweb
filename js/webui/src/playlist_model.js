@@ -36,6 +36,16 @@ const compactPreset = Object.freeze({
     ]
 });
 
+export const sortableColumns = [
+    { title: 'Artist', expression: '%artist%' },
+    { title: 'Album', expression: '%album%' },
+    { title: 'Track number', expression: '%track%' },
+    { title: 'Date', expression: '%date%' },
+    { title: 'Title', expression: '%title%' },
+    { title: 'Artist/Date/Album/Track', expression: '%artist%/%date%/%album%/%track%' },
+    { title: 'Random', random: true }
+];
+
 export default class PlaylistModel extends EventEmitter
 {
     constructor(client, dataSource, settingsModel)
@@ -78,7 +88,7 @@ export default class PlaylistModel extends EventEmitter
         this.playlists = playlists;
         this.playlistsStale = false;
 
-        let currentPlaylist = playlists.find(p => p.id == this.currentPlaylistId);
+        let currentPlaylist = playlists.find(p => p.id === this.currentPlaylistId);
 
         if (currentPlaylist)
         {
@@ -101,7 +111,7 @@ export default class PlaylistModel extends EventEmitter
             return;
 
         this.currentPlaylistId = id;
-        this.currentPlaylist = this.playlists.find(p => p.id == id);
+        this.currentPlaylist = this.playlists.find(p => p.id === id);
 
         this.playlistsStale = true;
         this.watchPlaylistItems(true);
@@ -169,14 +179,14 @@ export default class PlaylistModel extends EventEmitter
     {
         var title = 'New Playlist';
 
-        if (!this.playlists.find(p => p.title == title))
+        if (!this.playlists.find(p => p.title === title))
             return title;
 
         for (let index = 1; true; index++)
         {
             title = `New Playlist (${index})`;
 
-            if (!this.playlists.find(p => p.title == title))
+            if (!this.playlists.find(p => p.title === title))
                 return title;
         }
     }
@@ -222,5 +232,25 @@ export default class PlaylistModel extends EventEmitter
     clearPlaylist()
     {
         this.client.clearPlaylist(this.currentPlaylistId);
+    }
+
+    sortPlaylist(column, desc = false)
+    {
+        switch (typeof column)
+        {
+            case 'string':
+                this.client.sortPlaylistItems(this.currentPlaylistId, { by: column, desc });
+                break;
+
+            case 'object':
+                if (column.random)
+                    this.client.sortPlaylistItems(this.currentPlaylistId, { random: true });
+                else
+                    this.client.sortPlaylistItems(this.currentPlaylistId, { by: column.expression, desc });
+                break;
+
+            default:
+                throw new TypeError(`Invalid column type: ${typeof column}`);
+        }
     }
 }

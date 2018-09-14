@@ -9,12 +9,12 @@ function formatTimePart(value)
 
 export function formatTime(value, withHours = false)
 {
-    var intValue = Math.round(value);
-    var seconds = intValue % 60;
-    var minutes = Math.floor(intValue / 60) % 60;
-    var hours = Math.floor(intValue / (60 * 60)) % (60 * 60);
+    const intValue = Math.round(value);
+    const seconds = intValue % 60;
+    const minutes = Math.floor(intValue / 60) % 60;
+    const hours = Math.floor(intValue / (60 * 60)) % (60 * 60);
 
-    var hoursStr = withHours || hours > 0 ? formatTimePart(hours) + ':' : '';
+    const hoursStr = withHours || hours > 0 ? formatTimePart(hours) + ':' : '';
     return hoursStr + formatTimePart(minutes) + ':' + formatTimePart(seconds);
 }
 
@@ -127,6 +127,12 @@ export function mapRange(start, count, func)
         array.push(func(i));
 
     return array;
+}
+
+export function appendArray(to, from)
+{
+    for (let item of from)
+        to.push(item);
 }
 
 const kbSize = 1024;

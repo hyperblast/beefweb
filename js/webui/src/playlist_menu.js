@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlaylistModel from './playlist_model'
-import { Dropdown, Menu, MenuItem, MenuSeparator } from './elements'
+import PlaylistModel, { sortableColumns } from './playlist_model'
+import { Dropdown, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { ConfirmDialog, InputDialog } from './dialogs'
-import { bindHandlers } from './utils'
+import { appendArray, bindHandlers } from './utils'
 import ModelBinding from './model_binding';
 
 class PlaylistMenu extends React.PureComponent
@@ -141,10 +141,16 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ addUrlDialogOpen: false });
     }
 
+    sortBy(e, index)
+    {
+        e.preventDefault();
+
+        this.props.playlistModel.sortPlaylist(sortableColumns[index]);
+    }
+
     render()
     {
         const {
-            currentPlaylistId,
             currentPlaylist,
             menuOpen,
             clearDialogOpen,
@@ -155,6 +161,27 @@ class PlaylistMenu extends React.PureComponent
             renameDialogValue,
         } = this.state;
 
+        const menuItems = [
+            <MenuItem key='add' title='Add playlist' onClick={this.handleAddClick} />,
+            <MenuItem key='remove' title='Remove playlist' onClick={this.handleRemoveClick} />,
+            <MenuSeparator key='modify' />,
+            <MenuItem key='rename' title='Rename playlist' onClick={this.handleRenameClick} />,
+            <MenuItem key='clear' title='Clear playlist' onClick={this.handleClearClick} />,
+            <MenuItem key='addurl' title='Add URL' onClick={this.handleAddUrlClick} />,
+            <MenuSeparator key='sort' />,
+            <MenuLabel key='sortby' title='Sort by' />
+        ];
+
+        const menuSortItems = sortableColumns.map((column, index) => (
+            <MenuItem
+                key={'sortby' + index}
+                title={column.title}
+                onClick={e => this.sortBy(e, index)}
+            />
+        ));
+
+        appendArray(menuItems, menuSortItems);
+
         const menu = (
             <Dropdown
                 title='Playlist menu'
@@ -163,12 +190,7 @@ class PlaylistMenu extends React.PureComponent
                 isOpen={menuOpen}
                 onRequestToggle={this.handleMenuToggle}>
                 <Menu>
-                    <MenuItem title='Add playlist' onClick={this.handleAddClick} />
-                    <MenuItem title='Remove playlist' onClick={this.handleRemoveClick} />
-                    <MenuSeparator />
-                    <MenuItem title='Rename playlist' onClick={this.handleRenameClick} />
-                    <MenuItem title='Clear playlist' onClick={this.handleClearClick} />
-                    <MenuItem title='Add URL' onClick={this.handleAddUrlClick} />
+                    { menuItems }
                 </Menu>
             </Dropdown>
         );
