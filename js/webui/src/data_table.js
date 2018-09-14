@@ -6,6 +6,7 @@ import { Icon } from './elements';
 import { mapRange, once } from './utils'
 import { addStyleSheet, generateElementId, getFontSize, getScrollBarSize, makeClassName } from './dom_utils'
 import ScrollManager from './scroll_manager';
+import { DropdownLink } from './dropdown';
 
 const maxColumns = 100;
 const rowHeight = 1.75;
@@ -39,7 +40,7 @@ export default class DataTable extends React.PureComponent
     {
         super(props);
 
-        this.state = { elementId: generateElementId('dtable') };
+        this.state = { elementId: generateElementId('dtable'), activeDropdownIndex: -1 };
         this.setBodyRef = this.setBodyRef.bind(this);
         this.handleScroll = throttle(this.handleScroll.bind(this), 50);
         this.handleClick = this.handleClick.bind(this);
@@ -180,6 +181,22 @@ export default class DataTable extends React.PureComponent
         }
     }
 
+    openDropdown(index, isOpen)
+    {
+        if (isOpen)
+        {
+            this.setState({
+                activeDropdownIndex: index
+            });
+        }
+        else
+        {
+            this.setState(state => (
+                state.activeDropdownIndex === index ? { activeDropdownIndex: -1 } : null
+            ));
+        }
+    }
+
     handleClick(e)
     {
         if (e.target.getAttribute('href') !== '#')
@@ -307,11 +324,39 @@ export default class DataTable extends React.PureComponent
 
     renderColumnHeaders()
     {
+        return this.props.onRenderColumnDropdown
+            ? this.renderColumnsHeadersWithDropdown()
+            : this.renderColumnHeadersSimple();
+    }
+
+    renderColumnHeadersSimple()
+    {
+        return this.props.columnNames.map((name, index) =>
+        {
+            const className =
+                columnHeaderClassNames[index] + ' dtable-column-header-text';
+
+            return (
+                <span
+                    key={index}
+                    title={name}
+                    className={className}>{name}</span>
+            );
+        });
+    }
+
+    renderColumnsHeadersWithDropdown()
+    {
         return this.props.columnNames.map((name, index) => (
-            <span
+            <DropdownLink
                 key={index}
                 title={name}
-                className={columnHeaderClassNames[index]}>{name}</span>
+                className={columnHeaderClassNames[index]}
+                linkClassName='dtable-column-header-text dtable-column-header-link'
+                isOpen={this.state.activeDropdownIndex === index}
+                onRequestOpen={o => this.openDropdown(index, o)}>
+                { this.props.onRenderColumnDropdown(index) }
+            </DropdownLink>
         ));
     }
 
@@ -366,6 +411,7 @@ DataTable.propTypes = {
     onLoadPage: PropTypes.func.isRequired,
     onClick: PropTypes.func,
     onDoubleClick: PropTypes.func,
+    onRenderColumnDropdown: PropTypes.func,
 };
 
 DataTable.defaultProps = {

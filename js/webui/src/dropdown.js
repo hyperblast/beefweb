@@ -3,11 +3,12 @@ import { bindHandlers } from './utils';
 import PropTypes from 'prop-types';
 import { Button } from './elements';
 import { makeClassName } from './dom_utils';
-import { pick } from 'lodash';
+import pick from 'lodash/pick';
 
 const dropdownTarget = Symbol('dropdownTarget');
 
 const basePropTypes = Object.freeze({
+    className: PropTypes.string,
     isOpen: PropTypes.bool.isRequired,
     onRequestOpen: PropTypes.func.isRequired,
     autoHide: PropTypes.bool,
@@ -74,18 +75,16 @@ export class Dropdown extends React.PureComponent
 
     render()
     {
-        const { isOpen, children, direction, onRenderElement } = this.props;
+        const { isOpen, children, direction, onRenderElement, className } = this.props;
 
-        const contentClass = (
-            'dropdown-content dropdown-'
-            + direction
-            + (isOpen ? ' active' : '')
-        );
+        const dropdownClass = makeClassName([ 'dropdown', className ]);
+        const contentClass = makeClassName(
+            ['dropdown-content', 'dropdown-' + direction, isOpen ? ' active' : '']);
 
         const element = onRenderElement(this.setElementRef, isOpen);
 
         return (
-            <div className='dropdown'>
+            <div className={dropdownClass}>
                 { element }
                 <div className={contentClass}>
                     {children}
@@ -119,7 +118,8 @@ export class DropdownButton extends React.PureComponent
                 ref={ref}
                 name={this.props.iconName}
                 title={this.props.title}
-                active={isOpen} />
+                active={isOpen}
+                className={this.props.buttonClassName} />
         );
     }
 
@@ -139,6 +139,7 @@ DropdownButton.propTypes = Object.assign(
     {
         title: PropTypes.string.isRequired,
         iconName: PropTypes.string.isRequired,
+        buttonClassName: PropTypes.string,
     },
     basePropTypes
 );
@@ -157,8 +158,8 @@ export class DropdownLink extends React.PureComponent
 
     renderElement(ref, isOpen)
     {
-        const { title, className } = this.props;
-        const fullClassName = makeClassName([className, isOpen ? 'active' : null]);
+        const { title, linkClassName } = this.props;
+        const fullClassName = makeClassName([linkClassName, isOpen ? 'active' : null]);
 
         return (
             <a
@@ -184,7 +185,7 @@ export class DropdownLink extends React.PureComponent
 DropdownLink.propTypes = Object.assign(
     {
         title: PropTypes.string.isRequired,
-        className: PropTypes.string,
+        linkClassName: PropTypes.string,
     },
     basePropTypes
 );

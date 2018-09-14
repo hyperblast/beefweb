@@ -204,6 +204,10 @@ body {
     .dropdown-box();
 }
 
+.dropdown-right {
+    left: 0;
+}
+
 .dropdown-left {
     right: 0;
 }
@@ -383,7 +387,6 @@ body {
 
 .dtable-head {
     height: 1.75rem;
-    font-weight: bold;
     position: relative;
 }
 
@@ -418,6 +421,19 @@ body {
     display: inline-block;
 
     .no-text-overflow();
+}
+
+.dtable-column-header-text {
+    font-weight: bold;
+}
+
+.dtable-column-header-link {
+    text-decoration: none;
+    color: @color-text;
+
+    &:visited {
+        color: @color-text;
+    }
 }
 
 .dtable-column-header {

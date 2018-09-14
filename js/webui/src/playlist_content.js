@@ -7,6 +7,7 @@ import DataTable from './data_table'
 import { bindHandlers } from './utils'
 import ScrollManager from './scroll_manager';
 import ModelBinding from './model_binding';
+import { Menu, MenuItem, MenuLabel } from './elements';
 
 const pageSize = 100;
 
@@ -90,6 +91,31 @@ class PlaylistContent extends React.PureComponent
         });
     }
 
+    handleRenderColumnDropdown(index)
+    {
+        const { columns } = this.props.playlistModel;
+        const name = columns.names[index];
+        const expression  = columns.expressions[index];
+
+        const sortAsc = e => {
+            e.preventDefault();
+            this.props.playlistModel.sortPlaylist(expression, false);
+        };
+
+        const sortDesc = e => {
+            e.preventDefault();
+            this.props.playlistModel.sortPlaylist(expression, true);
+        };
+
+        return (
+            <Menu>
+                <MenuLabel title={'Sort by ' + name} />
+                <MenuItem title={'Ascending'} onClick={sortAsc} />
+                <MenuItem title={'Descending'} onClick={sortDesc} />
+            </Menu>
+        );
+    }
+
     render()
     {
         return (
@@ -105,7 +131,8 @@ class PlaylistContent extends React.PureComponent
                 scrollManager={this.props.scrollManager}
                 className='panel main-panel playlist-content'
                 onLoadPage={this.handleLoadPage}
-                onDoubleClick={this.handleDoubleClick} />
+                onDoubleClick={this.handleDoubleClick}
+                onRenderColumnDropdown={this.handleRenderColumnDropdown} />
         );
     }
 }
