@@ -2,6 +2,8 @@ import React from 'react';
 import { bindHandlers } from './utils';
 import PropTypes from 'prop-types';
 import { Button } from './elements';
+import { makeClassName } from './dom_utils';
+import { pick } from 'lodash';
 
 const dropdownTarget = Symbol('dropdownTarget');
 
@@ -123,16 +125,11 @@ export class DropdownButton extends React.PureComponent
 
     render()
     {
-        const { isOpen, onRequestOpen, autoHide, direction, children } = this.props;
+        const props = pick(this.props, Object.keys(basePropTypes));
 
         return (
-            <Dropdown
-                onRenderElement={this.renderElement}
-                onRequestOpen={onRequestOpen}
-                isOpen={isOpen}
-                autoHide={autoHide}
-                direction={direction}>
-                { children }
+            <Dropdown onRenderElement={this.renderElement} {... props}>
+                { this.props.children }
             </Dropdown>
         );
     }
@@ -147,3 +144,49 @@ DropdownButton.propTypes = Object.assign(
 );
 
 DropdownButton.defaultProps = baseDefaultProps;
+
+export class DropdownLink extends React.PureComponent
+{
+    constructor(props)
+    {
+        super(props);
+
+        this.state = {};
+        this.renderElement = this.renderElement.bind(this);
+    }
+
+    renderElement(ref, isOpen)
+    {
+        const { title, className } = this.props;
+        const fullClassName = makeClassName([className, isOpen ? 'active' : null]);
+
+        return (
+            <a
+                ref={ref}
+                href='#'
+                title={title}
+                className={fullClassName}>{ title }</a>
+        );
+    }
+
+    render()
+    {
+        const props = pick(this.props, Object.keys(basePropTypes));
+
+        return (
+            <Dropdown onRenderElement={this.renderElement} {... props}>
+                { this.props.children }
+            </Dropdown>
+        );
+    }
+}
+
+DropdownLink.propTypes = Object.assign(
+    {
+        title: PropTypes.string.isRequired,
+        className: PropTypes.string,
+    },
+    basePropTypes
+);
+
+DropdownLink.defaultProps = baseDefaultProps;
