@@ -31,9 +31,6 @@ const addGeneratedStyles = once(() =>
 const cellClassNames = mapRange(
     0, maxColumns, value => `dtable-cell dtable-column${value}`);
 
-const columnHeaderClassNames = mapRange(
-    0, maxColumns, value => `dtable-column-header dtable-column${value}`);
-
 export default class DataTable extends React.PureComponent
 {
     constructor(props)
@@ -45,6 +42,8 @@ export default class DataTable extends React.PureComponent
         this.handleScroll = throttle(this.handleScroll.bind(this), 50);
         this.handleClick = this.handleClick.bind(this);
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
+        this.renderColumnHeaderSimple = this.renderColumnHeaderSimple.bind(this);
+        this.renderColumnHeaderWithDropdown = this.renderColumnHeaderWithDropdown.bind(this);
     }
 
     componentDidMount()
@@ -324,40 +323,43 @@ export default class DataTable extends React.PureComponent
 
     renderColumnHeaders()
     {
-        return this.props.onRenderColumnDropdown
-            ? this.renderColumnsHeadersWithDropdown()
-            : this.renderColumnHeadersSimple();
+        const render = this.props.onRenderColumnDropdown
+            ? this.renderColumnHeaderWithDropdown
+            : this.renderColumnHeaderSimple;
+
+        return this.props.columnNames.map(render);
     }
 
-    renderColumnHeadersSimple()
+    renderColumnHeaderSimple(name, index)
     {
-        return this.props.columnNames.map((name, index) =>
-        {
-            const className =
-                columnHeaderClassNames[index] + ' dtable-column-header-text';
+        const className = `dtable-column-header dtable-column-header-text dtable-column${index}`;
 
-            return (
-                <span
-                    key={index}
-                    title={name}
-                    className={className}>{name}</span>
-            );
-        });
+        return (
+            <span
+                key={index}
+                title={name}
+                className={className}>{name}</span>
+        );
     }
 
-    renderColumnsHeadersWithDropdown()
+    renderColumnHeaderWithDropdown(name, index)
     {
-        return this.props.columnNames.map((name, index) => (
+        const direction = index === this.props.columnNames.length - 1
+            ? 'left'
+            : 'right';
+
+        return (
             <DropdownLink
                 key={index}
                 title={name}
-                className={columnHeaderClassNames[index]}
+                direction={direction}
+                className={`dtable-column-header dtable-column${index}`}
                 linkClassName='dtable-column-header-text dtable-column-header-link'
                 isOpen={this.state.activeDropdownIndex === index}
                 onRequestOpen={o => this.openDropdown(index, o)}>
                 { this.props.onRenderColumnDropdown(index) }
             </DropdownLink>
-        ));
+        );
     }
 
     renderColumnStyle(index, size)
