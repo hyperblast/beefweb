@@ -11,12 +11,12 @@ const basePropTypes = Object.freeze({
     className: PropTypes.string,
     isOpen: PropTypes.bool.isRequired,
     onRequestOpen: PropTypes.func.isRequired,
-    autoHide: PropTypes.bool,
+    hideOnContentClick: PropTypes.bool,
     direction: PropTypes.oneOf(['left', 'center', 'right']),
 });
 
 const baseDefaultProps = Object.freeze({
-    autoHide: true,
+    hideOnContentClick: true,
     direction: 'right'
 });
 
@@ -27,12 +27,13 @@ export class Dropdown extends React.PureComponent
         super(props);
 
         this.state = {};
-        this.setElementRef = this.setElementRef.bind(this);
+        this.setToggleRef = this.setToggleRef.bind(this);
+        this.setContentRef = this.setContentRef.bind(this);
 
         bindHandlers(this);
     }
 
-    handleButtonClick(e)
+    handleToggleClick(e)
     {
         if (e.button !== 0)
             return;
@@ -43,24 +44,46 @@ export class Dropdown extends React.PureComponent
         this.props.onRequestOpen(!this.props.isOpen);
     }
 
+    handleContentClick(e)
+    {
+        if (e.button !== 0)
+            return;
+
+        e[dropdownTarget] = this;
+
+        if (this.props.hideOnContentClick)
+            this.props.onRequestOpen(false);
+    }
+
     handleWindowClick(e)
     {
         if (e.button !== 0)
             return;
 
-        if (this.props.autoHide && this !== e[dropdownTarget])
+        if (this !== e[dropdownTarget])
             this.props.onRequestOpen(false);
     }
 
-    setElementRef(element)
+    setToggleRef(element)
     {
-        if (this.element)
-            this.element.removeEventListener('click', this.handleButtonClick);
+        if (this.toggleElement)
+            this.toggleElement.removeEventListener('click', this.handleToggleClick);
 
-        this.element = element;
+        this.toggleElement = element;
 
-        if (this.element)
-            this.element.addEventListener('click', this.handleButtonClick);
+        if (this.toggleElement)
+            this.toggleElement.addEventListener('click', this.handleToggleClick);
+    }
+
+    setContentRef(element)
+    {
+        if (this.contentElement)
+            this.contentElement.removeEventListener('click', this.handleContentClick);
+
+        this.contentElement = element;
+
+        if (this.contentElement)
+            this.contentElement.addEventListener('click', this.handleContentClick);
     }
 
     componentDidMount()
@@ -81,12 +104,12 @@ export class Dropdown extends React.PureComponent
         const contentClass = makeClassName(
             ['dropdown-content', 'dropdown-' + direction, isOpen ? ' active' : '']);
 
-        const element = onRenderElement(this.setElementRef, isOpen);
+        const element = onRenderElement(this.setToggleRef, isOpen);
 
         return (
             <div className={dropdownClass}>
                 { element }
-                <div className={contentClass}>
+                <div ref={this.setContentRef} className={contentClass}>
                     {children}
                 </div>
             </div>

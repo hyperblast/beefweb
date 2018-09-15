@@ -117,7 +117,7 @@ class VolumeControl extends React.PureComponent
                         <DropdownButton
                             title='Show volume panel'
                             iconName={volumeIcon(isMuted)}
-                            autoHide={false}
+                            hideOnContentClick={false}
                             direction='center'
                             isOpen={panelOpen}
                             onRequestOpen={this.handlePanelRequestOpen}>
