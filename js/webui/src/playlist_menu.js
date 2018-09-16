@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 import PlaylistModel, { sortableColumns } from './playlist_model'
 import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { ConfirmDialog, InputDialog } from './dialogs'
-import { appendArray, bindHandlers } from './utils'
+import { bindHandlers } from './utils'
 import ModelBinding from './model_binding';
 import { DropdownButton } from './dropdown';
+import SettingsModel from './settings_model';
 
 class PlaylistMenu extends React.PureComponent
 {
@@ -21,6 +22,8 @@ class PlaylistMenu extends React.PureComponent
             addUrlDialogValue: '',
             renameDialogOpen: false,
             renameDialogValue: '',
+            sortDialogOpen: false,
+            sortDialogValue: '',
         });
 
         bindHandlers(this);
@@ -98,6 +101,7 @@ class PlaylistMenu extends React.PureComponent
     handleClearClick(e)
     {
         e.preventDefault();
+
         this.setState({ clearDialogOpen: true });
     }
 
@@ -142,6 +146,36 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ addUrlDialogOpen: false });
     }
 
+    handleSortClick(e)
+    {
+        e.preventDefault();
+
+        this.setState({
+            sortDialogOpen: true,
+            sortDialogValue: this.props.settingsModel.customSortBy,
+        });
+    }
+
+    handleSortOk()
+    {
+        this.setState({ sortDialogOpen: false });
+
+        const expression = this.state.sortDialogValue;
+
+        this.props.playlistModel.sortPlaylist(expression);
+        this.props.settingsModel.customSortBy = expression;
+    }
+
+    handleSortCancel()
+    {
+        this.setState({ sortDialogOpen: false });
+    }
+
+    handleSortUpdate(value)
+    {
+        this.setState({ sortDialogValue: value });
+    }
+
     sortBy(e, index)
     {
         e.preventDefault();
@@ -160,6 +194,8 @@ class PlaylistMenu extends React.PureComponent
             addUrlDialogValue,
             renameDialogOpen,
             renameDialogValue,
+            sortDialogOpen,
+            sortDialogValue,
         } = this.state;
 
         const menuItems = [
@@ -181,7 +217,9 @@ class PlaylistMenu extends React.PureComponent
             />
         ));
 
-        appendArray(menuItems, menuSortItems);
+        menuSortItems.push(
+            <MenuItem key='sortcustom' title='Custom...' onClick={this.handleSortClick} />
+        );
 
         const menu = (
             <DropdownButton
@@ -191,7 +229,7 @@ class PlaylistMenu extends React.PureComponent
                 isOpen={menuOpen}
                 onRequestOpen={this.handleMenuRequestOpen}>
                 <Menu>
-                    { menuItems }
+                    { menuItems } { menuSortItems }
                 </Menu>
             </DropdownButton>
         );
@@ -222,6 +260,13 @@ class PlaylistMenu extends React.PureComponent
                     onOk={this.handleRenameOk}
                     onCancel={this.handleRenameCancel}
                     onUpdate={this.handleRenameUpdate} />
+                <InputDialog
+                    message='Enter sort expression:'
+                    isOpen={sortDialogOpen}
+                    value={sortDialogValue}
+                    onOk={this.handleSortOk}
+                    onCancel={this.handleSortCancel}
+                    onUpdate={this.handleSortUpdate} />
             </div>
         );
 
@@ -236,7 +281,8 @@ class PlaylistMenu extends React.PureComponent
 }
 
 PlaylistMenu.propTypes = {
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired
+    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
 };
 
 export default ModelBinding(PlaylistMenu, { playlistModel: 'playlistsChange' });

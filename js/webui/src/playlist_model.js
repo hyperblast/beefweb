@@ -42,7 +42,6 @@ export const sortableColumns = [
     { title: 'Track number', expression: '%track%' },
     { title: 'Date', expression: '%date%' },
     { title: 'Title', expression: '%title%' },
-    { title: 'Artist/Date/Album/Track', expression: '%artist%/%date%/%album%/%track%' },
     { title: 'Random', random: true }
 ];
 

@@ -8,6 +8,7 @@ const storageKey = 'player_settings';
 export const SettingType = Object.freeze({
     bool: 'bool',
     enum: 'enum',
+    string: 'string',
 });
 
 export const FontSize = Object.freeze({
@@ -68,6 +69,13 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.bool,
             defaultValue: false,
             persistent: true,
+        });
+
+        this.define({
+            key: 'customSortBy',
+            type: SettingType.string,
+            defaultValue: '',
+            persistent: true
         });
 
         this.define({
