@@ -15,6 +15,10 @@ and [foobar2000](https://foobar2000.org/) music players.
 - Mobile-friendly responsive design
 - REST-like API for controlling player from your application
 
+### Browser support
+- Any recent browser should work
+- Due to high development effort required Internet Explorer of any version is not supported
+
 ### Downloads
 Check out [releases section](https://github.com/hyperblast/beefweb/releases).
 If you want to try development builds instead you could [download them here](https://hyperblast.org/beefweb/builds).
