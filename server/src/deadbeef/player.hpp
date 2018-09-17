@@ -92,6 +92,8 @@ public:
     void handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 private:
+    using PlaylistItemSelector = DB_playItem_t* (*)(DB_playItem_t*, int);
+
     PlaybackState getPlaybackState();
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
     void queryVolume(VolumeInfo* info);
@@ -103,6 +105,7 @@ private:
     void readVersion();
     void initArtwork();
     boost::intrusive_ptr<ArtworkRequest> buildArtworkRequest(const ArtworkQuery& query);
+    bool playNextBy(const std::string& expression, PlaylistItemSelector selector);
 
     PlaylistMutex playlistMutex_;
     ConfigMutex configMutex_;

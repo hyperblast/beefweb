@@ -47,17 +47,16 @@ std::vector<std::string> evaluateColumns(
     std::vector<std::string> results;
     results.reserve(formatters.size());
 
-    ddb_tf_context_t context;
-
-    memset(&context, 0, sizeof(context));
+    ddb_tf_context_t context{};
     context._size = sizeof(context);
     context.plt = playlist;
     context.it = item;
 
     int index = 0;
+    char buffer[TITLE_FORMAT_BUFFER_SIZE];
+
     for (auto& formatter : formatters)
     {
-        char buffer[1024];
         int size = ddbApi->tf_eval(&context, formatter.get(), buffer, sizeof(buffer));
         if (size < 0)
             throw std::runtime_error("Failed to evaluate expression at index " + toString(index));

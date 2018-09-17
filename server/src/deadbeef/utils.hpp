@@ -43,6 +43,8 @@ using PlaylistPtr = std::unique_ptr<ddb_playlist_t, PlaylistDeleter>;
 using PlaylistItemPtr = std::unique_ptr<ddb_playItem_t, PlaylistItemDeleter>;
 using TitleFormatPtr = std::unique_ptr<char, TitleFormatDeleter>;
 
+constexpr int TITLE_FORMAT_BUFFER_SIZE = 1024;
+
 PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index);
 
 std::vector<TitleFormatPtr> compileColumns(

@@ -156,9 +156,9 @@ void PlayerImpl::playNext()
     ddbApi->sendmessage(DB_EV_NEXT, 0, 0, 0);
 }
 
-bool PlayerImpl::playNextBy(const std::string&)
+bool PlayerImpl::playNextBy(const std::string& expression)
 {
-    return false;
+    return playNextBy(expression, ddbApi->pl_get_next);
 }
 
 void PlayerImpl::playPrevious()
@@ -166,8 +166,64 @@ void PlayerImpl::playPrevious()
     ddbApi->sendmessage(DB_EV_PREV, 0, 0, 0);
 }
 
-bool PlayerImpl::playPreviousBy(const std::string&)
+bool PlayerImpl::playPreviousBy(const std::string& expression)
 {
+    return playNextBy(expression, ddbApi->pl_get_prev);
+}
+
+bool PlayerImpl::playNextBy(const std::string& expression, PlayerImpl::PlaylistItemSelector selector)
+{
+    TitleFormatPtr format(ddbApi->tf_compile(expression.c_str()));
+    if (!format)
+        throw InvalidRequestException("Invalid format expression: " + expression);
+
+    PlaylistLockGuard lock(playlistMutex_);
+
+    int playlistIndex = ddbApi->streamer_get_current_playlist();
+    if (playlistIndex < 0)
+        return false;
+
+    PlaylistPtr playlist(ddbApi->plt_get_for_idx(playlistIndex));
+    PlaylistItemPtr activeItem(ddbApi->streamer_get_playing_track());
+
+    if (!activeItem)
+        return false;
+
+    ddb_tf_context_t context{};
+    context._size = sizeof(context);
+    context.plt = playlist.get();
+
+    auto eval = [&context, &format, &expression] (DB_playItem_t* item, char* buffer)
+    {
+        context.it = item;
+        auto ret = ddbApi->tf_eval(&context, format.get(), buffer, TITLE_FORMAT_BUFFER_SIZE);
+        if (ret < 0)
+            throw std::runtime_error("Failed to evaluate expression: " + expression);
+    };
+
+    char activeValue[TITLE_FORMAT_BUFFER_SIZE];
+    char currentValue[TITLE_FORMAT_BUFFER_SIZE];
+
+    eval(activeItem.get(), activeValue);
+
+    for (
+        auto current = PlaylistItemPtr(selector(activeItem.get(), PL_MAIN));
+        current;
+        current = PlaylistItemPtr(selector(current.get(), PL_MAIN)))
+    {
+        eval(current.get(), currentValue);
+
+        if (strcmp(activeValue, currentValue) == 0)
+            continue;
+
+        auto index = ddbApi->plt_get_item_idx(playlist.get(), current.get(), PL_MAIN);
+        if (index < 0)
+            return false;
+
+        ddbApi->sendmessage(DB_EV_PLAY_NUM, 0, index, 0);
+        return true;
+    }
+
     return false;
 }
 
