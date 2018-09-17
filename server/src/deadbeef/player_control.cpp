@@ -156,9 +156,19 @@ void PlayerImpl::playNext()
     ddbApi->sendmessage(DB_EV_NEXT, 0, 0, 0);
 }
 
+bool PlayerImpl::playNextBy(const std::string&)
+{
+    return false;
+}
+
 void PlayerImpl::playPrevious()
 {
     ddbApi->sendmessage(DB_EV_PREV, 0, 0, 0);
+}
+
+bool PlayerImpl::playPreviousBy(const std::string&)
+{
+    return false;
 }
 
 void PlayerImpl::stop()

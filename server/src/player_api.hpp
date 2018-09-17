@@ -230,13 +230,15 @@ public:
 
     // Player control and query API
 
-    virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) = 0;
+    virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery) = 0;
 
     virtual void playCurrent() = 0;
     virtual void playItem(const PlaylistRef& playlist, int32_t itemIndex) = 0;
     virtual void playRandom() = 0;
     virtual void playNext() = 0;
+    virtual bool playNextBy(const std::string& expression) = 0;
     virtual void playPrevious() = 0;
+    virtual bool playPreviousBy(const std::string& expression) = 0;
     virtual void stop() = 0;
     virtual void pause() = 0;
     virtual void togglePause() = 0;

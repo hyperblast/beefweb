@@ -22,7 +22,9 @@ public:
     virtual void playItem(const PlaylistRef& playlist, int32_t itemIndex) override;
     virtual void playRandom() override;
     virtual void playNext() override;
+    virtual bool playNextBy(const std::string& expression) override { return false; }
     virtual void playPrevious() override;
+    virtual bool playPreviousBy(const std::string& expression) override { return false; }
     virtual void stop() override;
     virtual void pause() override;
     virtual void togglePause() override;
