@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlayerModel from './player_model'
+import PlayerModel, { navigationColumns } from './player_model'
 import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { bindHandlers } from './utils'
 import urls from './urls';
@@ -41,6 +41,12 @@ class PlaybackControl extends React.PureComponent
         this.props.playerModel.play();
     }
 
+    handlePlayRandom(e)
+    {
+        e.preventDefault();
+        this.props.playerModel.playRandom();
+    }
+
     handlePause(e)
     {
         e.preventDefault();
@@ -53,10 +59,22 @@ class PlaybackControl extends React.PureComponent
         this.props.playerModel.previous();
     }
 
+    handlePreviousBy(e, index)
+    {
+        e.preventDefault();
+        this.props.playerModel.previousBy(navigationColumns[index].expression);
+    }
+
     handleNext(e)
     {
         e.preventDefault();
         this.props.playerModel.next();
+    }
+
+    handleNextBy(e, index)
+    {
+        e.preventDefault();
+        this.props.playerModel.nextBy(navigationColumns[index].expression);
     }
 
     handleSetMode(e, value)
@@ -94,10 +112,26 @@ class PlaybackControl extends React.PureComponent
 
         const modeMenuItems = playbackModes.map((mode, index) => (
             <MenuItem
-                key={index}
+                key={'plmode' + index}
                 title={mode}
                 checked={index === playbackMode}
                 onClick={e => this.handleSetMode(e, index)} />
+        ));
+
+        const nextByMenuItems = navigationColumns.map((column, index) => (
+            <MenuItem
+                key={'nextby' + index}
+                title={column.title}
+                checked={false}
+                onClick={e => this.handleNextBy(e, index)} />
+        ));
+
+        const prevByMenuItems = navigationColumns.map((column, index) => (
+            <MenuItem
+                key={'prevby' + index}
+                title={column.title}
+                checked={false}
+                onClick={e => this.handlePreviousBy(e, index)} />
         ));
 
         return (
@@ -139,6 +173,11 @@ class PlaybackControl extends React.PureComponent
                     onRequestOpen={this.handleNavigationMenuRequestOpen}>
                     <Menu>
                         <MenuItem
+                            title='Play random'
+                            checked={false}
+                            onClick={this.handlePlayRandom} />
+                        <MenuSeparator />
+                        <MenuItem
                             title='Locate current track'
                             checked={false}
                             href={urls.nowPlaying} />
@@ -146,6 +185,12 @@ class PlaybackControl extends React.PureComponent
                             title='Cursor follows playback'
                             checked={cursorFollowsPlayback}
                             onClick={this.handleCursorFollowsPlaybackClick} />
+                        <MenuSeparator />
+                        <MenuLabel title='Play next' />
+                        { nextByMenuItems }
+                        <MenuSeparator />
+                        <MenuLabel title='Play previous'/>
+                        { prevByMenuItems }
                     </Menu>
                 </DropdownButton>
             </div>

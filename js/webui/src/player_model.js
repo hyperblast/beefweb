@@ -32,6 +32,11 @@ const initialPlayerInfo = Object.freeze({
     activeItemId: '',
 });
 
+export const navigationColumns = [
+    { title: 'Artist', expression: '%artist%' },
+    { title: 'Album', expression: '%album%' },
+];
+
 export default class PlayerModel extends EventEmitter
 {
     constructor(client, dataSource)
@@ -63,6 +68,11 @@ export default class PlayerModel extends EventEmitter
         this.client.playCurrent();
     }
 
+    playRandom()
+    {
+        this.client.playRandom();
+    }
+
     stop()
     {
         this.client.stop();
@@ -78,9 +88,19 @@ export default class PlayerModel extends EventEmitter
         this.client.next();
     }
 
+    nextBy(expression)
+    {
+        this.client.next({ by: expression });
+    }
+
     previous()
     {
         this.client.previous();
+    }
+
+    previousBy(expression)
+    {
+        this.client.previous({ by: expression });
     }
 
     mute()
