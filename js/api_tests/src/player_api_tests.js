@@ -201,6 +201,23 @@ q.test('next', async assert =>
     assert.ok(true);
 });
 
+q.test('next by', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t1, tracks.t2]);
+
+    await client.play(0, 0);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 0;
+    });
+
+    await client.next({ by: '%title%' });
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 2;
+    });
+
+    assert.ok(true);
+});
+
 q.test('previous', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
@@ -211,6 +228,23 @@ q.test('previous', async assert =>
     });
 
     await client.previous();
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 0;
+    });
+
+    assert.ok(true);
+});
+
+q.test('previous by', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t2]);
+
+    await client.play(0, 2);
+    await client.waitForState(s => {
+        return s.playbackState === 'playing' && s.activeItem.index === 2;
+    });
+
+    await client.previous({ by: '%title%' });
     await client.waitForState(s => {
         return s.playbackState === 'playing' && s.activeItem.index === 0;
     });

@@ -96,14 +96,14 @@ export default class PlayerClient
         return this.post('api/player/pause/toggle');
     }
 
-    previous()
+    previous(params)
     {
-        return this.post('api/player/previous');
+        return this.post('api/player/previous', params);
     }
 
-    next()
+    next(params)
     {
-        return this.post('api/player/next');
+        return this.post('api/player/next', params);
     }
 
     getPlaylists()
