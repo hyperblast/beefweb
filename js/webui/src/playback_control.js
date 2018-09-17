@@ -5,7 +5,7 @@ import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { bindHandlers } from './utils'
 import urls from './urls';
 import ModelBinding from './model_binding';
-import SettingsModel from './settings_model';
+import SettingsModel, { MediaSize } from './settings_model';
 import { DropdownButton } from './dropdown';
 
 class PlaybackControl extends React.PureComponent
@@ -24,9 +24,20 @@ class PlaybackControl extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playbackMode, playbackModes } = this.props.playerModel;
-        const { cursorFollowsPlayback } = this.props.settingsModel;
-        return { playbackMode, playbackModes, cursorFollowsPlayback };
+        const { playerModel, settingsModel } = this.props;
+        const { playbackMode, playbackModes } = playerModel;
+        const { cursorFollowsPlayback } = settingsModel;
+
+        const menuDirection = settingsModel.mediaSizeUp(MediaSize.medium)
+            ? 'right'
+            : 'center';
+
+        return {
+            playbackMode,
+            playbackModes,
+            cursorFollowsPlayback,
+            menuDirection
+        };
     }
 
     handleStop(e)
@@ -106,8 +117,9 @@ class PlaybackControl extends React.PureComponent
             playbackMode,
             playbackModes,
             cursorFollowsPlayback,
+            menuDirection,
             audioMenuOpen,
-            navigationMenuOpen
+            navigationMenuOpen,
         } = this.state;
 
         const modeMenuItems = playbackModes.map((mode, index) => (
@@ -159,6 +171,7 @@ class PlaybackControl extends React.PureComponent
                 <DropdownButton
                     iconName='audio'
                     title='Audio menu'
+                    direction={menuDirection}
                     isOpen={audioMenuOpen}
                     onRequestOpen={this.handleAudioMenuRequestOpen}>
                     <Menu>
@@ -169,6 +182,7 @@ class PlaybackControl extends React.PureComponent
                 <DropdownButton
                     iconName='share'
                     title='Navigation menu'
+                    direction={menuDirection}
                     isOpen={navigationMenuOpen}
                     onRequestOpen={this.handleNavigationMenuRequestOpen}>
                     <Menu>
@@ -205,5 +219,5 @@ PlaybackControl.propTypes = {
 
 export default ModelBinding(PlaybackControl, {
     playerModel: 'change',
-    settingsModel: 'cursorFollowsPlaybackChange',
+    settingsModel: [ 'cursorFollowsPlaybackChange', 'mediaSizeChange' ],
 });
