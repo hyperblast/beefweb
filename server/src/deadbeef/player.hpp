@@ -102,7 +102,7 @@ private:
     void setModes(int order, int loop);
     int32_t getPlaybackMode();
     void endModifyPlaylist(ddb_playlist_t* playlist);
-    void readVersion();
+    void initVersion();
     void initArtwork();
     boost::intrusive_ptr<ArtworkRequest> buildArtworkRequest(const ArtworkQuery& query);
     bool playNextBy(const std::string& expression, PlaylistItemSelector selector);

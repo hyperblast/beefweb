@@ -32,26 +32,15 @@ void PlayerImpl::initArtwork()
     artworkPlugin_ = reinterpret_cast<DB_artwork_plugin_t*>(artwork);
 }
 
-void PlayerImpl::readVersion()
+void PlayerImpl::initVersion()
 {
-    TitleFormatPtr versionFormat(ddbApi->tf_compile("%_deadbeef_version%"));
-
-    if (!versionFormat)
-        return;
-
-    ddb_tf_context_t context;
-    memset(&context, 0, sizeof(context));
-    context._size = sizeof(context);
-
-    char buffer[64];
-    int ret = ddbApi->tf_eval(&context, versionFormat.get(), buffer, sizeof(buffer));
-    if (ret >= 0)
-        version_ = buffer;
+    ConfigLockGuard lock(configMutex_);
+    version_ = ddbApi->conf_get_str_fast("deadbeef_version", "");
 }
 
 void PlayerImpl::connect()
 {
-    readVersion();
+    initVersion();
     initArtwork();
 }
 
