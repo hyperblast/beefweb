@@ -117,6 +117,11 @@ paths:
       operationId: playNext
       summary: Play next item in currently played playlist
       tags: [ player ]
+      parameters:
+      - name: by
+        description: Expression to select next item by (e.g. %artist%).
+        in: query
+        type: string
       responses:
         204:
           description: Success
@@ -126,6 +131,11 @@ paths:
       operationId: playPrevious
       summary: Play previous item in currently played playlist
       tags: [ player ]
+      parameters:
+      - name: by
+        description: Expression to select previous item by (e.g. %artist%).
+        in: query
+        type: string
       responses:
         204:
           description: Success
