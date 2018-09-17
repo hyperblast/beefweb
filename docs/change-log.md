@@ -4,7 +4,7 @@
 - Added "Cursor follows playback" option
 - Implemented proper escaping for array query string parameters
 - Added playlist sort operations
-- Added "Play Next/Previous Artist/Album" operations
+- Added "Play next/previous artist/album" operations
 
 ### Changes in v0.2 (released 2018-08-25):
 - First official release
