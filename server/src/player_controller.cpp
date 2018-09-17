@@ -56,12 +56,18 @@ void PlayerController::playCurrent()
 
 void PlayerController::playNext()
 {
-    player_->playNext();
+    if (auto by = optionalParam<std::string>("by"))
+        player_->playNextBy(*by);
+    else
+        player_->playNext();
 }
 
 void PlayerController::playPrevious()
 {
-    player_->playPrevious();
+    if (auto by = optionalParam<std::string>("by"))
+        player_->playPreviousBy(*by);
+    else
+        player_->playPrevious();
 }
 
 void PlayerController::playRandom()
