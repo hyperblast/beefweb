@@ -203,7 +203,9 @@ q.test('next', async assert =>
 
 q.test('next by', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t1, tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
 
     await client.play(0, 0);
     await client.waitForState(s => {
@@ -237,7 +239,9 @@ q.test('previous', async assert =>
 
 q.test('previous by', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t2]);
 
     await client.play(0, 2);
     await client.waitForState(s => {
