@@ -22,9 +22,9 @@ public:
     virtual void playItem(const PlaylistRef& playlist, int32_t itemIndex) override;
     virtual void playRandom() override;
     virtual void playNext() override;
-    virtual bool playNextBy(const std::string& expression) override { return false; }
+    virtual bool playNextBy(const std::string& expression) override;
     virtual void playPrevious() override;
-    virtual bool playPreviousBy(const std::string& expression) override { return false; }
+    virtual bool playPreviousBy(const std::string& expression) override;
     virtual void stop() override;
     virtual void pause() override;
     virtual void togglePause() override;
@@ -111,6 +111,8 @@ private:
         t_size playlist,
         const std::vector<int32_t>& indexes,
         pfc::bit_array_flatIndexList* mask);
+
+    bool playNextBy(const std::string& expression, int increment);
 
     service_ptr_t<playback_control> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;

@@ -151,9 +151,70 @@ void PlayerImpl::playNext()
     playbackControl_->next();
 }
 
+bool PlayerImpl::playNextBy(const std::string& expression)
+{
+    return playNextBy(expression, 1);
+}
+
 void PlayerImpl::playPrevious()
 {
     playbackControl_->previous();
+}
+
+bool PlayerImpl::playPreviousBy(const std::string& expression)
+{
+    return playNextBy(expression, -1);
+}
+
+bool PlayerImpl::playNextBy(const std::string& expression, int increment)
+{
+    service_ptr_t<titleformat_object> format;
+
+    if (!titleFormatCompiler_->compile(format, expression.c_str()))
+        throw InvalidRequestException("Invalid title format: " + expression);
+
+    t_size playlist;
+    t_size activeItem;
+    if (!playlistManager_->get_playing_item_location(&playlist, &activeItem))
+        return false;
+
+    pfc::string8 activeValue;
+    pfc::string8 currentValue;
+
+    const auto ret = playbackControl_->playback_format_title(
+        nullptr,
+        activeValue,
+        format,
+        nullptr,
+        playback_control::display_level_titles);
+
+    if (!ret)
+        return false;
+
+    const auto count = playlistManager_->playlist_get_item_count(playlist);
+
+    for (
+        t_size item = activeItem + increment;
+        item < count;
+        item += increment)
+    {
+        playlistManager_->playlist_item_format_title(
+            playlist,
+            item,
+            nullptr,
+            currentValue,
+            format,
+            nullptr,
+            playback_control::display_level_titles);
+
+        if (activeValue == currentValue)
+            continue;
+
+        playlistManager_->playlist_execute_default_action(playlist, item);
+        return true;
+    }
+
+    return false;
 }
 
 void PlayerImpl::stop()
