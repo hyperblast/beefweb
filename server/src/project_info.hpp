@@ -11,7 +11,7 @@
 #define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
 #define MSRV_VERSION_MAJOR      0
 #define MSRV_VERSION_MINOR      3
-#define MSRV_VERSION_FINAL      0
+#define MSRV_VERSION_FINAL      1
 
 #define MSRV_DEFAULT_PORT       8880
 #define MSRV_DEFAULT_TEST_PORT  8882

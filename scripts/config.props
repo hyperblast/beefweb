@@ -4,7 +4,7 @@
         <ProjectName>beefweb</ProjectName>
         <PackageFile>foo_beefweb</PackageFile>
         <PackageVersion>0.3</PackageVersion>
-        <PackageVersionFinal>False</PackageVersionFinal>
+        <PackageVersionFinal>True</PackageVersionFinal>
         <PluginFile>foo_beefweb.dll</PluginFile>
         <WebuiRoot>beefweb.root</WebuiRoot>
     </PropertyGroup>
