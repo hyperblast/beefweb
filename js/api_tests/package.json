@@ -1,6 +1,6 @@
 {
   "name": "beefweb-api-tests",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Beefweb API tests",
   "main": "src/main.js",
   "repository": "https://github.com/hyperblast/beefweb",

@@ -1,4 +1,7 @@
 ### Changes in v0.3 (not released):
+
+
+### Changes in v0.3 (2018-09-20):
 - Added button that locates currently played track
 - Fixed volume and mute state not being synchronized
 - Added "Cursor follows playback" option
