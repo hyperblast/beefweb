@@ -80,15 +80,42 @@ function update_jslib
     update_package_json "$root_dir/js/client"
 }
 
+function add_change_log_entry
+{
+    cd "$root_dir/docs"
+
+    change_log_data="### Changes in v$version (not released):
+
+
+$(cat change-log.md)"
+
+    echo "$change_log_data" > change-log.md
+}
+
+function mark_change_log_entry_as_released
+{
+    cd "$root_dir/docs"
+    release_date=$(date -u +%F)
+    sed -i "s|v$version (.*)|v$version (released $release_date)|" change-log.md
+}
+
+function unmark_change_log_entry_as_released
+{
+    cd "$root_dir/docs"
+    sed -i "s|v$version (.*)|v$version (not released)|" change-log.md
+}
+
+update_change_log=""
+
 case "$1" in
     app)
         init_app
-        update_func=update_app
+        update_version=update_app
         ;;
 
     jslib)
         init_jslib
-        update_func=update_jslib
+        update_version=update_jslib
         ;;
 
     *)
@@ -102,22 +129,31 @@ case "$2" in
         major=$((major + 1))
         minor=0
         final=0
+        update_change_log=add_change_log_entry
         ;;
 
     minor)
         minor=$((minor + 1))
         final=0
+        update_change_log=add_change_log_entry
         ;;
 
     dev)
         final=0
+        update_change_log=unmark_change_log_entry_as_released
         ;;
 
     final)
         final=1
+        update_change_log=mark_change_log_entry_as_released
         ;;
 
     refresh)
+        if [ $final -ne 0 ]; then
+            update_change_log=mark_change_log_entry_as_released
+        else
+            update_change_log=unmark_change_log_entry_as_released
+        fi
         ;;
 
     *)
@@ -126,4 +162,9 @@ case "$2" in
 esac
 
 version=$major.$minor
-$update_func
+
+$update_version
+
+if [ $update_version = update_app ]; then
+    $update_change_log
+fi

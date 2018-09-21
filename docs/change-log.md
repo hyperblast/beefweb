@@ -1,4 +1,4 @@
-### Changes in v0.3 (not released):
+### Changes in v0.4 (not released):
 
 
 ### Changes in v0.3 (released 2018-09-20):
