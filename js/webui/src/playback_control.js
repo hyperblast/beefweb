@@ -15,8 +15,8 @@ class PlaybackControl extends React.PureComponent
         super(props);
 
         this.state = Object.assign(this.getStateFromModel(), {
-            audioMenuOpen: false,
-            navigationMenuOpen: false,
+            playbackModeOpen: false,
+            navigationOpen: false,
         });
 
         bindHandlers(this);
@@ -88,20 +88,20 @@ class PlaybackControl extends React.PureComponent
         this.props.playerModel.nextBy(navigationColumns[index].expression);
     }
 
-    handleSetMode(e, value)
+    handleSetPlaybackMode(e, value)
     {
         e.preventDefault();
         this.props.playerModel.setPlaybackMode(value);
     }
 
-    handleAudioMenuRequestOpen(value)
+    handlePlaybackModeRequestOpen(value)
     {
-        this.setState({ audioMenuOpen: value });
+        this.setState({ playbackModeOpen: value });
     }
 
-    handleNavigationMenuRequestOpen(value)
+    handleNavigationRequestOpen(value)
     {
-        this.setState({ navigationMenuOpen: value });
+        this.setState({ navigationOpen: value });
     }
 
     handleCursorFollowsPlaybackClick(e)
@@ -118,16 +118,16 @@ class PlaybackControl extends React.PureComponent
             playbackModes,
             cursorFollowsPlayback,
             menuDirection,
-            audioMenuOpen,
-            navigationMenuOpen,
+            playbackModeOpen,
+            navigationOpen,
         } = this.state;
 
-        const modeMenuItems = playbackModes.map((mode, index) => (
+        const playbackModeMenuItems = playbackModes.map((mode, index) => (
             <MenuItem
                 key={'plmode' + index}
                 title={mode}
                 checked={index === playbackMode}
-                onClick={e => this.handleSetMode(e, index)} />
+                onClick={e => this.handleSetPlaybackMode(e, index)} />
         ));
 
         const nextByMenuItems = navigationColumns.map((column, index) => (
@@ -170,21 +170,21 @@ class PlaybackControl extends React.PureComponent
                     onClick={this.handleNext} />
                 <DropdownButton
                     iconName='audio'
-                    title='Audio menu'
+                    title='Playback mode'
                     direction={menuDirection}
-                    isOpen={audioMenuOpen}
-                    onRequestOpen={this.handleAudioMenuRequestOpen}>
+                    isOpen={playbackModeOpen}
+                    onRequestOpen={this.handlePlaybackModeRequestOpen}>
                     <Menu>
-                        <MenuLabel title='Mode' />
-                        { modeMenuItems }
+                        <MenuLabel title='Playback mode' />
+                        { playbackModeMenuItems }
                     </Menu>
                 </DropdownButton>
                 <DropdownButton
                     iconName='share'
-                    title='Navigation menu'
+                    title='Navigation'
                     direction={menuDirection}
-                    isOpen={navigationMenuOpen}
-                    onRequestOpen={this.handleNavigationMenuRequestOpen}>
+                    isOpen={navigationOpen}
+                    onRequestOpen={this.handleNavigationRequestOpen}>
                     <Menu>
                         <MenuItem
                             title='Play random'

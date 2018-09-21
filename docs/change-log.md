@@ -1,5 +1,5 @@
 ### Changes in v0.4 (not released):
-
+- Renamed "Audio menu" to "Playback mode"
 
 ### Changes in v0.3 (released 2018-09-20):
 - Added button that locates currently played track
