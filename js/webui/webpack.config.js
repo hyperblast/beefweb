@@ -36,6 +36,14 @@ function configApp(config, params)
 
     config.output.path = params.outputDir;
 
+    if (params.buildType === 'release')
+    {
+        const limit = 300 * 1024;
+        config.performance.hints = 'error';
+        config.performance.maxEntrypointSize = limit;
+        config.performance.maxAssetSize = limit;
+    }
+
     config.entry.push('./src/style.less');
     config.entry.push('./src/index.js');
 
