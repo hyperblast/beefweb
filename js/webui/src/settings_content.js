@@ -37,7 +37,7 @@ class SettingsContent extends React.PureComponent
     render()
     {
         const { settingsView } = this.state;
-        
+
         return (
             <div className={'panel main-panel settings settings-' + settingsView}>
                 { this.renderView[settingsView].call(this) }
