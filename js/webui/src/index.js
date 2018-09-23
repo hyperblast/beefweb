@@ -5,7 +5,7 @@ import { PlayerClient } from 'beefweb-client'
 import App from './app'
 import RequestHandler from './request_handler'
 import SettingsStore from './settings_store'
-import AppModel, { ViewId } from './app_model'
+import AppModel from './app_model'
 import MediaSizeController from './media_size_controller'
 import TouchModeController from './touch_mode_controller'
 import WindowController from './window_controller'
@@ -13,12 +13,20 @@ import CssSettingsController from './css_settings_controller'
 import urls, { getPathFromUrl } from './urls'
 import { playlistTableKey } from './playlist_content';
 import { PlaybackState } from 'beefweb-client/src';
+import { View } from './navigation_model';
 
 const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();
 const appModel = new AppModel(client, settingsStore);
 
-const { playerModel, playlistModel, fileBrowserModel, settingsModel, scrollManager } = appModel;
+const {
+    playerModel,
+    playlistModel,
+    fileBrowserModel,
+    settingsModel,
+    scrollManager,
+    navigationModel,
+} = appModel;
 
 const mediaSizeController = new MediaSizeController(settingsModel);
 const touchModeController = new TouchModeController(settingsModel);
@@ -35,12 +43,12 @@ router.on({
         if (playlistModel.currentPlaylistId)
             router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
         else
-            appModel.setCurrentView(ViewId.playlist);
+            navigationModel.setView(View.playlist);
     },
 
     '/playlists/:id': params => {
         playlistModel.setCurrentPlaylistId(params.id);
-        appModel.setCurrentView(ViewId.playlist);
+        navigationModel.setView(View.playlist);
     },
 
     '/files': () => {
@@ -48,13 +56,13 @@ router.on({
     },
 
     '/files/!*': () => {
-        appModel.setCurrentView(ViewId.fileBrowser);
+        navigationModel.setView(View.fileBrowser);
         const path = getPathFromUrl(router.lastRouteResolved().url);
         fileBrowserModel.browse(path);
     },
 
     '/settings': () => {
-        appModel.setCurrentView(ViewId.settings);
+        navigationModel.setView(View.settings);
     },
 
     '/now-playing': () => {
@@ -83,7 +91,7 @@ router.on({
 });
 
 router.notFound(() => {
-    appModel.setCurrentView(ViewId.notFound);
+    navigationModel.setView(View.notFound);
 });
 
 playerModel.on('trackSwitch', () => {
@@ -98,7 +106,7 @@ playerModel.on('trackSwitch', () => {
 
 playlistModel.on('playlistsChange', () => {
 
-    if (appModel.currentView !== ViewId.playlist)
+    if (navigationModel.view !== View.playlist)
         return;
 
     if (playlistModel.currentPlaylistId)
@@ -116,5 +124,5 @@ windowController.start();
 router.resolve();
 
 ReactDom.render(
-    <App appModel={appModel} />,
+    <App appModel={appModel} navigationModel={navigationModel} />,
     document.getElementById('app-container'));

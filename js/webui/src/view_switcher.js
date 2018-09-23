@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import AppModel, { ViewId } from './app_model'
 import { Button } from './elements'
 import urls from './urls'
 import ModelBinding from './model_binding';
+import NavigationModel, { View } from './navigation_model';
 
 class ViewSwitcher extends React.PureComponent
 {
@@ -16,8 +16,8 @@ class ViewSwitcher extends React.PureComponent
 
     getStateFromModel()
     {
-        const { currentView } = this.props.appModel;
-        return { view: currentView };
+        const { view } = this.props.navigationModel;
+        return { view };
     }
 
     render()
@@ -29,17 +29,17 @@ class ViewSwitcher extends React.PureComponent
                 <Button
                     name='list'
                     href={urls.viewCurrentPlaylist}
-                    active={view == ViewId.playlist}
+                    active={view === View.playlist}
                     title='View playlists' />
                 <Button
                     name='folder'
                     href={urls.browseCurrentPath}
-                    active={view == ViewId.fileBrowser}
+                    active={view === View.fileBrowser}
                     title='Browse files' />
                 <Button
                     name='cog'
                     href={urls.viewSettings}
-                    active={view == ViewId.settings}
+                    active={view === View.settings}
                     title='View settings' />
             </div>
         );
@@ -47,7 +47,7 @@ class ViewSwitcher extends React.PureComponent
 }
 
 ViewSwitcher.propTypes = {
-    appModel: PropTypes.instanceOf(AppModel).isRequired
+    navigationModel: PropTypes.instanceOf(NavigationModel).isRequired
 };
 
-export default ModelBinding(ViewSwitcher, { appModel: 'currentViewChange' });
+export default ModelBinding(ViewSwitcher, { navigationModel: 'viewChange' });
