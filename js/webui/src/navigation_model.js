@@ -8,9 +8,20 @@ export const View = Object.freeze({
 });
 
 export const SettingsView = Object.freeze({
-    client: 'client',
+    general: 'general',
     columns: 'columns'
 });
+
+export const SettingsViewMetadata = [
+    {
+        key: SettingsView.general,
+        title: 'General',
+    },
+    {
+        key: SettingsView.columns,
+        title: 'Columns',
+    },
+];
 
 export default class NavigationModel extends EventEmitter
 {
@@ -19,7 +30,7 @@ export default class NavigationModel extends EventEmitter
         super();
 
         this.view = View.playlist;
-        this.settingsView = SettingsView.client;
+        this.settingsView = SettingsView.general;
 
         this.defineEvent('viewChange');
         this.defineEvent('settingsViewChange');

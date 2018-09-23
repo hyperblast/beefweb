@@ -38,7 +38,7 @@ class ViewSwitcher extends React.PureComponent
                     title='Browse files' />
                 <Button
                     name='cog'
-                    href={urls.viewSettings}
+                    href={urls.viewCurrentSettings}
                     active={view === View.settings}
                     title='View settings' />
             </div>

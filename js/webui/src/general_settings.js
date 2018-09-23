@@ -150,21 +150,19 @@ SettingEditor.propTypes = {
     settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
 };
 
-export default function Settings(props)
+export default function GeneralSettings(props)
 {
     const model = props.settingsModel;
 
     return (
-        <div className='panel main-panel settings'>
-            <form>
-                <SettingEditor settingKey='fullWidth' settingsModel={model} />
-                <SettingEditor settingKey='fontSize' settingsModel={model} />
-                <SettingEditor settingKey='inputMode' settingsModel={model} />
-            </form>
-        </div>
+        <form>
+            <SettingEditor settingKey='fullWidth' settingsModel={model} />
+            <SettingEditor settingKey='fontSize' settingsModel={model} />
+            <SettingEditor settingKey='inputMode' settingsModel={model} />
+        </form>
     );
 }
 
-Settings.propTypes = {
+GeneralSettings.propTypes = {
     settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
 };

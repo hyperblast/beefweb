@@ -13,7 +13,7 @@ import CssSettingsController from './css_settings_controller'
 import urls, { getPathFromUrl } from './urls'
 import { playlistTableKey } from './playlist_content';
 import { PlaybackState } from 'beefweb-client/src';
-import { View } from './navigation_model';
+import { SettingsView, View } from './navigation_model';
 
 const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();
@@ -62,7 +62,17 @@ router.on({
     },
 
     '/settings': () => {
-        navigationModel.setView(View.settings);
+        router.navigate(urls.viewSettings(navigationModel.settingsView));
+    },
+
+    '/settings/:view': params => {
+        if (params.view in SettingsView)
+        {
+            navigationModel.setView(View.settings);
+            navigationModel.setSettingsView(params.view);
+        }
+        else
+            navigationModel.setView(View.notFound);
     },
 
     '/now-playing': () => {

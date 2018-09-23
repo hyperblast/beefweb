@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
+import { makeClassName } from './dom_utils';
 
 export function Icon(props)
 {
@@ -114,7 +115,26 @@ export function PanelHeader(props)
         </div>
     );
 }
-
 PanelHeader.propTypes = {
     title: PropTypes.string.isRequired
+};
+
+export function PanelHeaderTab(props)
+{
+    const className = makeClassName({
+        'header-tab': true,
+        'header-tab-active': props.active
+    });
+
+    return (
+        <li className={className}>
+            <a href={props.href} title={props.title}>{props.title}</a>
+        </li>
+    );
+}
+
+PanelHeaderTab.propTypes = {
+    active: PropTypes.bool.isRequired,
+    href: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
 };

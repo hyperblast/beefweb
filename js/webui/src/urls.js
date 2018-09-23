@@ -13,7 +13,12 @@ const urls = Object.freeze({
         return `#/files/!${encodeURIComponent(path)}`;
     },
 
-    viewSettings: '#/settings',
+    viewCurrentSettings: '#/settings',
+
+    viewSettings(view)
+    {
+        return `#/settings/${view}`;
+    },
 
     nowPlaying: '#/now-playing',
 });

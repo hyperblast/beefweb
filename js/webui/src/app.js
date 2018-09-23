@@ -8,10 +8,11 @@ import PlaylistMenu from './playlist_menu'
 import PlaylistContent from './playlist_content'
 import FileBrowser from './file_browser'
 import FileBrowserHeader from './file_browser_header'
-import Settings from './settings'
 import StatusBar from './status_bar'
 import ModelBinding from './model_binding';
 import NavigationModel, { View } from './navigation_model';
+import SettingsHeader from './settings_header';
+import SettingsContent from './settings_content';
 
 class App extends React.PureComponent
 {
@@ -93,11 +94,18 @@ class App extends React.PureComponent
 
     renderSettingsView()
     {
-        const { settingsModel } = this.props.appModel;
+        const { navigationModel, settingsModel } = this.props.appModel;
 
         return {
-            header: <PanelHeader title='Settings' />,
-            main: <Settings settingsModel={settingsModel} />
+            header: (
+                <SettingsHeader
+                    navigationModel={navigationModel} />
+            ),
+            main: (
+                <SettingsContent
+                    navigationModel={navigationModel}
+                    settingsModel={settingsModel} />
+            )
         };
     }
 
