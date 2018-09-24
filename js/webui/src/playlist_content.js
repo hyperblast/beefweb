@@ -41,8 +41,7 @@ class PlaylistContent extends React.PureComponent
 
         return {
             playbackState,
-            columnNames: columns.names,
-            columnSizes: columns.sizes,
+            columns,
             offset,
             totalCount,
             items,
@@ -93,9 +92,7 @@ class PlaylistContent extends React.PureComponent
 
     handleRenderColumnDropdown(index)
     {
-        const { columns } = this.props.playlistModel;
-        const name = columns.names[index];
-        const expression  = columns.expressions[index];
+        const { title, expression } = this.props.playlistModel.columns[index];
 
         const sortAsc = e => {
             e.preventDefault();
@@ -109,7 +106,7 @@ class PlaylistContent extends React.PureComponent
 
         return (
             <Menu>
-                <MenuLabel title={'Sort by ' + name} />
+                <MenuLabel title={'Sort by ' + title} />
                 <MenuItem title={'Ascending'} onClick={sortAsc} />
                 <MenuItem title={'Descending'} onClick={sortDesc} />
             </Menu>
@@ -118,11 +115,15 @@ class PlaylistContent extends React.PureComponent
 
     render()
     {
+        const { columns } = this.state;
+        const columnNames = columns.map(c => c.title);
+        const columnSizes = columns.map(c => c.size);
+
         return (
             <DataTable
                 useIcons={true}
-                columnNames={this.state.columnNames}
-                columnSizes={this.state.columnSizes}
+                columnNames={columnNames}
+                columnSizes={columnSizes}
                 data={this.getTableData()}
                 offset={this.state.offset}
                 totalCount={this.state.totalCount}

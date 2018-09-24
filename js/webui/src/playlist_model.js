@@ -2,39 +2,68 @@ import EventEmitter from 'wolfy87-eventemitter'
 import { arrayMove } from 'react-sortable-hoc'
 import { MediaSize } from './settings_model'
 
-const standardPreset = Object.freeze({
-    names: [
-        'Artist',
-        'Album',
-        'Track No',
-        'Title',
-        'Duration'
-    ],
-    expressions: [
-        '%artist%',
-        '%album%',
-        '%track%',
-        '%title%',
-        '%length%'
-    ],
-    sizes: [
-        3, 3, 2, 3, 2
-    ]
+const Visibility = Object.freeze({
+    never: Object.freeze({
+        [MediaSize.small]: false,
+        [MediaSize.medium]: false,
+        [MediaSize.large]: false,
+    }),
+    always: Object.freeze({
+        [MediaSize.small]: true,
+        [MediaSize.medium]: true,
+        [MediaSize.large]: true
+    }),
+    largeOnly: Object.freeze({
+        [MediaSize.small]: false,
+        [MediaSize.medium]: false,
+        [MediaSize.large]: true,
+    })
 });
 
-const compactPreset = Object.freeze({
-    names: [
-        'Artist',
-        'Title'
-    ],
-    expressions: [
-        '%artist%',
-        '%title%'
-    ],
-    sizes: [
-        1, 1
-    ]
-});
+/**
+ * @class ColumnDefinition
+ * @property {string} title
+ * @property {string} expression
+ * @property {number} size
+ * @property {object} visibility
+ * @property {boolean} visibility.small
+ * @property {boolean} visibility.medium
+ * @property {boolean} visibility.large
+ */
+class ColumnDefinition
+{
+    constructor(title, expression, opts = null)
+    {
+        this.title = title;
+        this.expression = expression;
+        this.visibility = Visibility.largeOnly;
+        this.size = 10;
+
+        if (opts)
+        {
+            const { visibility, size } = opts;
+
+            if (visibility)
+            {
+                this.visibility = Object.freeze(
+                    Object.assign({}, Visibility.never, visibility));
+            }
+
+            if (size)
+                this.size = size;
+        }
+
+        Object.freeze(this);
+    }
+}
+
+const standardColumns = [
+    new ColumnDefinition('Artist', '%artist%', { visibility: Visibility.always }),
+    new ColumnDefinition('Album', '%album%'),
+    new ColumnDefinition('Track No', '%track%', { size: 7 }),
+    new ColumnDefinition('Title', '%title%', { visibility: Visibility.always }),
+    new ColumnDefinition('Duration', '%duration%', { size: 7 }),
+];
 
 export const sortableColumns = [
     { title: 'Artist', expression: '%artist%' },
@@ -63,6 +92,7 @@ export default class PlaylistModel extends EventEmitter
 
         this.currentPlaylistId = '';
         this.columns = null;
+        this.layout = null;
 
         this.defineEvent('playlistsChange');
         this.defineEvent('itemsChange');
@@ -141,10 +171,10 @@ export default class PlaylistModel extends EventEmitter
         if (!this.currentPlaylistId)
             return;
 
-        var request = {
+        const request = {
             playlistItems: true,
             plref: this.currentPlaylistId,
-            plcolumns: this.columns.expressions,
+            plcolumns: this.columns.map(c => c.expression),
             plrange: this.playlistRange,
         };
 
@@ -153,14 +183,13 @@ export default class PlaylistModel extends EventEmitter
 
     updateLayout()
     {
-        const newColumns = this.settingsModel.mediaSizeUp(MediaSize.large)
-            ? standardPreset
-            : compactPreset;
+        const mediaSize = this.settingsModel.mediaSize;
 
-        if (this.columns === newColumns)
+        if (this.layout === mediaSize)
             return false;
 
-        this.columns = newColumns;
+        this.layout = mediaSize;
+        this.columns = standardColumns.filter(c => c.visibility[mediaSize]);
         return true;
     }
 
