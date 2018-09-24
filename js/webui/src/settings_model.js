@@ -1,7 +1,8 @@
 import EventEmitter from 'wolfy87-eventemitter'
-import SettingsStore from './settings_store.js'
 import pickBy from 'lodash/pickBy'
 import mapKeys from 'lodash/mapKeys'
+import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
 
 const storageKey = 'player_settings';
 
@@ -9,6 +10,7 @@ export const SettingType = Object.freeze({
     bool: 'bool',
     enum: 'enum',
     string: 'string',
+    custom: 'custom',
 });
 
 export const FontSize = Object.freeze({
@@ -41,6 +43,17 @@ const defaultSettingProps = Object.freeze({
     version: 1,
 });
 
+
+/**
+ * @class SettingsModel
+ * @property {boolean} fullWidth
+ * @property {boolean} cursorFollowsPlayback
+ * @property {string} customSortBy
+ * @property {string} inputMode
+ * @property {string} fontSize
+ * @property {boolean} touchMode
+ * @property {string} mediaSize
+ */
 export default class SettingsModel extends EventEmitter
 {
     constructor(store)
@@ -122,6 +135,13 @@ export default class SettingsModel extends EventEmitter
             cssVisible: true,
         });
 
+        this.define({
+            key: 'columns',
+            type: SettingType.custom,
+            defaultValue: [],
+            persistent: true
+        });
+
         Object.freeze(this.metadata);
     }
 
@@ -129,8 +149,7 @@ export default class SettingsModel extends EventEmitter
     {
         const { key, type } = props;
 
-        const metadata = Object.assign(
-            { }, defaultSettingProps, props);
+        const metadata = Object.assign({}, defaultSettingProps, props);
 
         metadata.eventName = key + 'Change';
 
@@ -147,7 +166,7 @@ export default class SettingsModel extends EventEmitter
             Object.freeze(metadata.enumNames);
 
         this.metadata[key] = metadata;
-        this.values[key] = metadata.defaultValue;
+        this.values[key] = cloneDeep(metadata.defaultValue);
 
         Object.defineProperty(this, key, {
             enumerable: true,
@@ -165,10 +184,10 @@ export default class SettingsModel extends EventEmitter
         if (!metadata)
             throw new Error(`Unknown setting key '${key}'`);
 
-        if (value === this.values[key])
+        if (isEqual(value, this.values[key]))
             return;
 
-        this.values[key] = value;
+        this.values[key] = cloneDeep(value);
 
         if (metadata.persistent)
             this.save();
@@ -197,7 +216,7 @@ export default class SettingsModel extends EventEmitter
             const metadata = this.metadata[key];
             const value = newValues[metadata.persistenceKey];
 
-            if (value === undefined || this.values[key] === value)
+            if (value === undefined || isEqual(this.values[key], value))
                 continue;
 
             this.values[key] = value;
