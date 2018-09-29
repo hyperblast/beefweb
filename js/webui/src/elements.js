@@ -11,9 +11,11 @@ export function Icon(props)
     if (name === 'none')
         return (<div className={fullClassName} />);
 
+    const href = `${spriteSvg}#${name}`;
+
     return (
         <svg className={fullClassName}>
-            <use xlinkHref={spriteSvg + '#' + name} />
+            <use xlinkHref={href} href={href} />
         </svg>
     );
 }
