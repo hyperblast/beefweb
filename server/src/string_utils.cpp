@@ -28,13 +28,13 @@ StringView trimWhitespace(StringView str)
     auto data = str.data();
     auto length = str.length();
 
-    while (length > 0 && data[0] <= ' ')
+    while (length > 0 && static_cast<unsigned char>(data[0]) <= ' ')
     {
         data++;
         length--;
     }
 
-    while (length > 0 && data[length - 1] <= ' ')
+    while (length > 0 && static_cast<unsigned char>(data[length - 1]) <= ' ')
     {
         length--;
     }
