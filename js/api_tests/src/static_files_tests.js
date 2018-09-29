@@ -72,7 +72,7 @@ q.test('etag support', async assert =>
     assert.ok(etag);
 
     const cacheControl = initialResult.headers['cache-control'];
-    assert.equal(cacheControl, 'max-age=0, must-revalidate');
+    assert.equal(cacheControl, 'max-age=3, must-revalidate');
 
     const cachedResult = await getFile('file.html', {
         headers: { 'If-None-Match': etag },
