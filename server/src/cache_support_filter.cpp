@@ -32,7 +32,7 @@ void CacheSupportFilter::endRequest(Request* request)
 
 void CacheSupportFilter::setCacheHeaders(Response* reponse, const std::string& etag)
 {
-    reponse->headers[HttpHeader::CACHE_CONTROL] = "max-age=0, must-revalidate";
+    reponse->headers[HttpHeader::CACHE_CONTROL] = "max-age=3, must-revalidate";
     reponse->headers[HttpHeader::ETAG] = etag;
 }
 
