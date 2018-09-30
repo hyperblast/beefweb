@@ -1,78 +1,6 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import { arrayMove } from 'react-sortable-hoc'
-import { MediaSize } from './settings_model'
-
-const Visibility = Object.freeze({
-    never: Object.freeze({
-        [MediaSize.small]: false,
-        [MediaSize.medium]: false,
-        [MediaSize.large]: false,
-    }),
-    always: Object.freeze({
-        [MediaSize.small]: true,
-        [MediaSize.medium]: true,
-        [MediaSize.large]: true
-    }),
-    largeOnly: Object.freeze({
-        [MediaSize.small]: false,
-        [MediaSize.medium]: false,
-        [MediaSize.large]: true,
-    })
-});
-
-/**
- * @class ColumnDefinition
- * @property {string} title
- * @property {string} expression
- * @property {number} size
- * @property {object} visibility
- * @property {boolean} visibility.small
- * @property {boolean} visibility.medium
- * @property {boolean} visibility.large
- */
-class ColumnDefinition
-{
-    constructor(title, expression, opts = null)
-    {
-        this.title = title;
-        this.expression = expression;
-        this.visibility = Visibility.largeOnly;
-        this.size = 10;
-
-        if (opts)
-        {
-            const { visibility, size } = opts;
-
-            if (visibility)
-            {
-                this.visibility = Object.freeze(
-                    Object.assign({}, Visibility.never, visibility));
-            }
-
-            if (size)
-                this.size = size;
-        }
-
-        Object.freeze(this);
-    }
-}
-
-const standardColumns = [
-    new ColumnDefinition('Artist', '%artist%', { visibility: Visibility.always }),
-    new ColumnDefinition('Album', '%album%'),
-    new ColumnDefinition('Track No', '%track%', { size: 7 }),
-    new ColumnDefinition('Title', '%title%', { visibility: Visibility.always }),
-    new ColumnDefinition('Duration', '%duration%', { size: 7 }),
-];
-
-export const sortableColumns = [
-    { title: 'Artist', expression: '%artist%' },
-    { title: 'Album', expression: '%album%' },
-    { title: 'Track number', expression: '%track%' },
-    { title: 'Date', expression: '%date%' },
-    { title: 'Title', expression: '%title%' },
-    { title: 'Random', random: true }
-];
+import { defaultPlaylistColumns } from './columns';
 
 export default class PlaylistModel extends EventEmitter
 {
@@ -189,7 +117,7 @@ export default class PlaylistModel extends EventEmitter
             return false;
 
         this.layout = mediaSize;
-        this.columns = standardColumns.filter(c => c.visibility[mediaSize]);
+        this.columns = defaultPlaylistColumns.filter(c => c.visibility[mediaSize]);
         return true;
     }
 

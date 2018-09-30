@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlayerModel, { navigationColumns } from './player_model'
+import PlayerModel from './player_model'
 import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { bindHandlers } from './utils'
 import urls from './urls';
 import ModelBinding from './model_binding';
 import SettingsModel, { MediaSize } from './settings_model';
 import { DropdownButton } from './dropdown';
+import { navigationMenuColumns } from './columns';
 
 class PlaybackControl extends React.PureComponent
 {
@@ -73,7 +74,7 @@ class PlaybackControl extends React.PureComponent
     handlePreviousBy(e, index)
     {
         e.preventDefault();
-        this.props.playerModel.previousBy(navigationColumns[index].expression);
+        this.props.playerModel.previousBy(navigationMenuColumns[index].expression);
     }
 
     handleNext(e)
@@ -85,7 +86,7 @@ class PlaybackControl extends React.PureComponent
     handleNextBy(e, index)
     {
         e.preventDefault();
-        this.props.playerModel.nextBy(navigationColumns[index].expression);
+        this.props.playerModel.nextBy(navigationMenuColumns[index].expression);
     }
 
     handleSetPlaybackMode(e, value)
@@ -130,7 +131,7 @@ class PlaybackControl extends React.PureComponent
                 onClick={e => this.handleSetPlaybackMode(e, index)} />
         ));
 
-        const nextByMenuItems = navigationColumns.map((column, index) => (
+        const nextByMenuItems = navigationMenuColumns.map((column, index) => (
             <MenuItem
                 key={'nextby' + index}
                 title={column.title}
@@ -138,7 +139,7 @@ class PlaybackControl extends React.PureComponent
                 onClick={e => this.handleNextBy(e, index)} />
         ));
 
-        const prevByMenuItems = navigationColumns.map((column, index) => (
+        const prevByMenuItems = navigationMenuColumns.map((column, index) => (
             <MenuItem
                 key={'prevby' + index}
                 title={column.title}

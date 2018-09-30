@@ -32,11 +32,6 @@ const initialPlayerInfo = Object.freeze({
     activeItemId: '',
 });
 
-export const navigationColumns = [
-    { title: 'Artist', expression: '%artist%' },
-    { title: 'Album', expression: '%album%' },
-];
-
 export default class PlayerModel extends EventEmitter
 {
     constructor(client, dataSource)

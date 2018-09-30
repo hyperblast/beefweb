@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlaylistModel, { sortableColumns } from './playlist_model'
+import PlaylistModel from './playlist_model'
 import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
 import { ConfirmDialog, InputDialog } from './dialogs'
 import { bindHandlers } from './utils'
 import ModelBinding from './model_binding';
 import { DropdownButton } from './dropdown';
 import SettingsModel from './settings_model';
+import { sortMenuColumns } from './columns';
 
 class PlaylistMenu extends React.PureComponent
 {
@@ -180,7 +181,7 @@ class PlaylistMenu extends React.PureComponent
     {
         e.preventDefault();
 
-        this.props.playlistModel.sortPlaylist(sortableColumns[index]);
+        this.props.playlistModel.sortPlaylist(sortMenuColumns[index]);
     }
 
     render()
@@ -209,7 +210,7 @@ class PlaylistMenu extends React.PureComponent
             <MenuLabel key='sortby' title='Sort by' />
         ];
 
-        const menuSortItems = sortableColumns.map((column, index) => (
+        const menuSortItems = sortMenuColumns.map((column, index) => (
             <MenuItem
                 key={'sortby' + index}
                 title={column.title}
