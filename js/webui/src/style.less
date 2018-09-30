@@ -590,6 +590,7 @@ body {
 
 .column-editor {
     padding: 0.5rem;
+    background: @color-background;
 
     .border();
 
@@ -612,9 +613,13 @@ body {
 }
 
 .column-editor-text {
-    width: 20rem;
+    max-width: 20rem;
 }
 
 .column-editor-text-size {
-    width: 5rem;
+    max-width: 5rem;
+}
+
+.column-editor-drag-handle {
+    cursor: grab;
 }
