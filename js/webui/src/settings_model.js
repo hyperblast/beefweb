@@ -3,6 +3,7 @@ import pickBy from 'lodash/pickBy'
 import mapKeys from 'lodash/mapKeys'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
+import { defaultPlaylistColumns } from './columns';
 
 const storageKey = 'player_settings';
 
@@ -138,7 +139,7 @@ export default class SettingsModel extends EventEmitter
         this.define({
             key: 'columns',
             type: SettingType.custom,
-            defaultValue: [],
+            defaultValue: defaultPlaylistColumns,
             persistent: true
         });
 

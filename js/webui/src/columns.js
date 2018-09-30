@@ -1,20 +1,18 @@
-import { MediaSize } from './settings_model';
-
 export const Visibility = Object.freeze({
     never: Object.freeze({
-        [MediaSize.small]: false,
-        [MediaSize.medium]: false,
-        [MediaSize.large]: false,
+        small: false,
+        medium: false,
+        large: false,
     }),
     always: Object.freeze({
-        [MediaSize.small]: true,
-        [MediaSize.medium]: true,
-        [MediaSize.large]: true
+        small: true,
+        medium: true,
+        large: true
     }),
     largeOnly: Object.freeze({
-        [MediaSize.small]: false,
-        [MediaSize.medium]: false,
-        [MediaSize.large]: true,
+        small: false,
+        medium: false,
+        large: true,
     })
 });
 

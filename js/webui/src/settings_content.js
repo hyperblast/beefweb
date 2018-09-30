@@ -4,6 +4,7 @@ import NavigationModel, { SettingsView } from './navigation_model';
 import ModelBinding from './model_binding';
 import GeneralSettings from './general_settings';
 import SettingsModel from './settings_model';
+import ColumnsSettings from './columns_settings';
 
 class SettingsContent extends React.PureComponent
 {
@@ -31,7 +32,7 @@ class SettingsContent extends React.PureComponent
 
     renderColumns()
     {
-        return null;
+        return <ColumnsSettings settingsModel={this.props.settingsModel} />;
     }
 
     render()

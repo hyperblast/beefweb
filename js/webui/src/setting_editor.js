@@ -46,7 +46,7 @@ class BoolSettingEditor extends React.PureComponent
         const { value, metadata } = this.state;
 
         return (
-            <label>
+            <label className='setting-editor setting-editor-bool'>
                 <input type='checkbox' checked={value} onChange={this.handleInput} />
                 <span>{metadata.title}</span>
             </label>
@@ -110,7 +110,7 @@ class EnumSettingEditor extends React.PureComponent
         });
 
         return (
-            <label>
+            <label className='setting-editor setting-editor-enum'>
                 <span>{metadata.title + ':'}</span>
                 <select value={value} onChange={this.handleInput}>{ options }</select>
             </label>

@@ -8,7 +8,7 @@ export default function GeneralSettings(props)
     const model = props.settingsModel;
 
     return (
-        <form>
+        <form className='settings-form'>
             <SettingEditor settingKey='fullWidth' settingsModel={model} />
             <SettingEditor settingKey='fontSize' settingsModel={model} />
             <SettingEditor settingKey='inputMode' settingsModel={model} />

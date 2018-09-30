@@ -571,19 +571,50 @@ body {
     margin-bottom: 0.25rem;
 }
 
-.settings > form {
+.settings-form {
     padding: 0.5rem;
 }
 
-.settings label {
+.setting-editor {
     display: block;
     margin-bottom: 0.5rem;
+
+    & > span {
+        margin: 0 0.5rem;
+    }
+
+    & > span:first-child {
+        margin-left: 0;
+    }
 }
 
-.settings label > span {
-    margin: 0 0.5rem;
+.column-editor {
+    padding: 0.5rem;
+
+    .border();
+
+    &:not(:last-child) {
+        margin-bottom: 0.5rem;
+    }
 }
 
-.settings label > span:first-child {
-    margin-left: 0;
+.column-editor-block {
+    white-space: nowrap;
+    display: inline-block;
+
+    &:not(:last-child) {
+        margin-right: 1rem;
+    }
+}
+
+.column-editor-label {
+    margin-right: 0.25rem;
+}
+
+.column-editor-text {
+    width: 20rem;
+}
+
+.column-editor-text-size {
+    width: 5rem;
 }
