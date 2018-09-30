@@ -46,7 +46,7 @@ export const allColumns = [
     playlistColumn('Album', '%album%', Visibility.largeOnly),
     playlistColumn('Track No', '%track%', Visibility.largeOnly),
     playlistColumn('Title', '%title%', Visibility.always),
-    playlistColumn('Duration', '%duration%', Visibility.largeOnly),
+    playlistColumn('Duration', '%length%', Visibility.largeOnly),
     playlistColumn('Date', '%date%', Visibility.never),
 ];
 

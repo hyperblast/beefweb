@@ -35,6 +35,11 @@ export default class PlaylistModel extends EventEmitter
                 this.watchPlaylistItems();
         });
 
+        this.settingsModel.on('columnsChange', () => {
+            this.updateLayout(true);
+            this.watchPlaylistItems();
+        });
+
         this.dataSource.on('playlists', this.setPlaylists.bind(this));
         this.dataSource.on('playlistItems', this.setPlaylistItems.bind(this));
         this.dataSource.watch('playlists');
@@ -109,15 +114,18 @@ export default class PlaylistModel extends EventEmitter
         this.dataSource.watch('playlistItems', request, forceUpdate);
     }
 
-    updateLayout()
+    updateLayout(forced = false)
     {
         const mediaSize = this.settingsModel.mediaSize;
 
-        if (this.layout === mediaSize)
+        if (this.layout === mediaSize && !forced)
             return false;
 
         this.layout = mediaSize;
-        this.columns = defaultPlaylistColumns.filter(c => c.visibility[mediaSize]);
+        this.columns = this.settingsModel.columns
+            .filter(c => c.visibility[mediaSize])
+            .map(c => Object.assign({}, c));
+
         return true;
     }
 
