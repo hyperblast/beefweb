@@ -28,7 +28,7 @@ export default class AppModel
     {
         this.settingsModel.load();
         this.notificationModel.load();
-        this.columnsSettingsModel.reset();
+        this.columnsSettingsModel.load();
     }
 
     start()

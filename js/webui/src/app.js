@@ -99,6 +99,7 @@ class App extends React.PureComponent
         return {
             header: (
                 <SettingsHeader
+                    columnsSettingsModel={columnsSettingsModel}
                     navigationModel={navigationModel} />
             ),
             main: (

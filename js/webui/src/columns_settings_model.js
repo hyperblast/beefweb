@@ -13,14 +13,31 @@ export default class ColumnsSettingsModel extends EventEmitter
         this.defineEvent('change');
     }
 
+    load()
+    {
+        this.columns = cloneDeep(this.settingsModel.columns);
+    }
+
     apply()
     {
         this.settingsModel.columns = this.columns;
     }
 
-    reset()
+    revertChanges()
     {
         this.columns = cloneDeep(this.settingsModel.columns);
+        this.emit('change');
+    }
+
+    resetToDefault()
+    {
+        this.columns = cloneDeep(this.settingsModel.metadata.columns.defaultValue);
+        this.emit('change');
+    }
+
+    addColumn(column)
+    {
+        this.columns = [... this.columns, column];
         this.emit('change');
     }
 
