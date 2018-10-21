@@ -5,6 +5,7 @@ import ModelBinding from './model_binding';
 import GeneralSettings from './general_settings';
 import SettingsModel from './settings_model';
 import ColumnsSettings from './columns_settings';
+import ColumnsSettingsModel from './columns_settings_model';
 
 class SettingsContent extends React.PureComponent
 {
@@ -32,7 +33,7 @@ class SettingsContent extends React.PureComponent
 
     renderColumns()
     {
-        return <ColumnsSettings settingsModel={this.props.settingsModel} />;
+        return <ColumnsSettings columnsSettingsModel={this.props.columnsSettingsModel} />;
     }
 
     render()
@@ -49,6 +50,7 @@ class SettingsContent extends React.PureComponent
 
 SettingsContent.propTypes = {
     settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
+    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
     navigationModel: PropTypes.instanceOf(NavigationModel).isRequired,
 };
 

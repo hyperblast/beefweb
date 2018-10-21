@@ -94,7 +94,7 @@ class App extends React.PureComponent
 
     renderSettingsView()
     {
-        const { navigationModel, settingsModel } = this.props.appModel;
+        const { navigationModel, settingsModel, columnsSettingsModel } = this.props.appModel;
 
         return {
             header: (
@@ -103,6 +103,7 @@ class App extends React.PureComponent
             ),
             main: (
                 <SettingsContent
+                    columnsSettingsModel={columnsSettingsModel}
                     navigationModel={navigationModel}
                     settingsModel={settingsModel} />
             )

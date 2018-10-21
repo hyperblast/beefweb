@@ -1,11 +1,11 @@
-import React from 'react';
+import React  from 'react';
 import PropTypes from 'prop-types'
-import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc';
-import cloneDeep from 'lodash/cloneDeep'
-import SettingsModel from './settings_model';
+import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { bindHandlers } from './utils';
 import { Icon, Menu, MenuItem } from './elements';
 import { DropdownButton } from './dropdown';
+import ColumnsSettingsModel from './columns_settings_model';
+import ModelBinding from './model_binding';
 
 function ColumnEditorDragHandleInner()
 {
@@ -137,30 +137,50 @@ ColumnEditorInner.propTypes = {
 
 const ColumnEditor = SortableElement(ColumnEditorInner);
 
-function ColumnEditorListInner(props)
+class ColumnEditorListInner extends React.PureComponent
 {
-    const editors = props.columns.map((c, i) => (
-        <ColumnEditor
-            key={i}
-            index={i}
-            columnIndex={i}
-            column={c}
-            onUpdate={props.onUpdate} />
-    ));
+    constructor(props)
+    {
+        super(props);
+        this.state = this.getStateFromModel();
+        bindHandlers(this);
+    }
 
-    return (
-        <div className='column-editor-list'>
-            { editors }
-        </div>
-    );
+    getStateFromModel()
+    {
+        const { columns } = this.props.columnsSettingsModel;
+        return { columns };
+    }
+
+    handleUpdate(index, patch)
+    {
+        this.props.columnsSettingsModel.updateColumn(index, patch);
+    }
+
+    render()
+    {
+        const editors = this.state.columns.map((c, i) => (
+            <ColumnEditor
+                key={i}
+                index={i}
+                columnIndex={i}
+                column={c}
+                onUpdate={this.handleUpdate} />
+        ));
+
+        return (
+            <div className='column-editor-list'>
+                {editors}
+            </div>
+        );
+    }
 }
 
 ColumnEditorListInner.propTypes = {
-    columns: PropTypes.array.isRequired,
-    onUpdate: PropTypes.func.isRequired,
+    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
 };
 
-const ColumnEditorList = SortableContainer(ColumnEditorListInner);
+const ColumnEditorList = SortableContainer(ModelBinding(ColumnEditorListInner, { columnsSettingsModel: 'change' }));
 
 export default class ColumnsSettings extends React.PureComponent
 {
@@ -168,43 +188,19 @@ export default class ColumnsSettings extends React.PureComponent
     {
         super(props);
 
-        this.state = this.getInitialState();
+        this.state = {};
 
         bindHandlers(this);
     }
 
-    getInitialState()
-    {
-        return {
-            columns: cloneDeep(this.props.settingsModel.columns)
-        };
-    }
-
-    apply()
-    {
-        this.props.settingsModel.columns = this.state.columns;
-    }
-
-    reset()
-    {
-        this.setState(this.getInitialState());
-    }
-
-    handleColumnUpdate(index, patch)
-    {
-        const newColumns = [... this.state.columns];
-        newColumns[index] = Object.assign({}, this.state.columns[index], patch);
-        this.setState({ columns: newColumns });
-    }
-
     handleSortEnd(e)
     {
-        this.setState({ columns: arrayMove(this.state.columns, e.oldIndex, e.newIndex) });
+        this.props.columnsSettingsModel.moveColumn(e.oldIndex, e.newIndex);
     }
 
     componentWillUnmount()
     {
-        this.apply();
+        this.props.columnsSettingsModel.apply();
     }
 
     render()
@@ -212,17 +208,16 @@ export default class ColumnsSettings extends React.PureComponent
         return (
             <form className='settings-form'>
                 <ColumnEditorList
-                    columns={this.state.columns}
+                    columnsSettingsModel={this.props.columnsSettingsModel}
                     axis='y'
                     lockAxis='y'
                     useDragHandle={true}
-                    onSortEnd={this.handleSortEnd}
-                    onUpdate={this.handleColumnUpdate} />
+                    onSortEnd={this.handleSortEnd} />
             </form>
         );
     }
 }
 
 ColumnsSettings.propTypes = {
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
+    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
 };

@@ -6,6 +6,7 @@ import SettingsModel from './settings_model'
 import NotificationModel from './notification_model';
 import ScrollManager from './scroll_manager';
 import NavigationModel from './navigation_model';
+import ColumnsSettingsModel from './columns_settings_model';
 
 export default class AppModel
 {
@@ -14,6 +15,7 @@ export default class AppModel
         this.client = client;
         this.dataSource = new DataSource(client);
         this.settingsModel = new SettingsModel(settingsStore);
+        this.columnsSettingsModel = new ColumnsSettingsModel(this.settingsModel);
         this.playerModel = new PlayerModel(client, this.dataSource);
         this.playlistModel = new PlaylistModel(client, this.dataSource, this.settingsModel);
         this.fileBrowserModel = new FileBrowserModel(client);
@@ -26,6 +28,7 @@ export default class AppModel
     {
         this.settingsModel.load();
         this.notificationModel.load();
+        this.columnsSettingsModel.reset();
     }
 
     start()
