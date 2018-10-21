@@ -4,7 +4,7 @@ import ColumnsSettingsModel from './columns_settings_model';
 import { DropdownButton } from './dropdown';
 import { bindHandlers } from './utils';
 import { MenuItem, MenuLabel, MenuSeparator } from './elements';
-import { allColumns } from './columns';
+import { allColumns, Visibility } from './columns';
 
 export default class ColumnsSettingsMenu extends React.PureComponent
 {
@@ -35,7 +35,8 @@ export default class ColumnsSettingsMenu extends React.PureComponent
     addStandardColumn(e, index)
     {
         e.preventDefault();
-        this.props.columnsSettingsModel.addColumn(allColumns[index]);
+        const column = Object.assign({}, allColumns[index], { visibility: Visibility.always });
+        this.props.columnsSettingsModel.addColumn(column);
     }
 
     render()
