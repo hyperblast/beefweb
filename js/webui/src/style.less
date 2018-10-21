@@ -571,8 +571,14 @@ body {
     margin-bottom: 0.25rem;
 }
 
-.settings-form {
+.settings-content-wrapper {
+    display: flex;
+}
+
+.settings-content {
     padding: 0.5rem;
+    flex: 1;
+    overflow: auto;
 }
 
 .setting-editor {
@@ -590,18 +596,38 @@ body {
 
 .column-editor {
     padding: 0.5rem;
+    display: flex;
     background: @color-background;
-
-    .border();
 
     &:not(:last-child) {
         margin-bottom: 0.5rem;
+    }
+
+    .border();
+}
+
+.column-editor-main {
+    flex: 1;
+}
+
+.column-editor-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    &:first-child {
+        margin-right: 1rem;
+    }
+
+    &:last-child {
+        margin-left: 1rem;
     }
 }
 
 .column-editor-block {
     white-space: nowrap;
     display: inline-block;
+    margin: 0.25rem;
 
     &:not(:last-child) {
         margin-right: 1rem;

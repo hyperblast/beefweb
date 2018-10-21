@@ -73,35 +73,39 @@ class ColumnEditorInner extends React.PureComponent
 
         return (
             <div className='column-editor'>
-                <ColumnEditorDragHandle />
-                <div className='column-editor-block'>
-                    <label className='column-editor-label' htmlFor={titleName}>Title:</label>
-                    <input
-                        className='column-editor-text column-editor-text-title'
-                        type='text'
-                        name={titleName}
-                        value={column.title}
-                        onChange={this.handleTitleChange} />
+                <div className='column-editor-side'>
+                    <ColumnEditorDragHandle />
                 </div>
-                <div className='column-editor-block'>
-                    <label className='column-editor-label' htmlFor={expressionName}>Expression:</label>
-                    <input
-                        className='column-editor-text column-editor-text-expression'
-                        type='text'
-                        name={expressionName}
-                        value={column.expression}
-                        onChange={this.handleExpressionChange} />
+                <div className='column-editor-main'>
+                    <div className='column-editor-block'>
+                        <label className='column-editor-label' htmlFor={titleName}>Title:</label>
+                        <input
+                            className='column-editor-text column-editor-text-title'
+                            type='text'
+                            name={titleName}
+                            value={column.title}
+                            onChange={this.handleTitleChange} />
+                    </div>
+                    <div className='column-editor-block'>
+                        <label className='column-editor-label' htmlFor={expressionName}>Expression:</label>
+                        <input
+                            className='column-editor-text column-editor-text-expression'
+                            type='text'
+                            name={expressionName}
+                            value={column.expression}
+                            onChange={this.handleExpressionChange} />
+                    </div>
+                    <div className='column-editor-block'>
+                        <label className='column-editor-label' htmlFor={sizeName}>Size:</label>
+                        <input
+                            className='column-editor-text column-editor-text-size'
+                            type='text'
+                            name={sizeName}
+                            value={column.size}
+                            onChange={this.handleSizeChange} />
+                    </div>
                 </div>
-                <div className='column-editor-block'>
-                    <label className='column-editor-label' htmlFor={sizeName}>Size:</label>
-                    <input
-                        className='column-editor-text column-editor-text-size'
-                        type='text'
-                        name={sizeName}
-                        value={column.size}
-                        onChange={this.handleSizeChange} />
-                </div>
-                <div className='column-editor-block'>
+                <div className='column-editor-side'>
                     <DropdownButton
                         title='Options'
                         iconName='cog'
@@ -206,7 +210,7 @@ export default class ColumnsSettings extends React.PureComponent
     render()
     {
         return (
-            <form className='settings-form'>
+            <form>
                 <ColumnEditorList
                     columnsSettingsModel={this.props.columnsSettingsModel}
                     axis='y'
