@@ -129,10 +129,14 @@ export function mapRange(start, count, func)
     return array;
 }
 
-export function appendArray(to, from)
+export function arrayRemove(array, index)
 {
-    for (let item of from)
-        to.push(item);
+    if (index < 0 || index >= array.length)
+        throw new RangeError('Array index is out of bounds');
+
+    const result = [... array];
+    result.splice(index, 1);
+    return result;
 }
 
 const kbSize = 1024;

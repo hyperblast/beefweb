@@ -1,6 +1,7 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import cloneDeep from 'lodash/cloneDeep'
 import { arrayMove } from 'react-sortable-hoc';
+import { arrayRemove } from './utils';
 
 export default class ColumnsSettingsModel extends EventEmitter
 {
@@ -52,6 +53,12 @@ export default class ColumnsSettingsModel extends EventEmitter
     moveColumn(oldIndex, newIndex)
     {
         this.columns = arrayMove(this.columns, oldIndex, newIndex);
+        this.emit('change');
+    }
+
+    removeColumn(index)
+    {
+        this.columns = arrayRemove(this.columns, index);
         this.emit('change');
     }
 }

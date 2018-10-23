@@ -4,7 +4,7 @@ import { SortableContainer, SortableElement, SortableHandle } from 'react-sortab
 import { bindHandlers } from './utils';
 import { Button, Icon } from './elements';
 import ReactModal from 'react-modal';
-import { DialogButton } from './dialogs';
+import { ConfirmDialog, DialogButton } from './dialogs';
 import cloneDeep from 'lodash/cloneDeep'
 import ModelBinding from './model_binding';
 import ColumnsSettingsModel from './columns_settings_model';
@@ -140,14 +140,17 @@ class ColumnEditorInner extends React.PureComponent
     constructor(props)
     {
         super(props);
-        this.state = ColumnEditorInner.closedState();
+
+        this.state = Object.assign(
+            { deleteDialogOpen: false }, ColumnEditorInner.editDialogClosed());
+
         bindHandlers(this);
     }
 
-    static closedState()
+    static editDialogClosed()
     {
         return {
-            dialogOpen: false,
+            editDialogOpen: false,
             editedColumn: {
                 title: '',
                 expression: '',
@@ -157,34 +160,50 @@ class ColumnEditorInner extends React.PureComponent
         };
     }
 
-    handleDialogOpen()
+    handleEdit()
     {
         this.setState({
-            dialogOpen: true,
+            editDialogOpen: true,
             editedColumn: cloneDeep(this.props.column),
         });
     }
 
-    handleDialogOk(patch)
+    handleEditOk(patch)
     {
         this.props.onUpdate(this.props.columnIndex, this.state.editedColumn);
-        this.setState(ColumnEditorInner.closedState);
+        this.setState(ColumnEditorInner.editDialogClosed);
     }
 
-    handleDialogCancel()
+    handleEditCancel()
     {
-        this.setState(ColumnEditorInner.closedState);
+        this.setState(ColumnEditorInner.editDialogClosed);
     }
 
-    handleDialogUpdate(patch)
+    handleEditUpdate(patch)
     {
         this.setState(state => ({ editedColumn: Object.assign({}, state.editedColumn, patch) }));
+    }
+
+    handleDelete()
+    {
+        this.setState({ deleteDialogOpen: true });
+    }
+
+    handleDeleteOk()
+    {
+        this.props.onDelete(this.props.columnIndex);
+        this.setState({ deleteDialogOpen: false });
+    }
+
+    handleDeleteCancel()
+    {
+        this.setState({ deleteDialogOpen: false });
     }
 
     render()
     {
         const { column } = this.props;
-        const { dialogOpen, editedColumn } = this.state;
+        const { deleteDialogOpen, editDialogOpen, editedColumn } = this.state;
 
         return (
             <div className='column-editor'>
@@ -195,14 +214,22 @@ class ColumnEditorInner extends React.PureComponent
                     { column.title } { column.expression }
                 </div>
                 <div className='column-editor-side'>
-                    <Button name='cog' onClick={this.handleDialogOpen} title='Edit' />
+                    <div className='button-bar'>
+                        <Button name='cog' onClick={this.handleEdit} title='Edit' />
+                        <Button name='delete' onClick={this.handleDelete} title='Delete' />
+                    </div>
                 </div>
                 <ColumnEditorDialog
-                    isOpen={dialogOpen}
+                    isOpen={editDialogOpen}
                     column={editedColumn}
-                    onOk={this.handleDialogOk}
-                    onCancel={this.handleDialogCancel}
-                    onUpdate={this.handleDialogUpdate} />
+                    onOk={this.handleEditOk}
+                    onCancel={this.handleEditCancel}
+                    onUpdate={this.handleEditUpdate} />
+                <ConfirmDialog
+                    isOpen={deleteDialogOpen}
+                    message={`Do you want to delete column ${column.title}?`}
+                    onOk={this.handleDeleteOk}
+                    onCancel={this.handleDeleteCancel} />
             </div>
         );
     }
@@ -212,6 +239,7 @@ ColumnEditorInner.propTypes = {
     columnIndex: PropTypes.number.isRequired,
     column: PropTypes.object.isRequired,
     onUpdate: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
 };
 
 const ColumnEditor = SortableElement(ColumnEditorInner);
@@ -236,6 +264,11 @@ class ColumnEditorListInner extends React.PureComponent
         this.props.columnsSettingsModel.updateColumn(index, patch);
     }
 
+    handleDelete(index)
+    {
+        this.props.columnsSettingsModel.removeColumn(index);
+    }
+
     render()
     {
         const editors = this.state.columns.map((c, i) => (
@@ -244,7 +277,8 @@ class ColumnEditorListInner extends React.PureComponent
                 index={i}
                 columnIndex={i}
                 column={c}
-                onUpdate={this.handleUpdate} />
+                onUpdate={this.handleUpdate}
+                onDelete={this.handleDelete} />
         ));
 
         return (
