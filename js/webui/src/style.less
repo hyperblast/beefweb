@@ -598,6 +598,7 @@ body {
     padding: 0.5rem;
     display: flex;
     background: @color-background;
+    max-width: 40rem;
 
     &:not(:last-child) {
         margin-bottom: 0.5rem;
@@ -606,18 +607,25 @@ body {
     .border();
 }
 
-.column-editor-side,
+.column-info-expression {
+    font-style: italic;
+}
+
 .column-editor-main {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
 
-.column-editor-main {
     flex: 1;
+
+    .no-text-overflow();
 }
 
 .column-editor-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
     &:first-child {
         margin-right: 1rem;
     }

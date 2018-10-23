@@ -211,7 +211,8 @@ class ColumnEditorInner extends React.PureComponent
                     <ColumnEditorDragHandle />
                 </div>
                 <div className='column-editor-main'>
-                    { column.title } { column.expression }
+                    <span className='column-info-title'>{ column.title }</span>
+                    <span className='column-info-expression'>{ column.expression }</span>
                 </div>
                 <div className='column-editor-side'>
                     <div className='button-bar'>
@@ -319,14 +320,12 @@ export default class ColumnsSettings extends React.PureComponent
     render()
     {
         return (
-            <form>
-                <ColumnEditorList
-                    columnsSettingsModel={this.props.columnsSettingsModel}
-                    axis='y'
-                    lockAxis='y'
-                    useDragHandle={true}
-                    onSortEnd={this.handleSortEnd} />
-            </form>
+            <ColumnEditorList
+                columnsSettingsModel={this.props.columnsSettingsModel}
+                axis='y'
+                lockAxis='y'
+                useDragHandle={true}
+                onSortEnd={this.handleSortEnd} />
         );
     }
 }
