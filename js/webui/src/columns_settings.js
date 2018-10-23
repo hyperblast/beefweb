@@ -216,7 +216,7 @@ class ColumnEditorInner extends React.PureComponent
                 <div className='column-editor-side'>
                     <div className='button-bar'>
                         <Button name='cog' onClick={this.handleEdit} title='Edit' />
-                        <Button name='delete' onClick={this.handleDelete} title='Delete' />
+                        <Button name='minus' onClick={this.handleDelete} title='Delete' />
                     </div>
                 </div>
                 <ColumnEditorDialog

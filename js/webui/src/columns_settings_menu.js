@@ -11,13 +11,18 @@ export default class ColumnsSettingsMenu extends React.PureComponent
     constructor(props)
     {
         super(props);
-        this.state = { menuOpen: false };
+        this.state = { addMenuOpen: false, settingsMenuOpen: false };
         bindHandlers(this);
     }
 
-    handleMenuRequestOpen(value)
+    handleAddMenuRequestOpen(value)
     {
-        this.setState({ menuOpen: value });
+        this.setState({ addMenuOpen: value });
+    }
+
+    handleSettingsMenuRequestOpen(value)
+    {
+        this.setState({ settingsMenuOpen: value });
     }
 
     handleRevertChanges(e)
@@ -38,7 +43,7 @@ export default class ColumnsSettingsMenu extends React.PureComponent
 
     render()
     {
-        const { menuOpen } = this.state;
+        const { addMenuOpen, settingsMenuOpen } = this.state;
 
         const addColumnMenuItems = allColumns.map((c, i) =>
             <MenuItem
@@ -51,16 +56,22 @@ export default class ColumnsSettingsMenu extends React.PureComponent
             <div className='header-block'>
                 <div className='button-bar'>
                     <DropdownButton
-                        title='Columns menu'
-                        iconName='menu'
+                        title='Add column'
+                        iconName='plus'
                         direction='left'
-                        isOpen={menuOpen}
-                        onRequestOpen={this.handleMenuRequestOpen}>
-                        <MenuItem title='Revert changes' onClick={this.handleRevertChanges} />
-                        <MenuItem title='Reset to default' onClick={this.handleResetToDefault} />
-                        <MenuSeparator />
+                        isOpen={addMenuOpen}
+                        onRequestOpen={this.handleAddMenuRequestOpen}>
                         <MenuLabel title='Add column' />
                         { addColumnMenuItems }
+                    </DropdownButton>
+                    <DropdownButton
+                        title='Columns settings'
+                        iconName='menu'
+                        direction='left'
+                        isOpen={settingsMenuOpen}
+                        onRequestOpen={this.handleSettingsMenuRequestOpen}>
+                        <MenuItem title='Revert changes' onClick={this.handleRevertChanges} />
+                        <MenuItem title='Reset to default' onClick={this.handleResetToDefault} />
                     </DropdownButton>
                 </div>
             </div>
