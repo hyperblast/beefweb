@@ -25,8 +25,6 @@ class FileBrowserHeader extends React.PureComponent
 
     handleAddClick(e)
     {
-        e.preventDefault();
-
         const { playlistModel, fileBrowserModel, notificationModel } = this.props;
         const { currentPath } = fileBrowserModel;
 

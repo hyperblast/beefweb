@@ -94,15 +94,8 @@ class PlaylistContent extends React.PureComponent
     {
         const { title, expression } = this.props.playlistModel.columns[index];
 
-        const sortAsc = e => {
-            e.preventDefault();
-            this.props.playlistModel.sortPlaylist(expression, false);
-        };
-
-        const sortDesc = e => {
-            e.preventDefault();
-            this.props.playlistModel.sortPlaylist(expression, true);
-        };
+        const sortAsc = () => this.props.playlistModel.sortPlaylist(expression, false);
+        const sortDesc = () => this.props.playlistModel.sortPlaylist(expression, true);
 
         return (
             <Menu>

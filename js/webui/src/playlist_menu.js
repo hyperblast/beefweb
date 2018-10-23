@@ -45,15 +45,13 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ menuOpen: value });
     }
 
-    handleAddClick(e)
+    handleAddClick()
     {
-        e.preventDefault();
         this.props.playlistModel.addPlaylist();
     }
 
-    handleRemoveClick(e)
+    handleRemoveClick()
     {
-        e.preventDefault();
         this.setState({ removeDialogOpen: true });
     }
 
@@ -68,10 +66,8 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ removeDialogOpen: false });
     }
 
-    handleRenameClick(e)
+    handleRenameClick()
     {
-        e.preventDefault();
-
         this.setState({
             renameDialogOpen: true,
             renameDialogValue: this.state.currentPlaylist.title
@@ -99,10 +95,8 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ renameDialogOpen: false });
     }
 
-    handleClearClick(e)
+    handleClearClick()
     {
-        e.preventDefault();
-
         this.setState({ clearDialogOpen: true });
     }
 
@@ -117,10 +111,8 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ clearDialogOpen: false });
     }
 
-    handleAddUrlClick(e)
+    handleAddUrlClick()
     {
-        e.preventDefault();
-
         this.setState({
             addUrlDialogOpen: true,
             addUrlDialogValue: ''
@@ -147,10 +139,8 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ addUrlDialogOpen: false });
     }
 
-    handleSortClick(e)
+    handleSortClick()
     {
-        e.preventDefault();
-
         this.setState({
             sortDialogOpen: true,
             sortDialogValue: this.props.settingsModel.customSortBy,
@@ -177,10 +167,8 @@ class PlaylistMenu extends React.PureComponent
         this.setState({ sortDialogValue: value });
     }
 
-    sortBy(e, index)
+    sortBy(index)
     {
-        e.preventDefault();
-
         this.props.playlistModel.sortPlaylist(sortMenuColumns[index]);
     }
 
@@ -214,7 +202,7 @@ class PlaylistMenu extends React.PureComponent
             <MenuItem
                 key={'sortby' + index}
                 title={column.title}
-                onClick={e => this.sortBy(e, index)}
+                onClick={() => this.sortBy(index)}
             />
         ));
 

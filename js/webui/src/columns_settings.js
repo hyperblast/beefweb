@@ -48,9 +48,8 @@ class ColumnEditorInner extends React.PureComponent
         this.setState({ optionsMenuOpen: value });
     }
 
-    handleMenuClick(e, size)
+    toggleVisibility(size)
     {
-        e.preventDefault();
         const { visibility } = this.props.column;
         const newVisibility = Object.assign({}, visibility, { [size]: !visibility[size] });
         this.update({ visibility: newVisibility });
@@ -116,15 +115,15 @@ class ColumnEditorInner extends React.PureComponent
                             <MenuItem
                                 title='Show in small layout'
                                 checked={visibility.small}
-                                onClick={e => this.handleMenuClick(e, 'small')}/>
+                                onClick={() => this.toggleVisibility('small')}/>
                             <MenuItem
                                 title='Show in medium layout'
                                 checked={visibility.medium}
-                                onClick={e => this.handleMenuClick(e, 'medium')}/>
+                                onClick={() => this.toggleVisibility('medium')}/>
                             <MenuItem
                                 title='Show in large layout'
                                 checked={visibility.large}
-                                onClick={e => this.handleMenuClick(e, 'large')}/>
+                                onClick={() => this.toggleVisibility('large')}/>
                         </Menu>
                     </DropdownButton>
                 </div>

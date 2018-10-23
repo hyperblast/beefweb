@@ -26,10 +26,8 @@ class VolumeControlPanelInner extends React.PureComponent
         return this.props.playerModel.volume;
     }
 
-    handleMuteClick(e)
+    handleMuteClick()
     {
-        e.preventDefault();
-
         this.props.playerModel.mute();
 
         if (this.props.onAfterMuteClick)

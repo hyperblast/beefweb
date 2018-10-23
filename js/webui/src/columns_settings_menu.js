@@ -22,19 +22,16 @@ export default class ColumnsSettingsMenu extends React.PureComponent
 
     handleRevertChanges(e)
     {
-        e.preventDefault();
         this.props.columnsSettingsModel.revertChanges();
     }
 
     handleResetToDefault(e)
     {
-        e.preventDefault();
         this.props.columnsSettingsModel.resetToDefault();
     }
 
-    addStandardColumn(e, index)
+    addStandardColumn(index)
     {
-        e.preventDefault();
         const column = Object.assign({}, allColumns[index], { visibility: Visibility.always });
         this.props.columnsSettingsModel.addColumn(column);
     }
@@ -47,7 +44,7 @@ export default class ColumnsSettingsMenu extends React.PureComponent
             <MenuItem
                 key={i}
                 title={c.title}
-                onClick={e => this.addStandardColumn(e, i)} />
+                onClick={() => this.addStandardColumn(i)} />
         );
 
         return (

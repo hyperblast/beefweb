@@ -3,6 +3,23 @@ import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
 import { makeClassName } from './dom_utils';
 
+function makeClickHandler(callback)
+{
+    if (!callback)
+        return null;
+
+    return function handleClick(e)
+    {
+        if (e.button === 0 || e.button === 1)
+        {
+            e.preventDefault();
+
+            if (e.button === 0)
+                callback(e);
+        }
+    };
+}
+
 export function Icon(props)
 {
     const { name, className } = props;
@@ -34,7 +51,12 @@ export const Button = React.forwardRef(function Button(props, ref)
         + (active ? ' active' : '');
 
     return (
-        <a ref={ref} href={href || '#'} title={title} className={fullClassName} onClick={onClick}>
+        <a
+            ref={ref}
+            href={href || '#'}
+            title={title}
+            className={fullClassName}
+            onClick={makeClickHandler(onClick)}>
             <Icon name={name} />
         </a>
     );
@@ -75,7 +97,7 @@ export function MenuItem(props)
 
     return (
         <li className='menu-item'>
-            <a href={href || '#'} onClick={onClick}>
+            <a href={href || '#'} onClick={makeClickHandler(onClick)}>
                 { menuIcon }<span>{ title }</span>
             </a>
         </li>

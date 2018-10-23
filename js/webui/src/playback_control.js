@@ -41,57 +41,48 @@ class PlaybackControl extends React.PureComponent
         };
     }
 
-    handleStop(e)
+    handleStop()
     {
-        e.preventDefault();
         this.props.playerModel.stop();
     }
 
-    handlePlay(e)
+    handlePlay()
     {
-        e.preventDefault();
         this.props.playerModel.play();
     }
 
-    handlePlayRandom(e)
+    handlePlayRandom()
     {
-        e.preventDefault();
         this.props.playerModel.playRandom();
     }
 
-    handlePause(e)
+    handlePause()
     {
-        e.preventDefault();
         this.props.playerModel.pause();
     }
 
-    handlePrevious(e)
+    handlePrevious()
     {
-        e.preventDefault();
         this.props.playerModel.previous();
     }
 
-    handlePreviousBy(e, index)
+    playPreviousBy(index)
     {
-        e.preventDefault();
         this.props.playerModel.previousBy(navigationMenuColumns[index].expression);
     }
 
-    handleNext(e)
+    handleNext()
     {
-        e.preventDefault();
         this.props.playerModel.next();
     }
 
-    handleNextBy(e, index)
+    playNextBy(index)
     {
-        e.preventDefault();
         this.props.playerModel.nextBy(navigationMenuColumns[index].expression);
     }
 
-    handleSetPlaybackMode(e, value)
+    setPlaybackMode(value)
     {
-        e.preventDefault();
         this.props.playerModel.setPlaybackMode(value);
     }
 
@@ -105,9 +96,8 @@ class PlaybackControl extends React.PureComponent
         this.setState({ navigationOpen: value });
     }
 
-    handleCursorFollowsPlaybackClick(e)
+    handleCursorFollowsPlaybackClick()
     {
-        e.preventDefault();
         const { settingsModel } = this.props;
         settingsModel.cursorFollowsPlayback = !settingsModel.cursorFollowsPlayback;
     }
@@ -128,7 +118,7 @@ class PlaybackControl extends React.PureComponent
                 key={'plmode' + index}
                 title={mode}
                 checked={index === playbackMode}
-                onClick={e => this.handleSetPlaybackMode(e, index)} />
+                onClick={() => this.setPlaybackMode(index)} />
         ));
 
         const nextByMenuItems = navigationMenuColumns.map((column, index) => (
@@ -136,7 +126,7 @@ class PlaybackControl extends React.PureComponent
                 key={'nextby' + index}
                 title={column.title}
                 checked={false}
-                onClick={e => this.handleNextBy(e, index)} />
+                onClick={() => this.playNextBy(index)} />
         ));
 
         const prevByMenuItems = navigationMenuColumns.map((column, index) => (
@@ -144,7 +134,7 @@ class PlaybackControl extends React.PureComponent
                 key={'prevby' + index}
                 title={column.title}
                 checked={false}
-                onClick={e => this.handlePreviousBy(e, index)} />
+                onClick={() => this.playPreviousBy(index)} />
         ));
 
         return (

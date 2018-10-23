@@ -24,15 +24,9 @@ export default class NotificationGroup extends React.Component
         super(props);
     }
 
-    handleCloseClick(e, index)
-    {
-        e.preventDefault();
-
-        this.props.onCloseQuery(index);
-    }
-
     renderBox(index, item)
     {
+        const { onCloseQuery } = this.props;
         const { start, end } = smartSplit(item.message);
 
         return (
@@ -48,7 +42,7 @@ export default class NotificationGroup extends React.Component
                     name='x'
                     title='Dismiss'
                     className='notification-close-button'
-                    onClick={e => this.handleCloseClick(e, index)}/>
+                    onClick={() => onCloseQuery(index)}/>
             </div>
         );
     }
