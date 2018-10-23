@@ -1,28 +1,28 @@
-import React  from 'react';
+import React from 'react';
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { bindHandlers } from './utils';
-import { Icon, Menu, MenuItem } from './elements';
-import { DropdownButton } from './dropdown';
-import ColumnsSettingsModel from './columns_settings_model';
+import { Button, Icon } from './elements';
+import ReactModal from 'react-modal';
+import { DialogButton } from './dialogs';
+import cloneDeep from 'lodash/cloneDeep'
 import ModelBinding from './model_binding';
+import ColumnsSettingsModel from './columns_settings_model';
+import { Visibility } from './columns';
+import { MediaSize } from './settings_model';
 
-function ColumnEditorDragHandleInner()
-{
-    return <Icon name='ellipses' className='column-editor-drag-handle' />;
-}
-
-const ColumnEditorDragHandle = SortableHandle(ColumnEditorDragHandleInner);
-
-class ColumnEditorInner extends React.PureComponent
+class ColumnEditorDialog extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
-
-        this.state = { optionsMenuOpen: false };
-
+        this.state = { };
         bindHandlers(this);
+    }
+
+    update(patch)
+    {
+        this.props.onUpdate(patch);
     }
 
     handleTitleChange(e)
@@ -48,27 +48,143 @@ class ColumnEditorInner extends React.PureComponent
         this.setState({ optionsMenuOpen: value });
     }
 
-    toggleVisibility(size)
+    setVisibility(e, size)
     {
         const { visibility } = this.props.column;
-        const newVisibility = Object.assign({}, visibility, { [size]: !visibility[size] });
+        const newVisibility = Object.assign({}, visibility, { [size]: e.target.checked });
         this.update({ visibility: newVisibility });
-    }
-
-    update(patch)
-    {
-        this.props.onUpdate(this.props.columnIndex, patch);
     }
 
     render()
     {
-        const { optionsMenuOpen } = this.state;
-        const { columnIndex, column } = this.props;
+        const { isOpen, column, onOk, onCancel } = this.props;
         const { visibility } = column;
 
-        const titleName = `title${columnIndex}`;
-        const expressionName = `expr${columnIndex}`;
-        const sizeName = `size${columnIndex}`;
+        const visibilityControls = [MediaSize.small, MediaSize.medium, MediaSize.large].map(size => (
+            <div key={size} className='column-editor-control'>
+                <label className='column-editor-label'>
+                    <input
+                        type='checkbox'
+                        checked={visibility[size]}
+                        onChange={e => this.setVisibility(e, size)} />
+                    <span>Show in {size} layout</span>
+                </label>
+            </div>
+        ));
+
+        return (
+            <ReactModal
+                isOpen={isOpen}
+                onRequestClose={onCancel}
+                className='dialog column-editor-dialog'
+                overlayClassName='dialog-overlay'
+                ariaHideApp={false}>
+                <form className='dialog-content'>
+                    <div className='dialog-body'>
+                        <div className='column-editor-control'>
+                            <label className='column-editor-label' htmlFor='title'>Title:</label>
+                            <input
+                                className='column-editor-text column-editor-text-title'
+                                type='text'
+                                name='title'
+                                value={column.title}
+                                onChange={this.handleTitleChange} />
+                        </div>
+                        <div className='column-editor-control'>
+                            <label className='column-editor-label' htmlFor='expr'>Expression:</label>
+                            <input
+                                className='column-editor-text column-editor-text-expression'
+                                type='text'
+                                name='expr'
+                                value={column.expression}
+                                onChange={this.handleExpressionChange} />
+                        </div>
+                        <div className='column-editor-control'>
+                            <label className='column-editor-label' htmlFor='size'>Size:</label>
+                            <input
+                                className='column-editor-text column-editor-text-size'
+                                type='text'
+                                name='size'
+                                value={column.size}
+                                onChange={this.handleSizeChange} />
+                        </div>
+                        { visibilityControls }
+                    </div>
+                    <div className='dialog-buttons'>
+                        <DialogButton type='ok' onClick={onOk} />
+                        <DialogButton type='cancel' onClick={onCancel} />
+                    </div>
+                </form>
+            </ReactModal>
+        );
+    }
+}
+
+ColumnEditorDialog.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    column: PropTypes.object.isRequired,
+    onOk: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    onUpdate: PropTypes.func.isRequired,
+};
+
+function ColumnEditorDragHandleInner()
+{
+    return <Icon name='ellipses' className='column-editor-drag-handle' />;
+}
+
+const ColumnEditorDragHandle = SortableHandle(ColumnEditorDragHandleInner);
+
+class ColumnEditorInner extends React.PureComponent
+{
+    constructor(props)
+    {
+        super(props);
+        this.state = ColumnEditorInner.closedState();
+        bindHandlers(this);
+    }
+
+    static closedState()
+    {
+        return {
+            dialogOpen: false,
+            editedColumn: {
+                title: '',
+                expression: '',
+                size: 1,
+                visibility: Visibility.never
+            }
+        };
+    }
+
+    handleDialogOpen()
+    {
+        this.setState({
+            dialogOpen: true,
+            editedColumn: cloneDeep(this.props.column),
+        });
+    }
+
+    handleDialogOk(patch)
+    {
+        this.props.onUpdate(this.props.columnIndex, this.state.editedColumn);
+        this.setState(ColumnEditorInner.closedState);
+    }
+
+    handleDialogCancel()
+    {
+        this.setState(ColumnEditorInner.closedState);
+    }
+
+    handleDialogUpdate(patch)
+    {
+        this.setState(state => ({ editedColumn: Object.assign({}, state.editedColumn, patch) }));
+    }
+
+    render()
+    {
+        const { column } = this.props;
+        const { dialogOpen, editedColumn } = this.state;
 
         return (
             <div className='column-editor'>
@@ -76,57 +192,17 @@ class ColumnEditorInner extends React.PureComponent
                     <ColumnEditorDragHandle />
                 </div>
                 <div className='column-editor-main'>
-                    <div className='column-editor-block'>
-                        <label className='column-editor-label' htmlFor={titleName}>Title:</label>
-                        <input
-                            className='column-editor-text column-editor-text-title'
-                            type='text'
-                            name={titleName}
-                            value={column.title}
-                            onChange={this.handleTitleChange} />
-                    </div>
-                    <div className='column-editor-block'>
-                        <label className='column-editor-label' htmlFor={expressionName}>Expression:</label>
-                        <input
-                            className='column-editor-text column-editor-text-expression'
-                            type='text'
-                            name={expressionName}
-                            value={column.expression}
-                            onChange={this.handleExpressionChange} />
-                    </div>
-                    <div className='column-editor-block'>
-                        <label className='column-editor-label' htmlFor={sizeName}>Size:</label>
-                        <input
-                            className='column-editor-text column-editor-text-size'
-                            type='text'
-                            name={sizeName}
-                            value={column.size}
-                            onChange={this.handleSizeChange} />
-                    </div>
+                    { column.title } { column.expression }
                 </div>
                 <div className='column-editor-side'>
-                    <DropdownButton
-                        title='Options'
-                        iconName='cog'
-                        direction='left'
-                        isOpen={optionsMenuOpen}
-                        onRequestOpen={this.handleOptionsMenuRequestOpen}>
-                        <Menu>
-                            <MenuItem
-                                title='Show in small layout'
-                                checked={visibility.small}
-                                onClick={() => this.toggleVisibility('small')}/>
-                            <MenuItem
-                                title='Show in medium layout'
-                                checked={visibility.medium}
-                                onClick={() => this.toggleVisibility('medium')}/>
-                            <MenuItem
-                                title='Show in large layout'
-                                checked={visibility.large}
-                                onClick={() => this.toggleVisibility('large')}/>
-                        </Menu>
-                    </DropdownButton>
+                    <Button name='cog' onClick={this.handleDialogOpen} title='Edit' />
                 </div>
+                <ColumnEditorDialog
+                    isOpen={dialogOpen}
+                    column={editedColumn}
+                    onOk={this.handleDialogOk}
+                    onCancel={this.handleDialogCancel}
+                    onUpdate={this.handleDialogUpdate} />
             </div>
         );
     }

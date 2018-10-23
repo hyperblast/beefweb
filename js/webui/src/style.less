@@ -606,15 +606,18 @@ body {
     .border();
 }
 
+.column-editor-side,
+.column-editor-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .column-editor-main {
     flex: 1;
 }
 
 .column-editor-side {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
     &:first-child {
         margin-right: 1rem;
     }
@@ -624,26 +627,8 @@ body {
     }
 }
 
-.column-editor-block {
-    white-space: nowrap;
-    display: inline-block;
+.column-editor-control {
     margin: 0.25rem;
-
-    &:not(:last-child) {
-        margin-right: 1rem;
-    }
-}
-
-.column-editor-label {
-    margin-right: 0.25rem;
-}
-
-.column-editor-text {
-    max-width: 20rem;
-}
-
-.column-editor-text-size {
-    max-width: 5rem;
 }
 
 .column-editor-drag-handle {
