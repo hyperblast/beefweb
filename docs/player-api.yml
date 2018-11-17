@@ -71,7 +71,7 @@ paths:
         in: query
         type: number
       responses:
-        200:
+        204:
           description: Success
 
   /player/play:
