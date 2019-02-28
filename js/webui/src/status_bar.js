@@ -1,10 +1,8 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
-import PlayerModel from './player_model'
-import PlaylistModel from './playlist_model'
 import { formatTime } from './utils'
 import ModelBinding from './model_binding';
+import ServiceContext from './service_context';
 
 const stateToName = Object.freeze({
     [PlaybackState.playing]: 'Playing',
@@ -14,16 +12,17 @@ const stateToName = Object.freeze({
 
 class StatusBar extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
+        //this.state = {};
         this.state = this.getStateFromModel();
     }
 
     getStateFromModel()
     {
-        const { playerModel, playlistModel } = this.props;
+        const { playerModel, playlistModel } = this.context;
 
         const totalTime = playlistModel.currentPlaylist
             ? playlistModel.currentPlaylist.totalTime
@@ -40,7 +39,7 @@ class StatusBar extends React.PureComponent
     {
         const { playbackState, totalCount, totalTime } = this.state;
 
-        var items = [
+        const items = [
             stateToName[playbackState],
             `${totalCount} track(s)`,
             `${formatTime(totalTime, true)} total playtime`
@@ -55,10 +54,7 @@ class StatusBar extends React.PureComponent
     }
 }
 
-StatusBar.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired
-};
+StatusBar.contextType = ServiceContext;
 
 export default ModelBinding(StatusBar, {
     playerModel: 'change',

@@ -22,6 +22,8 @@ export default class AppModel
         this.notificationModel = new NotificationModel();
         this.navigationModel = new NavigationModel();
         this.scrollManager = new ScrollManager();
+
+        Object.freeze(this);
     }
 
     load()

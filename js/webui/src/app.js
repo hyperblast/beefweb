@@ -138,9 +138,7 @@ class App extends React.PureComponent
                     navigationModel={navigationModel} />
                 { view.header }
                 { view.main }
-                <StatusBar
-                    playerModel={playerModel}
-                    playlistModel={playlistModel} />
+                <StatusBar />
             </div>
         );
     }

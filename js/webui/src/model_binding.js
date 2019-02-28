@@ -1,4 +1,5 @@
 import React from 'react';
+import ServiceContext from './service_context'
 
 function makeBindingList(bindings)
 {
@@ -51,7 +52,7 @@ export default function ModelBinding(InnerComponent, eventBindings)
         {
             for (let binding of bindings)
             {
-                const model = this.props[binding.model];
+                const model = this.props[binding.model] || this.context[binding.model];
 
                 if (model)
                     model.on(binding.event, this.handleModelUpdate);
@@ -62,7 +63,7 @@ export default function ModelBinding(InnerComponent, eventBindings)
         {
             for (let binding of bindings)
             {
-                const model = this.props[binding.model];
+                const model = this.props[binding.model] || this.context[binding.model];
 
                 if (model)
                     model.off(binding.event, this.handleModelUpdate);
@@ -102,6 +103,7 @@ export default function ModelBinding(InnerComponent, eventBindings)
 
     ModelBinder.propTypes = InnerComponent.propTypes;
     ModelBinder.defaultProps = InnerComponent.defaultProps;
+    ModelBinder.contextType = ServiceContext;
 
     return ModelBinder;
 }

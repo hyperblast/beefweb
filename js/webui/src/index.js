@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import Navigo from 'navigo'
 import { PlayerClient } from 'beefweb-client'
+import ServiceContext from './service_context'
 import App from './app'
 import RequestHandler from './request_handler'
 import SettingsStore from './settings_store'
@@ -133,6 +134,10 @@ appModel.start();
 windowController.start();
 router.resolve();
 
-ReactDom.render(
-    <App appModel={appModel} navigationModel={navigationModel} />,
-    document.getElementById('app-container'));
+const appComponent = (
+    <ServiceContext.Provider value={appModel}>
+        <App appModel={appModel} navigationModel={navigationModel} />
+    </ServiceContext.Provider>
+);
+
+ReactDom.render(appComponent, document.getElementById('app-container'));
