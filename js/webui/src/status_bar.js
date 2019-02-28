@@ -16,7 +16,6 @@ class StatusBar extends React.PureComponent
     {
         super(props, context);
 
-        //this.state = {};
         this.state = this.getStateFromModel();
     }
 
