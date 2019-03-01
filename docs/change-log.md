@@ -2,6 +2,7 @@
 - Renamed "Audio menu" to "Playback mode"
 - Fixed icons occasionally not being rendered on Chrome-based browsers
 - Fixed non-latin music directories support
+- Added optional playback information panel
 
 ### Changes in v0.3 (released 2018-09-20):
 - Added button that locates currently played track
