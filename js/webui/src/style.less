@@ -455,15 +455,18 @@ body {
 .panel,
 .panel-header {
     background: @color-background;
-    margin: 0.5rem;
+    margin: 0 0.5rem 0.5rem;
 
     .border();
+}
+
+.panel:first-child {
+    margin-top: 0.5rem;
 }
 
 .panel-header {
     display: flex;
     min-height: 2.25rem;
-    margin-top: 0;
     margin-bottom: 0;
     border-bottom: none;
     border-bottom-left-radius: 0;
@@ -472,8 +475,6 @@ body {
 
 .main-panel {
     flex: 1;
-    margin-top: 0;
-    margin-bottom: 0;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     overflow: hidden;
@@ -490,6 +491,14 @@ body {
 
 .st-no-fullwidth .app {
     max-width: 62rem;
+}
+
+.playback-info-bar {
+    font-style: italic;
+    height: 2.25rem;
+    text-align: center;
+    padding: 0.5rem;
+    .no-text-overflow();
 }
 
 .control-bar {
@@ -524,7 +533,6 @@ body {
 
 .status-bar {
     padding: 0.5rem;
-    margin: 0.5rem;
 
     .no-text-overflow();
 }

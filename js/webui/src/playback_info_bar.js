@@ -27,7 +27,7 @@ class PlaybackInfoBarInner extends React.PureComponent
     {
         const { title } = this.state;
 
-        return title ? <div className='panel playback-info-bar'>{title}</div> : null;
+        return <div className='panel playback-info-bar'>{title}</div>;
     }
 }
 
