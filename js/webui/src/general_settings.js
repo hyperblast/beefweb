@@ -12,6 +12,7 @@ export default function GeneralSettings(props)
             <SettingEditor settingKey='fullWidth' settingsModel={model} />
             <SettingEditor settingKey='fontSize' settingsModel={model} />
             <SettingEditor settingKey='inputMode' settingsModel={model} />
+            <SettingEditor settingKey='showPlaybackInfo' settingsModel={model} />
         </form>
     );
 }

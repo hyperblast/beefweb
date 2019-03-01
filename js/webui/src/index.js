@@ -136,7 +136,7 @@ router.resolve();
 
 const appComponent = (
     <ServiceContext.Provider value={appModel}>
-        <App appModel={appModel} navigationModel={navigationModel} />
+        <App />
     </ServiceContext.Provider>
 );
 

@@ -54,6 +54,7 @@ const defaultSettingProps = Object.freeze({
  * @property {string} fontSize
  * @property {boolean} touchMode
  * @property {string} mediaSize
+ * @property {boolean} showPlaybackInfo
  */
 export default class SettingsModel extends EventEmitter
 {
@@ -141,6 +142,14 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.custom,
             defaultValue: defaultPlaylistColumns,
             persistent: true
+        });
+
+        this.define({
+            key: 'showPlaybackInfo',
+            title: 'Show playback information panel',
+            type: SettingType.bool,
+            defaultValue: false,
+            persistent: true,
         });
 
         Object.freeze(this.metadata);

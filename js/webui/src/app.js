@@ -1,6 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import AppModel from './app_model'
 import { PanelHeader } from './elements'
 import ControlBar from './control_bar'
 import PlaylistSwitcher from './playlist_switcher'
@@ -10,15 +8,17 @@ import FileBrowser from './file_browser'
 import FileBrowserHeader from './file_browser_header'
 import StatusBar from './status_bar'
 import ModelBinding from './model_binding';
-import NavigationModel, { View } from './navigation_model';
+import { View } from './navigation_model';
 import SettingsHeader from './settings_header';
 import SettingsContent from './settings_content';
+import ServiceContext from './service_context';
+import PlaybackInfoBar from './playback_info_bar';
 
 class App extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
 
@@ -32,8 +32,10 @@ class App extends React.PureComponent
 
     getStateFromModel()
     {
-        const { view } = this.props.navigationModel;
-        return { view };
+        const { navigationModel, settingsModel } = this.context;
+        const { view } = navigationModel;
+        const { showPlaybackInfo } = settingsModel;
+        return { view, showPlaybackInfo };
     }
 
     renderPlaylistView()
@@ -43,7 +45,7 @@ class App extends React.PureComponent
             playlistModel,
             settingsModel,
             scrollManager,
-        } = this.props.appModel;
+        } = this.context;
 
         return {
             header: (
@@ -73,7 +75,7 @@ class App extends React.PureComponent
             fileBrowserModel,
             notificationModel,
             scrollManager,
-        } = this.props.appModel;
+        } = this.context;
 
         return {
             header: (
@@ -94,7 +96,7 @@ class App extends React.PureComponent
 
     renderSettingsView()
     {
-        const { navigationModel, settingsModel, columnsSettingsModel } = this.props.appModel;
+        const { navigationModel, settingsModel, columnsSettingsModel } = this.context;
 
         return {
             header: (
@@ -126,12 +128,17 @@ class App extends React.PureComponent
             playlistModel,
             settingsModel,
             navigationModel
-        } = this.props.appModel;
+        } = this.context;
 
         const view = this.renderView[this.state.view].call(this);
 
+        const playbackInfoBar = this.state.showPlaybackInfo
+            ? <PlaybackInfoBar />
+            : null;
+
         return (
             <div className='app'>
+                { playbackInfoBar }
                 <ControlBar
                     playerModel={playerModel}
                     settingsModel={settingsModel}
@@ -144,9 +151,9 @@ class App extends React.PureComponent
     }
 }
 
-App.propTypes = {
-    appModel: PropTypes.instanceOf(AppModel).isRequired,
-    navigationModel: PropTypes.instanceOf(NavigationModel).isRequired,
-};
+App.contextType = ServiceContext;
 
-export default ModelBinding(App, { navigationModel: 'viewChange' });
+export default ModelBinding(App, {
+    navigationModel: 'viewChange',
+    settingsModel: 'change'
+});
