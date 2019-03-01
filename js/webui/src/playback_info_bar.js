@@ -17,7 +17,7 @@ class PlaybackInfoBarInner extends React.PureComponent
         const { playerModel } = this.context;
 
         const title = playerModel.playbackState !== PlaybackState.stopped
-            ? (playerModel.activeItem.columns[0] || '')
+            ? (playerModel.activeItem.columns[1] || '')
             : '';
 
         return { title };
@@ -27,7 +27,7 @@ class PlaybackInfoBarInner extends React.PureComponent
     {
         const { title } = this.state;
 
-        return <div className='panel playback-info-bar'>{title}</div>;
+        return <div className='panel playback-info-bar' title={title}>{title}</div>;
     }
 }
 

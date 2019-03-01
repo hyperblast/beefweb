@@ -54,7 +54,7 @@ export default class PlayerModel extends EventEmitter
     {
         this.dataSource.on('player', this.update.bind(this));
         this.dataSource.watch('player', {
-            trcolumns: ['%artist% - %title%']
+            trcolumns: ['%artist% - %title%', '%artist% - %album% - %title%']
         });
     }
 
