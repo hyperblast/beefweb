@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Beefweb client library for browser and node",
   "main": "dist/cjs/index.js",
+  "module": "src/index.js",
   "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
   "license": "MIT",
