@@ -2,6 +2,7 @@
 
 #include "defines.hpp"
 #include "controller.hpp"
+#include "settings.hpp"
 
 namespace msrv {
 
@@ -41,6 +42,9 @@ public:
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsStore* store);
 
 private:
+    std::string validateAndNormalizeItem(const SettingsData& settings, const std::string& item);
+
+
     Player* player_;
     SettingsStore* store_;
 

@@ -10,19 +10,26 @@
 #include "player_api_parsers.hpp"
 
 #include <boost/algorithm/string.hpp>
+#include <regex>
 
 namespace msrv {
 
 namespace {
 
-const char FILE_SCHEME[] = "file://";
-
-std::string stripFileScheme(const std::string& url)
+bool isUrl(const std::string& input)
 {
+    static std::regex pattern("^[a-z]+:\\/\\/.*$", std::regex::ECMAScript);
+    return std::regex_match(input, pattern);
+}
+
+boost::optional<std::string> stripFileScheme(const std::string& url)
+{
+    static const char FILE_SCHEME[] = "file://";
+
     if (boost::starts_with(url, FILE_SCHEME))
         return url.substr(sizeof(FILE_SCHEME) - 1);
 
-    return url;
+    return boost::none;
 }
 
 }
@@ -90,6 +97,31 @@ void PlaylistsController::clearPlaylist()
     player_->clearPlaylist(param<PlaylistRef>("plref"));
 }
 
+std::string PlaylistsController::validateAndNormalizeItem(const SettingsData &settings, const std::string &item)
+{
+    std::string path;
+
+    if (isUrl(item))
+    {
+        if (auto fileUrlPath = stripFileScheme(item))
+            path = *fileUrlPath;
+        else
+            return item;
+    }
+    else
+        path = item;
+
+    path = pathToUtf8(pathFromUtf8(path).lexically_normal().make_preferred());
+
+    if (settings.isAllowedPath(path))
+        return path;
+
+    request()->response = Response::error(HttpStatus::S_403_FORBIDDEN, "item is not under allowed path: " + item);
+    request()->setProcessed();
+
+    throw InvalidRequestException();
+}
+
 ResponsePtr PlaylistsController::addItems()
 {
     auto plref = param<PlaylistRef>("plref");
@@ -100,14 +132,7 @@ ResponsePtr PlaylistsController::addItems()
     auto settings = store_->settings();
 
     for (auto& item : items)
-    {
-        auto normalizedPath = pathToUtf8(pathFromUtf8(stripFileScheme(item)).lexically_normal().make_preferred());
-
-        if (!settings->isAllowedPath(normalizedPath))
-            return Response::error(HttpStatus::S_403_FORBIDDEN, "item is not under allowed path: " + item);
-
-        normalizedItems.emplace_back(std::move(normalizedPath));
-    }
+        normalizedItems.emplace_back(validateAndNormalizeItem(*settings, item));
 
     auto addCompleted = player_->addPlaylistItems(plref, normalizedItems, targetIndex);
 

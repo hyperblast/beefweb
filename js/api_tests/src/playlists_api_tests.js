@@ -167,6 +167,14 @@ q.test('add playlist items single', async assert =>
     assert.ok(pathCollectionsEqual(files, [tracks.t1]));
 });
 
+q.test('add playlist items URL', async assert =>
+{
+    await client.addPlaylistItems(0, ['http://localhost:12345']);
+
+    const files = await client.getPlaylistFiles(0);
+    assert.ok(pathCollectionsEqual(files, ['http://localhost:12345']));
+});
+
 q.test('add playlist items multiple', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
