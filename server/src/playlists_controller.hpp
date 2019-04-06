@@ -44,7 +44,6 @@ public:
 private:
     std::string validateAndNormalizeItem(const SettingsData& settings, const std::string& item);
 
-
     Player* player_;
     SettingsStore* store_;
 

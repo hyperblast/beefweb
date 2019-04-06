@@ -18,7 +18,7 @@ namespace {
 
 bool isUrl(const std::string& input)
 {
-    static std::regex pattern("^[a-z]+:\\/\\/.*$", std::regex::ECMAScript);
+    static const std::regex pattern("^[a-z]+:\\/\\/.*$", std::regex::ECMAScript);
     return std::regex_match(input, pattern);
 }
 
@@ -97,7 +97,7 @@ void PlaylistsController::clearPlaylist()
     player_->clearPlaylist(param<PlaylistRef>("plref"));
 }
 
-std::string PlaylistsController::validateAndNormalizeItem(const SettingsData &settings, const std::string &item)
+std::string PlaylistsController::validateAndNormalizeItem(const SettingsData& settings, const std::string& item)
 {
     std::string path;
 
