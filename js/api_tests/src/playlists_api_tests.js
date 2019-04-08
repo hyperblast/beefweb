@@ -167,12 +167,14 @@ q.test('add playlist items single', async assert =>
     assert.ok(pathCollectionsEqual(files, [tracks.t1]));
 });
 
-q.test('add playlist items URL', async assert =>
+q.test('add playlist items url', async assert =>
 {
-    await client.addPlaylistItems(0, ['http://localhost:12345']);
+    const streamUrl = 'https://upload.wikimedia.org/wikipedia/en/d/d0/Rick_Astley_-_Never_Gonna_Give_You_Up.ogg';
+
+    await client.addPlaylistItems(0, [streamUrl]);
 
     const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, ['http://localhost:12345']));
+    assert.ok(pathCollectionsEqual(files, [streamUrl]));
 });
 
 q.test('add playlist items multiple', async assert =>
