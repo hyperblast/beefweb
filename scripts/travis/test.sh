@@ -18,7 +18,7 @@ function run_server_tests
 function run_api_tests
 {
     (
-        banner "Running API tests ($1)"
+        banner "Running API tests on deadbeef $1 $TARGET_ARCH"
         export BEEFWEB_TEST_DEADBEEF_VERSION=$1
         export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
         tools/deadbeef/$1/$TARGET_ARCH/deadbeef --version
