@@ -14,6 +14,8 @@ class TestContext extends TestContextBase
         const { BEEFWEB_TEST_FOOBAR2000_VERSION } = process.env;
         const version = BEEFWEB_TEST_FOOBAR2000_VERSION || 'v1.3';
 
+        config.playerDir = path.join(config.toolsDir, 'foobar2000', version);
+
         config.pluginBuildDir = path.join(
             config.rootDir,
             'server',
@@ -24,7 +26,6 @@ class TestContext extends TestContextBase
             config.buildType);
 
         config.pluginFile = 'foo_beefweb.dll';
-        config.playerDir = path.join(config.toolsDir, `foobar2000-${version}`);
     }
 
     createController(config)
