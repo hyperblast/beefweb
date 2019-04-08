@@ -82,7 +82,7 @@ class PlayerController
     async findPlayerBinary()
     {
         const locations = [
-            path.join(this.config.playerDirBase, this.pluginArch),
+            path.join(this.config.playerDirBase, this.pluginArch, 'deadbeef'),
             '/opt/deadbeef/bin/deadbeef',
             '/usr/local/bin/deadbeef',
             '/usr/bin/deadbeef'
