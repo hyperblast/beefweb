@@ -30,7 +30,7 @@
     <Target Name="Upload" DependsOnTargets="FindPackageFile">
         <PropertyGroup>
             <UploadUrl>https://hyperblast.org/uploads/$(ProjectName)/builds/$(PackageFileDate)</UploadUrl>
-            <DebugUploadUrl>$(UploadUrl)/debug</UploadUrl>
+            <DebugUploadUrl>$(UploadUrl)/debug</DebugUploadUrl>
         </PropertyGroup>
         <Exec
             Command="curl-auth.cmd $(CurlArgs) -X MKCOL $(UploadUrl)/"
