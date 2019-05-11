@@ -178,8 +178,9 @@ q.test('add playlist items url', async assert =>
         const result = await client.getPlaylistFiles(0);
         console.log(result);
         return result.length === 1 ? result : null;
-    });
+    }, 200, 100);
 
+    assert.ok(files, 'expected to get added URL');
     assert.ok(pathCollectionsEqual(files, [streamUrl]));
 });
 
