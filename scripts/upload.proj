@@ -23,24 +23,26 @@
         <Error Text="Unable to find package file" Condition="'$(PackageFilePath)' == ''" />
         <PropertyGroup>
             <PackageFileTimestamp>@(PackageFile -> '%(ModifiedTime)')</PackageFileTimestamp>
-            <PackageFileDate>$(PackageFileTimestamp.Substring(0, 10))</PackageFileDate> 
+            <PackageFileDate>$(PackageFileTimestamp.Substring(0, 10))</PackageFileDate>
         </PropertyGroup>
     </Target>
 
-    <Target Name="MakeUploadDirectory" DependsOnTargets="FindPackageFile">
+    <Target Name="Upload" DependsOnTargets="FindPackageFile">
         <PropertyGroup>
-            <UploadUrl>https://hyperblast.org/uploads/$(ProjectName)/builds/$(PackageFileDate)/</UploadUrl>
+            <UploadUrl>https://hyperblast.org/uploads/$(ProjectName)/builds/$(PackageFileDate)</UploadUrl>
+            <DebugUploadUrl>$(UploadUrl)/debug</UploadUrl>
         </PropertyGroup>
         <Exec
-            Command="curl-auth.cmd $(CurlArgs) -X MKCOL $(UploadUrl)"
+            Command="curl-auth.cmd $(CurlArgs) -X MKCOL $(UploadUrl)/"
             IgnoreExitCode="True" />
-    </Target>
-    
-    <Target Name="Upload" DependsOnTargets="MakeUploadDirectory">
         <Exec
-            Command="curl-auth.cmd $(CurlArgs) -T $(PackageFilePath) $(UploadUrl)" />
+            Command="curl-auth.cmd $(CurlArgs) -T $(PackageFilePath) $(UploadUrl)/" />
         <Exec
             Condition="'$(DebugInfoFilePath)' != ''"
-            Command="curl-auth.cmd $(CurlArgs) -T $(DebugInfoFilePath) $(UploadUrl)"/>
+            Command="curl-auth.cmd $(CurlArgs) -X MKCOL $(DebugUploadUrl)/"
+            IgnoreExitCode="True" />
+        <Exec
+            Condition="'$(DebugInfoFilePath)' != ''"
+            Command="curl-auth.cmd $(CurlArgs) -T $(DebugInfoFilePath) $(DebugUploadUrl)/"/>
     </Target>
 </Project>
