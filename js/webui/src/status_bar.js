@@ -30,19 +30,22 @@ class StatusBar extends React.PureComponent
         return {
             playbackState: playerModel.playbackState,
             totalCount: playlistModel.playlistItems.totalCount,
-            totalTime
+            totalTime,
+            showTotalTime: playerModel.info.name !== 'foobar2000',
         };
     }
 
     getStatusLine()
     {
-        const { playbackState, totalCount, totalTime } = this.state;
+        const { playbackState, totalCount, totalTime, showTotalTime } = this.state;
 
         const items = [
             stateToName[playbackState],
             `${totalCount} track(s)`,
-            `${formatTime(totalTime, true)} total playtime`
         ];
+
+        if (showTotalTime)
+            items.push(`${formatTime(totalTime, true)} total playtime`);
 
         return items.join(' | ');
     }
