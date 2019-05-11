@@ -173,8 +173,13 @@ q.test('add playlist items url', async assert =>
 
     await client.addPlaylistItems(0, [streamUrl]);
 
-    const files = await client.getPlaylistFiles(0);
-    console.log(files);
+    const files = await waitUntil(async () =>
+    {
+        const result = await client.getPlaylistFiles(0);
+        console.log(result);
+        return result.length === 1 ? result : null;
+    });
+
     assert.ok(pathCollectionsEqual(files, [streamUrl]));
 });
 
