@@ -44,7 +44,7 @@ class VolumeControlPanelInner extends React.PureComponent
     render()
     {
         const { type, min, max, value, isMuted } = this.state;
-        const title = value + (type === 'db' ? 'dB' : '');
+        const title = value.toFixed(0) + (type === 'db' ? 'dB' : '');
 
         return (
             <div className='volume-control-panel'>

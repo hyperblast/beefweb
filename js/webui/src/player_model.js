@@ -2,7 +2,8 @@ import EventEmitter from 'wolfy87-eventemitter'
 import debounce from 'lodash/debounce'
 import clamp from 'lodash/clamp'
 import Timer from './timer'
-import { SwitchParam, PlaybackState } from 'beefweb-client'
+import { PlaybackState } from 'beefweb-client'
+import { dbToLinear, linearToDb } from './utils';
 
 const initialPlayerInfo = Object.freeze({
     info: {
@@ -47,7 +48,8 @@ export default class PlayerModel extends EventEmitter
         this.defineEvent('change');
         this.defineEvent('trackSwitch');
 
-        this.setVolumeRemote = debounce(value => this.client.setVolume(value), 80);
+        this.setVolumeRemote = debounce(
+            value => this.client.setVolume(this.convertVolumeToServer(value)), 80);
     }
 
     start()
@@ -126,6 +128,7 @@ export default class PlayerModel extends EventEmitter
         const wasPlaying = this.playbackState === PlaybackState.playing;
 
         Object.assign(this, playerInfo);
+        this.convertVolumeFromServer();
 
         if (this.playbackState === PlaybackState.playing)
             this.positionTimer.restart();
@@ -167,5 +170,26 @@ export default class PlayerModel extends EventEmitter
         {
             this.emit('trackSwitch');
         }
+    }
+
+    convertVolumeFromServer()
+    {
+        if (this.info.name !== 'foobar2000')
+            return;
+
+        this.volume = {
+            type: 'linear',
+            min: 0.0,
+            max: 100.0,
+            value: dbToLinear(this.volume.value) * 100.0,
+            isMuted: this.volume.isMuted,
+        };
+    }
+
+    convertVolumeToServer(value)
+    {
+        return this.info.name === 'foobar2000'
+            ? linearToDb(value / 100.0)
+            : value;
     }
 }
