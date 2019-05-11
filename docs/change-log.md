@@ -5,6 +5,8 @@
 - Fixed icons occasionally not being rendered on Chrome-based browsers
 - Fixed non-latin music directories support
 - Fixed "Add URL" not working
+- Total playlist time status line is removed (foobar2000 only)
+- Volume slider now uses linear scale instead of dB (foobar2000 only)
 
 ### Changes in v0.3 (released 2018-09-20):
 - Added button that locates currently played track
