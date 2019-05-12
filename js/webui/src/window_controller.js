@@ -3,7 +3,7 @@ import iconPause from 'open-iconic/png/media-pause-4x.png'
 import iconStop from 'open-iconic/png/media-stop-4x.png'
 import { PlaybackState } from 'beefweb-client'
 
-var stateToIcon = {
+const stateToIcon = {
     [PlaybackState.playing]: iconPlay,
     [PlaybackState.paused]: iconPause,
     [PlaybackState.stopped]: iconStop
