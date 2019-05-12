@@ -18,7 +18,7 @@ class PlaybackInfoBarInner extends React.PureComponent
 
         const title = playerModel.playbackState !== PlaybackState.stopped
             ? (playerModel.activeItem.columns[1] || '')
-            : '';
+            : playerModel.info.title;
 
         return { title };
     }
