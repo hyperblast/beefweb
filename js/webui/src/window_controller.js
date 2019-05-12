@@ -11,7 +11,7 @@ var stateToIcon = {
 
 function setIcon(icon)
 {
-    var iconElement = document.getElementById('player-state-icon');
+    let iconElement = document.getElementById('player-state-icon');
 
     if (iconElement)
     {
@@ -29,7 +29,7 @@ function setIcon(icon)
 
 function stateEqual(x, y)
 {
-    return x.title == y.title && x.playbackState == y.playbackState;
+    return x.title === y.title && x.playbackState === y.playbackState;
 }
 
 export default class WindowController
@@ -54,10 +54,10 @@ export default class WindowController
 
     getStateFromModel()
     {
-        var model = this.playerModel;
-        var playbackState = model.playbackState;
+        const model = this.playerModel;
+        const playbackState = model.playbackState;
 
-        var title = playbackState != PlaybackState.stopped
+        const title = playbackState !== PlaybackState.stopped
             ? model.activeItem.columns[0] + ' - ' + model.info.title
             : model.info.title;
 
@@ -66,7 +66,7 @@ export default class WindowController
 
     handleUpdate()
     {
-        var state = this.getStateFromModel();
+        const state = this.getStateFromModel();
 
         if (stateEqual(this.state, state))
             return;
