@@ -31,7 +31,7 @@ class StatusBar extends React.PureComponent
             playbackState: playerModel.playbackState,
             totalCount: playlistModel.playlistItems.totalCount,
             totalTime,
-            showTotalTime: playerModel.info.name !== 'foobar2000',
+            showTotalTime: playerModel.features.showTotalTime,
         };
     }
 

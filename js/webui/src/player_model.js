@@ -4,8 +4,10 @@ import clamp from 'lodash/clamp'
 import Timer from './timer'
 import { PlaybackState } from 'beefweb-client'
 import { dbToLinear, linearToDb } from './utils';
+import { defaultPlayerFeatures, getPlayerFeatures } from './player_features';
 
 const initialPlayerInfo = Object.freeze({
+    features: defaultPlayerFeatures,
     info: {
         name: '',
         title: '',
@@ -33,6 +35,16 @@ const initialPlayerInfo = Object.freeze({
     activeItemId: '',
 });
 
+/**
+ * @class PlayerModel
+ * @property {object} features
+ * @property {object} info
+ * @property {string} playbackState
+ * @property {number} playbackMode
+ * @property {object} volume
+ * @property {object} activeItem
+ * @property {string} activeItemId
+ */
 export default class PlayerModel extends EventEmitter
 {
     constructor(client, dataSource)
@@ -42,6 +54,7 @@ export default class PlayerModel extends EventEmitter
         this.client = client;
         this.dataSource = dataSource;
         this.positionTimer = new Timer(this.updatePosition.bind(this), 500);
+        this.featuresInitialized = false;
 
         Object.assign(this, initialPlayerInfo);
 
@@ -128,6 +141,12 @@ export default class PlayerModel extends EventEmitter
         const wasPlaying = this.playbackState === PlaybackState.playing;
 
         Object.assign(this, playerInfo);
+
+        if (!this.featuresInitialized) {
+            this.features = getPlayerFeatures(this.info.name);
+            this.featuresInitialized = true;
+        }
+
         this.convertVolumeFromServer();
 
         if (this.playbackState === PlaybackState.playing)
@@ -174,7 +193,7 @@ export default class PlayerModel extends EventEmitter
 
     convertVolumeFromServer()
     {
-        if (this.info.name !== 'foobar2000')
+        if (!this.features.linearVolumeControl)
             return;
 
         this.volume = {
@@ -188,7 +207,7 @@ export default class PlayerModel extends EventEmitter
 
     convertVolumeToServer(value)
     {
-        return this.info.name === 'foobar2000'
+        return this.features.linearVolumeControl
             ? linearToDb(value / 100.0)
             : value;
     }
