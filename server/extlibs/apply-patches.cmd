@@ -3,9 +3,13 @@
 @set src_dir=%~dp0%1
 
 @call :apply_patches "%src_dir%\patches"
+if %errorlevel% neq 0 goto :error
 @call :apply_patches "%src_dir%\patches.windows"
+if %errorlevel% neq 0 goto :error
 @call :copy_files "%src_dir%\files"
+if %errorlevel% neq 0 goto :error
 @call :copy_files "%src_dir%\files.windows"
+if %errorlevel% neq 0 goto :error
 
 @goto :end
 
@@ -28,6 +32,9 @@
 :usage
 @echo usage: %~nx0 target
 @echo.
-@cmd /c exit 1
+@exit /b 1
+
+:error
+@exit /b %errorlevel%
 
 :end
