@@ -7,6 +7,7 @@
 - Fixed "Add URL" not working
 - Total playlist time status line is removed (foobar2000 only)
 - Volume slider now uses linear scale instead of dB (foobar2000 only)
+- Fixed browsing directories with `!` in path
 
 ### Changes in v0.3 (released 2018-09-20):
 - Added button that locates currently played track

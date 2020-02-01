@@ -58,8 +58,11 @@ router.on({
 
     '/files/!*': () => {
         navigationModel.setView(View.fileBrowser);
+
         const path = getPathFromUrl(router.lastRouteResolved().url);
-        fileBrowserModel.browse(path);
+
+        if (path)
+            fileBrowserModel.browse(path);
     },
 
     '/settings': () => {

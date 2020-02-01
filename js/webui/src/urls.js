@@ -27,5 +27,10 @@ export default urls;
 
 export function getPathFromUrl(url)
 {
-    return decodeURIComponent(url.split('!', 2)[1]);
+    const index = url.indexOf('!');
+
+    if (index < 0)
+        return null;
+
+    return decodeURIComponent(url.substring(index + 1));
 }
