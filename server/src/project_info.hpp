@@ -44,7 +44,7 @@
 #endif
 
 #define MSRV_LICENSE_TEXT \
-    "Copyright 2015-2019 Hyperblast\n" \
+    "Copyright 2015-2020 Hyperblast\n" \
     "\n" \
     "Permission is hereby granted, free of charge, to any person obtaining a copy " \
     "of this software and associated documentation files (the \"Software\"), to deal " \
