@@ -1,3 +1,6 @@
+### Changes in v0.5 (not released):
+
+
 ### Changes in v0.4 (released 2020-02-02):
 - Added optional playback information panel
 - Added basic support for playlist column customization
