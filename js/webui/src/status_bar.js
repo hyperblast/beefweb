@@ -3,6 +3,7 @@ import { PlaybackState } from 'beefweb-client'
 import { formatTime } from './utils'
 import ModelBinding from './model_binding';
 import ServiceContext from './service_context';
+import urls from './urls';
 
 const stateToName = Object.freeze({
     [PlaybackState.playing]: 'Playing',
@@ -52,7 +53,13 @@ class StatusBar extends React.PureComponent
 
     render()
     {
-        return <div className='panel status-bar'>{ this.getStatusLine() }</div>;
+        return (
+            <div className='panel status-bar'>
+                <a className='status-bar-link' href={urls.nowPlaying}>
+                    { this.getStatusLine() }
+                </a>
+            </div>
+        );
     }
 }
 

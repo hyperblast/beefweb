@@ -40,6 +40,15 @@
     white-space: nowrap;
 }
 
+.button-link() {
+    text-decoration: none;
+    color: @color-text;
+
+    &:visited {
+        color: @color-text;
+    }
+}
+
 /* Base setup */
 
 html {
@@ -431,11 +440,8 @@ body {
 
 .dtable-column-header-link {
     text-decoration: none;
-    color: @color-text;
 
-    &:visited {
-        color: @color-text;
-    }
+    .button-link();
 }
 
 .dtable-column-header {
@@ -443,13 +449,9 @@ body {
 }
 
 .dtable-cell {
-    text-decoration: none;
-    color: @color-text;
     padding: 0.25rem;
 
-    &:visited {
-        color: @color-text;
-    }
+    .button-link();
 }
 
 .panel,
@@ -535,6 +537,12 @@ body {
     padding: 0.5rem;
 
     .no-text-overflow();
+}
+
+.status-bar-link {
+    display: block;
+
+    .button-link();
 }
 
 .playback-control .icon-media-play > use {
