@@ -10,8 +10,13 @@
     @goto :install
 )
 
+@if "%1" == "v1.5" (
+    @set pkg_file=foobar2000_v1.5.1.exe
+    @goto :install
+)
+
 @echo Usage: %~nx0 version
-@echo Supported versions: v1.3 v1.4
+@echo Supported versions: v1.3 v1.4 v1.5
 @cmd /c exit 1
 @goto :end
 
