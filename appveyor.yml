@@ -5,6 +5,7 @@ install:
 - scripts\install\patch.cmd
 - scripts\install\foobar2000.cmd v1.3
 - scripts\install\foobar2000.cmd v1.4
+- scripts\install\foobar2000.cmd v1.5
 - set PATH=%cd%\tools\patch;%PATH%
 
 build_script:
