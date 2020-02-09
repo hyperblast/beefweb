@@ -18,19 +18,6 @@ const mkdirp = promisify(require('mkdirp'));
 const rimraf = promisify(require('rimraf'));
 const tmpdir = promisify(require('tmp').dir);
 
-async function getBinaryArch(path)
-{
-    const { stdout } = await execFile('file', ['-L', path]);
-
-    if (stdout.indexOf('x86-64') !== -1)
-        return 'x86_64';
-
-    if (stdout.indexOf('Intel 80386') !== -1)
-        return 'x86';
-
-    throw Error(`Unsupported file type: ${stdout}`);
-}
-
 class PlayerController
 {
     constructor(config)
@@ -41,9 +28,6 @@ class PlayerController
 
     async start(pluginSettings)
     {
-        if (!this.pluginArch)
-            await this.detectPluginArch();
-
         if (!this.paths.playerBinary)
             await this.findPlayerBinary();
 
@@ -70,19 +54,10 @@ class PlayerController
         return null;
     }
 
-    async detectPluginArch()
-    {
-        const pluginPath = path.join(
-            this.config.pluginBuildDir,
-            this.config.pluginFiles[0]);
-
-        this.pluginArch = await getBinaryArch(pluginPath);
-    }
-
     async findPlayerBinary()
     {
         const locations = [
-            path.join(this.config.playerDirBase, this.pluginArch, 'deadbeef'),
+            path.join(this.config.playerDirBase, 'deadbeef'),
             '/opt/deadbeef/bin/deadbeef',
             '/usr/local/bin/deadbeef',
             '/usr/bin/deadbeef'
@@ -93,13 +68,8 @@ class PlayerController
             try
             {
                 await accessCheck(location, fs.constants.X_OK);
-
-                const binaryArch = await getBinaryArch(location);
-
-                if (binaryArch !== this.pluginArch)
-                    continue;
-
                 this.paths.playerBinary = location;
+                console.log('using deadbeef at ' + this.paths.playerBinary);
                 return;
             }
             catch(e)
@@ -107,7 +77,7 @@ class PlayerController
             }
         }
 
-        throw Error(`Unable to find deadbeef ${this.pluginArch} executable`);
+        throw Error(`Unable to find deadbeef executable`);
     }
 
     async initProfile()

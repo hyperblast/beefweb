@@ -18,10 +18,10 @@ function run_server_tests
 function run_api_tests
 {
     (
-        banner "Running API tests on deadbeef $1 $TARGET_ARCH"
+        banner "Running API tests on deadbeef $1"
         export BEEFWEB_TEST_DEADBEEF_VERSION=$1
         export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
-        tools/deadbeef/$1/$TARGET_ARCH/deadbeef --version
+        tools/deadbeef/$1/deadbeef --version
         cd js/api_tests
         yarn test
     )
@@ -31,7 +31,4 @@ function run_api_tests
 cd "$(dirname $0)/../.."
 run_server_tests
 run_api_tests v0.7
-
-if [ "$TARGET_ARCH" = "x86_64" ]; then
-    run_api_tests v1.8
-fi
+run_api_tests v1.8

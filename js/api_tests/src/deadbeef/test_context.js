@@ -12,7 +12,7 @@ class TestContext extends TestContextBase
         config.playerId = 'deadbeef';
 
         const { BEEFWEB_TEST_DEADBEEF_VERSION } = process.env;
-        const version = BEEFWEB_TEST_DEADBEEF_VERSION || 'v0.7';
+        const version = BEEFWEB_TEST_DEADBEEF_VERSION || 'v1.8';
 
         config.playerDirBase = path.join(config.toolsDir, 'deadbeef', version);
 
