@@ -22,20 +22,11 @@ compiler:
 - gcc
 - clang
 
-env:
-- TARGET_ARCH=x86
-- TARGET_ARCH=x86_64
-
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
     packages:
-    - gcc-multilib
-    - g++-multilib
     - gcc-6
-    - gcc-6-multilib
     - g++-6
-    - g++-6-multilib
     - zlib1g-dev
-    - zlib1g-dev:i386
