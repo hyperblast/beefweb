@@ -5,7 +5,7 @@ ExternalProject_Add(
     PREFIX
         ${EXTLIB_INSTALL_DIR}
     URL
-        https://github.com/hyperblast/foosdk/archive/2bd812bc24b1288f11016e1aaa578d4bd4d9bc60.zip
+        https://github.com/hyperblast/foosdk/archive/21868e4d47e2ef783ff2b6b11e5d0099da8fe49f.zip
     DOWNLOAD_DIR
         ${EXTLIB_CACHE_DIR}/foosdk
     PATCH_COMMAND
