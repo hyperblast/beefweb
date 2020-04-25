@@ -1,3 +1,4 @@
+#include "project_info.hpp"
 #include "server_host.hpp"
 #include "artwork_controller.hpp"
 #include "browser_controller.hpp"
@@ -8,6 +9,7 @@
 #include "cache_support_filter.hpp"
 #include "compression_filter.hpp"
 #include "basic_auth_filter.hpp"
+#include "cors_support_filter.hpp"
 
 namespace msrv {
 
@@ -18,6 +20,11 @@ ServerHost::ServerHost(Player* player)
 
     filters_.addFilter(std::make_unique<BasicAuthFilter>(static_cast<SettingsStore*>(this)));
     filters_.addFilter(std::make_unique<CompressionFilter>());
+
+    auto corsHeader = ::getenv(MSRV_CORS_HEADER);
+    if (corsHeader != nullptr && corsHeader[0] != '\0')
+        filters_.addFilter(std::make_unique<CorsSupportFilter>(std::string(corsHeader)));
+
     filters_.addFilter(std::make_unique<CacheSupportFilter>());
     filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
