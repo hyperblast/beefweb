@@ -15,6 +15,7 @@
 
 #define MSRV_DEFAULT_PORT       8880
 #define MSRV_DEFAULT_TEST_PORT  8882
+#define MSRV_CORS_HEADER        "BEEFWEB_CORS_HEADER"
 
 #define MSRV_DEADBEEF_ENTRY     beefweb_load
 #define MSRV_FOOBAR2000_FILE    "foo_beefweb.dll"
