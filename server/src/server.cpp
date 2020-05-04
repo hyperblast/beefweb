@@ -246,7 +246,8 @@ RequestContextPtr Server::createContext(RequestCore* corereq)
         assert(request->handler);
 
         context->workQueue = factory->workQueue();
-        assert(context->workQueue);
+        if (context->workQueue == nullptr)
+            context->workQueue = core_->workQueue();
 
         request->routeParams = std::move(routeResult->params);
     }

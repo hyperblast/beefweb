@@ -189,6 +189,9 @@ HttpMethod BeastRequest::method()
     case beast::http::verb::post:
         return HttpMethod::POST;
 
+    case beast::http::verb::options:
+        return HttpMethod::OPTIONS;
+
     default:
         return HttpMethod::UNDEFINED;
     }

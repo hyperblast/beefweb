@@ -87,7 +87,7 @@ public:
 private:
     NodeType type_;
     std::string value_;
-    bool hasRoutes_;
+    bool hasRoutes_{};
 
     std::vector<std::unique_ptr<RequestHandlerFactory>> factories_;
     std::vector<std::unique_ptr<Node>> children_;
@@ -109,18 +109,14 @@ RouteResult::RouteResult(ResponsePtr errorResponseVal)
 {
 }
 
-RouteResult::~RouteResult()
-{
-}
+RouteResult::~RouteResult() = default;
 
 Router::Router()
 {
     rootNode_ = std::make_unique<Node>(NodeType::STRING, std::string());
 }
 
-Router::~Router()
-{
-}
+Router::~Router() = default;
 
 Node* Router::allocateNode(Node* parent, Tokenizer* urlTokenizer)
 {
@@ -203,10 +199,10 @@ std::unique_ptr<RouteResult> Router::dispatch(const Request* request) const
 
     auto node = matchNode(rootNode_.get(), &urlTokenizer, params);
     if (!node)
-    {
-        return std::unique_ptr<RouteResult>(
-            new RouteResult(Response::error(HttpStatus::S_404_NOT_FOUND)));
-    }
+        return std::make_unique<RouteResult>(Response::error(HttpStatus::S_404_NOT_FOUND));
+
+    if (request->method == HttpMethod::OPTIONS)
+        return std::make_unique<RouteResult>(RequestHandlerFactory::empty(), HttpKeyValueMap());
 
     auto factory = node->getRoute(request->method);
     if (!factory)

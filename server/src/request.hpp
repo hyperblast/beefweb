@@ -86,6 +86,8 @@ public:
 class RequestHandlerFactory
 {
 public:
+    static RequestHandlerFactory* empty();
+
     RequestHandlerFactory() = default;
     virtual ~RequestHandlerFactory() = default;
     virtual WorkQueue* workQueue() = 0;
