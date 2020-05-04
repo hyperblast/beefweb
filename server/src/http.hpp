@@ -12,6 +12,7 @@ enum class HttpMethod
     UNDEFINED,
     GET,
     POST,
+    OPTIONS,
     COUNT,
 };
 

@@ -18,7 +18,7 @@ class RouteResult
 {
 public:
     RouteResult(RequestHandlerFactory* factoryVal, HttpKeyValueMap parametersVal);
-    RouteResult(ResponsePtr errorResponseVal);
+    explicit RouteResult(ResponsePtr errorResponseVal);
     ~RouteResult();
 
     RequestHandlerFactory* factory;
