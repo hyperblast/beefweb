@@ -22,13 +22,15 @@ class PlayerController
         });
     }
 
-    async start(pluginSettings)
+    async start(options)
     {
+        const { pluginSettings, environment } = options;
+
         if (!this.pluginInstalled)
             await this.installPlugin();
 
         await this.writePluginSettings(pluginSettings);
-        this.startProcess();
+        this.startProcess(environment);
     }
 
     async stop()
@@ -57,7 +59,7 @@ class PlayerController
             JSON.stringify(settings));
     }
 
-    startProcess()
+    startProcess(environment)
     {
         if (this.process)
             throw new Error('Process is still running');
@@ -65,6 +67,7 @@ class PlayerController
         this.process = childProcess.spawn(this.paths.exeFile, ['/hide'], {
             cwd: this.config.playerDir,
             detached: true,
+            env: Object.assign({}, process.env, environment)
         });
 
         this.process.on('error', err => console.error('Error spawning player process: %s', err));
