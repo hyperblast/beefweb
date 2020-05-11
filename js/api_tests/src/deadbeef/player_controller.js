@@ -12,8 +12,6 @@ const symlink = promisify(fs.symlink);
 const open = promisify(fs.open);
 const close = promisify(fs.close);
 
-const execFile = promisify(childProcess.execFile);
-
 const mkdirp = promisify(require('mkdirp'));
 const rimraf = promisify(require('rimraf'));
 const tmpdir = promisify(require('tmp').dir);
@@ -26,8 +24,10 @@ class PlayerController
         this.paths = {};
     }
 
-    async start(pluginSettings)
+    async start(options)
     {
+        const { pluginSettings, environment } = options;
+
         if (!this.paths.playerBinary)
             await this.findPlayerBinary();
 
@@ -37,7 +37,7 @@ class PlayerController
         await this.installPlugins();
         await this.writePlayerSettings();
         await this.writePluginSettings(pluginSettings);
-        await this.startProcess();
+        await this.startProcess(environment);
     }
 
     async stop()
@@ -137,9 +137,9 @@ class PlayerController
             await rimraf(this.paths.profileDir);
     }
 
-    async startProcess()
+    async startProcess(environment)
     {
-        const env = Object.assign({}, process.env, { HOME: this.paths.profileDir });
+        const env = Object.assign({}, process.env, { HOME: this.paths.profileDir }, environment);
 
         const logFile = await open(this.paths.logFile, 'w');
 
