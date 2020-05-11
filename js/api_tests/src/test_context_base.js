@@ -62,23 +62,21 @@ class TestContextBase
         const axiosConfig = options.axiosConfig || null;
         const environment = options.environment || null;
 
-        this.options = { pluginSettings, axiosConfig, environment };
+        options = { pluginSettings, axiosConfig, environment };
 
         return {
-            before: () => this.beginModule(),
+            before: () => this.beginModule(options),
             after: () => this.endModule(),
-            beforeEach: () => this.beginTest(),
+            beforeEach: () => this.beginTest(options),
             afterEach: () => this.endTest(),
         };
     }
 
-    async beginModule()
+    async beginModule(options)
     {
-        const { axiosConfig } = this.options;
+        await this.player.start(options);
 
-        await this.player.start(this.options);
-
-        this.client.handler.init(axiosConfig);
+        this.client.handler.init(options.axiosConfig);
 
         if (await this.client.waitUntilReady())
             return;
@@ -96,9 +94,9 @@ class TestContextBase
         await this.player.stop();
     }
 
-    async beginTest()
+    async beginTest(options)
     {
-        this.client.handler.init(this.options.axiosConfig);
+        this.client.handler.init(options.axiosConfig);
         await this.client.resetState();
     }
 
