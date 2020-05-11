@@ -3,6 +3,8 @@
 - Binaries for DeaDBeeF x86 are no longer provided, you can still build manually
 - Binaries for foobar2000 are built with VS2017 and dynamic runtime libraries
 - Update foobar2000 SDK to 2019-06-30
+- Added experimental support for CORS requests.
+  Use `BEEFWEB_CORS_HEADER` environment variable to set value for `Access-Control-Allow-Origin` header.
 
 ### Changes in v0.4 (released 2020-02-02):
 - Added optional playback information panel
