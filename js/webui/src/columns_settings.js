@@ -61,8 +61,8 @@ class ColumnEditorDialog extends React.PureComponent
         const { visibility } = column;
 
         const visibilityControls = [MediaSize.small, MediaSize.medium, MediaSize.large].map(size => (
-            <div key={size} className='column-editor-control'>
-                <label className='column-editor-label'>
+            <div key={size} className='dialog-row'>
+                <label className='dialog-label'>
                     <input
                         type='checkbox'
                         checked={visibility[size]}
@@ -80,29 +80,30 @@ class ColumnEditorDialog extends React.PureComponent
                 overlayClassName='dialog-overlay'
                 ariaHideApp={false}>
                 <form className='dialog-content'>
+                    <div className='dialog-header'>Edit column</div>
                     <div className='dialog-body'>
-                        <div className='column-editor-control'>
-                            <label className='column-editor-label' htmlFor='title'>Title:</label>
+                        <div className='dialog-row'>
+                            <label className='dialog-label' htmlFor='title'>Title:</label>
                             <input
-                                className='column-editor-text column-editor-text-title'
+                                className='dialog-input'
                                 type='text'
                                 name='title'
                                 value={column.title}
                                 onChange={this.handleTitleChange} />
                         </div>
-                        <div className='column-editor-control'>
-                            <label className='column-editor-label' htmlFor='expr'>Expression:</label>
+                        <div className='dialog-row'>
+                            <label className='dialog-label' htmlFor='expr'>Expression:</label>
                             <input
-                                className='column-editor-text column-editor-text-expression'
+                                className='dialog-input'
                                 type='text'
                                 name='expr'
                                 value={column.expression}
                                 onChange={this.handleExpressionChange} />
                         </div>
-                        <div className='column-editor-control'>
-                            <label className='column-editor-label' htmlFor='size'>Size:</label>
+                        <div className='dialog-row'>
+                            <label className='dialog-label' htmlFor='size'>Size:</label>
                             <input
-                                className='column-editor-text column-editor-text-size'
+                                className='dialog-input'
                                 type='text'
                                 name='size'
                                 value={column.size}
@@ -110,7 +111,7 @@ class ColumnEditorDialog extends React.PureComponent
                         </div>
                         { visibilityControls }
                     </div>
-                    <div className='dialog-buttons'>
+                    <div className='dialog-footer'>
                         <DialogButton type='ok' onClick={onOk} />
                         <DialogButton type='cancel' onClick={onCancel} />
                     </div>
@@ -228,6 +229,7 @@ class ColumnEditorInner extends React.PureComponent
                     onUpdate={this.handleEditUpdate} />
                 <ConfirmDialog
                     isOpen={deleteDialogOpen}
+                    title='Delete column'
                     message={`Do you want to delete column ${column.title}?`}
                     onOk={this.handleDeleteOk}
                     onCancel={this.handleDeleteCancel} />

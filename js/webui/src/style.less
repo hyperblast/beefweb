@@ -355,6 +355,7 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 20;
+    min-width: 20rem;
 
     .border();
     .dropdown-box();
@@ -374,11 +375,41 @@ body {
 }
 
 .dialog-body {
-    padding: 0.25rem;
 }
 
-.dialog-buttons {
+.dialog-row {
+    margin-bottom: 0.5rem;
+}
+
+.dialog-row:last-child {
+    margin-bottom: 0;
+}
+
+.dialog-label {
+    display: block;
+    padding: 0.125rem;
+
+    & > span {
+        margin-left: 0.25rem;
+    }
+}
+
+.dialog-input {
+    display: block;
+    padding: 0.125rem;
+    width: 100%;
+}
+
+.dialog-header {
+    margin-bottom: 0.75rem;
     padding: 0.25rem;
+    background: @color-spacer;
+    color: @color-text;
+    font-weight: bold;
+}
+
+.dialog-footer {
+    margin-top: 0.75rem;
     float: right;
 }
 
@@ -395,7 +426,6 @@ body {
     display: inline-block;
     height: 1.75rem;
     line-height: 1.25rem;
-    outline: 0;
     padding: 0.25rem 0.5rem;
     text-align: center;
     transition: background 0.2s;
@@ -572,7 +602,7 @@ body {
 }
 
 .playback-control .icon-media-stop > use {
-    fill: #B30000;
+    fill: #b30000;
 }
 
 .position-control {
@@ -673,10 +703,7 @@ body {
     }
 }
 
-.column-editor-control {
-    margin: 0.25rem;
-}
-
 .column-editor-drag-handle {
     cursor: grab;
 }
+

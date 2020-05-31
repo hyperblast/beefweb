@@ -28,20 +28,23 @@ DialogButton.propTypes = {
 
 export function ConfirmDialog(props)
 {
-    const { isOpen, message, onOk, onCancel } = props;
+    const { isOpen, title, message, onOk, onCancel } = props;
 
     return (
         <ReactModal
             isOpen={isOpen}
             onRequestClose={onCancel}
-            className='dialog dialog-confirm'
+            className='dialog'
             overlayClassName='dialog-overlay'
             ariaHideApp={false}>
             <form className='dialog-content'>
+                <div className='dialog-header'>{title}</div>
                 <div className='dialog-body'>
-                    <span className='dialog-confirm-message'>{message}</span>
+                    <div className='dialog-row'>
+                        <span className='dialog-label'>{message}</span>
+                    </div>
                 </div>
-                <div className='dialog-buttons'>
+                <div className='dialog-footer'>
                     <DialogButton type='ok' onClick={onOk} />
                     <DialogButton type='cancel' onClick={onCancel} />
                 </div>
@@ -52,6 +55,7 @@ export function ConfirmDialog(props)
 
 ConfirmDialog.propTypes = {
     isOpen: PropTypes.bool.isRequired,
+    title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
@@ -73,23 +77,24 @@ export class InputDialog extends React.PureComponent
 
     render()
     {
-        const { isOpen, message, value, onOk, onCancel } = this.props;
+        const { isOpen, title, message, value, onOk, onCancel } = this.props;
 
         return (
             <ReactModal
                 isOpen={isOpen}
                 onRequestClose={onCancel}
-                className='dialog dialog-input'
+                className='dialog'
                 overlayClassName='dialog-overlay'
                 ariaHideApp={false}>
                 <form className='dialog-content'>
+                    <div className='dialog-header'>{title}</div>
                     <div className='dialog-body'>
-                        <label>
-                            <span className='dialog-input-message'>{message}</span>
-                            <input type='text' value={value} onChange={this.handleChange} />
-                        </label>
+                        <div className='dialog-row'>
+                            <label className='dialog-label' htmlFor='input'>{message}</label>
+                            <input className='dialog-input' type='text' name='input' value={value} onChange={this.handleChange} />
+                        </div>
                     </div>
-                    <div className='dialog-buttons'>
+                    <div className='dialog-footer'>
                         <DialogButton type='ok' onClick={onOk} />
                         <DialogButton type='cancel' onClick={onCancel} />
                     </div>
@@ -101,6 +106,7 @@ export class InputDialog extends React.PureComponent
 
 InputDialog.propTypes = {
     isOpen: PropTypes.bool.isRequired,
+    title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired,
     onUpdate: PropTypes.func.isRequired,

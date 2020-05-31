@@ -226,23 +226,27 @@ class PlaylistMenu extends React.PureComponent
         const dialogs = (
             <div className='dialog-placeholder'>
                 <ConfirmDialog
+                    title='Remove playlist'
                     message={`Do you want to remove '${currentPlaylist.title}' playlist?`}
                     isOpen={removeDialogOpen}
                     onOk={this.handleRemoveOk}
                     onCancel={this.handleRemoveCancel} />
                 <ConfirmDialog
+                    title='Clear playlist'
                     message={`Do you want to clear '${currentPlaylist.title}' playlist?`}
                     isOpen={clearDialogOpen}
                     onOk={this.handleClearOk}
                     onCancel={this.handleClearCancel} />
                 <InputDialog
+                    title='Add URL'
                     message='Add URL to playlist:'
                     isOpen={addUrlDialogOpen}
                     value={addUrlDialogValue}
                     onOk={this.handleAddUrlOk}
                     onCancel={this.handleAddUrlCancel}
-                    onUpdate={this.handleAddUrlUpdate} />
+                    onUpdate={this.handleAddUrlUpdate}/>
                 <InputDialog
+                    title='Rename playlist'
                     message='Enter new playlist name:'
                     isOpen={renameDialogOpen}
                     value={renameDialogValue}
@@ -250,6 +254,7 @@ class PlaylistMenu extends React.PureComponent
                     onCancel={this.handleRenameCancel}
                     onUpdate={this.handleRenameUpdate} />
                 <InputDialog
+                    title='Custom sort'
                     message='Enter sort expression:'
                     isOpen={sortDialogOpen}
                     value={sortDialogValue}
