@@ -4,19 +4,10 @@
 @scale-medium: 1.0;
 @scale-large: 1.125;
 
-/* text, icons */
 @color-text: #212121;
-
-/* progress gauge, ui border */
 @color-hover: #E0E0E0;
-
-/* table row hover, button hover, progress background */
 @color-border: #BDBDBD;
-
-/* spacer background */
 @color-spacer: #EEEEEE;
-
-/* ui background */
 @color-background: #FFFFFF;
 
 /* Mixins */
@@ -46,6 +37,14 @@
 
     &:visited {
         color: @color-text;
+    }
+}
+
+.hover() {
+    transition: background-color 0.2s;
+
+    &:hover, &.active {
+        background: @color-hover;
     }
 }
 
@@ -85,16 +84,13 @@ body {
 }
 
 .button {
+    .hover();
+
     display: inline-block;
     width: 1.75rem;
     height: 1.75rem;
     margin: 0 0.125rem;
     border-radius: 0.125rem;
-}
-
-.button:hover,
-.button.active {
-    background: @color-hover;
 }
 
 .icon {
@@ -206,11 +202,19 @@ body {
 }
 
 .dropdown-content {
-    position: absolute;
-    display: none;
-    z-index: 10;
-
     .dropdown-box();
+
+    position: absolute;
+    visibility: hidden;
+    z-index: -10;
+    opacity: 0;
+    transition: opacity 0.2s;
+
+    &.active {
+        visibility: visible;
+        z-index: 10;
+        opacity: 1;
+    }
 }
 
 .dropdown-right {
@@ -224,10 +228,6 @@ body {
 .dropdown-center {
     margin-left: 50%;
     transform: translateX(-50%);
-}
-
-.dropdown-content.active {
-    display: block;
 }
 
 .menu {
@@ -258,15 +258,13 @@ body {
 }
 
 .menu-item > a {
+    .hover();
+
     display: block;
     padding: 0.25rem;
     border-radius: 0.125rem;
     text-decoration: none;
     color: @color-text;
-}
-
-.menu-item > a:hover {
-    background: @color-hover;
 }
 
 .menu-item .icon {
@@ -384,6 +382,32 @@ body {
     float: right;
 }
 
+.dialog-button {
+    .border();
+    .hover();
+
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: @color-spacer;
+    color: @color-text;
+    cursor: pointer;
+    display: inline-block;
+    height: 1.75rem;
+    line-height: 1.25rem;
+    outline: 0;
+    padding: 0.25rem 0.5rem;
+    text-align: center;
+    transition: background 0.2s;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    min-width: 5rem;
+}
+
 .dialog-button:not(:last-child) {
     margin-right: 0.25rem;
 }
@@ -405,13 +429,11 @@ body {
 }
 
 .dtable-row {
+    .hover();
+
     height: 1.75rem;
     border-radius: 0.125rem;
     position: relative;
-
-    &:hover {
-        background: @color-hover;
-    }
 }
 
 .dtable-icons {
