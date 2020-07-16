@@ -14,7 +14,7 @@
   "dependencies": {
     "detect-it": "^3.0.4",
     "event-source-polyfill": "^0.0.12",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.19",
     "navigo": "^7.0.0",
     "normalize.css": "^8.0.0",
     "open-iconic": "^1.1.1",
