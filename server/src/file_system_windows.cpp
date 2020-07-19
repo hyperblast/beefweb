@@ -47,7 +47,7 @@ Path getModulePath(void* symbol)
 
 Path getUserConfigDir()
 {
-    auto appData = ::_wgetenv("APPDATA");
+    auto appData = ::_wgetenv(L"APPDATA");
     if (appData && appData[0])
         return Path(appData);
 

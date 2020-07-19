@@ -19,7 +19,7 @@ namespace msrv {
 class WorkQueue;
 
 class Server;
-struct ServerConfig;
+class ServerConfig;
 struct RequestContext;
 
 using ServerPtr = std::shared_ptr<Server>;
