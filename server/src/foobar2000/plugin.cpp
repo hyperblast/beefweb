@@ -22,25 +22,20 @@ Plugin::~Plugin()
     current_ = nullptr;
 }
 
-
 void Plugin::reconfigure()
 {
-    SettingsData settings;
+    auto settings = std::make_shared<SettingsData>();
 
-    settings.port = SettingVars::port;
-    settings.allowRemote = SettingVars::allowRemote;
-    settings.musicDirs = SettingVars::getMusicDirs();
-    settings.authRequired = SettingVars::authRequired;
-
-    if (settings.authRequired)
-    {
-        settings.authUser = SettingVars::authUser;
-        settings.authPassword = SettingVars::authPassword;
-    }
+    settings->port = SettingVars::port;
+    settings->allowRemote = SettingVars::allowRemote;
+    settings->musicDirs = SettingVars::getMusicDirs();
+    settings->authRequired = SettingVars::authRequired;
+    settings->authUser = SettingVars::authUser;
+    settings->authPassword = SettingVars::authPassword;
 
     settings.loadAll("foobar2000");
 
-    host_.reconfigure(settings);
+    host_.reconfigure(std::move(settings));
 }
 
 Plugin* Plugin::current_ = nullptr;

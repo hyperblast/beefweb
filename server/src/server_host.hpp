@@ -20,11 +20,10 @@ public:
     ServerHost(Player* player);
     virtual ~ServerHost();
 
-    void reconfigure(const SettingsData& settings);
+    void reconfigure(SettingsDataPtr settings);
 
 private:
     void handlePlayerEvent(PlayerEvent);
-    std::unique_ptr<ServerConfig> buildServerConfig(SettingsDataPtr settings);
 
     Player* player_;
 

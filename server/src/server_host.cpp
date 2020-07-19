@@ -1,4 +1,3 @@
-#include "router.hpp"
 #include "server_host.hpp"
 #include "artwork_controller.hpp"
 #include "browser_controller.hpp"
@@ -10,6 +9,7 @@
 #include "compression_filter.hpp"
 #include "basic_auth_filter.hpp"
 #include "response_headers_filter.hpp"
+#include "log.hpp"
 
 namespace msrv {
 
@@ -32,7 +32,8 @@ void ServerHost::handlePlayerEvent(PlayerEvent event)
     serverThread_->dispatchEvents();
 }
 
-std::unique_ptr<ServerConfig> ServerHost::buildServerConfig(SettingsDataPtr settings)
+
+void ServerHost::reconfigure(SettingsDataPtr settings)
 {
     auto config = std::make_unique<ServerConfig>(settings->port, settings->allowRemote);
 
@@ -57,12 +58,7 @@ std::unique_ptr<ServerConfig> ServerHost::buildServerConfig(SettingsDataPtr sett
     BrowserController::defineRoutes(router, &utilityQueue_, settings);
     StaticController::defineRoutes(router, &utilityQueue_, settings, &ctmap_);
 
-    return config;
-}
-
-void ServerHost::reconfigure(const SettingsData& settings)
-{
-    serverThread_->restart(buildServerConfig(std::make_shared<SettingsData>(settings)));
+    serverThread_->restart(std::move(config));
 }
 
 }
