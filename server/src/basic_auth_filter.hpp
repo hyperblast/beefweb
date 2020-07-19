@@ -2,26 +2,24 @@
 
 #include "defines.hpp"
 #include "request_filter.hpp"
+#include "settings.hpp"
 
 namespace msrv {
-
-class SettingsData;
-class SettingsStore;
 
 class BasicAuthFilter : public RequestFilter
 {
 public:
-    BasicAuthFilter(SettingsStore* store);
-    virtual ~BasicAuthFilter();
+    explicit BasicAuthFilter(SettingsDataPtr settings);
+    ~BasicAuthFilter() override;
 
 protected:
     virtual void beginRequest(Request* request) override;
 
 private:
     void setUnauthorizedResponse(Request* request);
-    bool verifyCredentials(Request* request, const SettingsData& settings);
+    bool verifyCredentials(Request* request);
 
-    SettingsStore* store_;
+    std::string credentials_;
 };
 
 }

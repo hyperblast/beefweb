@@ -1,11 +1,16 @@
 #include "server.hpp"
 #include "work_queue.hpp"
-#include "request_filter.hpp"
-#include "router.hpp"
 #include "log.hpp"
 #include "response_sender.hpp"
 
 namespace msrv {
+
+ServerConfig::ServerConfig(int portVal, bool allowRemoteVal)
+    : port(portVal), allowRemote(allowRemoteVal)
+{
+}
+
+ServerConfig::~ServerConfig() = default;
 
 Server::Server(ServerCorePtr core, ServerConfigPtr config)
     : core_(std::move(core)),
@@ -75,7 +80,7 @@ void Server::onRequestDone(RequestCore* corereq)
 
 void Server::runHandlerAndProcessResponse(RequestContextPtr context)
 {
-    config_->filters->execute(&context->request);
+    config_->filters.execute(&context->request);
 
     processResponse(context);
 }
@@ -238,7 +243,7 @@ RequestContextPtr Server::createContext(RequestCore* corereq)
         }
     }
 
-    auto routeResult = config_->router->dispatch(request);
+    auto routeResult = config_->router.dispatch(request);
 
     if (auto factory = routeResult->factory)
     {

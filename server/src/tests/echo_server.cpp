@@ -87,21 +87,9 @@ public:
 class EchoServer
 {
 public:
-    static constexpr int PORT = MSRV_DEFAULT_TEST_PORT;
-
     EchoServer(bool allowRemote, ServerReadyCallback readyCallback)
-        : thread_(std::move(readyCallback))
+        : allowRemote_(allowRemote), thread_(std::move(readyCallback))
     {
-        EchoController::defineRoutes(&router_, &workQueue_);
-
-        filters_.addFilter(std::make_unique<EchoHeadersFilter>());
-        filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
-
-        config_.allowRemote = allowRemote;
-        config_.port = PORT;
-        config_.router = &router_;
-        config_.filters = &filters_;
-
         restart();
     }
 
@@ -109,7 +97,22 @@ public:
 
     void restart()
     {
-        thread_.restart(std::make_unique<ServerConfig>(config_));
+        thread_.restart(buildConfig());
+    }
+
+    std::unique_ptr<ServerConfig> buildConfig()
+    {
+        auto config = std::make_unique<ServerConfig>(MSRV_DEFAULT_TEST_PORT, allowRemote_);
+
+        auto router = &config->router;
+        auto filters = &config->filters;
+
+        EchoController::defineRoutes(router, &workQueue_);
+
+        filters->addFilter(std::make_unique<EchoHeadersFilter>());
+        filters->addFilter(std::make_unique<ExecuteHandlerFilter>());
+
+        return config;
     }
 
     void dispatchEvents()
@@ -118,10 +121,8 @@ public:
     }
 
 private:
-    Router router_;
-    RequestFilterChain filters_;
+    bool allowRemote_;
     ThreadWorkQueue workQueue_;
-    ServerConfig config_;
     ServerThread thread_;
 
     MSRV_NO_COPY_AND_ASSIGN(EchoServer);

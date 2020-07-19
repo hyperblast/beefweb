@@ -8,12 +8,10 @@ namespace msrv {
 
 class Player;
 class Router;
-class SettingsStore;
-
 class PlaylistsController : public ControllerBase
 {
 public:
-    PlaylistsController(Request* request, Player* player, SettingsStore* store);
+    PlaylistsController(Request* request, Player* player, SettingsDataPtr settings);
     ~PlaylistsController();
 
     ResponsePtr getPlaylists();
@@ -39,13 +37,13 @@ public:
 
     void sortItems();
 
-    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsStore* store);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsDataPtr settings);
 
 private:
-    std::string validateAndNormalizeItem(const SettingsData& settings, const std::string& item);
+    std::string validateAndNormalizeItem(const std::string& item);
 
     Player* player_;
-    SettingsStore* store_;
+    SettingsDataPtr settings_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistsController);
 };

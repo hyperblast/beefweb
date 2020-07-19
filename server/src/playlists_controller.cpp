@@ -34,14 +34,12 @@ boost::optional<std::string> stripFileScheme(const std::string& url)
 
 }
 
-PlaylistsController::PlaylistsController(Request* request, Player* player, SettingsStore* store)
-    : ControllerBase(request), player_(player), store_(store)
+PlaylistsController::PlaylistsController(Request* request, Player* player, SettingsDataPtr settings)
+    : ControllerBase(request), player_(player), settings_(settings)
 {
 }
 
-PlaylistsController::~PlaylistsController()
-{
-}
+PlaylistsController::~PlaylistsController() = default;
 
 ResponsePtr PlaylistsController::getPlaylists()
 {
@@ -97,7 +95,7 @@ void PlaylistsController::clearPlaylist()
     player_->clearPlaylist(param<PlaylistRef>("plref"));
 }
 
-std::string PlaylistsController::validateAndNormalizeItem(const SettingsData& settings, const std::string& item)
+std::string PlaylistsController::validateAndNormalizeItem(const std::string& item)
 {
     std::string path;
 
@@ -113,7 +111,7 @@ std::string PlaylistsController::validateAndNormalizeItem(const SettingsData& se
 
     path = pathToUtf8(pathFromUtf8(path).lexically_normal().make_preferred());
 
-    if (settings.isAllowedPath(path))
+    if (settings_->isAllowedPath(path))
         return path;
 
     request()->response = Response::error(HttpStatus::S_403_FORBIDDEN, "item is not under allowed path: " + item);
@@ -129,10 +127,8 @@ ResponsePtr PlaylistsController::addItems()
     std::vector<std::string> normalizedItems;
     auto targetIndex = optionalParam<int32_t>("index", -1);
 
-    auto settings = store_->settings();
-
     for (auto& item : items)
-        normalizedItems.emplace_back(validateAndNormalizeItem(*settings, item));
+        normalizedItems.emplace_back(validateAndNormalizeItem(item));
 
     auto addCompleted = player_->addPlaylistItems(plref, normalizedItems, targetIndex);
 
@@ -221,13 +217,13 @@ void PlaylistsController::sortItems()
         optionalParam<bool>("desc", false));
 }
 
-void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsStore* store)
+void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsDataPtr settings)
 {
     auto routes = router->defineRoutes<PlaylistsController>();
 
     routes.createWith([=](Request* request)
     {
-        return new PlaylistsController(request, player, store);
+        return new PlaylistsController(request, player, settings);
     });
 
     routes.useWorkQueue(workQueue);

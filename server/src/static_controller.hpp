@@ -1,18 +1,18 @@
 #pragma once
 
 #include "controller.hpp"
+#include "settings.hpp"
 
 namespace msrv {
 
 class Router;
-class SettingsStore;
 class ContentTypeMap;
 class WorkQueue;
 
 class StaticController : public ControllerBase
 {
 public:
-    StaticController(Request* request, SettingsStore* store, const ContentTypeMap* ctmap);
+    StaticController(Request* request, SettingsDataPtr settings, const ContentTypeMap* ctmap);
     ~StaticController();
 
     ResponsePtr getFile();
@@ -20,11 +20,11 @@ public:
     static void defineRoutes(
         Router* router,
         WorkQueue* workQueue,
-        SettingsStore* store,
+        SettingsDataPtr settings,
         const ContentTypeMap* ctmap);
 
 private:
-    SettingsStore* store_;
+    SettingsDataPtr settings_;
     const ContentTypeMap* ctmap_;
 };
 

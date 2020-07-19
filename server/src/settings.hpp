@@ -36,14 +36,4 @@ public:
 
 using SettingsDataPtr = std::shared_ptr<const SettingsData>;
 
-class SettingsStore
-{
-public:
-    SettingsStore() = default;
-
-    virtual SettingsDataPtr settings() = 0;
-
-    MSRV_NO_COPY_AND_ASSIGN(SettingsStore);
-};
-
 }

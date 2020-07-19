@@ -14,7 +14,7 @@
 
 namespace msrv {
 
-class ServerHost : SettingsStore
+class ServerHost
 {
 public:
     ServerHost(Player* player);
@@ -23,25 +23,16 @@ public:
     void reconfigure(const SettingsData& settings);
 
 private:
-    virtual SettingsDataPtr settings() override;
-
     void handlePlayerEvent(PlayerEvent);
-    void handleServerReady();
+    std::unique_ptr<ServerConfig> buildServerConfig(SettingsDataPtr settings);
 
     Player* player_;
 
-    Router router_;
-    RequestFilterChain filters_;
     EventDispatcher dispatcher_;
     ContentTypeMap ctmap_;
 
-    SettingsDataPtr currentSettings_;
-    SettingsDataPtr nextSettings_;
-    std::mutex settingsMutex_;
-
     std::unique_ptr<WorkQueue> playerWorkQueue_;
     ThreadWorkQueue utilityQueue_;
-
     std::unique_ptr<ServerThread> serverThread_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerHost);

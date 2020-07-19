@@ -4,8 +4,8 @@
 
 namespace msrv {
 
-ResponseHeadersFilter::ResponseHeadersFilter(SettingsStore* settingsStore)
-    : settingsStore_(settingsStore) { }
+ResponseHeadersFilter::ResponseHeadersFilter(SettingsDataPtr settings)
+    : settings_(settings) { }
 
 ResponseHeadersFilter::~ResponseHeadersFilter() = default;
 
@@ -14,12 +14,11 @@ void ResponseHeadersFilter::endRequest(Request* request)
     if (!request->response)
         return;
 
-    const auto& fromHeaders = settingsStore_->settings()->responseHeaders;
+    const auto& fromHeaders = settings_->responseHeaders;
     auto& toHeaders = request->response->headers;
 
-    for (const auto& kv : fromHeaders) {
+    for (const auto& kv : fromHeaders)
         toHeaders[kv.first] = kv.second;
-    }
 }
 
 }

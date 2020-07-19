@@ -16,31 +16,30 @@ const char WWW_AUTHENTICATE_VALUE[] = "Basic realm=\"" MSRV_PROJECT_NAME "\"";
 
 }
 
-BasicAuthFilter::BasicAuthFilter(SettingsStore* store)
-    : store_(store)
+BasicAuthFilter::BasicAuthFilter(SettingsDataPtr settings)
+    : credentials_(settings->authUser + ":" + settings->authPassword)
 {
+    assert(settings->authRequired);
 }
 
 BasicAuthFilter::~BasicAuthFilter() = default;
 
 void BasicAuthFilter::beginRequest(Request* request)
 {
-    auto settings = store_->settings();
-
-    if (!settings->authRequired || verifyCredentials(request, *settings))
+    if (verifyCredentials(request))
         return;
 
     setUnauthorizedResponse(request);
 }
 
-bool BasicAuthFilter::verifyCredentials(Request* request, const SettingsData& settings)
+bool BasicAuthFilter::verifyCredentials(Request* request)
 {
     const auto& authValue = request->getHeader(HttpHeader::AUTHORIZATION);
     if (!boost::starts_with(authValue, BASIC_AUTH_PREFIX))
         return false;
 
     const auto credentials = base64Decode(authValue.substr(sizeof(BASIC_AUTH_PREFIX) - 1));
-    return credentials == settings.authUser + ":" + settings.authPassword;
+    return credentials == credentials_;
 }
 
 void BasicAuthFilter::setUnauthorizedResponse(Request* request)
