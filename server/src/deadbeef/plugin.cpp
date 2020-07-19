@@ -35,28 +35,27 @@ Plugin::~Plugin() = default;
 
 void Plugin::handleConfigChanged()
 {
-    if (ready_ && reloadConfig())
+    if (ready_ && loadUiConfig())
+    {
+        loadFileConfigs();
         host_.reconfigure(settings_);
+    }
 }
 
 void Plugin::handlePluginsLoaded()
 {
     ready_ = true;
-    reloadConfig();
+    loadUiConfig();
+    loadFileConfigs();
     host_.reconfigure(settings_);
 }
 
-bool Plugin::reloadConfig()
+void Plugin::loadFileConfigs()
 {
-    if (reloadUiConfig()) {
-        settings_.loadAll("deadbeef");
-        return true;
-    }
-
-    return false;
+    settings_.loadAll("deadbeef");
 }
 
-bool Plugin::reloadUiConfig()
+bool Plugin::loadUiConfig()
 {
     ConfigMutex mutex;
     ConfigLockGuard lock(mutex);

@@ -82,7 +82,7 @@ class PlayerController
 
     async initProfile()
     {
-        const profileDir = await tmpdir({ prefix: 'api-tests-' });
+        const profileDir = await tmpdir({ prefix: 'beefweb-api-tests-' });
         const configDir = path.join(profileDir, '.config/deadbeef');
         const libDir = path.join(profileDir, '.local/lib/deadbeef');
         const configFile = path.join(configDir, 'config');

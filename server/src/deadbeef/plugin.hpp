@@ -23,8 +23,8 @@ public:
 private:
     void handleConfigChanged();
     void handlePluginsLoaded();
-    bool reloadConfig();
-    bool reloadUiConfig();
+    bool loadUiConfig();
+    void loadFileConfigs();
 
     bool ready_;
     SettingsData settings_;
