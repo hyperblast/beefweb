@@ -26,37 +26,38 @@ const char PluginWrapper::configDialog_[] =
 
 Plugin::Plugin()
     : ready_(false),
-      settingsLocked_(false),
       player_(),
       host_(&player_)
 {
-    settings_.staticDir = SettingsData::defaultStaticDir();
 }
 
 Plugin::~Plugin() = default;
 
 void Plugin::handleConfigChanged()
 {
-    if (ready_ && !settingsLocked_ && reloadConfig())
+    if (ready_ && reloadConfig())
         host_.reconfigure(settings_);
 }
 
 void Plugin::handlePluginsLoaded()
 {
     ready_ = true;
-
-    settingsLocked_ = settings_.load();
-
-    if (!settingsLocked_)
-        reloadConfig();
-
+    reloadConfig();
     host_.reconfigure(settings_);
 }
 
 bool Plugin::reloadConfig()
 {
-    assert(!settingsLocked_);
+    if (reloadUiConfig()) {
+        settings_.loadAll();
+        return true;
+    }
 
+    return false;
+}
+
+bool Plugin::reloadUiConfig()
+{
     ConfigMutex mutex;
     ConfigLockGuard lock(mutex);
 

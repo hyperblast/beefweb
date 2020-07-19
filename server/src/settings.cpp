@@ -1,9 +1,9 @@
 #include "settings.hpp"
 #include "project_info.hpp"
 #include "json.hpp"
+#include "log.hpp"
 
 #include <stdexcept>
-#include <boost/algorithm/string.hpp>
 
 namespace msrv {
 
@@ -11,61 +11,31 @@ namespace {
 
 int dummySymbol;
 
-inline Path thisModuleDir()
+const Path& thisModuleDir()
 {
-    return getModulePath(&dummySymbol).parent_path();
+    static Path path = getModulePath(&dummySymbol).parent_path();
+    return path;
 }
 
-void parse(SettingsData* value, const Json& json)
-{
-    if (!json.is_object())
-        throw std::invalid_argument("Expected json object");
-
-    auto it = json.find("port");
-    if (it != json.end())
-        value->port = it->get<int>();
-
-    it = json.find("allowRemote");
-    if (it != json.end())
-        value->allowRemote = it->get<bool>();
-
-    it = json.find("musicDirs");
-    if (it != json.end())
-        value->musicDirs = it->get<std::vector<std::string>>();
-
-    it = json.find("staticDir");
-    if (it != json.end())
-        value->staticDir = it->get<std::string>();
-
-    it = json.find("authRequired");
-    if (it != json.end())
-        value->authRequired = it->get<bool>();
-
-    it = json.find("authUser");
-    if (it != json.end())
-        value->authUser = it->get<std::string>();
-
-    it = json.find("authPassword");
-    if (it != json.end())
-        value->authPassword = it->get<std::string>();
-}
-
-}
-
-const Path& SettingsData::defaultConfigFile()
+const Path& systemConfigFile()
 {
     static Path path = thisModuleDir() / pathFromUtf8(MSRV_CONFIG_FILE);
     return path;
 }
 
-const std::string& SettingsData::defaultStaticDir()
+const std::string& defaultStaticDir()
 {
     static std::string path = pathToUtf8(thisModuleDir() / pathFromUtf8(MSRV_WEB_ROOT));
     return path;
 }
 
+}
+
 SettingsData::SettingsData()
-    : port(MSRV_DEFAULT_PORT), allowRemote(true), authRequired(false)
+    : port(MSRV_DEFAULT_PORT),
+      allowRemote(true),
+      staticDir(defaultStaticDir()),
+      authRequired(false)
 {
 }
 
@@ -82,16 +52,64 @@ bool SettingsData::isAllowedPath(const std::string& path) const
     return false;
 }
 
+void SettingsData::loadAll()
+{
+    load(systemConfigFile());
+}
+
 bool SettingsData::load(const Path& path)
 {
-    auto file = file_io::open(path);
-    if (!file)
-        return false;
+    auto result = false;
 
-    auto data = file_io::readToEnd(file.get());
-    auto json = Json::parse(data);
-    parse(this, json);
-    return true;
+    tryCatchLog([&]{
+        auto file = file_io::open(path);
+        if (!file)
+            return;
+
+        auto data = file_io::readToEnd(file.get());
+        load(Json::parse(data));
+        result = true;
+    });
+
+    return result;
+}
+
+void SettingsData::load(const Json& json)
+{
+    if (!json.is_object())
+        throw std::invalid_argument("Expected json object");
+
+    auto it = json.find("port");
+    if (it != json.end())
+        port = it->get<int>();
+
+    it = json.find("allowRemote");
+    if (it != json.end())
+        allowRemote = it->get<bool>();
+
+    it = json.find("musicDirs");
+    if (it != json.end())
+        musicDirs = it->get<std::vector<std::string>>();
+
+    it = json.find("staticDir");
+    if (it != json.end())
+        staticDir = it->get<std::string>();
+
+    it = json.find("authRequired");
+    if (it != json.end())
+        authRequired = it->get<bool>();
+
+    it = json.find("authUser");
+    if (it != json.end())
+        authUser = it->get<std::string>();
+
+    it = json.find("authPassword");
+    if (it != json.end())
+        authPassword = it->get<std::string>();
+
+    it = json.find("responseHeaders");
+    if (it != json.end())
+        responseHeaders = it->get<std::unordered_map<std::string, std::string>>();
 }
 
 }

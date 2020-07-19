@@ -24,11 +24,11 @@ private:
     void handleConfigChanged();
     void handlePluginsLoaded();
     bool reloadConfig();
+    bool reloadUiConfig();
 
     bool ready_;
     SettingsData settings_;
     std::string musicDirList_;
-    bool settingsLocked_;
 
     PlayerImpl player_;
     ServerHost host_;
@@ -53,7 +53,6 @@ private:
     static Plugin* instance_;
     static const char configDialog_[];
 
-    PluginWrapper();
     MSRV_NO_COPY_AND_ASSIGN(PluginWrapper);
 };
 

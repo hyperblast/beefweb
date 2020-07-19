@@ -79,7 +79,6 @@ set(
     core_types.cpp core_types.hpp
     core_types_json.cpp core_types_json.hpp
     core_types_parsers.cpp core_types_parsers.hpp
-    cors_support_filter.cpp cors_support_filter.hpp
     controller.hpp
     defines.hpp
     file_system.cpp file_system.hpp
@@ -100,6 +99,7 @@ set(
     request.cpp request.hpp
     request_filter.cpp request_filter.hpp
     response.cpp response.hpp
+    response_headers_filter.cpp response_headers_filter.hpp
     response_sender.cpp response_sender.hpp
     router.cpp router.hpp
     server.cpp server.hpp

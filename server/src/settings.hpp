@@ -2,19 +2,18 @@
 
 #include "defines.hpp"
 #include "file_system.hpp"
+#include "json.hpp"
 
 #include <string>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 namespace msrv {
 
 class SettingsData
 {
 public:
-    static const std::string& defaultStaticDir();
-    static const Path& defaultConfigFile();
-
     SettingsData();
     ~SettingsData();
 
@@ -26,11 +25,13 @@ public:
     bool authRequired;
     std::string authUser;
     std::string authPassword;
+    std::unordered_map<std::string, std::string> responseHeaders;
 
     bool isAllowedPath(const std::string& path) const;
 
+    void load(const Json& json);
     bool load(const Path& path);
-    bool load() { return load(defaultConfigFile()); }
+    void loadAll();
 };
 
 using SettingsDataPtr = std::shared_ptr<const SettingsData>;

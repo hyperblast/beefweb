@@ -1,4 +1,3 @@
-#include "project_info.hpp"
 #include "server_host.hpp"
 #include "artwork_controller.hpp"
 #include "browser_controller.hpp"
@@ -9,7 +8,7 @@
 #include "cache_support_filter.hpp"
 #include "compression_filter.hpp"
 #include "basic_auth_filter.hpp"
-#include "cors_support_filter.hpp"
+#include "response_headers_filter.hpp"
 
 namespace msrv {
 
@@ -18,18 +17,15 @@ ServerHost::ServerHost(Player* player)
 {
     playerWorkQueue_ = player_->createWorkQueue();
 
-    filters_.addFilter(std::make_unique<BasicAuthFilter>(static_cast<SettingsStore*>(this)));
+    auto settingsStore = static_cast<SettingsStore*>(this);
+    filters_.addFilter(std::make_unique<BasicAuthFilter>(settingsStore));
     filters_.addFilter(std::make_unique<CompressionFilter>());
-
-    auto corsHeader = ::getenv(MSRV_CORS_HEADER);
-    if (corsHeader != nullptr && corsHeader[0] != '\0')
-        filters_.addFilter(std::make_unique<CorsSupportFilter>(std::string(corsHeader)));
-
+    filters_.addFilter(std::make_unique<ResponseHeadersFilter>(settingsStore));
     filters_.addFilter(std::make_unique<CacheSupportFilter>());
     filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
     PlayerController::defineRoutes(&router_, playerWorkQueue_.get(), player_);
-    PlaylistsController::defineRoutes(&router_, playerWorkQueue_.get(), player_, this);
+    PlaylistsController::defineRoutes(&router_, playerWorkQueue_.get(), player_, settingsStore);
     QueryController::defineRoutes(&router_, playerWorkQueue_.get(), player_, &dispatcher_);
     ArtworkController::defineRoutes(&router_, playerWorkQueue_.get(), player_, &ctmap_);
     BrowserController::defineRoutes(&router_, &utilityQueue_, this);
