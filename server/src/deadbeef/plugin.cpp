@@ -49,7 +49,7 @@ void Plugin::handlePluginsLoaded()
 bool Plugin::reloadConfig()
 {
     if (reloadUiConfig()) {
-        settings_.loadAll();
+        settings_.loadAll("deadbeef");
         return true;
     }
 

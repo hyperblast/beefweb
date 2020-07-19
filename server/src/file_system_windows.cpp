@@ -1,5 +1,6 @@
 #include "file_system.hpp"
 #include "safe_windows.h"
+#include <stdlib.h>
 
 namespace msrv {
 
@@ -42,6 +43,15 @@ Path getModulePath(void* symbol)
 
     path.resize(static_cast<size_t>(size));
     return Path(std::move(path));
+}
+
+Path getUserConfigDir()
+{
+    auto appData = ::_wgetenv("APPDATA");
+    if (appData && appData[0])
+        return Path(appData);
+
+    return Path();
 }
 
 namespace file_io {

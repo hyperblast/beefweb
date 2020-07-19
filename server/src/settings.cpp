@@ -11,21 +11,35 @@ namespace {
 
 int dummySymbol;
 
-const Path& thisModuleDir()
+const Path& getBundleDir()
 {
     static Path path = getModulePath(&dummySymbol).parent_path();
     return path;
 }
 
-const Path& systemConfigFile()
+const Path& getBundledConfigFile()
 {
-    static Path path = thisModuleDir() / pathFromUtf8(MSRV_CONFIG_FILE);
+    static Path path = getBundleDir() / pathFromUtf8(MSRV_CONFIG_FILE);
     return path;
 }
 
-const std::string& defaultStaticDir()
+Path getUserConfigFile(const char* appName)
 {
-    static std::string path = pathToUtf8(thisModuleDir() / pathFromUtf8(MSRV_WEB_ROOT));
+    auto userConfigDir = getUserConfigDir();
+
+    if (userConfigDir.empty()) {
+        return Path();
+    }
+
+    return userConfigDir
+        / pathFromUtf8(MSRV_PROJECT_ID)
+        / pathFromUtf8(appName)
+        / pathFromUtf8(MSRV_CONFIG_FILE);
+}
+
+const std::string& getDefaultStaticDir()
+{
+    static std::string path = pathToUtf8(getBundleDir() / pathFromUtf8(MSRV_WEB_ROOT));
     return path;
 }
 
@@ -34,7 +48,7 @@ const std::string& defaultStaticDir()
 SettingsData::SettingsData()
     : port(MSRV_DEFAULT_PORT),
       allowRemote(true),
-      staticDir(defaultStaticDir()),
+      staticDir(getDefaultStaticDir()),
       authRequired(false)
 {
 }
@@ -52,9 +66,14 @@ bool SettingsData::isAllowedPath(const std::string& path) const
     return false;
 }
 
-void SettingsData::loadAll()
+void SettingsData::loadAll(const char* appName)
 {
-    load(systemConfigFile());
+    load(getBundledConfigFile());
+
+    auto userConfigPath = getUserConfigFile(appName);
+
+    if (!userConfigPath.empty())
+        load(userConfigPath);
 }
 
 bool SettingsData::load(const Path& path)
@@ -66,6 +85,7 @@ bool SettingsData::load(const Path& path)
         if (!file)
             return;
 
+        logInfo("loading config file: %s", pathToUtf8(path).c_str());
         auto data = file_io::readToEnd(file.get());
         load(Json::parse(data));
         result = true;

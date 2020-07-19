@@ -36,6 +36,21 @@ Path getModulePath(void* symbol)
     return Path(info.dli_fname);
 }
 
+Path getUserConfigDir()
+{
+    auto xdgConfigHome = ::getenv("XDG_CONFIG_HOME");
+    if (xdgConfigHome && xdgConfigHome[0]) {
+        return Path(xdgConfigHome);
+    }
+
+    auto home = ::getenv("HOME");
+    if (home && home[0]) {
+        return Path(home) / Path(".config");
+    }
+
+    return Path();
+}
+
 namespace file_io {
 
 FileInfo queryInfo(const Path& path)

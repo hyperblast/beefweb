@@ -31,7 +31,7 @@ public:
 
     void load(const Json& json);
     bool load(const Path& path);
-    void loadAll();
+    void loadAll(const char* appName);
 };
 
 using SettingsDataPtr = std::shared_ptr<const SettingsData>;

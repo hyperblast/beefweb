@@ -39,7 +39,7 @@ void Plugin::reconfigure()
         settings.authPassword = SettingVars::authPassword;
     }
 
-    settings.loadAll();
+    settings.loadAll("foobar2000");
 
     host_.reconfigure(settings);
 }
