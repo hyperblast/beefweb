@@ -14,12 +14,7 @@ Plugin::Plugin()
       host_(&player_)
 {
     assert(!current_);
-
-    settingsLocked_ = reconfigureFromFile();
-
-    if (!settingsLocked_)
-        reconfigure();
-
+    reconfigure();
     current_ = this;
 }
 
@@ -28,28 +23,14 @@ Plugin::~Plugin()
     current_ = nullptr;
 }
 
-bool Plugin::reconfigureFromFile()
-{
-    SettingsData settings;
-    settings.staticDir = SettingsData::defaultStaticDir();
-
-    if (!settings.load())
-        return false;
-
-    host_.reconfigure(settings);
-    return true;
-}
 
 void Plugin::reconfigure()
 {
-    assert(!settingsLocked_);
-
     SettingsData settings;
 
     settings.port = SettingVars::port;
     settings.allowRemote = SettingVars::allowRemote;
     settings.musicDirs = SettingVars::getMusicDirs();
-    settings.staticDir = SettingsData::defaultStaticDir();
     settings.authRequired = SettingVars::authRequired;
 
     if (settings.authRequired)
@@ -57,6 +38,8 @@ void Plugin::reconfigure()
         settings.authUser = SettingVars::authUser;
         settings.authPassword = SettingVars::authPassword;
     }
+
+    settings.loadAll();
 
     host_.reconfigure(settings);
 }

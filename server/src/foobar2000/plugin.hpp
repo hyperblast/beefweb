@@ -18,15 +18,11 @@ public:
     Plugin();
     ~Plugin();
 
-    bool settingsLocked() const { return settingsLocked_; }
     void reconfigure();
 
 private:
     static Plugin* current_;
 
-    bool reconfigureFromFile();
-
-    bool settingsLocked_;
     PlayerImpl player_;
     ServerHost host_;
 
