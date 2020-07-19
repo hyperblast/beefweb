@@ -9,8 +9,7 @@ namespace msrv {
 namespace player_foobar2000 {
 
 Plugin::Plugin()
-    : settingsLocked_(false),
-      player_(),
+    : player_(),
       host_(&player_)
 {
     assert(!current_);
