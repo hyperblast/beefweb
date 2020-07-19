@@ -25,66 +25,70 @@ const char PluginWrapper::configDialog_[] =
     "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";";
 
 Plugin::Plugin()
-    : ready_(false),
-      settingsLocked_(false),
-      player_(),
+    : player_(),
       host_(&player_)
 {
-    settings_.staticDir = SettingsData::defaultStaticDir();
 }
 
 Plugin::~Plugin() = default;
 
 void Plugin::handleConfigChanged()
 {
-    if (ready_ && !settingsLocked_ && reloadConfig())
-        host_.reconfigure(settings_);
+    if (pluginsLoaded_ && refreshSettings())
+        reconfigure();
 }
 
 void Plugin::handlePluginsLoaded()
 {
-    ready_ = true;
-
-    settingsLocked_ = settings_.load();
-
-    if (!settingsLocked_)
-        reloadConfig();
-
-    host_.reconfigure(settings_);
+    pluginsLoaded_ = true;
+    refreshSettings();
+    reconfigure();
 }
 
-bool Plugin::reloadConfig()
+void Plugin::reconfigure()
 {
-    assert(!settingsLocked_);
+    auto settings = std::make_shared<SettingsData>();
 
+    settings->port = port_;
+    settings->allowRemote = allowRemote_;
+    settings->musicDirs = parseValueList<std::string>(musicDirs_, ';');
+    settings->authRequired = authRequired_;
+    settings->authUser = authUser_;
+    settings->authPassword = authPassword_;
+
+    settings->loadAll("deadbeef");
+
+    host_.reconfigure(std::move(settings));
+}
+
+bool Plugin::refreshSettings()
+{
     ConfigMutex mutex;
     ConfigLockGuard lock(mutex);
 
-    int port = ddbApi->conf_get_int(CONF_PORT, MSRV_DEFAULT_PORT);
-    bool allowRemote = ddbApi->conf_get_int(CONF_ALLOW_REMOTE, 1) != 0;
-    const char* musicDirList = ddbApi->conf_get_str_fast(CONF_MUSIC_DIRS, "");
-    bool authRequired = ddbApi->conf_get_int(CONF_AUTH_REQUIRED, 0) != 0;
-    const char* authUser = ddbApi->conf_get_str_fast(CONF_AUTH_USER, "");
-    const char* authPassword = ddbApi->conf_get_str_fast(CONF_AUTH_PASSWORD, "");
+    auto port = ddbApi->conf_get_int(CONF_PORT, MSRV_DEFAULT_PORT);
+    auto allowRemote = ddbApi->conf_get_int(CONF_ALLOW_REMOTE, 1) != 0;
+    auto musicDirs = ddbApi->conf_get_str_fast(CONF_MUSIC_DIRS, "");
+    auto authRequired = ddbApi->conf_get_int(CONF_AUTH_REQUIRED, 0) != 0;
+    auto authUser = ddbApi->conf_get_str_fast(CONF_AUTH_USER, "");
+    auto authPassword = ddbApi->conf_get_str_fast(CONF_AUTH_PASSWORD, "");
 
-    if (settings_.port == port &&
-        settings_.allowRemote == allowRemote &&
-        musicDirList_ == musicDirList &&
-        settings_.authRequired == authRequired &&
-        settings_.authUser == authUser &&
-        settings_.authPassword == authPassword)
+    if (port_ == port &&
+        allowRemote_ == allowRemote &&
+        musicDirs_ == musicDirs &&
+        authRequired_ == authRequired &&
+        authUser_ == authUser &&
+        authPassword_ == authPassword)
     {
         return false;
     }
 
-    settings_.port = port;
-    settings_.allowRemote = allowRemote;
-    musicDirList_ = musicDirList;
-    settings_.musicDirs.clear();
-    settings_.musicDirs = parseValueList<std::string>(musicDirList_, ';');
-    settings_.authRequired = authRequired;
-    settings_.authUser = authUser;
-    settings_.authPassword = authPassword;
+    port_ = port;
+    allowRemote_ = allowRemote;
+    musicDirs_ = musicDirs;
+    authRequired_ = authRequired;
+    authUser_ = authUser;
+    authPassword_ = authPassword;
 
     return true;
 }

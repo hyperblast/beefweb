@@ -1,4 +1,3 @@
-#include "project_info.hpp"
 #include "server_host.hpp"
 #include "artwork_controller.hpp"
 #include "browser_controller.hpp"
@@ -9,7 +8,8 @@
 #include "cache_support_filter.hpp"
 #include "compression_filter.hpp"
 #include "basic_auth_filter.hpp"
-#include "cors_support_filter.hpp"
+#include "response_headers_filter.hpp"
+#include "log.hpp"
 
 namespace msrv {
 
@@ -17,38 +17,13 @@ ServerHost::ServerHost(Player* player)
     : player_(player)
 {
     playerWorkQueue_ = player_->createWorkQueue();
-
-    filters_.addFilter(std::make_unique<BasicAuthFilter>(static_cast<SettingsStore*>(this)));
-    filters_.addFilter(std::make_unique<CompressionFilter>());
-
-    auto corsHeader = ::getenv(MSRV_CORS_HEADER);
-    if (corsHeader != nullptr && corsHeader[0] != '\0')
-        filters_.addFilter(std::make_unique<CorsSupportFilter>(std::string(corsHeader)));
-
-    filters_.addFilter(std::make_unique<CacheSupportFilter>());
-    filters_.addFilter(std::make_unique<ExecuteHandlerFilter>());
-
-    PlayerController::defineRoutes(&router_, playerWorkQueue_.get(), player_);
-    PlaylistsController::defineRoutes(&router_, playerWorkQueue_.get(), player_, this);
-    QueryController::defineRoutes(&router_, playerWorkQueue_.get(), player_, &dispatcher_);
-    ArtworkController::defineRoutes(&router_, playerWorkQueue_.get(), player_, &ctmap_);
-    BrowserController::defineRoutes(&router_, &utilityQueue_, this);
-    StaticController::defineRoutes(&router_, &utilityQueue_, this, &ctmap_);
-
     player_->onEvent([this] (PlayerEvent event) { handlePlayerEvent(event); });
-
-    serverThread_ = std::make_unique<ServerThread>([this] { handleServerReady(); });
+    serverThread_ = std::make_unique<ServerThread>();
 }
 
 ServerHost::~ServerHost()
 {
     player_->onEvent(PlayerEventCallback());
-}
-
-SettingsDataPtr ServerHost::settings()
-{
-    std::lock_guard<std::mutex> lock(settingsMutex_);
-    return currentSettings_;
 }
 
 void ServerHost::handlePlayerEvent(PlayerEvent event)
@@ -57,27 +32,33 @@ void ServerHost::handlePlayerEvent(PlayerEvent event)
     serverThread_->dispatchEvents();
 }
 
-void ServerHost::reconfigure(const SettingsData& settings)
+
+void ServerHost::reconfigure(SettingsDataPtr settings)
 {
-    {
-        std::lock_guard<std::mutex> lock(settingsMutex_);
-        nextSettings_ = std::make_shared<SettingsData>(settings);
-    }
+    auto config = std::make_unique<ServerConfig>(settings->port, settings->allowRemote);
 
-    auto config = std::make_unique<ServerConfig>();
+    auto router = &config->router;
+    auto filters = &config->filters;
 
-    config->allowRemote = settings.allowRemote;
-    config->port = settings.port;
-    config->filters = &filters_;
-    config->router = &router_;
+    if (settings->authRequired)
+        filters->addFilter(std::make_unique<BasicAuthFilter>(settings));
+
+    filters->addFilter(std::make_unique<CompressionFilter>());
+
+    if (!settings->responseHeaders.empty())
+        filters->addFilter(std::make_unique<ResponseHeadersFilter>(settings));
+
+    filters->addFilter(std::make_unique<CacheSupportFilter>());
+    filters->addFilter(std::make_unique<ExecuteHandlerFilter>());
+
+    PlayerController::defineRoutes(router, playerWorkQueue_.get(), player_);
+    PlaylistsController::defineRoutes(router, playerWorkQueue_.get(), player_, settings);
+    QueryController::defineRoutes(router, playerWorkQueue_.get(), player_, &dispatcher_);
+    ArtworkController::defineRoutes(router, playerWorkQueue_.get(), player_, &ctmap_);
+    BrowserController::defineRoutes(router, &utilityQueue_, settings);
+    StaticController::defineRoutes(router, &utilityQueue_, settings, &ctmap_);
 
     serverThread_->restart(std::move(config));
-}
-
-void ServerHost::handleServerReady()
-{
-    std::lock_guard<std::mutex> lock(settingsMutex_);
-    currentSettings_ = std::move(nextSettings_);
 }
 
 }

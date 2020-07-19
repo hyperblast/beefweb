@@ -4,6 +4,7 @@
 #include "../settings.hpp"
 #include "../server_host.hpp"
 #include "../file_system.hpp"
+#include "../project_info.hpp"
 
 #include "player.hpp"
 
@@ -23,15 +24,19 @@ public:
 private:
     void handleConfigChanged();
     void handlePluginsLoaded();
-    bool reloadConfig();
-
-    bool ready_;
-    SettingsData settings_;
-    std::string musicDirList_;
-    bool settingsLocked_;
+    bool refreshSettings();
+    void reconfigure();
 
     PlayerImpl player_;
     ServerHost host_;
+    bool pluginsLoaded_ = false;
+
+    int port_ = MSRV_DEFAULT_PORT;
+    bool allowRemote_ = true;
+    std::string musicDirs_;
+    bool authRequired_ = false;
+    std::string authUser_;
+    std::string authPassword_;
 
     MSRV_NO_COPY_AND_ASSIGN(Plugin);
 };
@@ -53,7 +58,6 @@ private:
     static Plugin* instance_;
     static const char configDialog_[];
 
-    PluginWrapper();
     MSRV_NO_COPY_AND_ASSIGN(PluginWrapper);
 };
 

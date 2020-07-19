@@ -16,15 +16,8 @@ TEST_CASE("server")
     boost::promise<void> startedPromise;
     boost::unique_future<void> started = startedPromise.get_future();
 
-    Router router;
-    RequestFilterChain filters;
-    filters.addFilter(std::make_unique<ExecuteHandlerFilter>());
-
-    auto config = std::make_unique<ServerConfig>();
-    config->allowRemote = false;
-    config->port = MSRV_DEFAULT_TEST_PORT;
-    config->router = &router;
-    config->filters = &filters;
+    auto config = std::make_unique<ServerConfig>(MSRV_DEFAULT_TEST_PORT, false);
+    config->filters.addFilter(std::make_unique<ExecuteHandlerFilter>());
 
     ServerThread server([&] { startedPromise.set_value(); });
     server.restart(std::move(config));

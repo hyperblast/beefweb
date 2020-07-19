@@ -9,17 +9,11 @@ namespace msrv {
 namespace player_foobar2000 {
 
 Plugin::Plugin()
-    : settingsLocked_(false),
-      player_(),
+    : player_(),
       host_(&player_)
 {
     assert(!current_);
-
-    settingsLocked_ = reconfigureFromFile();
-
-    if (!settingsLocked_)
-        reconfigure();
-
+    reconfigure();
     current_ = this;
 }
 
@@ -28,37 +22,20 @@ Plugin::~Plugin()
     current_ = nullptr;
 }
 
-bool Plugin::reconfigureFromFile()
-{
-    SettingsData settings;
-    settings.staticDir = SettingsData::defaultStaticDir();
-
-    if (!settings.load())
-        return false;
-
-    host_.reconfigure(settings);
-    return true;
-}
-
 void Plugin::reconfigure()
 {
-    assert(!settingsLocked_);
+    auto settings = std::make_shared<SettingsData>();
 
-    SettingsData settings;
+    settings->port = SettingVars::port;
+    settings->allowRemote = SettingVars::allowRemote;
+    settings->musicDirs = SettingVars::getMusicDirs();
+    settings->authRequired = SettingVars::authRequired;
+    settings->authUser = SettingVars::authUser;
+    settings->authPassword = SettingVars::authPassword;
 
-    settings.port = SettingVars::port;
-    settings.allowRemote = SettingVars::allowRemote;
-    settings.musicDirs = SettingVars::getMusicDirs();
-    settings.staticDir = SettingsData::defaultStaticDir();
-    settings.authRequired = SettingVars::authRequired;
+    settings->loadAll("foobar2000");
 
-    if (settings.authRequired)
-    {
-        settings.authUser = SettingVars::authUser;
-        settings.authPassword = SettingVars::authPassword;
-    }
-
-    host_.reconfigure(settings);
+    host_.reconfigure(std::move(settings));
 }
 
 Plugin* Plugin::current_ = nullptr;

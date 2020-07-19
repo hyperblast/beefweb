@@ -58,8 +58,8 @@ inline std::string pathSeparator()
 
 }
 
-BrowserController::BrowserController(Request* request, SettingsStore* store)
-    : ControllerBase(request), store_(store)
+BrowserController::BrowserController(Request* request, SettingsDataPtr settings)
+    : ControllerBase(request), settings_(settings)
 {
 }
 
@@ -70,9 +70,8 @@ BrowserController::~BrowserController()
 ResponsePtr BrowserController::getRoots()
 {
     std::vector<FileSystemEntry> roots;
-    auto settings = store_->settings();
 
-    for (auto& dir : settings->musicDirs)
+    for (auto& dir : settings_->musicDirs)
     {
         auto path = pathFromUtf8(dir);
         auto info = file_io::queryInfo(path);
@@ -91,9 +90,8 @@ ResponsePtr BrowserController::getEntries()
 {
     auto requestedPath = param<std::string>("path");
     auto normalizedPath = pathFromUtf8(requestedPath).lexically_normal().make_preferred();
-    auto settings = store_->settings();
 
-    if (!settings->isAllowedPath(pathToUtf8(normalizedPath)))
+    if (!settings_->isAllowedPath(pathToUtf8(normalizedPath)))
         return Response::error(HttpStatus::S_403_FORBIDDEN);
 
     std::vector<FileSystemEntry> entries;
@@ -115,13 +113,13 @@ ResponsePtr BrowserController::getEntries()
     });
 }
 
-void BrowserController::defineRoutes(Router* router, WorkQueue* workQueue, SettingsStore* store)
+void BrowserController::defineRoutes(Router* router, WorkQueue* workQueue, SettingsDataPtr settings)
 {
     auto routes = router->defineRoutes<BrowserController>();
 
     routes.createWith([=](Request* request)
     {
-        return new BrowserController(request, store);
+        return new BrowserController(request, settings);
     });
 
     routes.useWorkQueue(workQueue);

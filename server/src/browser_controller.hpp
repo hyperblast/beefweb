@@ -2,6 +2,7 @@
 
 #include "defines.hpp"
 #include "controller.hpp"
+#include "settings.hpp"
 
 namespace msrv {
 
@@ -12,16 +13,16 @@ class WorkQueue;
 class BrowserController : public ControllerBase
 {
 public:
-    BrowserController(Request* request, SettingsStore* store);
+    BrowserController(Request* request, SettingsDataPtr settings);
     ~BrowserController();
 
     ResponsePtr getRoots();
     ResponsePtr getEntries();
 
-    static void defineRoutes(Router* router, WorkQueue* workQueue, SettingsStore* store);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, SettingsDataPtr settings);
 
 private:
-    SettingsStore* store_;
+    SettingsDataPtr settings_;
 };
 
 }

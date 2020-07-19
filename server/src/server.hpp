@@ -6,6 +6,8 @@
 #include "request.hpp"
 #include "response.hpp"
 #include "timers.hpp"
+#include "request_filter.hpp"
+#include "router.hpp"
 
 #include <memory>
 #include <thread>
@@ -15,23 +17,29 @@
 namespace msrv {
 
 class WorkQueue;
-class Router;
-class RequestFilterChain;
 
 class Server;
-struct ServerConfig;
+class ServerConfig;
 struct RequestContext;
 
 using ServerPtr = std::shared_ptr<Server>;
 using ServerConfigPtr = std::unique_ptr<ServerConfig>;
 using RequestContextPtr = std::shared_ptr<RequestContext>;
 
-struct ServerConfig
+class ServerConfig
 {
-    bool allowRemote;
-    int port;
-    const Router* router;
-    const RequestFilterChain* filters;
+public:
+    ServerConfig(int portVal, bool allowRemoteVal);
+    ~ServerConfig();
+
+    const int port;
+    const bool allowRemote;
+
+    Router router;
+    RequestFilterChain filters;
+
+private:
+    MSRV_NO_COPY_AND_ASSIGN(ServerConfig);
 };
 
 struct RequestContext

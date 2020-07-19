@@ -9,19 +9,16 @@
 namespace msrv {
 
 StaticController::StaticController(
-    Request* request, SettingsStore* store, const ContentTypeMap* ctmap)
-    : ControllerBase(request), store_(store), ctmap_(ctmap)
+    Request* request, SettingsDataPtr settings, const ContentTypeMap* ctmap)
+    : ControllerBase(request), settings_(settings), ctmap_(ctmap)
 {
 }
 
-StaticController::~StaticController()
-{
-}
+StaticController::~StaticController() = default;
 
 ResponsePtr StaticController::getFile()
 {
-    auto settings = store_->settings();
-    const auto& rootDirUtf8 = settings->staticDir;
+    const auto& rootDirUtf8 = settings_->staticDir;
 
     if (rootDirUtf8.empty())
         return Response::error(HttpStatus::S_404_NOT_FOUND);
@@ -43,14 +40,14 @@ ResponsePtr StaticController::getFile()
 void StaticController::defineRoutes(
     Router* router,
     WorkQueue* workQueue,
-    SettingsStore* store,
+    SettingsDataPtr settings,
     const ContentTypeMap* ctmap)
 {
     auto routes = router->defineRoutes<StaticController>();
 
     routes.createWith([=](Request* request)
     {
-        return new StaticController(request, store, ctmap);
+        return new StaticController(request, settings, ctmap);
     });
 
     routes.useWorkQueue(workQueue);

@@ -3,15 +3,26 @@
 const q = require('qunit');
 const { client, usePlayer } = require('./test_context');
 
-const options = { environment: {'BEEFWEB_CORS_HEADER':'http://whatever' } };
+const expectedValue = "Very Custom, Much Configurable, Wow";
 
-q.module('http features', usePlayer(options));
+const pluginSettings = {
+    responseHeaders: {
+        "X-CustomHeader": expectedValue
+    }
+};
 
-q.test('options method', async assert =>
+q.module('http features', usePlayer({ pluginSettings }));
+
+q.test('custom headers', async assert =>
 {
     const response = await client.handler.axios.get('/api/player');
 
-    assert.strictEqual(response.headers['access-control-allow-origin'], 'http://whatever');
-    assert.strictEqual(response.headers['access-control-allow-headers'], 'Content-Type');
-    assert.strictEqual(response.headers['access-control-allow-methods'], 'GET, POST, OPTIONS');
+    assert.strictEqual(response.headers['x-customheader'], expectedValue);
+});
+
+q.test('options method', async assert =>
+{
+    const response = await client.handler.axios.options('/api/player');
+
+    assert.strictEqual(response.headers['x-customheader'], expectedValue);
 });
