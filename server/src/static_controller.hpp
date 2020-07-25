@@ -14,7 +14,6 @@ class StaticController : public ControllerBase
 public:
     StaticController(
         Request* request,
-        const std::string& urlPrefix,
         const Path& targetDir,
         const ContentTypeMap& contentTypes);
     ~StaticController();
@@ -38,7 +37,6 @@ private:
     std::string getNormalizedPath();
     ResponsePtr redirectToDirectory();
 
-    const std::string& urlPrefix_;
     const Path& targetDir_;
     const ContentTypeMap& contentTypes_;
 };
