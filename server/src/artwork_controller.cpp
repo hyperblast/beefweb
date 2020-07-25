@@ -49,10 +49,12 @@ ResponsePtr ArtworkController::getResponse(ArtworkResult* result)
         auto fileData = file_io::readToEnd(fileHandle.get(), 64);
         file_io::setPosition(fileHandle.get(), 0);
 
+        auto fileInfo = file_io::queryInfo(fileHandle.get());
+
         return Response::file(
             std::move(filePath),
             std::move(fileHandle),
-            file_io::queryInfo(fileHandle),
+            std::move(fileInfo),
             contentTypes_.byHeader(fileData));
     }
 
