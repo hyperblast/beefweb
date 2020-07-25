@@ -14,7 +14,7 @@ If setting is specified in more preferred source it overrides values defined in 
 
 The following options are available:
 
-```js
+```json
 {
     "port": 8880,
     "allowRemote": true,
@@ -54,10 +54,10 @@ The following options are available:
 
 The following configuration file uses `C:\MyWebPage` directory to serve requests starting with `/mywebpage`:
 
-```js
+```json
 {
     "urlMappings": {
-        "/mywebpage: "C:\\MyWebPage"
+        "/mywebpage": "C:\\MyWebPage"
     }
 }
 ```
@@ -67,7 +67,7 @@ The following configuration file uses `C:\MyWebPage` directory to serve requests
 
 The following configuration file allows to make requests from any origin:
 
-```js
+```json
 {
     "responseHeaders": {
         "Access-Control-Allow-Origin": "*"
