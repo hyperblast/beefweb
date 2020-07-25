@@ -4,6 +4,7 @@
 - Binaries for foobar2000 are built with VS2017 and dynamic runtime libraries
 - Update foobar2000 SDK to 2019-06-30
 - Added support for specifying custom response header (e.g. for CORS)
+- Added support for specifying custom web content directories
 
 ### Changes in v0.4 (released 2020-02-02):
 - Added optional playback information panel
