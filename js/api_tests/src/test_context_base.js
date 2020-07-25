@@ -24,7 +24,7 @@ class TestContextBase
             port,
             allowRemote: false,
             musicDirs: [musicDir],
-            staticDir: webRootDir,
+            webRoot: webRootDir,
         };
 
         const config = {

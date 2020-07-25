@@ -12,7 +12,11 @@ class WorkQueue;
 class StaticController : public ControllerBase
 {
 public:
-    StaticController(Request* request, SettingsDataPtr settings, const ContentTypeMap* ctmap);
+    StaticController(
+        Request* request,
+        const std::string& urlPrefix,
+        const Path& targetDir,
+        const ContentTypeMap& contentTypes);
     ~StaticController();
 
     ResponsePtr getFile();
@@ -21,12 +25,22 @@ public:
         Router* router,
         WorkQueue* workQueue,
         SettingsDataPtr settings,
-        const ContentTypeMap* ctmap);
+        const ContentTypeMap& contentTypes);
+
+    static void defineRoutes(
+        Router* router,
+        WorkQueue* workQueue,
+        const std::string& urlPrefix,
+        const std::string& targetDir,
+        const ContentTypeMap& contentTypes);
 
 private:
-    SettingsDataPtr settings_;
-    const ContentTypeMap* ctmap_;
-};
+    std::string getNormalizedPath();
+    ResponsePtr redirectToDirectory();
 
+    const std::string& urlPrefix_;
+    const Path& targetDir_;
+    const ContentTypeMap& contentTypes_;
+};
 
 }

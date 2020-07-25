@@ -28,7 +28,7 @@ private:
     Player* player_;
 
     EventDispatcher dispatcher_;
-    ContentTypeMap ctmap_;
+    ContentTypeMap contentTypes_;
 
     std::unique_ptr<WorkQueue> playerWorkQueue_;
     ThreadWorkQueue utilityQueue_;

@@ -8,25 +8,24 @@ namespace msrv {
 
 class Player;
 class Router;
-class SettingsStore;
 class ContentTypeMap;
 
 class ArtworkController : public ControllerBase
 {
 public:
-    ArtworkController(Request* request, Player* player, ContentTypeMap* ctmap);
+    ArtworkController(Request* request, Player* player, const ContentTypeMap& contentTypes);
     ~ArtworkController();
 
     ResponsePtr getArtwork();
 
-    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, ContentTypeMap* ctmap);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, const ContentTypeMap& contentTypes);
 
 private:
     ResponsePtr getResponse(ArtworkResult* result);
     ResponsePtr getNotFoundResponse();
 
     Player* player_;
-    ContentTypeMap* ctmap_;
+    const ContentTypeMap& contentTypes_;
 
     MSRV_NO_COPY_AND_ASSIGN(ArtworkController);
 };

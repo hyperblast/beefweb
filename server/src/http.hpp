@@ -23,6 +23,8 @@ enum class HttpStatus
     S_202_ACCEPTED = 202,
     S_204_NO_CONTENT = 204,
     S_304_NOT_MODIFIED = 304,
+    S_307_TEMP_REDIRECT = 307,
+    S_308_PERM_REDIRECT = 308,
     S_400_BAD_REQUEST = 400,
     S_401_UNAUTHORIZED = 401,
     S_403_FORBIDDEN = 403,
@@ -43,6 +45,7 @@ struct HttpHeader
     static const char CACHE_CONTROL[];
     static const char ACCEPT_ENCODING[];
     static const char CONTENT_ENCODING[];
+    static const char LOCATION[];
 };
 
 using HttpKeyValueMap = std::unordered_map<std::string, std::string>;

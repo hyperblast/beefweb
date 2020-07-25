@@ -10,8 +10,8 @@
 
 namespace msrv {
 
-ArtworkController::ArtworkController(Request* request, Player* player, ContentTypeMap* ctmap)
-    : ControllerBase(request), player_(player), ctmap_(ctmap)
+ArtworkController::ArtworkController(Request* request, Player* player, const ContentTypeMap& contentTypes)
+    : ControllerBase(request), player_(player), contentTypes_(contentTypes)
 {
 }
 
@@ -52,12 +52,13 @@ ResponsePtr ArtworkController::getResponse(ArtworkResult* result)
         return Response::file(
             std::move(filePath),
             std::move(fileHandle),
-            ctmap_->byHeader(fileData));
+            file_io::queryInfo(fileHandle),
+            contentTypes_.byHeader(fileData));
     }
 
     if (!result->fileData.empty())
     {
-        const auto& contentType = ctmap_->byHeader(result->fileData);
+        const auto& contentType = contentTypes_.byHeader(result->fileData);
         return Response::data(std::move(result->fileData), contentType);
     }
 
@@ -70,13 +71,13 @@ ResponsePtr ArtworkController::getNotFoundResponse()
 }
 
 void ArtworkController::defineRoutes(
-    Router* router, WorkQueue* workQueue, Player* player, ContentTypeMap* ctmap)
+    Router* router, WorkQueue* workQueue, Player* player, const ContentTypeMap& contentTypes)
 {
     auto routes = router->defineRoutes<ArtworkController>();
 
     routes.createWith([=](Request* request)
     {
-        return new ArtworkController(request, player, ctmap);
+        return new ArtworkController(request, player, contentTypes);
     });
 
     routes.useWorkQueue(workQueue);

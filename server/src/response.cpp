@@ -21,21 +21,24 @@ std::unique_ptr<SimpleResponse> Response::custom(HttpStatus status)
     return std::make_unique<SimpleResponse>(status);
 }
 
-std::unique_ptr<Response> Response::file(Path path, std::string contentType)
+std::unique_ptr<SimpleResponse> Response::temporaryRedirect(std::string targetUrl)
 {
-    auto handle = file_io::open(path);
-    if (!handle)
-        return error(HttpStatus::S_404_NOT_FOUND, "requested file is not found");
-
-    return file(std::move(path), std::move(handle), std::move(contentType));
+    auto response = std::make_unique<SimpleResponse>(HttpStatus::S_307_TEMP_REDIRECT);
+    response->headers[HttpHeader::LOCATION] = std::move(targetUrl);
+    return response;
 }
 
-std::unique_ptr<FileResponse> Response::file(Path path, FileHandle handle, std::string contentType)
+std::unique_ptr<SimpleResponse> Response::permanentRedirect(std::string targetUrl)
 {
-    auto info = file_io::queryInfo(handle.get());
+    auto response = std::make_unique<SimpleResponse>(HttpStatus::S_308_PERM_REDIRECT);
+    response->headers[HttpHeader::LOCATION] = std::move(targetUrl);
+    return response;
+}
 
+std::unique_ptr<FileResponse> Response::file(Path path, FileHandle handle, FileInfo fileInfo, std::string contentType)
+{
     return std::make_unique<FileResponse>(
-        std::move(path), std::move(handle), std::move(contentType), std::move(info));
+        std::move(path), std::move(handle), std::move(fileInfo), std::move(contentType));
 }
 
 std::unique_ptr<DataResponse> Response::data(std::vector<uint8_t> data, std::string contentType)
@@ -101,13 +104,13 @@ void DataResponse::process(ResponseHandler* handler)
 FileResponse::FileResponse(
     Path pathVal,
     FileHandle handleVal,
-    std::string contentTypeVal,
-    FileInfo infoVal)
+    FileInfo infoVal,
+    std::string contentTypeVal)
     : Response(HttpStatus::S_200_OK),
       path(std::move(pathVal)),
       handle(std::move(handleVal)),
-      contentType(std::move(contentTypeVal)),
-      info(std::move(infoVal))
+      info(std::move(infoVal)),
+      contentType(std::move(contentTypeVal))
 {
 }
 

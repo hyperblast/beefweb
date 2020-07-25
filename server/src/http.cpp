@@ -13,6 +13,7 @@ const char HttpHeader::ETAG[] = "ETag";
 const char HttpHeader::CACHE_CONTROL[] = "Cache-Control";
 const char HttpHeader::ACCEPT_ENCODING[] = "Accept-Encoding";
 const char HttpHeader::CONTENT_ENCODING[] = "Content-Encoding";
+const char HttpHeader::LOCATION[] = "Location";
 
 std::string toString(HttpMethod method)
 {

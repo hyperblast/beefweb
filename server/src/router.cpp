@@ -199,7 +199,7 @@ std::unique_ptr<RouteResult> Router::dispatch(const Request* request) const
 
     auto node = matchNode(rootNode_.get(), &urlTokenizer, params);
     if (!node)
-        return std::make_unique<RouteResult>(Response::error(HttpStatus::S_404_NOT_FOUND));
+        return std::make_unique<RouteResult>(Response::notFound());
 
     if (request->method == HttpMethod::OPTIONS)
         return std::make_unique<RouteResult>(RequestHandlerFactory::empty(), HttpKeyValueMap());

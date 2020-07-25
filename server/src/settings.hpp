@@ -20,12 +20,13 @@ public:
     int port;
     bool allowRemote;
     std::vector<std::string> musicDirs;
-    std::string staticDir;
+    std::string webRoot;
 
     bool authRequired;
     std::string authUser;
     std::string authPassword;
     std::unordered_map<std::string, std::string> responseHeaders;
+    std::unordered_map<std::string, std::string> urlMappings;
 
     bool isAllowedPath(const std::string& path) const;
 
