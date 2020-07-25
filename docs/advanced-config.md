@@ -14,7 +14,7 @@ If setting is specified in more preferred source it overrides values defined in 
 
 The following options are available:
 
-```json
+```js
 {
     "port": 8880,
     "allowRemote": true,
@@ -22,7 +22,7 @@ The following options are available:
     "authRequired": false,
     "authUser: "",
     "authPassword": "",
-    "webRoot": "{directory of beefweb binary}/beefweb.root"
+    "webRoot": "{directory of beefweb binary}/beefweb.root",
     "urlMappings": {},
     "responseHeaders": {}
 }
@@ -31,6 +31,7 @@ The following options are available:
 ### Network settings
 
 `port: number` - Network port to use (same as in UI)
+
 `allowRemote: bool` - Allow connections from remote hosts (same as in UI)
 
 ### Music directories
@@ -40,20 +41,20 @@ The following options are available:
 ### Authentication settings
 
 `authRequired: bool` - Require authentication (same as in UI)
+
 `authUser: string` - User name for authentication (same as in UI)
+
 `authPassword: string` - Password for authentication (same as in UI)
 
-### Web root
+### Web server settings
 
 `webRoot: string` - Root directory where static web content is located. This path has to be absolute.
-
-### URL mappings
 
 `urlMappings: {string: string}` - Alternative web directories defined by URL prefix
 
 The following configuration file uses `C:\MyWebPage` directory to serve requests starting with `/mywebpage`:
 
-```json
+```js
 {
     "urlMappings": {
         "/mywebpage: "C:\\MyWebPage"
@@ -61,13 +62,12 @@ The following configuration file uses `C:\MyWebPage` directory to serve requests
 }
 ```
 
-### Response headers
 
 `responseHeaders: {string: string}` - Any response headers to send to client. Could be used to enable CORS.
 
 The following configuration file allows to make requests from any origin:
 
-```json
+```js
 {
     "responseHeaders": {
         "Access-Control-Allow-Origin": "*"
