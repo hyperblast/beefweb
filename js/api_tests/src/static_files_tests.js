@@ -7,7 +7,14 @@ const q = require('qunit');
 
 const { client, usePlayer, config } = require('./test_context');
 
-q.module('static files', usePlayer());
+const pluginSettings = {
+    urlMappings: {
+        '/prefix': config.webRootDir,
+        '/prefix/nested': config.webRootDir,
+    }
+};
+
+q.module('static files', usePlayer({ pluginSettings }));
 
 function getFile(url, config)
 {
@@ -19,27 +26,75 @@ function getFileData(url)
    return readFile(path.join(config.webRootDir, url), 'utf8');
 }
 
-q.test('get index', async assert =>
+q.test('get index of root', async assert =>
 {
-    const result = await getFile('');
+    const result = await getFile('/');
     assert.equal(result.data, 'index.html\n');
 });
 
-q.test('get file', async assert =>
+q.test('get index of prefix', async assert =>
 {
-    const result = await getFile('file.html');
+    const result = await getFile('/prefix/');
+    assert.equal(result.data, 'index.html\n');
+});
+
+q.test('get index of nested prefix', async assert =>
+{
+    const result = await getFile('/prefix/nested/');
+    assert.equal(result.data, 'index.html\n');
+});
+
+q.test('get file of root', async assert =>
+{
+    const result = await getFile('/file.html');
     assert.equal(result.data, 'file.html\n');
 });
 
-q.test('get subdir index', async assert =>
+q.test('get file of prefix', async assert =>
 {
-    const result = await getFile('subdir/');
+    const result = await getFile('/prefix/file.html');
+    assert.equal(result.data, 'file.html\n');
+});
+
+q.test('get file of nested prefix', async assert =>
+{
+    const result = await getFile('/prefix/nested/file.html');
+    assert.equal(result.data, 'file.html\n');
+});
+
+q.test('get subdir index of root', async assert =>
+{
+    const result = await getFile('/subdir/');
     assert.equal(result.data, 'subdir/index.html\n');
 });
 
-q.test('get subdir file', async assert =>
+q.test('get subdir index of prefix', async assert =>
 {
-    const result = await getFile('subdir/file.html');
+    const result = await getFile('/prefix/subdir/');
+    assert.equal(result.data, 'subdir/index.html\n');
+});
+
+q.test('get subdir index of nested prefix', async assert =>
+{
+    const result = await getFile('/prefix/nested/subdir/');
+    assert.equal(result.data, 'subdir/index.html\n');
+});
+
+q.test('get subdir file of root', async assert =>
+{
+    const result = await getFile('/subdir/file.html');
+    assert.equal(result.data, 'subdir/file.html\n');
+});
+
+q.test('get subdir file of prefix', async assert =>
+{
+    const result = await getFile('/prefix/subdir/file.html');
+    assert.equal(result.data, 'subdir/file.html\n');
+});
+
+q.test('get subdir file of nested prefix', async assert =>
+{
+    const result = await getFile('/prefix/nested/subdir/file.html');
     assert.equal(result.data, 'subdir/file.html\n');
 });
 
