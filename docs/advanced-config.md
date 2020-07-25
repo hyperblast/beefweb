@@ -20,7 +20,7 @@ The following options are available:
     "allowRemote": true,
     "musicDirs": [],
     "authRequired": false,
-    "authUser: "",
+    "authUser": "",
     "authPassword": "",
     "webRoot": "{directory of beefweb binary}/beefweb.root",
     "urlMappings": {},
