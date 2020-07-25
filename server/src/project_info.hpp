@@ -7,6 +7,7 @@
 #define MSRV_PROJECT_NAME       "Beefweb Remote Control"
 #define MSRV_WEB_ROOT           "beefweb.root"
 #define MSRV_CONFIG_FILE        "beefweb.config.json"
+#define MSRV_CONFIG_FILE_ENV    "BEEFWEB_CONFIG_FILE"
 #define MSRV_PROJECT_DESC       "Provides web UI and HTTP API for controlling player remotely"
 #define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
 #define MSRV_VERSION_MAJOR      0

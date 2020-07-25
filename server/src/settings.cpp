@@ -70,10 +70,13 @@ void SettingsData::loadAll(const char* appName)
 {
     load(getBundledConfigFile());
 
-    auto userConfigPath = getUserConfigFile(appName);
+    auto configPath = getUserConfigFile(appName);
+    if (!configPath.empty())
+        load(configPath);
 
-    if (!userConfigPath.empty())
-        load(userConfigPath);
+    configPath = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
+    if (!configPath.empty())
+        load(configPath);
 }
 
 bool SettingsData::load(const Path& path)
