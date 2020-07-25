@@ -8,8 +8,8 @@
 namespace msrv {
 
 StaticController::StaticController(
-    Request* request, const std::string& urlPrefix, const Path& targetDir, const ContentTypeMap& contentTypes)
-    : ControllerBase(request), urlPrefix_(urlPrefix), targetDir_(targetDir), contentTypes_(contentTypes)
+    Request* request, const Path& targetDir, const ContentTypeMap& contentTypes)
+    : ControllerBase(request), targetDir_(targetDir), contentTypes_(contentTypes)
 {
 }
 
@@ -136,7 +136,7 @@ void StaticController::defineRoutes(
 
     routes.createWith([=](Request* request)
     {
-        return new StaticController(request, prefix, target, contentTypes);
+        return new StaticController(request, target, contentTypes);
     });
 
     routes.useWorkQueue(workQueue);
