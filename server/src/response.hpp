@@ -34,12 +34,15 @@ public:
 
     static std::unique_ptr<SimpleResponse> ok();
     static std::unique_ptr<SimpleResponse> custom(HttpStatus status);
-    static std::unique_ptr<Response> file(Path path, std::string contentType);
-    static std::unique_ptr<FileResponse> file(Path path, FileHandle handle, std::string contentType);
+    static std::unique_ptr<SimpleResponse> temporaryRedirect(std::string targetUrl);
+    static std::unique_ptr<SimpleResponse> permanentRedirect(std::string targetUrl);
+    static std::unique_ptr<FileResponse> file(Path path, FileHandle handle, FileInfo fileInfo, std::string contentType);
     static std::unique_ptr<DataResponse> data(std::vector<uint8_t> data, std::string contentType);
     static std::unique_ptr<JsonResponse> json(Json value);
     static std::unique_ptr<EventStreamResponse> eventStream(EventStreamSource source);
     static std::unique_ptr<AsyncResponse> async(ResponseFuture response);
+
+    static std::unique_ptr<ErrorResponse> notFound() { return error(HttpStatus::S_404_NOT_FOUND); }
 
     static std::unique_ptr<ErrorResponse> error(
         HttpStatus status,
@@ -92,8 +95,8 @@ public:
     FileResponse(
         Path pathVal,
         FileHandle handleVal,
-        std::string contentTypeVal,
-        FileInfo info);
+        FileInfo infoVal,
+        std::string contentTypeVal);
 
     virtual ~FileResponse();
 
@@ -101,8 +104,8 @@ public:
 
     const Path path;
     FileHandle handle;
-    const std::string contentType;
     const FileInfo info;
+    const std::string contentType;
 };
 
 class EventStreamResponse : public Response

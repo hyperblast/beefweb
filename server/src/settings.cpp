@@ -37,7 +37,7 @@ Path getUserConfigFile(const char* appName)
         / pathFromUtf8(MSRV_CONFIG_FILE);
 }
 
-const std::string& getDefaultStaticDir()
+const std::string& getDefaultWebRoot()
 {
     static std::string path = pathToUtf8(getBundleDir() / pathFromUtf8(MSRV_WEB_ROOT));
     return path;
@@ -48,7 +48,7 @@ const std::string& getDefaultStaticDir()
 SettingsData::SettingsData()
     : port(MSRV_DEFAULT_PORT),
       allowRemote(true),
-      staticDir(getDefaultStaticDir()),
+      webRoot(getDefaultWebRoot()),
       authRequired(false)
 {
 }
@@ -111,9 +111,9 @@ void SettingsData::load(const Json& json)
     if (it != json.end())
         musicDirs = it->get<std::vector<std::string>>();
 
-    it = json.find("staticDir");
+    it = json.find("webRoot");
     if (it != json.end())
-        staticDir = it->get<std::string>();
+        webRoot = it->get<std::string>();
 
     it = json.find("authRequired");
     if (it != json.end())
@@ -130,6 +130,10 @@ void SettingsData::load(const Json& json)
     it = json.find("responseHeaders");
     if (it != json.end())
         responseHeaders = it->get<std::unordered_map<std::string, std::string>>();
+
+    it = json.find("urlMappings");
+    if (it != json.end())
+        urlMappings = it->get<std::unordered_map<std::string, std::string>>();
 }
 
 }
