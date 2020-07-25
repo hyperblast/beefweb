@@ -14,7 +14,18 @@ const pluginSettings = {
     }
 };
 
-q.module('static files', usePlayer({ pluginSettings }));
+const axiosConfig = {
+    maxRedirects: 0,
+    validateStatus: s => s >= 200 && s <= 399
+};
+
+function assertRedirect(assert, result, location)
+{
+    assert.equal(result.status, 307);
+    assert.equal(result.headers["location"], location);
+}
+
+q.module('static files', usePlayer({ pluginSettings, axiosConfig }));
 
 function getFile(url, config)
 {
@@ -42,6 +53,18 @@ q.test('get index of nested prefix', async assert =>
 {
     const result = await getFile('/prefix/nested/');
     assert.equal(result.data, 'index.html\n');
+});
+
+q.test('redirect index of prefix', async assert =>
+{
+    const result = await getFile('/prefix');
+    assert.equal(result.headers["location"], '/prefix/');
+});
+
+q.test('redirect index of nested prefix', async assert =>
+{
+    const result = await getFile('/prefix/nested');
+    assertRedirect(assert, result, '/prefix/nested/');
 });
 
 q.test('get file of root', async assert =>
@@ -78,6 +101,24 @@ q.test('get subdir index of nested prefix', async assert =>
 {
     const result = await getFile('/prefix/nested/subdir/');
     assert.equal(result.data, 'subdir/index.html\n');
+});
+
+q.test('redirect subdir index of root', async assert =>
+{
+    const result = await getFile('/subdir');
+    assertRedirect(assert, result, '/subdir/');
+});
+
+q.test('redirect subdir index of prefix', async assert =>
+{
+    const result = await getFile('/prefix/subdir');
+    assertRedirect(assert, result, '/prefix/subdir/');
+});
+
+q.test('redirect subdir index of nested prefix', async assert =>
+{
+    const result = await getFile('/prefix/nested/subdir');
+    assertRedirect(assert, result, '/prefix/nested/subdir/');
 });
 
 q.test('get subdir file of root', async assert =>
@@ -187,4 +228,16 @@ q.test('escape root dir', async assert =>
 
     const result2 = await getFile('/%2E%2E/package.json', ignoreStatus);
     assert.equal(result2.status, 404);
+
+    const result3 = await getFile('/prefix/../package.json', ignoreStatus);
+    assert.equal(result3.status, 404);
+
+    const result4 = await getFile('/prefix/%2E%2E/package.json', ignoreStatus);
+    assert.equal(result4.status, 404);
+
+    const result5 = await getFile('/prefix/nested/../package.json', ignoreStatus);
+    assert.equal(result3.status, 404);
+
+    const result6 = await getFile('/prefix/nested/%2E%2E/package.json', ignoreStatus);
+    assert.equal(result4.status, 404);
 });
