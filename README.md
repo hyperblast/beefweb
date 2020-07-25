@@ -40,6 +40,8 @@ To allow browsing and adding files via web interface
 specify music directories in plugin configuration screen.
 For DeaDBeeF multiple music directories should be separated with `;`.
 
+See [advanced configuration guide](docs/advanced-config.md) to unlock hidden developer features.
+
 ### Screenshots
 ![Main web interface on Linux](https://user-images.githubusercontent.com/19171756/44335589-a3286180-a47d-11e8-8db4-fd7708e262c6.png)
 
