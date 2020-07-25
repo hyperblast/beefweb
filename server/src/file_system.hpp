@@ -64,6 +64,7 @@ bool isSubpath(const T& parentPath, const T& childPath)
 
 Path getModulePath(void* symbol);
 Path getUserConfigDir();
+Path getEnvAsPath(const char* env);
 
 namespace file_io {
 

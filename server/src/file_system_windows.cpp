@@ -54,6 +54,14 @@ Path getUserConfigDir()
     return Path();
 }
 
+Path getEnvAsPath(const char* env)
+{
+    auto value = ::_wgetenv(utf8To16(env).c_str());
+    if (value && value[0])
+        return Path(value);
+    return Path();
+}
+
 namespace file_io {
 
 FileInfo queryInfo(FileHandle::Type handle)

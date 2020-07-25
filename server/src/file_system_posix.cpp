@@ -51,6 +51,14 @@ Path getUserConfigDir()
     return Path();
 }
 
+Path getEnvAsPath(const char* env)
+{
+    auto value = ::getenv(env);
+    if (value && value[0])
+        return Path(value);
+    return Path();
+}
+
 namespace file_io {
 
 FileInfo queryInfo(const Path& path)
