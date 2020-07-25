@@ -57,16 +57,16 @@ ResponsePtr StaticController::getFile()
     if (!isSubpath(targetDir_.native(), filePath.native()))
         return Response::notFound();
 
-    auto handle = file_io::open(filePath);
-    if (!handle) {
-        return Response::notFound();
-    }
+    auto info = file_io::queryInfo(filePath);
 
-    auto info = file_io::queryInfo(handle.get());
-
-    switch (info.type) {
+    switch (info.type)
+    {
         case FileType::REGULAR:
         {
+            auto handle = file_io::open(filePath);
+            if (!handle)
+                return Response::notFound();
+
             const auto& contentType = contentTypes_.byFilePath(filePath);
             return Response::file(std::move(filePath), std::move(handle), std::move(info), contentType);
         }
