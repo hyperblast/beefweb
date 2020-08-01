@@ -61,6 +61,18 @@ Path getEnvAsPath(const char* env)
 
 namespace file_io {
 
+boost::optional<FileInfo> tryQueryInfo(const Path& path)
+{
+    struct ::stat st;
+    int ret = ::stat(path.c_str(), &st);
+    if (ret < 0)
+        return boost::none;
+
+    FileInfo info;
+    statToFileInfo(st, info);
+    return info;
+}
+
 FileInfo queryInfo(const Path& path)
 {
     struct ::stat st;

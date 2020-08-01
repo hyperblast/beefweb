@@ -23,6 +23,14 @@ inline int64_t getUnixTimestamp(FILETIME time)
     return  makeInt64(time.dwHighDateTime, time.dwLowDateTime) / INT64_C(10000000) - INT64_C(11644473600);
 }
 
+inline void fileDataToInfo(const ::WIN32_FILE_ATTRIBUTE_DATA* data, FileInfo* info)
+{
+    info->inode = -1;
+    info->size = makeInt64(data->nFileSizeHigh, data->nFileSizeLow);
+    info->type = getFileType(data->dwFileAttributes);
+    info->timestamp = getUnixTimestamp(data->ftLastWriteTime);
+}
+
 }
 
 Path getModulePath(void* symbol)
@@ -78,6 +86,18 @@ FileInfo queryInfo(FileHandle::Type handle)
     return info;
 }
 
+boost::optional<FileInfo> tryQueryInfo(const Path& path)
+{
+    ::WIN32_FILE_ATTRIBUTE_DATA data;
+    auto ret = ::GetFileAttributesExW(path.native().c_str(), GetFileExInfoStandard, &data);
+    if (ret == 0)
+        return boost::none;
+
+    FileInfo info;
+    fileDataToInfo(&data, &info);
+    return info;
+}
+
 FileInfo queryInfo(const Path& path)
 {
     ::WIN32_FILE_ATTRIBUTE_DATA data;
@@ -85,10 +105,7 @@ FileInfo queryInfo(const Path& path)
     throwIfFailed("GetFileAttributesExW", ret != 0);
 
     FileInfo info;
-    info.inode = -1;
-    info.size = makeInt64(data.nFileSizeHigh, data.nFileSizeLow);
-    info.type = getFileType(data.dwFileAttributes);
-    info.timestamp = getUnixTimestamp(data.ftLastWriteTime);
+    fileDataToInfo(&data, &info);
     return info;
 }
 

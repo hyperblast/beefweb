@@ -9,6 +9,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/optional.hpp>
 
 namespace msrv {
 
@@ -70,6 +71,7 @@ namespace file_io {
 
 FileInfo queryInfo(FileHandle::Type handle);
 FileInfo queryInfo(const Path& path);
+boost::optional<FileInfo> tryQueryInfo(const Path& path);
 
 FileHandle open(const Path& path);
 void setPosition(FileHandle::Type handle, int64_t position);
