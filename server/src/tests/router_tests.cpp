@@ -21,6 +21,8 @@ class GetWithParam : public DummyFactoryBase {};
 class GetWithLongParam : public DummyFactoryBase {};
 class GetHandler : public DummyFactoryBase {};
 class PostHandler : public DummyFactoryBase {};
+class GetPrefix1 : public DummyFactoryBase {};
+class GetPrefix2 : public DummyFactoryBase {};
 
 TEST_CASE("router")
 {
@@ -86,6 +88,30 @@ TEST_CASE("router")
         result = router.dispatch(&postRequest);
         REQUIRE(result->factory != nullptr);
         REQUIRE(typeid(*result->factory) == typeid(PostHandler));
+    }
+
+    SECTION("get most specific route")
+    {
+        router.defineRoute(HttpMethod::GET, ":path*", std::make_unique<GetRoot>());
+        router.defineRoute(HttpMethod::GET, "prefix/:path*", std::make_unique<GetPrefix1>());
+        router.defineRoute(HttpMethod::GET, "prefix/nested/:path*", std::make_unique<GetPrefix2>());
+
+        Request request1(HttpMethod::GET, "/foo");
+        Request request2(HttpMethod::GET, "/prefix/foo");
+        Request request3(HttpMethod::GET, "/prefix/nested/foo");
+
+        auto result1 = router.dispatch(&request1);
+        auto result2 = router.dispatch(&request2);
+        auto result3 = router.dispatch(&request3);
+
+        REQUIRE(result1->factory != nullptr);
+        REQUIRE(typeid(*result1->factory) == typeid(GetRoot));
+
+        REQUIRE(result1->factory != nullptr);
+        REQUIRE(typeid(*result2->factory) == typeid(GetPrefix1));
+
+        REQUIRE(result1->factory != nullptr);
+        REQUIRE(typeid(*result3->factory) == typeid(GetPrefix2));
     }
 }
 
