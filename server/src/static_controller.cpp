@@ -126,7 +126,7 @@ void StaticController::defineRoutes(
     if (prefix.back() != '/')
         prefix.push_back('/');
 
-    auto target = pathFromUtf8(targetDir);
+    auto target = pathFromUtf8(targetDir).lexically_normal();
     if (!target.is_absolute()) {
         logError("url mapping '%s' target should be absolute, got '%s'", urlPrefix.c_str(), targetDir.c_str());
         return;
