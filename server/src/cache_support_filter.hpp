@@ -3,6 +3,8 @@
 #include "defines.hpp"
 #include "request_filter.hpp"
 
+#include <string>
+
 namespace msrv {
 
 class Response;
