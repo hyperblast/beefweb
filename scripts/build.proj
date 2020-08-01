@@ -33,6 +33,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ServerBuildFlags Include="-A Win32" />
         <ServerBuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
@@ -42,7 +43,8 @@
     </ItemGroup>
 
     <Target Name="CleanServer">
-        <RemoveDir Directories="$(ServerBuildDir)" />
+        <!-- <RemoveDir> can't handle long path names used by Boost -->
+        <Exec Command="rmdir /s /q &quot;$(ServerBuildDir)&quot;" />
     </Target>
 
     <Target Name="InitServer" DependsOnTargets="CleanServer">

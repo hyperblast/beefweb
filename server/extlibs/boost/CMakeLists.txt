@@ -67,9 +67,9 @@ if(OS_POSIX)
         PREFIX
             ${EXTLIB_INSTALL_DIR}
         URL
-            https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.tar.bz2
+            https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.bz2
         URL_HASH
-            SHA256=2684c972994ee57fc5632e03bf044746f6eb45d4920c343937a465fd67a5adba
+            SHA256=d73a8da01e8bf8c7eda40b4c84915071a8c8a0df4a6734537ddde4a8580524ee
         DOWNLOAD_DIR
             ${EXTLIB_CACHE_DIR}/boost
         BUILD_IN_SOURCE 1
@@ -91,9 +91,9 @@ if(OS_WINDOWS)
         PREFIX
             ${EXTLIB_INSTALL_DIR}
         URL
-            https://dl.bintray.com/boostorg/release/1.67.0/source/boost_1_67_0.zip
+            https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.zip
         URL_HASH
-            SHA256=7e37372d8cedd0fd6b7529e9dd67c2cb1c60e6c607aed721f5894d704945a7ec
+            SHA256=85a94ac71c28e59cf97a96714e4c58a18550c227ac8b0388c260d6c717e47a69
         DOWNLOAD_DIR
             ${EXTLIB_CACHE_DIR}/boost
         BUILD_IN_SOURCE 1

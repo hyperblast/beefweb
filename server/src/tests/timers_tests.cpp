@@ -1,5 +1,7 @@
 #include "../timers.hpp"
 
+#include <string>
+#include <boost/optional/optional_io.hpp>
 #include <catch.hpp>
 
 namespace msrv {
@@ -40,7 +42,7 @@ TEST_CASE("timers")
 
         auto now = timeSource.currentTime();
 
-        REQUIRE_FALSE(timerQueue.nextTimeout());
+        REQUIRE_FALSE(timerQueue.nextTimeout().has_value());
 
         timer1.runOnce(DurationMs(200));
         REQUIRE(timerQueue.nextTimeout().value() == now + DurationMs(200));
@@ -58,7 +60,7 @@ TEST_CASE("timers")
         REQUIRE(timerQueue.nextTimeout().value() == now + DurationMs(150));
 
         timer3.stop();
-        REQUIRE_FALSE(timerQueue.nextTimeout());
+        REQUIRE_FALSE(timerQueue.nextTimeout().has_value());
     }
 
     SECTION("one time")
