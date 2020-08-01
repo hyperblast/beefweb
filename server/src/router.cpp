@@ -8,9 +8,9 @@ namespace router_internal {
 
 enum class NodeType
 {
-    STRING,
-    PARAMETER,
-    LONG_PARAMETER
+    STRING = 0,
+    PARAMETER = 1,
+    LONG_PARAMETER = 2
 };
 
 StringView prepareUrl(const std::string& path)
@@ -59,8 +59,8 @@ public:
     NodeType type() const { return type_; }
     const std::string& value() const { return value_; }
 
-    std::vector<std::unique_ptr<Node>>& children() { return children_; }
-    const std::vector<std::unique_ptr<Node>>& children() const { return children_; }
+    std::multimap<NodeType, std::unique_ptr<Node>>& children() { return children_; }
+    const std::multimap<NodeType, std::unique_ptr<Node>>& children() const { return children_; }
 
     bool hasRoutes() const { return hasRoutes_; }
 
@@ -90,7 +90,7 @@ private:
     bool hasRoutes_{};
 
     std::vector<std::unique_ptr<RequestHandlerFactory>> factories_;
-    std::vector<std::unique_ptr<Node>> children_;
+    std::multimap<NodeType, std::unique_ptr<Node>> children_;
 
     MSRV_NO_COPY_AND_ASSIGN(Node);
 };
@@ -123,18 +123,20 @@ Node* Router::allocateNode(Node* parent, Tokenizer* urlTokenizer)
     if (!urlTokenizer->nextToken())
         return parent;
 
-    auto item = urlTokenizer->token();
-    auto type = getNodeType(item);
-    auto value = getNodeValue(type, item);
+    auto token = urlTokenizer->token();
+    auto type = getNodeType(token);
+    auto value = getNodeValue(type, token);
 
-    for (auto& node : parent->children())
+    for (auto& kv : parent->children())
     {
+        auto& node = kv.second;
+
         if (node->matches(type, value))
             return allocateNode(node.get(), urlTokenizer);
     }
 
-    parent->children().emplace_back(std::make_unique<Node>(type, std::move(value)));
-    return allocateNode(parent->children().back().get(), urlTokenizer);
+    auto item = parent->children().emplace(type, std::make_unique<Node>(type, std::move(value)));
+    return allocateNode(item->second.get(), urlTokenizer);
 }
 
 const Node* Router::matchNode(const Node* parent, Tokenizer* urlTokenizer, HttpKeyValueMap& params) const
@@ -146,8 +148,10 @@ const Node* Router::matchNode(const Node* parent, Tokenizer* urlTokenizer, HttpK
 
     auto item = urlTokenizer->token();
 
-    for (auto& node : parent->children())
+    for (const auto& kv : parent->children())
     {
+        const auto& node = kv.second;
+
         switch (node->type())
         {
             case NodeType::STRING:
