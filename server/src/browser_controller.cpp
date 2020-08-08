@@ -91,7 +91,7 @@ ResponsePtr BrowserController::getEntries()
     auto requestedPath = param<std::string>("path");
     auto normalizedPath = pathFromUtf8(requestedPath).lexically_normal().make_preferred();
 
-    if (!settings_->isAllowedPath(pathToUtf8(normalizedPath)))
+    if (!settings_->isAllowedPath(normalizedPath))
         return Response::error(HttpStatus::S_403_FORBIDDEN);
 
     std::vector<FileSystemEntry> entries;

@@ -55,11 +55,25 @@ SettingsData::SettingsData()
 
 SettingsData::~SettingsData() = default;
 
-bool SettingsData::isAllowedPath(const std::string& path) const
+void SettingsData::initialize()
 {
-    for (auto& dir : musicDirs)
+    musicPaths.clear();
+    musicPaths.reserve(musicDirs.size());
+
+    for (const auto& dir : musicDirs)
+        musicPaths.emplace_back(pathFromUtf8(dir).lexically_normal().make_preferred());
+
+    musicDirs.clear();
+
+    for (const auto& path : musicPaths)
+        musicDirs.emplace_back(pathToUtf8(path));
+}
+
+bool SettingsData::isAllowedPath(const Path& path) const
+{
+    for (const auto& root : musicPaths)
     {
-        if (isSubpath(dir, path))
+        if (isSubpath(root, path))
             return true;
     }
 
@@ -77,6 +91,8 @@ void SettingsData::loadAll(const char* appName)
     configPath = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
     if (!configPath.empty())
         load(configPath);
+
+    initialize();
 }
 
 bool SettingsData::load(const Path& path)

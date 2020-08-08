@@ -54,7 +54,7 @@ ResponsePtr StaticController::getFile()
 
     auto filePath = (targetDir_ / pathFromUtf8(requestPath)).lexically_normal().make_preferred();
 
-    if (!isSubpath(targetDir_.native(), filePath.native()))
+    if (!isSubpath(targetDir_, filePath))
         return Response::notFound();
 
     auto info = file_io::tryQueryInfo(filePath);
