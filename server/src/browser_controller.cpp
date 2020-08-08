@@ -101,10 +101,10 @@ ResponsePtr BrowserController::getEntries()
         ++iter)
     {
         auto& path = iter->path();
-        auto info = file_io::queryInfo(path);
+        auto info = file_io::tryQueryInfo(path);
 
-        if (info.type != FileType::UNKNOWN)
-            entries.emplace_back(makeFsEntry(path.filename(), path, info));
+        if (info && info->type != FileType::UNKNOWN)
+            entries.emplace_back(makeFsEntry(path.filename(), path, *info));
     }
 
     return  Response::json({
