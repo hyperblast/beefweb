@@ -2,7 +2,7 @@ swagger: '2.0'
 
 info:
   title: Player API
-  version: '0.1'
+  version: '0.5'
 
 host: localhost:8880
 basePath: /api
