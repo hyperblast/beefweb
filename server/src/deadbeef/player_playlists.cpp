@@ -26,19 +26,26 @@ public:
         PlaylistMapping* playlists,
         const PlaylistRef& plref,
         const std::vector<std::string>& items,
-        int32_t targetIndex);
+        int32_t targetIndex,
+        AddItemsOptions options);
 
     ~AddItemsTask();
 
     void execute();
 
 private:
-    PlaylistPtr resolvePlaylist();
+    void initialize();
+    void addItems();
+    void playAddedItems();
 
+    PlaylistMutex playlistMutex_;
     PlaylistMapping* playlists_;
+    PlaylistPtr playlist_;
+    PlaylistItemPtr targetItem_;
     PlaylistRef plref_;
     std::vector<std::string> items_;
     int32_t targetIndex_;
+    AddItemsOptions options_;
 
     MSRV_NO_COPY_AND_ASSIGN(AddItemsTask);
 };
@@ -200,8 +207,7 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
     int32_t targetIndex,
     AddItemsOptions options)
 {
-    (void)options;
-    auto task = std::make_shared<AddItemsTask>(&playlists_, plref, items, targetIndex);
+    auto task = std::make_shared<AddItemsTask>(&playlists_, plref, items, targetIndex, options);
     return boost::async([task]{ task->execute(); });
 }
 
@@ -313,41 +319,76 @@ AddItemsTask::AddItemsTask(
     PlaylistMapping* playlists,
     const PlaylistRef& plref,
     const std::vector<std::string>& items,
-    int32_t targetIndex)
+    int32_t targetIndex,
+    AddItemsOptions options)
     : playlists_(playlists),
       plref_(plref),
       items_(items),
-      targetIndex_(targetIndex)
+      targetIndex_(targetIndex),
+      options_(options)
 {
 }
 
-AddItemsTask::~AddItemsTask()
-{
-}
+AddItemsTask::~AddItemsTask() = default;
 
-PlaylistPtr AddItemsTask::resolvePlaylist()
+void AddItemsTask::initialize()
 {
-    PlaylistMutex mutex;
-    PlaylistLockGuard lock(mutex);
-    return playlists_->resolve(plref_);
+    PlaylistLockGuard lock(playlistMutex_);
+    playlist_ = playlists_->resolve(plref_);
 }
 
 void AddItemsTask::execute()
 {
-    PlaylistPtr playlist = resolvePlaylist();
-    AddItemsScope addScope(playlist.get(), 47);
-    PlaylistItemPtr targetItem = resolvePlaylistItem(playlist.get(), targetIndex_);
+    initialize();
+    addItems();
 
-    PlaylistItemPtr lastItem(
-        targetItem
-            ? ddbApi->pl_get_prev(targetItem.get(), PL_MAIN)
-            : ddbApi->plt_get_last(playlist.get(), PL_MAIN));
+    if ((options_ & AddItemsOptions::PLAY) != AddItemsOptions::NONE)
+        playAddedItems();
+}
 
-    targetItem.reset();
-    addScope.setLastItem(std::move(lastItem));
+void AddItemsTask::addItems()
+{
+    AddItemsScope addScope(playlist_.get(), 47);
+
+    if ((options_ & AddItemsOptions::REPLACE) != AddItemsOptions::NONE)
+    {
+        ddbApi->plt_clear(playlist_.get());
+    }
+    else
+    {
+        targetItem_ = resolvePlaylistItem(playlist_.get(), targetIndex_);
+
+        PlaylistItemPtr lastItem(
+            targetItem_
+                ? ddbApi->pl_get_prev(targetItem_.get(), PL_MAIN)
+                : ddbApi->plt_get_last(playlist_.get(), PL_MAIN));
+
+        addScope.setLastItem(std::move(lastItem));
+    }
 
     for (auto& item : items_)
         addScope.add(item);
+}
+
+void AddItemsTask::playAddedItems()
+{
+    PlaylistItemPtr firstAddedItem(
+        targetItem_
+            ? ddbApi->pl_get_next(targetItem_.get(), PL_MAIN)
+            : ddbApi->plt_get_first(playlist_.get(), PL_MAIN));
+
+    if (!firstAddedItem) {
+        ddbApi->sendmessage(DB_EV_STOP, 0, 0, 0);
+        return;
+    }
+
+    PlaylistPtr currentPlaylist(ddbApi->plt_get_curr());
+
+    if (playlist_ != currentPlaylist)
+        ddbApi->plt_set_curr(playlist_.get());
+
+    auto index = ddbApi->plt_get_item_idx(playlist_.get(), firstAddedItem.get(), PL_MAIN);
+    ddbApi->sendmessage(DB_EV_PLAY_NUM, 0, index, 0);
 }
 
 }}

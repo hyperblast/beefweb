@@ -139,7 +139,7 @@ ResponsePtr PlaylistsController::addItems()
 
     auto addCompleted = player_->addPlaylistItems(plref, normalizedItems, targetIndex, options);
 
-    if (optionalParam<bool>("async", false))
+    if (optionalParam("async", false))
     {
         addCompleted.then(boost::launch::sync, [] (boost::unique_future<void> result)
         {
