@@ -97,22 +97,22 @@ void PlaylistsController::clearPlaylist()
 
 std::string PlaylistsController::validateAndNormalizeItem(const std::string& item)
 {
-    std::string path;
+    Path path;
 
     if (isUrl(item))
     {
-        if (auto fileUrlPath = stripFileScheme(item))
-            path = *fileUrlPath;
+        if (auto urlPath = stripFileScheme(item))
+            path = pathFromUtf8(*urlPath);
         else
             return item;
     }
     else
-        path = item;
+        path = pathFromUtf8(item);
 
-    path = pathToUtf8(pathFromUtf8(path).lexically_normal().make_preferred());
+    path = path.lexically_normal().make_preferred();
 
     if (settings_->isAllowedPath(path))
-        return path;
+        return pathToUtf8(path);
 
     request()->response = Response::error(HttpStatus::S_403_FORBIDDEN, "item is not under allowed path: " + item);
     request()->setProcessed();
