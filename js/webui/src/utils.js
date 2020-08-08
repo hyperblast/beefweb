@@ -22,17 +22,21 @@ export function getParentDir(path, sep)
 {
     const index = path.lastIndexOf(sep);
 
-    if (index < 0)
+    if (index < 0 || index === path.length - 1)
         return '';
 
-    return path.substr(0, index);
+    const result = path.substr(0, index);
+
+    return result.indexOf(sep) >= 0
+        ? result
+        : result + sep;
 }
 
 export function getBaseName(path, sep)
 {
     const index = path.lastIndexOf(sep);
 
-    if (index < 0)
+    if (index < 0 || index === path.length - 1)
         return path;
 
     return path.substr(index + 1);
@@ -40,8 +44,13 @@ export function getBaseName(path, sep)
 
 export function isSubpath(parentPath, childPath, sep)
 {
-    return childPath.startsWith(parentPath)
-        && (parentPath.length === childPath.length || childPath[parentPath.length] === sep);
+    return childPath.startsWith(parentPath) && (
+        /* C:\foo and C:\foo */
+        parentPath.length === childPath.length
+        /* C:\foo and C:\foo\bar */
+        || childPath[parentPath.length] === sep
+        /* C:\ and C:\foo\ */
+        || (parentPath[parentPath.length - 1] === sep && childPath[parentPath.length - 1] === sep));
 }
 
 export function bindHandlers(obj)
