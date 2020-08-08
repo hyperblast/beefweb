@@ -36,6 +36,33 @@ enum class VolumeType
     LINEAR,
 };
 
+enum class AddItemsOptions : int
+{
+    NONE = 0,
+    REPLACE = 1,
+    PLAY = 2,
+};
+
+inline AddItemsOptions operator|(AddItemsOptions first, AddItemsOptions second)
+{
+    return static_cast<AddItemsOptions>(static_cast<int>(first) | static_cast<int>(second));
+}
+
+inline AddItemsOptions operator|=(AddItemsOptions& first, AddItemsOptions second)
+{
+    return (first = static_cast<AddItemsOptions>(static_cast<int>(first) | static_cast<int>(second)));
+}
+
+inline AddItemsOptions operator&(AddItemsOptions first, AddItemsOptions second)
+{
+    return static_cast<AddItemsOptions>(static_cast<int>(first) & static_cast<int>(second));
+}
+
+inline AddItemsOptions operator&=(AddItemsOptions& first, AddItemsOptions second)
+{
+    return (first = static_cast<AddItemsOptions>(static_cast<int>(first) & static_cast<int>(second)));
+}
+
 struct VolumeInfo
 {
     VolumeType type;
@@ -267,7 +294,8 @@ public:
     virtual boost::unique_future<void> addPlaylistItems(
         const PlaylistRef& playlist,
         const std::vector<std::string>& items,
-        int32_t targetIndex) = 0;
+        int32_t targetIndex,
+        AddItemsOptions options) = 0;
 
     virtual void copyPlaylistItems(
         const PlaylistRef& sourcePlaylist,

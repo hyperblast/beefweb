@@ -51,7 +51,8 @@ public:
     virtual boost::unique_future<void> addPlaylistItems(
         const PlaylistRef& playlist,
         const std::vector<std::string>& items,
-        int32_t targetIndex) override;
+        int32_t targetIndex,
+        AddItemsOptions options) override;
 
     virtual void copyPlaylistItems(
         const PlaylistRef& sourcePlaylist,
@@ -126,6 +127,6 @@ private:
     std::vector<std::string> playbackModes_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
-};  
+};
 
 }}

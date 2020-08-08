@@ -197,8 +197,10 @@ void PlayerImpl::setPlaylistTitle(const PlaylistRef& plref, const std::string& t
 boost::unique_future<void> PlayerImpl::addPlaylistItems(
     const PlaylistRef& plref,
     const std::vector<std::string>& items,
-    int32_t targetIndex)
+    int32_t targetIndex,
+    AddItemsOptions options)
 {
+    (void)options;
     auto task = std::make_shared<AddItemsTask>(&playlists_, plref, items, targetIndex);
     return boost::async([task]{ task->execute(); });
 }

@@ -260,8 +260,11 @@ void PlayerImpl::setPlaylistTitle(const PlaylistRef& playlist, const std::string
 boost::unique_future<void> PlayerImpl::addPlaylistItems(
     const PlaylistRef& plref,
     const std::vector<std::string>& items,
-    int32_t targetIndex)
+    int32_t targetIndex,
+    AddItemsOptions options)
 {
+    (void)options;
+
     pfc::list_t<const char*> itemsList;
 
     itemsList.prealloc(items.size());

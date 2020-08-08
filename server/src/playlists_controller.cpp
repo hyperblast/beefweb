@@ -126,11 +126,18 @@ ResponsePtr PlaylistsController::addItems()
     auto items = param<std::vector<std::string>>("items");
     std::vector<std::string> normalizedItems;
     auto targetIndex = optionalParam<int32_t>("index", -1);
+    auto options = AddItemsOptions::NONE;
+
+    if (optionalParam("replace", false))
+        options |= AddItemsOptions::REPLACE;
+
+    if (optionalParam("play", false))
+        options |= AddItemsOptions::PLAY;
 
     for (auto& item : items)
         normalizedItems.emplace_back(validateAndNormalizeItem(item));
 
-    auto addCompleted = player_->addPlaylistItems(plref, normalizedItems, targetIndex);
+    auto addCompleted = player_->addPlaylistItems(plref, normalizedItems, targetIndex, options);
 
     if (optionalParam<bool>("async", false))
     {
