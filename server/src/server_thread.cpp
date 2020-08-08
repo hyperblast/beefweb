@@ -82,6 +82,10 @@ void ServerThread::runOnce(ServerConfigPtr config)
 
     {
         std::lock_guard<std::mutex> lock(mutex_);
+
+        if (command_ != Command::NONE)
+            return;
+
         server_ = server;
     }
 
