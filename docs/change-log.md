@@ -7,6 +7,7 @@
 - Added support for specifying custom web content directories
 - Fixed preventing of foobar2000 update
 - Fixed "Port:" label overlow in settings page
+- Improved dialog styling in web UI
 
 ### Changes in v0.4 (released 2020-02-02):
 - Added optional playback information panel
