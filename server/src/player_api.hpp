@@ -43,25 +43,7 @@ enum class AddItemsOptions : int
     PLAY = 2,
 };
 
-inline AddItemsOptions operator|(AddItemsOptions first, AddItemsOptions second)
-{
-    return static_cast<AddItemsOptions>(static_cast<int>(first) | static_cast<int>(second));
-}
-
-inline AddItemsOptions operator|=(AddItemsOptions& first, AddItemsOptions second)
-{
-    return (first = static_cast<AddItemsOptions>(static_cast<int>(first) | static_cast<int>(second)));
-}
-
-inline AddItemsOptions operator&(AddItemsOptions first, AddItemsOptions second)
-{
-    return static_cast<AddItemsOptions>(static_cast<int>(first) & static_cast<int>(second));
-}
-
-inline AddItemsOptions operator&=(AddItemsOptions& first, AddItemsOptions second)
-{
-    return (first = static_cast<AddItemsOptions>(static_cast<int>(first) & static_cast<int>(second)));
-}
+MSRV_ENUM_FLAGS(AddItemsOptions, int)
 
 struct VolumeInfo
 {
