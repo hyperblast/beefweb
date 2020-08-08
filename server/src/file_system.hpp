@@ -54,14 +54,7 @@ inline Path pathFromUtf8(const std::string& path)
 #endif
 }
 
-template<typename T>
-bool isSubpath(const T& parentPath, const T& childPath)
-{
-    return !parentPath.empty()
-        && boost::starts_with(childPath, parentPath)
-        && (childPath.length() == parentPath.length()
-            || static_cast<int32_t>(childPath[parentPath.length()]) == static_cast<int32_t>(Path::preferred_separator));
-}
+bool isSubpath(const Path& parentPath, const Path& childPath);
 
 Path getModulePath(void* symbol);
 Path getUserConfigDir();
