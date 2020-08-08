@@ -52,7 +52,7 @@ ResponsePtr StaticController::getFile()
     if (requestPath.empty())
         return redirectToDirectory();
 
-    auto filePath = (targetDir_ / pathFromUtf8(requestPath)).lexically_normal();
+    auto filePath = (targetDir_ / pathFromUtf8(requestPath)).lexically_normal().make_preferred();
 
     if (!isSubpath(targetDir_.native(), filePath.native()))
         return Response::notFound();
@@ -128,7 +128,8 @@ void StaticController::defineRoutes(
     if (prefix.back() != '/')
         prefix.push_back('/');
 
-    auto target = pathFromUtf8(targetDir).lexically_normal();
+    auto target = pathFromUtf8(targetDir).lexically_normal().make_preferred();
+
     if (!target.is_absolute()) {
         logError("url mapping '%s' target should be absolute, got '%s'", urlPrefix.c_str(), targetDir.c_str());
         return;
