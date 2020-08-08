@@ -95,7 +95,7 @@ export default class FileBrowserModel extends EventEmitter
             items.push({ title: getBaseName(path, this.pathSeparator), path });
             path = getParentDir(path, this.pathSeparator);
         }
-        while (this.isUnderRootPath(path));
+        while (path.length > 0 && this.isUnderRootPath(path));
 
         const lastItem = items[items.length - 1];
         lastItem.title = lastItem.path;
