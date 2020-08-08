@@ -8,7 +8,6 @@
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
 
 namespace msrv {

@@ -1,5 +1,7 @@
 #include "file_system.hpp"
 
+#include <boost/algorithm/string.hpp>
+
 namespace msrv {
 
 bool isSubpath(const Path& parentPath, const Path& childPath)
@@ -7,19 +9,23 @@ bool isSubpath(const Path& parentPath, const Path& childPath)
     if (parentPath.empty() || childPath.empty() || !parentPath.is_absolute() || !childPath.is_absolute())
         return false;
 
-    auto parent = parentPath.begin();
-    auto child = childPath.begin();
+    const auto& parent = parentPath.native();
+    const auto& child = childPath.native();
 
-    while (parent != parentPath.end() && child != childPath.end())
-    {
-        if (*parent != *child)
-            return false;
+    if (!boost::starts_with(child, parent))
+        return false;
 
-        ++parent;
-        ++child;
-    }
+    // C:\foo and C:\foo
+    if (child.length() == parent.length())
+        return true;
 
-    return parent == parentPath.end();
+    // C:\foo and C:\foo\bar
+    if (child[parent.length()] == Path::preferred_separator)
+        return true;
+
+    // C:\ and C:\foo
+    return parent.back() == Path::preferred_separator
+        && child[parent.length() - 1] == Path::preferred_separator;
 }
 
 namespace file_io {
