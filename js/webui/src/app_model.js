@@ -16,7 +16,7 @@ export default class AppModel
         this.dataSource = new DataSource(client);
         this.settingsModel = new SettingsModel(settingsStore);
         this.columnsSettingsModel = new ColumnsSettingsModel(this.settingsModel);
-        this.playerModel = new PlayerModel(client, this.dataSource);
+        this.playerModel = new PlayerModel(client, this.dataSource, this.settingsModel);
         this.playlistModel = new PlaylistModel(client, this.dataSource, this.settingsModel);
         this.fileBrowserModel = new FileBrowserModel(client);
         this.notificationModel = new NotificationModel();

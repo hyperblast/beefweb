@@ -47,11 +47,14 @@ const defaultSettingProps = Object.freeze({
 
 /**
  * @class SettingsModel
+ * @property {object} metadata
  * @property {boolean} fullWidth
  * @property {boolean} cursorFollowsPlayback
  * @property {string} customSortBy
  * @property {string} inputMode
  * @property {string} fontSize
+ * @property {string} windowTitleExpression
+ * @property {string} playbackInfoExpression
  * @property {boolean} touchMode
  * @property {string} mediaSize
  * @property {boolean} showPlaybackInfo
@@ -91,6 +94,22 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.string,
             defaultValue: '',
             persistent: true
+        });
+
+        this.define({
+            key: 'windowTitleExpression',
+            type: SettingType.string,
+            defaultValue: '%artist% - %title%',
+            persistent: true,
+            title: 'Window title',
+        });
+
+        this.define({
+            key: 'playbackInfoExpression',
+            type: SettingType.string,
+            defaultValue: '%artist% - %album% - %title%',
+            persistent: true,
+            title: 'Playback panel content',
         });
 
         this.define({
