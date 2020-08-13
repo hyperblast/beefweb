@@ -47,12 +47,13 @@ const initialPlayerInfo = Object.freeze({
  */
 export default class PlayerModel extends EventEmitter
 {
-    constructor(client, dataSource)
+    constructor(client, dataSource, settingsModel)
     {
         super();
 
         this.client = client;
         this.dataSource = dataSource;
+        this.settingsModel = settingsModel;
         this.positionTimer = new Timer(this.updatePosition.bind(this), 500);
         this.featuresInitialized = false;
 
@@ -63,14 +64,18 @@ export default class PlayerModel extends EventEmitter
 
         this.setVolumeRemote = debounce(
             value => this.client.setVolume(this.convertVolumeToServer(value)), 80);
+
+        this.reloadWithDelay = debounce(this.reload.bind(this), 1000);
     }
 
     start()
     {
         this.dataSource.on('player', this.update.bind(this));
-        this.dataSource.watch('player', {
-            trcolumns: ['%artist% - %title%', '%artist% - %album% - %title%']
-        });
+
+        this.settingsModel.on('windowTitleExpressionChange', this.reloadWithDelay);
+        this.settingsModel.on('playbackInfoExpressionChange', this.reloadWithDelay);
+
+        this.reload();
     }
 
     play()
@@ -156,6 +161,16 @@ export default class PlayerModel extends EventEmitter
 
         this.emit('change');
         this.notifyTrackSwitch(wasPlaying);
+    }
+
+    reload()
+    {
+        this.dataSource.watch('player', {
+            trcolumns: [
+                this.settingsModel.windowTitleExpression,
+                this.settingsModel.playbackInfoExpression
+            ]
+        });
     }
 
     updateState(key, value)

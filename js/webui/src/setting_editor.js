@@ -44,10 +44,11 @@ class BoolSettingEditor extends React.PureComponent
     render()
     {
         const { value, metadata } = this.state;
+        const { disabled } = this.props;
 
         return (
             <label className='setting-editor setting-editor-bool'>
-                <input type='checkbox' checked={value} onChange={this.handleInput} />
+                <input type='checkbox' checked={value} onChange={this.handleInput} disabled={disabled} />
                 <span>{metadata.title}</span>
             </label>
         );
@@ -56,7 +57,8 @@ class BoolSettingEditor extends React.PureComponent
 
 BoolSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
+    disabled: PropTypes.bool
 };
 
 class EnumSettingEditor extends React.PureComponent
@@ -100,6 +102,7 @@ class EnumSettingEditor extends React.PureComponent
     render()
     {
         const { value, metadata } = this.state;
+        const { disabled } = this.props;
 
         const options = objectValues(metadata.enumKeys).map(value => {
             return (
@@ -112,7 +115,7 @@ class EnumSettingEditor extends React.PureComponent
         return (
             <label className='setting-editor setting-editor-enum'>
                 <span>{metadata.title + ':'}</span>
-                <select value={value} onChange={this.handleInput}>{ options }</select>
+                <select value={value} onChange={this.handleInput} disabled={disabled}>{ options }</select>
             </label>
         );
     }
@@ -120,17 +123,77 @@ class EnumSettingEditor extends React.PureComponent
 
 EnumSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
+    disabled: PropTypes.bool
+};
+
+class TextSettingEditor extends React.PureComponent
+{
+    constructor(props)
+    {
+        super(props);
+
+        this.state = this.getStateFromModel();
+        this.handleUpdate = () => this.setState(this.getStateFromModel());
+        this.handleInput = this.handleInput.bind(this);
+    }
+
+    componentDidMount()
+    {
+        this.props.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
+    componentWillUnmount()
+    {
+        this.props.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
+    getStateFromModel()
+    {
+        const { settingKey, settingsModel } = this.props;
+
+        return {
+            value: settingsModel[settingKey],
+            metadata: settingsModel.metadata[settingKey]
+        };
+    }
+
+    handleInput(e)
+    {
+        const { settingKey, settingsModel } = this.props;
+
+        settingsModel[settingKey] = e.target.value;
+    }
+
+    render()
+    {
+        const { value, metadata } = this.state;
+        const { disabled } = this.props;
+
+        return (
+            <label className='setting-editor setting-editor-text'>
+                <span>{metadata.title + ':'}</span>
+                <input value={value} onChange={this.handleInput} disabled={disabled} />
+            </label>
+        );
+    }
+}
+
+TextSettingEditor.propTypes = {
+    settingKey: PropTypes.string.isRequired,
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
+    disabled: PropTypes.bool
 };
 
 const editorComponents = Object.freeze({
     [SettingType.bool]: BoolSettingEditor,
     [SettingType.enum]: EnumSettingEditor,
+    [SettingType.string]: TextSettingEditor,
 });
 
 export default function SettingEditor(props)
 {
-    const { settingKey, settingsModel } = props;
+    const { settingKey, settingsModel, disabled } = props;
     const { type } = settingsModel.metadata[settingKey];
     const Editor = editorComponents[type];
 
@@ -140,11 +203,13 @@ export default function SettingEditor(props)
     return (
         <Editor
             settingKey={settingKey}
-            settingsModel={settingsModel} />
+            settingsModel={settingsModel}
+            disabled={disabled} />
     );
 }
 
 SettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
+    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
+    disabled: PropTypes.bool
 };
