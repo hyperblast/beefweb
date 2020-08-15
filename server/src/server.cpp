@@ -153,10 +153,17 @@ void Server::processResponse(RequestContextPtr context)
 
      if (auto asyncResponse = dynamic_cast<AsyncResponse*>(response))
      {
+         context->asyncResponse = asyncResponse;
+
          asyncResponse->responseFuture.then(
             boost::launch::sync, [context] (ResponseFuture resp)
          {
-             context->request.response = AsyncResponse::unpack(std::move(resp));
+             auto nextResponse = AsyncResponse::unpack(std::move(resp));
+             if (nextResponse)
+                 nextResponse->addHeaders(context->asyncResponse->headers);
+
+             context->request.response = std::move(nextResponse);
+             context->asyncResponse = nullptr;
 
              if (auto server = context->server.lock())
                  server->processResponse(context);

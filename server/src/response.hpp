@@ -52,6 +52,8 @@ public:
     HttpStatus status;
     HttpKeyValueMap headers;
 
+    void addHeaders(const HttpKeyValueMap& source);
+
 private:
     MSRV_NO_COPY_AND_ASSIGN(Response);
 };

@@ -71,6 +71,15 @@ std::unique_ptr<ErrorResponse> Response::error(
         status, std::move(message), std::move(parameter));
 }
 
+void Response::addHeaders(const HttpKeyValueMap& source)
+{
+    for (const auto& kv : source)
+    {
+        if (headers.find(kv.first) == headers.end())
+            headers[kv.first] = kv.second;
+    }
+}
+
 SimpleResponse::SimpleResponse(HttpStatus statusVal)
     : Response(statusVal)
 {
