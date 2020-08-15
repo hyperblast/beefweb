@@ -339,27 +339,27 @@ q.test('copy playlist items between playlists', async assert =>
 
 q.test('replace empty playlist items', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2], {replace: true});
+    await client.addPlaylistItems(0, [tracks.t1], {replace: true});
 
     const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2]));
+    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
 });
 
 q.test('replace non-empty playlist items', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t3], {replace: true});
+    await client.addPlaylistItems(0, [tracks.t2], {replace: true});
 
     const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t2, tracks.t3]));
+    assert.ok(pathCollectionsEqual(files, [tracks.t2]));
 });
 
 q.test('add items to empty playlist and play', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2], {play: true});
+    await client.addPlaylistItems(0, [tracks.t1], {play: true});
 
     const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2]));
+    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
 
     await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
 });
@@ -367,21 +367,20 @@ q.test('add items to empty playlist and play', async assert =>
 q.test('add items to non-empty playlist and play', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t3], {play: true});
+    await client.addPlaylistItems(0, [tracks.t2], {play: true});
 
     const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3]));
+    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2]));
 
     await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 1);
-
 });
 
 q.test('replace items in empty playlist and play', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2], {play: true, replace: true});
+    await client.addPlaylistItems(0, [tracks.t1], {play: true, replace: true});
 
     const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2]));
+    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
 
     await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
 });
@@ -389,10 +388,10 @@ q.test('replace items in empty playlist and play', async assert =>
 q.test('replace items in non-empty playlist and play', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t3], {play: true, replace: true});
+    await client.addPlaylistItems(0, [tracks.t2], {play: true, replace: true});
 
     const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t2, tracks.t3]));
+    assert.ok(pathCollectionsEqual(files, [tracks.t2]));
 
     await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
 });

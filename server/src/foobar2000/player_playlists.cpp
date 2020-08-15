@@ -30,19 +30,23 @@ class AsyncAddCompleter : public process_locations_notify
 public:
     AsyncAddCompleter(
         service_ptr_t<playlist_manager_v4> playlistManager,
+        service_ptr_t<playback_control> playbackControl,
         std::shared_ptr<PlaylistMapping> playlists,
         const PlaylistRef& plref,
-        int32_t index)
+        int32_t index,
+        AddItemsOptions options)
         : playlistManager_(playlistManager),
+          playbackControl_(playbackControl),
           playlists_(playlists),
           plref_(plref),
-          index_(index)
+          index_(index),
+          options_(options)
     {
     }
 
     boost::unique_future<void> getResult() { return result_.get_future(); }
 
-    virtual void on_completion(const pfc::list_base_const_t<metadb_handle_ptr>& items) override
+    void on_completion(const pfc::list_base_const_t<metadb_handle_ptr>& items) override
     {
         try
         {
@@ -57,7 +61,7 @@ public:
         result_.set_value();
     }
 
-    virtual void on_aborted() override
+    void on_aborted() override
     {
         result_.set_exception(InvalidRequestException("Operation aborted"));
     }
@@ -66,15 +70,43 @@ private:
     void complete(const pfc::list_base_const_t<metadb_handle_ptr>& items)
     {
         auto playlist = playlists_->resolve(plref_);
-        auto itemCount = playlistManager_->playlist_get_item_count(playlist);
-        auto index = clampIndex(index_, itemCount, pfc_infinite);
-        playlistManager_->playlist_insert_items(playlist, index, items, bit_array_false());
+        auto hasAddedItems = items.get_count() > 0;
+        t_size itemIndex;
+
+        if (hasFlags(options_, AddItemsOptions::REPLACE))
+        {
+            playlistManager_->playlist_clear(playlist);
+            itemIndex = 0;
+        }
+        else
+        {
+            auto itemCount = playlistManager_->playlist_get_item_count(playlist);
+            itemIndex = clampIndex(index_, itemCount, itemCount);
+        }
+
+        if (hasAddedItems)
+            playlistManager_->playlist_insert_items(playlist, itemIndex, items, bit_array_false());
+
+        if (!hasFlags(options_, AddItemsOptions::PLAY))
+            return;
+
+        if (hasAddedItems)
+        {
+            playlistManager_->set_active_playlist(playlist);
+            playlistManager_->playlist_execute_default_action(playlist, itemIndex);
+        }
+        else
+        {
+            playbackControl_->stop();
+        }
     }
 
     service_ptr_t<playlist_manager_v4> playlistManager_;
+    service_ptr_t<playback_control> playbackControl_;
     std::shared_ptr<PlaylistMapping> playlists_;
     PlaylistRef plref_;
     int32_t index_;
+    AddItemsOptions options_;
     boost::promise<void> result_;
 };
 
@@ -263,8 +295,6 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
     int32_t targetIndex,
     AddItemsOptions options)
 {
-    (void)options;
-
     pfc::list_t<const char*> itemsList;
 
     itemsList.prealloc(items.size());
@@ -274,7 +304,7 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
 
     service_ptr_t<AsyncAddCompleter> completer(
         new service_impl_t<AsyncAddCompleter>(
-            playlistManager_, playlists_, plref, targetIndex));
+            playlistManager_, playbackControl_, playlists_, plref, targetIndex, options));
 
     incomingItemFilter_->process_locations_async(
         itemsList,
