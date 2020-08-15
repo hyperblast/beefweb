@@ -47,8 +47,7 @@ struct RequestContext
     RequestContext()
         : corereq(nullptr),
           workQueue(nullptr),
-          eventStreamResponse(nullptr),
-          asyncResponse(nullptr)
+          eventStreamResponse(nullptr)
     {
     }
 
@@ -57,7 +56,6 @@ struct RequestContext
     std::weak_ptr<Server> server;
     WorkQueue* workQueue;
     EventStreamResponse* eventStreamResponse;
-    AsyncResponse* asyncResponse;
     Json lastEvent;
 
     bool isAlive() const { return corereq != nullptr; }
