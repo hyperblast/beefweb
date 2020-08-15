@@ -12,6 +12,9 @@
     type& operator=(const type&) = delete
 
 #define MSRV_ENUM_FLAGS(Type, Base) \
+    inline bool hasFlags(Type target, Type flags) \
+    { return (static_cast<Base>(target) & static_cast<Base>(flags)) == static_cast<Base>(flags); } \
+    \
     inline Type operator|(Type first, Type second) \
     { return static_cast<Type>(static_cast<Base>(first) | static_cast<Base>(second)); } \
     \
