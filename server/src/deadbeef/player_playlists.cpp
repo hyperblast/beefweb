@@ -12,7 +12,7 @@ public:
         const Range& rangeVal,
         const std::vector<std::string>& columns);
 
-    ~PlaylistQueryImpl();
+    ~PlaylistQueryImpl() override;
 
     PlaylistRef plref;
     Range range;
@@ -26,19 +26,27 @@ public:
         PlaylistMapping* playlists,
         const PlaylistRef& plref,
         const std::vector<std::string>& items,
-        int32_t targetIndex);
+        int32_t targetIndex,
+        AddItemsOptions options);
 
     ~AddItemsTask();
 
     void execute();
 
 private:
-    PlaylistPtr resolvePlaylist();
+    void initialize();
+    void addItems();
+    void playAddedItems();
 
+    PlaylistMutex playlistMutex_;
     PlaylistMapping* playlists_;
+    PlaylistPtr playlist_;
+    PlaylistItemPtr targetItem_;
     PlaylistRef plref_;
     std::vector<std::string> items_;
     int32_t targetIndex_;
+    AddItemsOptions options_;
+    bool hasAddedItems_{false};
 
     MSRV_NO_COPY_AND_ASSIGN(AddItemsTask);
 };
@@ -98,7 +106,10 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
 
 PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* query)
 {
-    PlaylistQueryImpl* queryImpl = static_cast<PlaylistQueryImpl*>(query);
+    auto queryImpl = dynamic_cast<PlaylistQueryImpl*>(query);
+    if (!queryImpl)
+        throw std::logic_error("Expected PlaylistQueryImpl");
+
     PlaylistLockGuard lock(playlistMutex_);
 
     PlaylistPtr playlist = playlists_.resolve(queryImpl->plref);
@@ -197,9 +208,10 @@ void PlayerImpl::setPlaylistTitle(const PlaylistRef& plref, const std::string& t
 boost::unique_future<void> PlayerImpl::addPlaylistItems(
     const PlaylistRef& plref,
     const std::vector<std::string>& items,
-    int32_t targetIndex)
+    int32_t targetIndex,
+    AddItemsOptions options)
 {
-    auto task = std::make_shared<AddItemsTask>(&playlists_, plref, items, targetIndex);
+    auto task = std::make_shared<AddItemsTask>(&playlists_, plref, items, targetIndex, options);
     return boost::async([task]{ task->execute(); });
 }
 
@@ -303,49 +315,94 @@ PlaylistQueryImpl::PlaylistQueryImpl(
 {
 }
 
-PlaylistQueryImpl::~PlaylistQueryImpl()
-{
-}
+PlaylistQueryImpl::~PlaylistQueryImpl() = default;
 
 AddItemsTask::AddItemsTask(
     PlaylistMapping* playlists,
     const PlaylistRef& plref,
     const std::vector<std::string>& items,
-    int32_t targetIndex)
+    int32_t targetIndex,
+    AddItemsOptions options)
     : playlists_(playlists),
       plref_(plref),
       items_(items),
-      targetIndex_(targetIndex)
+      targetIndex_(targetIndex),
+      options_(options)
 {
 }
 
-AddItemsTask::~AddItemsTask()
-{
-}
+AddItemsTask::~AddItemsTask() = default;
 
-PlaylistPtr AddItemsTask::resolvePlaylist()
+void AddItemsTask::initialize()
 {
-    PlaylistMutex mutex;
-    PlaylistLockGuard lock(mutex);
-    return playlists_->resolve(plref_);
+    PlaylistLockGuard lock(playlistMutex_);
+
+    playlist_ = playlists_->resolve(plref_);
+
+    if (hasFlags(options_, AddItemsOptions::REPLACE))
+        return;
+
+    auto itemAfterTarget = resolvePlaylistItem(playlist_.get(), targetIndex_);
+
+    if (itemAfterTarget)
+        targetItem_.reset(ddbApi->pl_get_prev(itemAfterTarget.get(), PL_MAIN));
+    else
+        targetItem_.reset(ddbApi->plt_get_last(playlist_.get(), PL_MAIN));
 }
 
 void AddItemsTask::execute()
 {
-    PlaylistPtr playlist = resolvePlaylist();
-    AddItemsScope addScope(playlist.get(), 47);
-    PlaylistItemPtr targetItem = resolvePlaylistItem(playlist.get(), targetIndex_);
+    initialize();
+    addItems();
 
-    PlaylistItemPtr lastItem(
-        targetItem
-            ? ddbApi->pl_get_prev(targetItem.get(), PL_MAIN)
-            : ddbApi->plt_get_last(playlist.get(), PL_MAIN));
+    if (hasFlags(options_, AddItemsOptions::PLAY))
+        playAddedItems();
+}
 
-    targetItem.reset();
-    addScope.setLastItem(std::move(lastItem));
+void AddItemsTask::addItems()
+{
+    AddItemsScope addScope(playlist_.get(), 47);
+
+    if (hasFlags(options_, AddItemsOptions::REPLACE))
+        ddbApi->plt_clear(playlist_.get());
+    else
+        addScope.setLastItem(copyPlaylistItemPtr(targetItem_.get()));
 
     for (auto& item : items_)
-        addScope.add(item);
+    {
+        if (addScope.add(item))
+            hasAddedItems_ = true;
+    }
+
+    PlayerImpl::endModifyPlaylist(playlist_.get());
+}
+
+void AddItemsTask::playAddedItems()
+{
+    PlaylistLockGuard lock{playlistMutex_};
+
+    if (!hasAddedItems_) {
+        ddbApi->sendmessage(DB_EV_STOP, 0, 0, 0);
+        return;
+    }
+
+    PlaylistItemPtr firstAddedItem(
+        targetItem_
+            ? ddbApi->pl_get_next(targetItem_.get(), PL_MAIN)
+            : ddbApi->plt_get_first(playlist_.get(), PL_MAIN));
+
+    if (!firstAddedItem) {
+        ddbApi->sendmessage(DB_EV_STOP, 0, 0, 0);
+        return;
+    }
+
+    PlaylistPtr currentPlaylist(ddbApi->plt_get_curr());
+
+    if (playlist_ != currentPlaylist)
+        ddbApi->plt_set_curr(playlist_.get());
+
+    auto index = ddbApi->plt_get_item_idx(playlist_.get(), firstAddedItem.get(), PL_MAIN);
+    ddbApi->sendmessage(DB_EV_PLAY_NUM, 0, index, 0);
 }
 
 }}

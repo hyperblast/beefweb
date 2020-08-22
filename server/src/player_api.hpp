@@ -36,6 +36,15 @@ enum class VolumeType
     LINEAR,
 };
 
+enum class AddItemsOptions : int
+{
+    NONE = 0,
+    REPLACE = 1,
+    PLAY = 2,
+};
+
+MSRV_ENUM_FLAGS(AddItemsOptions, int)
+
 struct VolumeInfo
 {
     VolumeType type;
@@ -267,7 +276,8 @@ public:
     virtual boost::unique_future<void> addPlaylistItems(
         const PlaylistRef& playlist,
         const std::vector<std::string>& items,
-        int32_t targetIndex) = 0;
+        int32_t targetIndex,
+        AddItemsOptions options) = 0;
 
     virtual void copyPlaylistItems(
         const PlaylistRef& sourcePlaylist,

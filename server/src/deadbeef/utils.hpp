@@ -47,6 +47,15 @@ constexpr int TITLE_FORMAT_BUFFER_SIZE = 1024;
 
 PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index);
 
+inline PlaylistItemPtr copyPlaylistItemPtr(ddb_playItem_t* item)
+{
+    if (!item)
+        return PlaylistItemPtr();
+
+    ddbApi->pl_item_ref(item);
+    return PlaylistItemPtr(item);
+}
+
 std::vector<TitleFormatPtr> compileColumns(
     const std::vector<std::string>& columns,
     bool throwOnError = true);

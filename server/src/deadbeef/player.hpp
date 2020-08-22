@@ -15,77 +15,80 @@ namespace player_deadbeef {
 class PlayerImpl : public Player
 {
 public:
+    static void endModifyPlaylist(ddb_playlist_t* playlist);
+
     PlayerImpl();
-    ~PlayerImpl();
+    ~PlayerImpl() override;
 
-    virtual std::unique_ptr<WorkQueue> createWorkQueue() override;
+    std::unique_ptr<WorkQueue> createWorkQueue() override;
 
-    virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
+    PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
 
-    virtual void playCurrent() override;
-    virtual void playItem(const PlaylistRef& playlist, int32_t itemIndex) override;
-    virtual void playRandom() override;
-    virtual void playNext() override;
-    virtual bool playNextBy(const std::string& expression) override;
-    virtual void playPrevious() override;
-    virtual bool playPreviousBy(const std::string& expression) override;
-    virtual void stop() override;
-    virtual void pause() override;
-    virtual void togglePause() override;
+    void playCurrent() override;
+    void playItem(const PlaylistRef& playlist, int32_t itemIndex) override;
+    void playRandom() override;
+    void playNext() override;
+    bool playNextBy(const std::string& expression) override;
+    void playPrevious() override;
+    bool playPreviousBy(const std::string& expression) override;
+    void stop() override;
+    void pause() override;
+    void togglePause() override;
 
-    virtual void setMuted(Switch val) override;
-    virtual void seekAbsolute(double offsetSeconds) override;
-    virtual void seekRelative(double offsetSeconds) override;
-    virtual void setVolume(double val) override;
-    virtual void setPlaybackMode(int32_t val) override;
+    void setMuted(Switch val) override;
+    void seekAbsolute(double offsetSeconds) override;
+    void seekRelative(double offsetSeconds) override;
+    void setVolume(double val) override;
+    void setPlaybackMode(int32_t val) override;
 
-    virtual TrackQueryPtr createTrackQuery(
+    TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) override;
 
-    virtual std::vector<PlaylistInfo> getPlaylists() override;
-    virtual PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) override;
+    std::vector<PlaylistInfo> getPlaylists() override;
+    PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) override;
 
-    virtual void addPlaylist(int32_t index, const std::string& title) override;
-    virtual void removePlaylist(const PlaylistRef& playlist) override;
-    virtual void movePlaylist(const PlaylistRef& playlist, int32_t index) override;
-    virtual void clearPlaylist(const PlaylistRef& playlist) override;
-    virtual void setCurrentPlaylist(const PlaylistRef& playlist) override;
-    virtual void setPlaylistTitle(const PlaylistRef& playlist, const std::string& title) override;
+    void addPlaylist(int32_t index, const std::string& title) override;
+    void removePlaylist(const PlaylistRef& playlist) override;
+    void movePlaylist(const PlaylistRef& playlist, int32_t index) override;
+    void clearPlaylist(const PlaylistRef& playlist) override;
+    void setCurrentPlaylist(const PlaylistRef& playlist) override;
+    void setPlaylistTitle(const PlaylistRef& playlist, const std::string& title) override;
 
-    virtual boost::unique_future<void> addPlaylistItems(
+    boost::unique_future<void> addPlaylistItems(
         const PlaylistRef& playlist,
         const std::vector<std::string>& items,
-        int32_t targetIndex) override;
+        int32_t targetIndex,
+        AddItemsOptions options) override;
 
-    virtual void copyPlaylistItems(
+    void copyPlaylistItems(
         const PlaylistRef& sourcePlaylist,
         const PlaylistRef& targetPlaylist,
         const std::vector<int32_t>& sourceItemIndexes,
         int32_t targetIndex) override;
 
-    virtual void movePlaylistItems(
+    void movePlaylistItems(
         const PlaylistRef& sourcePlaylist,
         const PlaylistRef& targetPlaylist,
         const std::vector<int32_t>& sourceItemIndexes,
         int32_t targetIndex) override;
 
-    virtual void removePlaylistItems(
+    void removePlaylistItems(
         const PlaylistRef& playlist,
         const std::vector<int32_t>& itemIndexes) override;
 
-    virtual void sortPlaylist(
+    void sortPlaylist(
         const PlaylistRef& plref,
         const std::string& expression,
         bool descending) override;
 
-    virtual void sortPlaylistRandom(const PlaylistRef& plref) override;
+    void sortPlaylistRandom(const PlaylistRef& plref) override;
 
-    virtual PlaylistQueryPtr createPlaylistQuery(
+    PlaylistQueryPtr createPlaylistQuery(
         const PlaylistRef& playlist,
         const Range& range,
         const std::vector<std::string>& columns) override;
 
-    virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
+    boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
     void connect();
     void disconnect();
@@ -101,7 +104,6 @@ private:
     void initPlaybackModes();
     void setModes(int order, int loop);
     int32_t getPlaybackMode();
-    void endModifyPlaylist(ddb_playlist_t* playlist);
     void initVersion();
     void initArtwork();
     boost::intrusive_ptr<ArtworkRequest> buildArtworkRequest(const ArtworkQuery& query);

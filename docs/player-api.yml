@@ -2,7 +2,7 @@ swagger: '2.0'
 
 info:
   title: Player API
-  version: '0.1'
+  version: '0.5'
 
 host: localhost:8880
 basePath: /api
@@ -327,14 +327,6 @@ paths:
         in: path
         required: true
         type: string
-      - name: index
-        description: Position to add items at
-        in: query
-        type: number
-      - name: async
-        description: Process request asynchronously
-        in: query
-        type: boolean
       - name: content
         in: body
         description: Items to add
@@ -737,10 +729,23 @@ definitions:
   AddItemsRequest:
     type: object
     properties:
+      index:
+        type: number
+        description: Position to add items at
+      async:
+        type: boolean
+        description: Process request asynchronously
+      replace:
+        type: boolean
+        description: Replace target playlist with specified items
+      play:
+        type: boolean
+        description: Start playback of added items
       items:
         type: array
         items:
           type: string
+        description: Items to add (files, directories, URLs)
 
   ItemIndexesRequest:
     type: object

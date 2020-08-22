@@ -11,8 +11,18 @@
     type(const type&) = delete; \
     type& operator=(const type&) = delete
 
-#ifdef NDEBUG
-#define MSRV_DEBUG_MODE false
-#else
-#define MSRV_DEBUG_MODE true
-#endif
+#define MSRV_ENUM_FLAGS(Type, Base) \
+    inline bool hasFlags(Type target, Type flags) \
+    { return (static_cast<Base>(target) & static_cast<Base>(flags)) == static_cast<Base>(flags); } \
+    \
+    inline Type operator|(Type first, Type second) \
+    { return static_cast<Type>(static_cast<Base>(first) | static_cast<Base>(second)); } \
+    \
+    inline Type operator|=(Type& first, Type second) \
+    { return (first = static_cast<Type>(static_cast<Base>(first) | static_cast<Base>(second))); } \
+    \
+    inline Type operator&(Type first, Type second) \
+    { return static_cast<Type>(static_cast<Base>(first) & static_cast<Base>(second)); } \
+    \
+    inline Type operator&=(Type& first, Type second) \
+    { return (first = static_cast<Type>(static_cast<Base>(first) & static_cast<Base>(second))); }

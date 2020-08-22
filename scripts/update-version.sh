@@ -73,6 +73,9 @@ function update_app
     cd "$root_dir/js"
     update_package_json api_tests
     update_package_json webui
+
+    cd "$root_dir/docs"
+    sed -i "s|version: '.*'|version: '$major.$minor'|" player-api.yml
 }
 
 function update_jslib
