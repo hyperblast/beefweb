@@ -395,3 +395,13 @@ q.test('replace items in non-empty playlist and play', async assert =>
 
     await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
 });
+
+q.test('stop playback when adding empty dir', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.play(0, 0);
+    await client.waitForState('playing');
+    await client.addPlaylistItems(0, [tracks.emptyDir], {play: true});
+    await client.waitForState('stopped');
+    assert.ok(true);
+});
