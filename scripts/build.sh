@@ -228,7 +228,11 @@ function build_pkg()
     cp -v -t . $server_src_dir/extlibs/server-licenses.txt
 
     cp -v -t $webui_root $webui_build_dir/*.*
-    (cd $webui_src_dir; yarn licenses generate-disclaimer | grep -v '^info ') > webui-licenses.txt
+    (
+        cd $webui_src_dir;
+        yarn licenses generate-disclaimer \
+            --ignore-engines --ignore-platform --prod | grep -v '^info '
+    ) > webui-licenses.txt
 
     tar cfa $pkg_licenses_file *-licenses.txt
 
