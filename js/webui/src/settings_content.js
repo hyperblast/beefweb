@@ -6,12 +6,13 @@ import GeneralSettings from './general_settings';
 import SettingsModel from './settings_model';
 import ColumnsSettings from './columns_settings';
 import ColumnsSettingsModel from './columns_settings_model';
+import ServiceContext from './service_context';
 
 class SettingsContent extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
         this.renderView = {
@@ -22,18 +23,18 @@ class SettingsContent extends React.PureComponent
 
     getStateFromModel()
     {
-        const { settingsView } = this.props.navigationModel;
+        const { settingsView } = this.context.navigationModel;
         return { settingsView };
     }
 
     renderGeneral()
     {
-        return <GeneralSettings settingsModel={this.props.settingsModel} />;
+        return <GeneralSettings />;
     }
 
     renderColumns()
     {
-        return <ColumnsSettings columnsSettingsModel={this.props.columnsSettingsModel} />;
+        return <ColumnsSettings columnsSettingsModel={this.context.columnsSettingsModel} />;
     }
 
     render()
@@ -50,10 +51,8 @@ class SettingsContent extends React.PureComponent
     }
 }
 
-SettingsContent.propTypes = {
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
-    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
-    navigationModel: PropTypes.instanceOf(NavigationModel).isRequired,
-};
+SettingsContent.contextType = ServiceContext;
 
-export default ModelBinding(SettingsContent, { navigationModel: 'settingsViewChange' });
+export default ModelBinding(SettingsContent, {
+    navigationModel: 'settingsViewChange'
+});

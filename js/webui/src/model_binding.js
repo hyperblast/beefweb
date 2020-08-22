@@ -104,6 +104,7 @@ export default function ModelBinding(InnerComponent, eventBindings)
     ModelBinder.propTypes = InnerComponent.propTypes;
     ModelBinder.defaultProps = InnerComponent.defaultProps;
     ModelBinder.contextType = ServiceContext;
+    ModelBinder.displayName = `ModelBinding<${InnerComponent.displayName || InnerComponent.name}>`
 
     return ModelBinder;
 }
