@@ -2,12 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import objectValues from 'lodash/values'
 import SettingsModel, { SettingType } from './settings_model'
+import ServiceContext from './service_context';
 
 class BoolSettingEditor extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
         this.handleUpdate = () => this.setState(this.getStateFromModel());
@@ -16,17 +17,18 @@ class BoolSettingEditor extends React.PureComponent
 
     componentDidMount()
     {
-        this.props.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     componentWillUnmount()
     {
-        this.props.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     getStateFromModel()
     {
-        const { settingKey, settingsModel } = this.props;
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
 
         return {
             value: settingsModel[settingKey],
@@ -36,7 +38,8 @@ class BoolSettingEditor extends React.PureComponent
 
     handleInput(e)
     {
-        const { settingKey, settingsModel } = this.props;
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
 
         settingsModel[settingKey] = e.target.checked;
     }
@@ -57,15 +60,16 @@ class BoolSettingEditor extends React.PureComponent
 
 BoolSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
     disabled: PropTypes.bool
 };
 
+BoolSettingEditor.contextType = ServiceContext;
+
 class EnumSettingEditor extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
         this.handleUpdate = () => this.setState(this.getStateFromModel());
@@ -74,17 +78,18 @@ class EnumSettingEditor extends React.PureComponent
 
     componentDidMount()
     {
-        this.props.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     componentWillUnmount()
     {
-        this.props.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     getStateFromModel()
     {
-        const { settingKey, settingsModel } = this.props;
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
 
         return {
             value: settingsModel[settingKey],
@@ -94,7 +99,8 @@ class EnumSettingEditor extends React.PureComponent
 
     handleInput(e)
     {
-        const { settingKey, settingsModel } = this.props;
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
 
         settingsModel[settingKey] = e.target.value;
     }
@@ -123,15 +129,16 @@ class EnumSettingEditor extends React.PureComponent
 
 EnumSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
     disabled: PropTypes.bool
 };
 
+EnumSettingEditor.contextType = ServiceContext;
+
 class TextSettingEditor extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
         this.handleUpdate = () => this.setState(this.getStateFromModel());
@@ -140,17 +147,18 @@ class TextSettingEditor extends React.PureComponent
 
     componentDidMount()
     {
-        this.props.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     componentWillUnmount()
     {
-        this.props.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
     }
 
     getStateFromModel()
     {
-        const { settingKey, settingsModel } = this.props;
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
 
         return {
             value: settingsModel[settingKey],
@@ -160,7 +168,8 @@ class TextSettingEditor extends React.PureComponent
 
     handleInput(e)
     {
-        const { settingKey, settingsModel } = this.props;
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
 
         settingsModel[settingKey] = e.target.value;
     }
@@ -181,9 +190,10 @@ class TextSettingEditor extends React.PureComponent
 
 TextSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
     disabled: PropTypes.bool
 };
+
+TextSettingEditor.contextType = ServiceContext;
 
 const editorComponents = Object.freeze({
     [SettingType.bool]: BoolSettingEditor,
@@ -191,25 +201,25 @@ const editorComponents = Object.freeze({
     [SettingType.string]: TextSettingEditor,
 });
 
-export default function SettingEditor(props)
+export default class SettingEditor extends React.PureComponent
 {
-    const { settingKey, settingsModel, disabled } = props;
-    const { type } = settingsModel.metadata[settingKey];
-    const Editor = editorComponents[type];
+    render()
+    {
+        const { settingKey, disabled } = this.props;
+        const { settingsModel } = this.context;
+        const { type } = settingsModel.metadata[settingKey];
+        const Editor = editorComponents[type];
 
-    if (!Editor)
-        throw new Error(`Setting property '${settingKey}' has unsupported type '${type}'.`);
+        if (!Editor)
+            throw new Error(`Setting property '${settingKey}' has unsupported type '${type}'.`);
 
-    return (
-        <Editor
-            settingKey={settingKey}
-            settingsModel={settingsModel}
-            disabled={disabled} />
-    );
+        return <Editor settingKey={settingKey} disabled={disabled} />;
+    }
 }
+
+SettingEditor.contextType = ServiceContext;
 
 SettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
     disabled: PropTypes.bool
 };

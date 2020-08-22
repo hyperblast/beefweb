@@ -1,17 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types'
 import { PanelHeaderTab } from './elements';
-import NavigationModel, { SettingsView, SettingsViewMetadata } from './navigation_model';
+import { SettingsView, SettingsViewMetadata } from './navigation_model';
 import ModelBinding from './model_binding';
 import urls from './urls';
 import ColumnsSettingsMenu from './columns_settings_menu';
-import ColumnsSettingsModel from './columns_settings_model';
+import ServiceContext from './service_context';
 
 class SettingsHeader extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
 
@@ -20,15 +19,15 @@ class SettingsHeader extends React.PureComponent
         };
     }
 
-    renderColumnsMenu()
-    {
-        return <ColumnsSettingsMenu columnsSettingsModel={this.props.columnsSettingsModel} />
-    }
-
     getStateFromModel()
     {
-        const { settingsView } = this.props.navigationModel;
+        const { settingsView } = this.context.navigationModel;
         return { settingsView };
+    }
+
+    renderColumnsMenu()
+    {
+        return <ColumnsSettingsMenu columnsSettingsModel={this.context.columnsSettingsModel} />
     }
 
     render()
@@ -57,9 +56,8 @@ class SettingsHeader extends React.PureComponent
     }
 }
 
-SettingsHeader.propTypes = {
-    navigationModel: PropTypes.instanceOf(NavigationModel).isRequired,
-    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
-};
+SettingsHeader.contextType = ServiceContext;
 
-export default ModelBinding(SettingsHeader, { navigationModel: 'settingsViewChange' });
+export default ModelBinding(SettingsHeader, {
+    navigationModel: 'settingsViewChange'
+});

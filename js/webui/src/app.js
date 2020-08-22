@@ -96,20 +96,9 @@ class App extends React.PureComponent
 
     renderSettingsView()
     {
-        const { navigationModel, settingsModel, columnsSettingsModel } = this.context;
-
         return {
-            header: (
-                <SettingsHeader
-                    columnsSettingsModel={columnsSettingsModel}
-                    navigationModel={navigationModel} />
-            ),
-            main: (
-                <SettingsContent
-                    columnsSettingsModel={columnsSettingsModel}
-                    navigationModel={navigationModel}
-                    settingsModel={settingsModel} />
-            )
+            header: <SettingsHeader />,
+            main: <SettingsContent />
         };
     }
 

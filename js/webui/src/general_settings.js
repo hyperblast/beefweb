@@ -1,8 +1,7 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import SettingsModel from './settings_model'
 import SettingEditor from './setting_editor';
 import ModelBinding from './model_binding';
+import ServiceContext from './service_context';
 
 class GeneralSettings extends React.PureComponent
 {
@@ -15,35 +14,32 @@ class GeneralSettings extends React.PureComponent
 
     getStateFromModel()
     {
-        const { showPlaybackInfo } = this.props.settingsModel;
+        const { showPlaybackInfo } = this.context.settingsModel;
 
         return {
-            showPlaybackInfo,
+            showPlaybackInfo
         };
     }
 
     render()
     {
-        const model = this.props.settingsModel;
+        const model = this.context.settingsModel;
         const { showPlaybackInfo } = this.state;
 
         return (
             <form>
-                <SettingEditor settingKey='windowTitleExpression' settingsModel={model} />
-                <SettingEditor settingKey='fullWidth' settingsModel={model} />
-                <SettingEditor settingKey='fontSize' settingsModel={model} />
-                <SettingEditor settingKey='inputMode' settingsModel={model} />
-                <SettingEditor settingKey='showPlaybackInfo' settingsModel={model} />
-                <SettingEditor settingKey='playbackInfoExpression' settingsModel={model} disabled={!showPlaybackInfo} />
+                <SettingEditor settingKey='windowTitleExpression' />
+                <SettingEditor settingKey='fullWidth' />
+                <SettingEditor settingKey='fontSize' />
+                <SettingEditor settingKey='inputMode' />
+                <SettingEditor settingKey='showPlaybackInfo' />
+                <SettingEditor settingKey='playbackInfoExpression' disabled={!showPlaybackInfo} />
             </form>
         );
     }
 }
 
-GeneralSettings.propTypes = {
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
-};
-
+GeneralSettings.contextType = ServiceContext;
 
 export default ModelBinding(GeneralSettings, {
     settingsModel: 'showPlaybackInfoChange',
