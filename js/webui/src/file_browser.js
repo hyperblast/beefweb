@@ -3,11 +3,13 @@ import PropTypes from 'prop-types'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import urls from './urls'
-import { getDisplaySize, getDisplayDate, mapRange } from './utils'
+import { getDisplaySize, getDisplayDate, mapRange, bindHandlers } from './utils'
 import DataTable from './data_table'
 import NotificationModel from './notification_model';
 import ScrollManager from './scroll_manager';
 import ModelBinding from './model_binding';
+import { Menu, MenuItem } from './elements';
+import { DropdownButton } from './dropdown';
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -37,10 +39,9 @@ class FileBrowser extends React.PureComponent
     {
         super(props);
 
-        this.state = this.getStateFromModel(0);
+        bindHandlers(this);
 
-        this.handleClick = this.handleClick.bind(this);
-        this.handleLoadPage = this.handleLoadPage.bind(this);
+        this.state = this.getStateFromModel(0);
     }
 
     getStateFromModel(offset)
@@ -72,6 +73,17 @@ class FileBrowser extends React.PureComponent
         notificationModel.notifyAddItem(itemPath);
     }
 
+    handleRenderRowMenu(index)
+    {
+        return (
+            <Menu>
+                <MenuItem title='Add' />
+                <MenuItem title='Add & Play' />
+                <MenuItem title='Replace & Play' />
+            </Menu>
+        );
+    }
+
     render()
     {
         return (
@@ -87,6 +99,9 @@ class FileBrowser extends React.PureComponent
                 onClick={this.handleClick}
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
+                rowMenuTitle='Add...'
+                rowMenuIconName='data-transfer-download'
+                onRenderRowMenu={this.handleRenderRowMenu}
                 className='panel main-panel file-browser' />
         )
     }

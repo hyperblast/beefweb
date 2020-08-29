@@ -6,7 +6,7 @@ import { Icon } from './elements';
 import { mapRange, once } from './utils'
 import { addStyleSheet, generateElementId, getFontSize, getScrollBarSize, makeClassName } from './dom_utils'
 import ScrollManager from './scroll_manager';
-import { DropdownLink } from './dropdown';
+import { DropdownButton, DropdownLink } from './dropdown';
 
 const maxColumns = 100;
 const rowHeight = 1.75;
@@ -37,13 +37,13 @@ export default class DataTable extends React.PureComponent
     {
         super(props);
 
-        this.state = { elementId: generateElementId('dtable'), activeDropdownIndex: -1 };
+        this.state = { elementId: generateElementId('dtable'), columnMenuIndex: -1, rowMenuIndex: -1 };
         this.setBodyRef = this.setBodyRef.bind(this);
         this.handleScroll = throttle(this.handleScroll.bind(this), 50);
         this.handleClick = this.handleClick.bind(this);
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
         this.renderColumnHeaderSimple = this.renderColumnHeaderSimple.bind(this);
-        this.renderColumnHeaderWithDropdown = this.renderColumnHeaderWithDropdown.bind(this);
+        this.renderColumnHeaderWithMenu = this.renderColumnHeaderWithMenu.bind(this);
     }
 
     componentDidMount()
@@ -180,18 +180,36 @@ export default class DataTable extends React.PureComponent
         }
     }
 
-    openDropdown(index, isOpen)
+    openColumnMenu(index, isOpen)
     {
         if (isOpen)
         {
             this.setState({
-                activeDropdownIndex: index
+                columnMenuIndex: index,
+                rowMenuIndex: -1,
             });
         }
         else
         {
             this.setState(state => (
-                state.activeDropdownIndex === index ? { activeDropdownIndex: -1 } : null
+                state.columnMenuIndex === index ? { columnMenuIndex: -1 } : null
+            ));
+        }
+    }
+
+    openRowMenu(index, isOpen)
+    {
+        if (isOpen)
+        {
+            this.setState({
+                columnMenuIndex: -1,
+                rowMenuIndex: index,
+            });
+        }
+        else
+        {
+            this.setState(state => (
+                state.rowMenuIndex === index ? { rowMenuIndex: -1 } : null
             ));
         }
     }
@@ -227,11 +245,15 @@ export default class DataTable extends React.PureComponent
     {
         addGeneratedStyles();
 
-        const { className, style, useIcons } = this.props;
+        const { className, style, useIcons, onRenderRowMenu } = this.props;
         const { elementId } = this.state;
 
-        const fullClassName = makeClassName(
-            ['dtable', useIcons ? 'dtable-icons' : null, className]);
+        const fullClassName = makeClassName([
+            'dtable',
+            useIcons ? 'dtable-has-row-icons' : null,
+            onRenderRowMenu ? 'dtable-has-row-menu' : null,
+            className
+        ]);
 
         return (
             <div id={elementId} className={fullClassName} style={style}>
@@ -277,7 +299,7 @@ export default class DataTable extends React.PureComponent
                 <Icon
                     key='icon'
                     name={rowData.icon}
-                    className='dtable-icon' />
+                    className='dtable-row-icon' />
             );
         }
 
@@ -293,6 +315,25 @@ export default class DataTable extends React.PureComponent
                     title={value}
                     className={cellClassNames[columnIndex]}>{value}</a>
             );
+        }
+
+        if (this.props.onRenderRowMenu) {
+            const rowMenu = this.props.onRenderRowMenu(rowIndex);
+            if (rowMenu)
+            {
+                cells.push(
+                    <DropdownButton
+                        key='menu'
+                        title={this.props.rowMenuTitle}
+                        iconName={this.props.rowMenuIconName}
+                        isOpen={this.state.rowMenuIndex === rowIndex}
+                        onRequestOpen={o => this.openRowMenu(rowIndex, o)}
+                        direction='left'
+                        className='dtable-row-menu'>
+                        { rowMenu }
+                    </DropdownButton>
+                );
+            }
         }
 
         return (
@@ -323,8 +364,8 @@ export default class DataTable extends React.PureComponent
 
     renderColumnHeaders()
     {
-        const render = this.props.onRenderColumnDropdown
-            ? this.renderColumnHeaderWithDropdown
+        const render = this.props.onRenderColumnMenu
+            ? this.renderColumnHeaderWithMenu
             : this.renderColumnHeaderSimple;
 
         return this.props.columnNames.map(render);
@@ -342,7 +383,7 @@ export default class DataTable extends React.PureComponent
         );
     }
 
-    renderColumnHeaderWithDropdown(name, index)
+    renderColumnHeaderWithMenu(name, index)
     {
         const direction = index === this.props.columnNames.length - 1
             ? 'left'
@@ -355,9 +396,9 @@ export default class DataTable extends React.PureComponent
                 direction={direction}
                 className={`dtable-column-header dtable-column${index}`}
                 linkClassName='dtable-column-header-text dtable-column-header-link'
-                isOpen={this.state.activeDropdownIndex === index}
-                onRequestOpen={o => this.openDropdown(index, o)}>
-                { this.props.onRenderColumnDropdown(index) }
+                isOpen={this.state.columnMenuIndex === index}
+                onRequestOpen={o => this.openColumnMenu(index, o)}>
+                { this.props.onRenderColumnMenu(index) }
             </DropdownLink>
         );
     }
@@ -409,14 +450,19 @@ DataTable.propTypes = {
     useIcons: PropTypes.bool,
     className: PropTypes.string,
     style: PropTypes.object,
+    rowMenuTitle: PropTypes.string,
+    rowMenuIconName: PropTypes.string,
 
     onLoadPage: PropTypes.func.isRequired,
     onClick: PropTypes.func,
     onDoubleClick: PropTypes.func,
-    onRenderColumnDropdown: PropTypes.func,
+    onRenderColumnMenu: PropTypes.func,
+    onRenderRowMenu: PropTypes.func,
 };
 
 DataTable.defaultProps = {
     useIcons: false,
     className: '',
+    rowMenuTitle: 'Menu',
+    rowMenuIconName: 'menu'
 };

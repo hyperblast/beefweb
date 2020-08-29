@@ -90,7 +90,7 @@ class PlaylistContent extends React.PureComponent
         });
     }
 
-    handleRenderColumnDropdown(index)
+    handleRenderColumnMenu(index)
     {
         const { title, expression } = this.props.playlistModel.columns[index];
 
@@ -126,7 +126,7 @@ class PlaylistContent extends React.PureComponent
                 className='panel main-panel playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick}
-                onRenderColumnDropdown={this.handleRenderColumnDropdown} />
+                onRenderColumnMenu={this.handleRenderColumnMenu} />
         );
     }
 }
