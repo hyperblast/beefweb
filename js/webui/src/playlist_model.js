@@ -129,9 +129,9 @@ export default class PlaylistModel extends EventEmitter
         return true;
     }
 
-    addItems(items)
+    addItems(items, options)
     {
-        this.client.addPlaylistItems(this.currentPlaylistId, items);
+        this.client.addPlaylistItems(this.currentPlaylistId, items, options);
     }
 
     activateItem(index)
