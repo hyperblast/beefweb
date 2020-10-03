@@ -22,12 +22,12 @@ const settingsStore = new SettingsStore();
 const appModel = new AppModel(client, settingsStore);
 
 const {
-  playerModel,
-  playlistModel,
-  fileBrowserModel,
-  settingsModel,
-  scrollManager,
-  navigationModel,
+    playerModel,
+    playlistModel,
+    fileBrowserModel,
+    settingsModel,
+    scrollManager,
+    navigationModel,
 } = appModel;
 
 const mediaSizeController = new MediaSizeController(settingsModel);
@@ -39,85 +39,85 @@ const mediaSessionController = new MediaSessionController(client, playerModel);
 
 router.on({
     '/': () => {
-    router.navigate(urls.viewCurrentPlaylist);
-  },
+        router.navigate(urls.viewCurrentPlaylist);
+    },
 
     '/playlists': () => {
-    if (playlistModel.currentPlaylistId)
-      router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
+        if (playlistModel.currentPlaylistId)
+            router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
         else
             navigationModel.setView(View.playlist);
-  },
+    },
 
     '/playlists/:id': params => {
-    playlistModel.setCurrentPlaylistId(params.id);
-    navigationModel.setView(View.playlist);
-  },
+        playlistModel.setCurrentPlaylistId(params.id);
+        navigationModel.setView(View.playlist);
+    },
 
     '/files': () => {
-    router.navigate(urls.browsePath(fileBrowserModel.currentPath));
-  },
+        router.navigate(urls.browsePath(fileBrowserModel.currentPath));
+    },
 
     '/files/!*': () => {
-    navigationModel.setView(View.fileBrowser);
+        navigationModel.setView(View.fileBrowser);
 
-    const path = getPathFromUrl(router.lastRouteResolved().url);
+        const path = getPathFromUrl(router.lastRouteResolved().url);
 
         if (path)
             fileBrowserModel.browse(path);
-  },
+    },
 
     '/settings': () => {
-    router.navigate(urls.viewSettings(navigationModel.settingsView));
-  },
+        router.navigate(urls.viewSettings(navigationModel.settingsView));
+    },
 
     '/settings/:view': params => {
         if (params.view in SettingsView)
         {
-      navigationModel.setView(View.settings);
-      navigationModel.setSettingsView(params.view);
+            navigationModel.setView(View.settings);
+            navigationModel.setSettingsView(params.view);
         }
         else
             navigationModel.setView(View.notFound);
-  },
+    },
 
     '/now-playing': () => {
         if (playerModel.playbackState === PlaybackState.stopped)
         {
-      router.navigate(urls.viewCurrentPlaylist);
-      return;
-    }
+            router.navigate(urls.viewCurrentPlaylist);
+            return;
+        }
 
-    const { playlistId, index } = playerModel.activeItem;
+        const { playlistId, index } = playerModel.activeItem;
 
         if (playlistId && index >= 0)
         {
-      scrollManager.scrollToItem(playlistTableKey(playlistId), index);
-      router.navigate(urls.viewPlaylist(playlistId));
+            scrollManager.scrollToItem(playlistTableKey(playlistId), index);
+            router.navigate(urls.viewPlaylist(playlistId));
         }
         else if (playlistId)
         {
-      router.navigate(urls.viewPlaylist(playlistId));
+            router.navigate(urls.viewPlaylist(playlistId));
         }
         else
         {
-      router.navigate(urls.viewCurrentPlaylist);
-    }
+            router.navigate(urls.viewCurrentPlaylist);
+        }
     }
 });
 
 router.notFound(() => {
-  navigationModel.setView(View.notFound);
+    navigationModel.setView(View.notFound);
 });
 
 playerModel.on('trackSwitch', () => {
     if (!settingsModel.cursorFollowsPlayback)
         return;
 
-  const { playlistId, index } = playerModel.activeItem;
+    const { playlistId, index } = playerModel.activeItem;
 
     if (playlistId !== '' && index >= 0)
-    scrollManager.scrollToItem(playlistTableKey(playlistId), index);
+        scrollManager.scrollToItem(playlistTableKey(playlistId), index);
 });
 
 playlistModel.on('playlistsChange', () => {
@@ -125,8 +125,8 @@ playlistModel.on('playlistsChange', () => {
     if (navigationModel.view !== View.playlist)
         return;
 
-  if (playlistModel.currentPlaylistId)
-    router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
+    if (playlistModel.currentPlaylistId)
+        router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
     else
         router.navigate(urls.viewCurrentPlaylist);
 });
@@ -141,9 +141,9 @@ mediaSessionController.start();
 router.resolve();
 
 const appComponent = (
-  <ServiceContext.Provider value={appModel}>
-    <App />
-  </ServiceContext.Provider>
+    <ServiceContext.Provider value={appModel}>
+        <App />
+    </ServiceContext.Provider>
 );
 
 ReactDom.render(appComponent, document.getElementById('app-container'));
