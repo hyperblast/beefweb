@@ -28,6 +28,18 @@ function configCommon(config, params)
             limit: 1024
         }
     });
+
+    config.optimization = {
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all'
+                }
+            }
+        }
+    }
 }
 
 function configApp(config, params)
