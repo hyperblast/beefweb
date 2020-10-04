@@ -171,6 +171,14 @@ export default class SettingsModel extends EventEmitter
             persistent: true,
         });
 
+        this.define({
+            key: 'enableNotification',
+            title: 'Enable playback control notification',
+            type: SettingType.bool,
+            defaultValue: false,
+            persistent: true,
+        });
+
         Object.freeze(this.metadata);
     }
 

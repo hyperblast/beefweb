@@ -9,10 +9,23 @@ export default class MediaSessionController {
         this.playerModel = playerModel;
     }
 
+    isSupported() {
+        return 'mediaSession' in navigator;
+    }
+
+    /**
+     * @returns {HTMLAudioElement}
+     */
+    getAudioElement() {
+        return document.getElementById('silence');
+    }
+
     start() {
-        if (!'mediaSession' in navigator) {
+        if (!this.isSupported()) {
             return;
         }
+
+        this.isStopped = false;
 
         navigator.mediaSession.setActionHandler('play', () =>
             this.playerModel.play()
@@ -32,21 +45,39 @@ export default class MediaSessionController {
         this.update();
     }
 
+    stop() {
+        if (!this.isSupported()) {
+            return;
+        }
+
+        this.isStopped = true;
+
+        navigator.mediaSession.playbackState = 'none';
+        this.getAudioElement().pause();
+
+        navigator.mediaSession.setActionHandler('play', null);
+        navigator.mediaSession.setActionHandler('pause', null);
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+        navigator.mediaSession.setActionHandler('nexttrack', null);
+    }
+
     update() {
+        if (this.isStopped) {
+            return true;
+        }
+
         const playbackStateMap = {
             playing: 'playing',
             paused: 'paused',
             stopped: 'none',
         };
 
-        const audioElement = document.getElementById('silence');
-
         switch (this.playerModel.playbackState) {
             case 'playing':
-                audioElement.play();
+                this.getAudioElement().play();
                 break;
             case 'paused':
-                audioElement.pause();
+                this.getAudioElement().pause();
                 break;
             default:
                 break;

@@ -121,7 +121,6 @@ playerModel.on('trackSwitch', () => {
 });
 
 playlistModel.on('playlistsChange', () => {
-
     if (navigationModel.view !== View.playlist)
         return;
 
@@ -131,13 +130,24 @@ playlistModel.on('playlistsChange', () => {
         router.navigate(urls.viewCurrentPlaylist);
 });
 
+settingsModel.on('enableNotificationChange', () => {
+    if (settingsModel.enableNotification) {
+        mediaSessionController.start();
+    }
+    else {
+        mediaSessionController.stop();
+    }
+});
+
 appModel.load();
 mediaSizeController.start();
 touchModeController.start();
 cssSettingsController.start();
 appModel.start();
 windowController.start();
-mediaSessionController.start();
+if (settingsModel.enableNotification) {
+    mediaSessionController.start();
+}
 router.resolve();
 
 const appComponent = (
