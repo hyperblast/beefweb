@@ -35,7 +35,7 @@ const touchModeController = new TouchModeController(settingsModel);
 const cssSettingsController = new CssSettingsController(settingsModel);
 const windowController = new WindowController(playerModel);
 const router = new Navigo(null, true);
-const mediaSessionController = new MediaSessionController(client, playerModel);
+const mediaSessionController = new MediaSessionController(playerModel);
 
 router.on({
     '/': () => {
