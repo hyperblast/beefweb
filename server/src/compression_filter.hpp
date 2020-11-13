@@ -3,6 +3,7 @@
 #include "defines.hpp"
 #include "request_filter.hpp"
 
+#include <string>
 #include <unordered_set>
 
 namespace msrv {
