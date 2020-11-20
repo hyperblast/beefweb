@@ -69,7 +69,8 @@ class FileBrowser extends React.PureComponent
         const { playlistModel, fileBrowserModel, notificationModel } = this.props;
         const itemPath = fileBrowserModel.entries[index].path;
         playlistModel.addItems([itemPath]);
-        notificationModel.notifyAddItem(itemPath);
+        playlistModel.client.next();
+        //notificationModel.notifyAddItem(itemPath);
     }
 
     render()
