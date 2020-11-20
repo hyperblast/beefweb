@@ -205,7 +205,34 @@ export default class PlayerClient
                 `api/playlists/${options.playlist}/items/move`, data);
         }
     }
-
+    
+    getBeefwebPlaylist() {
+      var e = "beefweb";
+      var p = this.playlists.find(t=>t.title === e)
+      if (p) {
+        return p
+      } else {
+        this.client.addPlaylist({
+            title: e
+        })
+        this.emit("playlistsChange")
+        // todo: fix this
+        return this.playlists.find(t=>t.title === e)
+      }
+    }
+    directPlay(e) {
+      var p = this.getBeefwebPlaylist();
+      if (p) {
+        this.client.addPlaylistItems(p.id, e).then( x => {
+            this.client.getPlaylists().then( r => {
+              p = r.find(t=>t.id == p.id)
+              this.client.play(p.id, p.itemCount - 1)
+            })
+        })
+        //this.client.next();
+      }
+    }
+    
     getFileSystemRoots()
     {
         return this.get('api/browser/roots');
