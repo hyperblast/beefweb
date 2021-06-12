@@ -1,18 +1,18 @@
-@setlocal
+setlocal
 
-@if "%1" == "v1.3" (
-    @set pkg_file=foobar2000_v1.3.20.exe
-    @goto :install
+if "%1" == "v1.3" (
+    set pkg_file=foobar2000_v1.3.20.exe
+    goto :install
 )
 
-@if "%1" == "v1.4" (
-    @set pkg_file=foobar2000_v1.4.3.exe
-    @goto :install
+if "%1" == "v1.4" (
+    set pkg_file=foobar2000_v1.4.3.exe
+    goto :install
 )
 
-@if "%1" == "v1.5" (
-    @set pkg_file=foobar2000_v1.5.1.exe
-    @goto :install
+if "%1" == "v1.5" (
+    set pkg_file=foobar2000_v1.5.1.exe
+    goto :install
 )
 
 @if "%1" == "v1.6" (
@@ -23,15 +23,15 @@
 @echo Usage: %~nx0 version
 @echo Supported versions: v1.3 v1.4 v1.5 v1.6
 @cmd /c exit 1
-@goto :end
+goto :end
 
 :install
 
-@set target_dir=tools\foobar2000\%1
+set target_dir=tools\foobar2000\%1
 
-@cd "%~dp0..\.."
+cd "%~dp0..\.."
 
-@if exist %target_dir%\. (
+if exist %target_dir%\. (
     rmdir /s /q %target_dir%
     @if errorlevel 1 goto :end
 )
@@ -39,7 +39,7 @@
 mkdir %target_dir%
 @if errorlevel 1 goto :end
 
-@cd %target_dir%
+cd %target_dir%
 @if errorlevel 1 goto :end
 
 curl --silent --fail --show-error --location -o %pkg_file% ^

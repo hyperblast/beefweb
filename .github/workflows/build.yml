@@ -1,0 +1,84 @@
+name: build
+
+on:
+  push:
+    branches: [ $default-branch, 'github-actions' ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+
+  build_linux:
+    runs-on: ubuntu-20.04
+
+    env:
+      BUILD_TYPE: relwithdebinfo
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Prepare docker image
+      run: ci/github/prepare.sh
+
+    - name: Install tools
+      run: ci/github/install.sh
+
+    - name: Build server
+      run: ci/github/build-server.sh
+
+    - name: Build rest
+      run: ci/github/build-rest.sh
+
+    - name: Test
+      run: ci/github/test.sh
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v2
+      with:
+        name: beefweb_linux
+        if-no-files-found: error
+        path: build/${{ env.BUILD_TYPE }}/*.tar.gz
+
+  build_windows:
+
+    runs-on: windows-2016
+
+    defaults:
+      run:
+        shell: cmd
+
+    env:
+      BUILD_TYPE: RelWithDebInfo
+      BUILD_TYPE_L: relwithdebinfo
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: win32
+
+    - name: Install tools
+      run: |
+        cmd /c ci\github\install.cmd
+        cmd /c "echo %cd%\tools\patch >> %GITHUB_PATH%"
+
+    - name: Build
+      run: cmd /c ci\github\build.cmd
+
+    - name: Test
+      run: |
+        cmd /c ci\github\test.cmd
+        echo %errorlevel%
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v2
+      with:
+        name: beefweb_windows
+        if-no-files-found: error
+        path: |
+          build\${{ env.BUILD_TYPE_L }}\*.fb2k-component
+          build\${{ env.BUILD_TYPE_L }}\*.zip

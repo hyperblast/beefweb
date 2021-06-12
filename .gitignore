@@ -1,11 +1,11 @@
 build/*
 tools/*
 
-
 js/.idea/*
 js/node_modules/*
 
 js/api_tests/node_modules/*
+js/api_tests/tmp/*
 
 js/client/dist/*
 js/client/node_modules/*
