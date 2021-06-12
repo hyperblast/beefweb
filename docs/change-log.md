@@ -1,12 +1,14 @@
 ### Changes in v0.5 (not released):
-- Clicking on status bar locates current track
 - Added support for specifying custom response header (e.g. for CORS)
 - Added support for specifying custom web content directories
-- Improved dialog styling in web UI
 - Added settings to customize window title and playback information panel content
+- Added support for different file browser add actions ("Add", "Add & Play", "Replace & Play")
+- Improved dialog styling in web UI
+- Clicking on status bar locates current track
 - Binaries for DeaDBeeF x86 are no longer provided, you can still build manually
 - Binaries for foobar2000 are built with VS2017 and dynamic runtime libraries
 - Updated foobar2000 SDK to 2019-06-30
+- Updated boost v1.71
 - Fixed preventing of foobar2000 update
 - Fixed "Port:" label overlow in settings page
 - Fixed error 500 when trying to browse directories with unaccessible files
