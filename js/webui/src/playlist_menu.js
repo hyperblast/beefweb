@@ -6,7 +6,7 @@ import { ConfirmDialog, InputDialog } from './dialogs'
 import { bindHandlers } from './utils'
 import ModelBinding from './model_binding';
 import { DropdownButton } from './dropdown';
-import SettingsModel from './settings_model';
+import SettingsModel, { AddAction } from './settings_model';
 import { sortMenuColumns } from './columns';
 
 class PlaylistMenu extends React.PureComponent
@@ -131,7 +131,7 @@ class PlaylistMenu extends React.PureComponent
         const url = this.state.addUrlDialogValue.trim();
 
         if (url)
-            this.props.playlistModel.addItems([ url ]);
+            this.props.playlistModel.addItems([ url ], AddAction.add);
     }
 
     handleAddUrlCancel()

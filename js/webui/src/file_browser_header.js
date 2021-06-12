@@ -8,6 +8,7 @@ import NotificationModel from './notification_model';
 import ModelBinding from './model_binding';
 import { DropdownButton } from './dropdown';
 import { bindHandlers } from './utils';
+import { AddAction } from "./settings_model";
 
 class FileBrowserHeader extends React.PureComponent
 {
@@ -26,7 +27,7 @@ class FileBrowserHeader extends React.PureComponent
         return { currentPath, parentPath, pathStack };
     }
 
-    addCurrent(options)
+    addCurrent(action)
     {
         const { playlistModel, fileBrowserModel, notificationModel } = this.props;
         const { currentPath } = fileBrowserModel;
@@ -34,23 +35,23 @@ class FileBrowserHeader extends React.PureComponent
         if (currentPath === rootPath)
             return;
 
-        playlistModel.addItems([currentPath], options);
+        playlistModel.addItems([currentPath], action);
         notificationModel.notifyAddDirectory(currentPath);
     }
 
     handleAddClick()
     {
-        this.addCurrent();
+        this.addCurrent(AddAction.add);
     }
 
     handleAddAndPlayClick()
     {
-        this.addCurrent({ play: true });
+        this.addCurrent(AddAction.addAndPlay);
     }
 
     handleReplaceAndPlayClick()
     {
-        this.addCurrent({ play: true, replace: true });
+        this.addCurrent(AddAction.replaceAndPlay);
     }
 
     handleRequestMenuOpen(value)

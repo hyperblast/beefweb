@@ -1,6 +1,12 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import { arrayMove } from 'react-sortable-hoc'
-import { defaultPlaylistColumns } from './columns';
+import { AddAction } from "./settings_model";
+
+const addOptions = {
+    [AddAction.add]: {},
+    [AddAction.addAndPlay]: { play:true },
+    [AddAction.replaceAndPlay]: { replace: true, play: true }
+};
 
 export default class PlaylistModel extends EventEmitter
 {
@@ -129,8 +135,14 @@ export default class PlaylistModel extends EventEmitter
         return true;
     }
 
-    addItems(items, options)
+    addItems(items, addAction)
     {
+        if (!addAction) {
+            addAction = this.settingsModel.defaultAddAction;
+        }
+
+        const options = addOptions[addAction];
+
         this.client.addPlaylistItems(this.currentPlaylistId, items, options);
     }
 

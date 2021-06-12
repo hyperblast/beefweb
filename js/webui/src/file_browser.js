@@ -9,6 +9,7 @@ import NotificationModel from './notification_model';
 import ScrollManager from './scroll_manager';
 import ModelBinding from './model_binding';
 import { Menu, MenuItem } from './elements';
+import { AddAction } from "./settings_model";
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -66,29 +67,29 @@ class FileBrowser extends React.PureComponent
 
     handleClick(index)
     {
-        this.addItem(index, {});
+        this.addItem(index, null);
     }
 
     handleMenuAdd(index)
     {
-        this.addItem(index, {});
+        this.addItem(index, AddAction.add);
     }
 
     handleMenuAddAndPlay(index)
     {
-        this.addItem(index, { play: true });
+        this.addItem(index, AddAction.addAndPlay);
     }
 
     handleMenuReplaceAndPlay(index)
     {
-        this.addItem(index, { play: true, replace: true });
+        this.addItem(index, AddAction.replaceAndPlay);
     }
 
-    addItem(index, options)
+    addItem(index, action)
     {
         const { playlistModel, fileBrowserModel, notificationModel } = this.props;
         const itemPath = fileBrowserModel.entries[index].path;
-        playlistModel.addItems([itemPath], options);
+        playlistModel.addItems([itemPath], action);
         notificationModel.notifyAddItem(itemPath);
     }
 
@@ -123,7 +124,7 @@ class FileBrowser extends React.PureComponent
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
                 rowMenuTitle='Add...'
-                rowMenuIconName='data-transfer-download'
+                rowMenuIconName='menu'
                 onRenderRowMenu={this.handleRenderRowMenu}
                 className='panel main-panel file-browser' />
         )
