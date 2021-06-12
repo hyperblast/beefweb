@@ -9,7 +9,6 @@ import NotificationModel from './notification_model';
 import ScrollManager from './scroll_manager';
 import ModelBinding from './model_binding';
 import { Menu, MenuItem } from './elements';
-import { DropdownButton } from './dropdown';
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -67,19 +66,43 @@ class FileBrowser extends React.PureComponent
 
     handleClick(index)
     {
+        this.addItem(index, {});
+    }
+
+    handleMenuAdd(index)
+    {
+        this.addItem(index, {});
+    }
+
+    handleMenuAddAndPlay(index)
+    {
+        this.addItem(index, { play: true });
+    }
+
+    handleMenuReplaceAndPlay(index)
+    {
+        this.addItem(index, { play: true, replace: true });
+    }
+
+    addItem(index, options)
+    {
         const { playlistModel, fileBrowserModel, notificationModel } = this.props;
         const itemPath = fileBrowserModel.entries[index].path;
-        playlistModel.addItems([itemPath]);
+        playlistModel.addItems([itemPath], options);
         notificationModel.notifyAddItem(itemPath);
     }
 
     handleRenderRowMenu(index)
     {
+        const add = () => this.handleMenuAdd(index);
+        const addAndPlay = () => this.handleMenuAddAndPlay(index);
+        const replaceAndPlay = () => this.handleMenuReplaceAndPlay(index);
+
         return (
             <Menu>
-                <MenuItem title='Add' />
-                <MenuItem title='Add & Play' />
-                <MenuItem title='Replace & Play' />
+                <MenuItem title='Add' onClick={add} />
+                <MenuItem title='Add & Play' onClick={addAndPlay} />
+                <MenuItem title='Replace & Play' onClick={replaceAndPlay} />
             </Menu>
         );
     }
