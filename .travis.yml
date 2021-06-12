@@ -2,6 +2,10 @@ os: linux
 dist: trusty
 language: cpp
 
+branches:
+  only:
+  - master
+
 install:
 - scripts/travis/install.sh
 
