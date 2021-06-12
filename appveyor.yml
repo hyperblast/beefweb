@@ -14,7 +14,7 @@ install:
 
 build_script:
 - set BUILD_TYPE=RelWithDebInfo
-- scripts\appveyor\build.cmd
+- ci\appveyor\build.cmd
 
-test_script: scripts\appveyor\test.cmd
-deploy_script: scripts\appveyor\upload.cmd
+test_script: ci\appveyor\test.cmd
+deploy_script: ci\appveyor\upload.cmd

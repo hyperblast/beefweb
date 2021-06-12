@@ -7,12 +7,12 @@ branches:
   - master
 
 install:
-- scripts/travis/install.sh
+- ci/travis/install.sh
 
 script:
 - export BUILD_TYPE=relwithdebinfo
-- scripts/travis/build.sh
-- scripts/travis/test.sh
+- ci/travis/build.sh
+- ci/travis/test.sh
 
 deploy:
   provider: script
