@@ -9,6 +9,7 @@
 #include "request_filter.hpp"
 #include "router.hpp"
 
+#include <atomic>
 #include <memory>
 #include <thread>
 

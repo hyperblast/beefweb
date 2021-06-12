@@ -7,6 +7,8 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+
 #include <boost/variant.hpp>
 
 namespace msrv {
