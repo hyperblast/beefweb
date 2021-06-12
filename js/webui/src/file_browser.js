@@ -3,11 +3,13 @@ import PropTypes from 'prop-types'
 import PlaylistModel from './playlist_model'
 import FileBrowserModel from './file_browser_model'
 import urls from './urls'
-import { getDisplaySize, getDisplayDate, mapRange } from './utils'
+import { getDisplaySize, getDisplayDate, mapRange, bindHandlers } from './utils'
 import DataTable from './data_table'
 import NotificationModel from './notification_model';
 import ScrollManager from './scroll_manager';
 import ModelBinding from './model_binding';
+import { Menu, MenuItem } from './elements';
+import { AddAction } from "./settings_model";
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -37,10 +39,9 @@ class FileBrowser extends React.PureComponent
     {
         super(props);
 
-        this.state = this.getStateFromModel(0);
+        bindHandlers(this);
 
-        this.handleClick = this.handleClick.bind(this);
-        this.handleLoadPage = this.handleLoadPage.bind(this);
+        this.state = this.getStateFromModel(0);
     }
 
     getStateFromModel(offset)
@@ -66,10 +67,45 @@ class FileBrowser extends React.PureComponent
 
     handleClick(index)
     {
+        this.addItem(index, null);
+    }
+
+    handleMenuAdd(index)
+    {
+        this.addItem(index, AddAction.add);
+    }
+
+    handleMenuAddAndPlay(index)
+    {
+        this.addItem(index, AddAction.addAndPlay);
+    }
+
+    handleMenuReplaceAndPlay(index)
+    {
+        this.addItem(index, AddAction.replaceAndPlay);
+    }
+
+    addItem(index, action)
+    {
         const { playlistModel, fileBrowserModel, notificationModel } = this.props;
         const itemPath = fileBrowserModel.entries[index].path;
-        playlistModel.addItems([itemPath]);
+        playlistModel.addItems([itemPath], action);
         notificationModel.notifyAddItem(itemPath);
+    }
+
+    handleRenderRowMenu(index)
+    {
+        const add = () => this.handleMenuAdd(index);
+        const addAndPlay = () => this.handleMenuAddAndPlay(index);
+        const replaceAndPlay = () => this.handleMenuReplaceAndPlay(index);
+
+        return (
+            <Menu>
+                <MenuItem title='Add' onClick={add} />
+                <MenuItem title='Add & Play' onClick={addAndPlay} />
+                <MenuItem title='Replace & Play' onClick={replaceAndPlay} />
+            </Menu>
+        );
     }
 
     render()
@@ -87,6 +123,9 @@ class FileBrowser extends React.PureComponent
                 onClick={this.handleClick}
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
+                rowMenuTitle='Add...'
+                rowMenuIconName='menu'
+                onRenderRowMenu={this.handleRenderRowMenu}
                 className='panel main-panel file-browser' />
         )
     }

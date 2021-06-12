@@ -2,10 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import FileBrowserModel, { rootPath } from './file_browser_model'
 import PlaylistModel from './playlist_model'
-import { Button } from './elements'
+import { Button, Menu, MenuItem, MenuSeparator } from './elements'
 import urls from './urls'
 import NotificationModel from './notification_model';
 import ModelBinding from './model_binding';
+import { DropdownButton } from './dropdown';
+import { bindHandlers } from './utils';
+import { AddAction } from "./settings_model";
 
 class FileBrowserHeader extends React.PureComponent
 {
@@ -13,8 +16,9 @@ class FileBrowserHeader extends React.PureComponent
     {
         super(props);
 
-        this.state = this.getStateFromModel();
-        this.handleAddClick = this.handleAddClick.bind(this);
+        bindHandlers(this);
+
+        this.state = Object.assign({ menuOpen: false }, this.getStateFromModel());
     }
 
     getStateFromModel()
@@ -23,7 +27,7 @@ class FileBrowserHeader extends React.PureComponent
         return { currentPath, parentPath, pathStack };
     }
 
-    handleAddClick(e)
+    addCurrent(action)
     {
         const { playlistModel, fileBrowserModel, notificationModel } = this.props;
         const { currentPath } = fileBrowserModel;
@@ -31,8 +35,28 @@ class FileBrowserHeader extends React.PureComponent
         if (currentPath === rootPath)
             return;
 
-        playlistModel.addItems([currentPath]);
+        playlistModel.addItems([currentPath], action);
         notificationModel.notifyAddDirectory(currentPath);
+    }
+
+    handleAddClick()
+    {
+        this.addCurrent(AddAction.add);
+    }
+
+    handleAddAndPlayClick()
+    {
+        this.addCurrent(AddAction.addAndPlay);
+    }
+
+    handleReplaceAndPlayClick()
+    {
+        this.addCurrent(AddAction.replaceAndPlay);
+    }
+
+    handleRequestMenuOpen(value)
+    {
+        this.setState({ menuOpen: value });
     }
 
     renderBreadcrumbs()
@@ -48,7 +72,7 @@ class FileBrowserHeader extends React.PureComponent
 
     renderButtons()
     {
-        const { parentPath } = this.state;
+        const { parentPath, menuOpen } = this.state;
 
         if (!parentPath)
             return null;
@@ -64,6 +88,18 @@ class FileBrowserHeader extends React.PureComponent
                         name='arrow-thick-top'
                         href={urls.browsePath(parentPath)}
                         title='Navigate to parent directory' />
+                    <DropdownButton
+                        iconName='menu'
+                        title='Directory menu'
+                        direction='left'
+                        isOpen={menuOpen}
+                        onRequestOpen={this.handleRequestMenuOpen}>
+                        <Menu>
+                            <MenuItem title='Add' onClick={this.handleAddClick} />
+                            <MenuItem title='Add & Play' onClick={this.handleAddAndPlayClick} />
+                            <MenuItem title='Replace & Play' onClick={this.handleReplaceAndPlayClick} />
+                        </Menu>
+                    </DropdownButton>
                 </div>
             </div>
         );

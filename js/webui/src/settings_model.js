@@ -38,12 +38,17 @@ export const MediaSizeIndex = Object.freeze({
     [MediaSize.large]: 2,
 });
 
+export const AddAction = Object.freeze({
+    add: 'add',
+    addAndPlay: 'addAndPlay',
+    replaceAndPlay: 'replaceAndPlay'
+});
+
 const defaultSettingProps = Object.freeze({
     persistent: false,
     cssVisible: false,
     version: 1,
 });
-
 
 /**
  * @class SettingsModel
@@ -53,6 +58,7 @@ const defaultSettingProps = Object.freeze({
  * @property {string} customSortBy
  * @property {string} inputMode
  * @property {string} fontSize
+ * @property {string} defaultAddAction
  * @property {string} windowTitleExpression
  * @property {string} playbackInfoExpression
  * @property {boolean} touchMode
@@ -123,6 +129,20 @@ export default class SettingsModel extends EventEmitter
                 [InputMode.auto]: 'Auto',
                 [InputMode.forceMouse]: 'Force mouse',
                 [InputMode.forceTouch]: 'Force touch'
+            }
+        });
+
+        this.define({
+            key: 'defaultAddAction',
+            type: SettingType.enum,
+            defaultValue: AddAction.add,
+            title: 'Default file browser action',
+            persistent: true,
+            enumKeys: AddAction,
+            enumNames: {
+                [AddAction.add]: 'Add',
+                [AddAction.addAndPlay]: 'Add & Play',
+                [AddAction.replaceAndPlay]: 'Replace & Play'
             }
         });
 

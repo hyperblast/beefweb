@@ -23,7 +23,6 @@ class GeneralSettings extends React.PureComponent
 
     render()
     {
-        const model = this.context.settingsModel;
         const { showPlaybackInfo } = this.state;
 
         return (
@@ -32,6 +31,7 @@ class GeneralSettings extends React.PureComponent
                 <SettingEditor settingKey='fullWidth' />
                 <SettingEditor settingKey='fontSize' />
                 <SettingEditor settingKey='inputMode' />
+                <SettingEditor settingKey='defaultAddAction' />
                 <SettingEditor settingKey='showPlaybackInfo' />
                 <SettingEditor settingKey='playbackInfoExpression' disabled={!showPlaybackInfo} />
             </form>
