@@ -19,7 +19,7 @@ rm -rf "tools/$name"
 mkdir -p "tools/$name"
 cd "tools/$name"
 
-curl --silent --fail --show-error --location -o "$file" "$url"
+curl -v --fail --show-error --location -o "$file" "$url"
 echo "$hash *$file" | sha256sum -c
 tar xf "$file" --strip-components=1
 rm "$file"
