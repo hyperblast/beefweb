@@ -11,12 +11,12 @@
 - Binaries for DeaDBeeF x86 are no longer provided, you can still build manually
 - Binaries for foobar2000 are built with VS2017 and dynamic runtime libraries
 - Updated foobar2000 SDK to 2019-06-30
-- Updated boost v1.71
+- Updated boost to v1.71
 - Fixed preventing of foobar2000 update
-- Fixed "Port:" label overlow in settings page
-- Fixed error 500 when trying to browse directories with unaccessible files
-- Fixed browsing of root directory (e.g. C:\)
-- Fixed volume slider vertial aligment
+- Fixed "Port:" label overflow in settings page
+- Fixed error 500 when trying to browse directories with inaccessible files
+- Fixed browsing of root directory (e.g. C:\\)
+- Fixed volume slider vertical alignment
 
 ### Changes in v0.4 (released 2020-02-02):
 - Added optional playback information panel
