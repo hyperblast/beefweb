@@ -7,9 +7,9 @@ branches:
   - master
 
 install:
-- sed -i 's/mozilla\/DST_Root_CA_X3.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf
-- dpkg-reconfigure -fnoninteractive ca-certificates
-- update-ca-certificates
+- sudo sed -i 's/mozilla\/DST_Root_CA_X3.crt/!mozilla\/DST_Root_CA_X3.crt/' /etc/ca-certificates.conf
+- sudo dpkg-reconfigure -fnoninteractive ca-certificates
+- sudo update-ca-certificates
 - ci/travis/install.sh
 
 script:
