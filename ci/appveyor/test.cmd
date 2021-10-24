@@ -32,6 +32,13 @@ set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.5
 cmd /c yarn test
 @if errorlevel 1 goto :end
 
+@echo.
+@echo === Running API tests on foobar2000 v1.6 ===
+@echo.
+set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.6
+cmd /c yarn test
+@if errorlevel 1 goto :end
+
 @popd
 
 :end
