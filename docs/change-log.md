@@ -1,4 +1,4 @@
-### Changes in v0.5 (not released):
+### Changes in v0.5 (released 2021-10-24):
 - Added support for specifying custom response header (e.g. for CORS)
 - Added support for specifying custom web content directories
 - Added settings to customize window title and playback information panel content
