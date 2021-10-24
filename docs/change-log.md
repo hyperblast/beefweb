@@ -13,6 +13,7 @@
 - Fixed "Port:" label overlow in settings page
 - Fixed error 500 when trying to browse directories with unaccessible files
 - Fixed browsing of root directory (e.g. C:\)
+- Fixed volume slider vertial aligment
 
 ### Changes in v0.4 (released 2020-02-02):
 - Added optional playback information panel
