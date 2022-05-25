@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.18.1",
-    "eventsource": "^1.0.5",
+    "eventsource": "^2.0.2",
     "lodash": "^4.17.19",
     "mkdirp": "^0.5.1",
     "qunit": "^2.4.1",
