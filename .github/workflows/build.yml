@@ -70,9 +70,7 @@ jobs:
       run: cmd /c ci\github\build.cmd
 
     - name: Test
-      run: |
-        cmd /c ci\github\test.cmd
-        echo %errorlevel%
+      run: cmd /c ci\github\test.cmd
 
     - name: Upload binaries
       uses: actions/upload-artifact@v2
