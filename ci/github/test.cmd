@@ -9,6 +9,8 @@ set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 server\build\%BUILD_TYPE%\src\tests\%BUILD_TYPE%\core_tests.exe
 @if errorlevel 1 goto :end
 
+set API_TEST_ERROR=0
+
 @pushd js\api_tests
 
 @echo.
@@ -16,22 +18,31 @@ server\build\%BUILD_TYPE%\src\tests\%BUILD_TYPE%\core_tests.exe
 @echo.
 set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.3
 cmd /c yarn test
-@if errorlevel 1 goto :end
+@if errorlevel 1 set API_TEST_ERROR=1
 
 @echo.
 @echo === Running API tests on foobar2000 v1.4 ===
 @echo.
 set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.4
 cmd /c yarn test
-@if errorlevel 1 goto :end
+@if errorlevel 1 set API_TEST_ERROR=1
 
 @echo.
 @echo === Running API tests on foobar2000 v1.5 ===
 @echo.
 set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.5
 cmd /c yarn test
-@if errorlevel 1 goto :end
+@if errorlevel 1 set API_TEST_ERROR=1
+
+@echo.
+@echo === Running API tests on foobar2000 v1.6 ===
+@echo.
+set BEEFWEB_TEST_FOOBAR2000_VERSION=v1.6
+cmd /c yarn test
+@if errorlevel 1 set API_TEST_ERROR=1
 
 @popd
+
+exit %API_TEST_ERROR%
 
 :end
