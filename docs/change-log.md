@@ -1,5 +1,5 @@
 ### Changes in v0.6 (not released):
-
+- Removed support for browsers without native EventSource implementation
 
 ### Changes in v0.5 (released 2021-10-24):
 - Added support for specifying custom response header (e.g. for CORS)

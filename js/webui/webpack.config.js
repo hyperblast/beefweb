@@ -12,7 +12,6 @@ function configCommon(config, params)
     config.performance.hints = false;
 
     config.entry.push('normalize.css');
-    config.entry.push('event-source-polyfill');
 
     config.module.rules.push({
         test: /\.js$/,
