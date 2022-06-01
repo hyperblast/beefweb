@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "detect-it": "^3.0.4",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "navigo": "^7.0.0",
     "normalize.css": "^8.0.0",
     "open-iconic": "^1.1.1",
