@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const fs = require('fs'); 
+const fs = require('fs');
 const childProcess = require('child_process');
 const { promisify } = require('util');
 const { waitForExit } = require('../utils');
@@ -72,13 +72,13 @@ class PlayerController
 
         this.process.on('error', err => console.error('Error spawning player process: %s', err));
         this.process.on('exit', () => this.process = null);
-        this.process.unref(); 
+        this.process.unref();
     }
 
     async stopProcess()
     {
         const process = this.process;
-        
+
         if (!process)
             return;
 

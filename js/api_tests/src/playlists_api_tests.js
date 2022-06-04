@@ -2,7 +2,7 @@
 
 const q = require('qunit');
 const isEqual = require('lodash/isEqual');
-const { client, usePlayer, tracks } = require('./test_context');
+const { client, usePlayer, tracks, config } = require('./test_context');
 const { waitUntil, pathCollectionsEqual } = require('./utils');
 
 q.module('playlists api', usePlayer());
@@ -169,7 +169,9 @@ q.test('add playlist items single', async assert =>
 
 q.test('add playlist items url', async assert =>
 {
-    if (process.env.APPVEYOR) {
+    // Fails with foobar2000 v1.3
+
+    if (config.playerId == 'foobar2000' && config.playerVersion == 'v1.3') {
         assert.ok(true);
         return;
     }

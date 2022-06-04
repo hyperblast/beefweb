@@ -60,7 +60,7 @@
     <Target Name="BuildServer" DependsOnTargets="InitServer">
         <MSBuild
             Projects="$(ServerBuildDir)\beefweb.sln"
-            Properties="Configuration=$(Configuration)" />
+            Properties="Configuration=$(Configuration);Platform=Win32" />
     </Target>
 
     <Target Name="InitJs">

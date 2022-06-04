@@ -27,8 +27,11 @@ function run_api_tests
     )
 }
 
+function main
+{
+    run_server_tests
+    run_api_tests v0.7
+    run_api_tests v1.8
+}
 
-cd "$(dirname $0)/../.."
-run_server_tests
-run_api_tests v0.7
-run_api_tests v1.8
+source "$(dirname $0)/run-in-docker.sh"

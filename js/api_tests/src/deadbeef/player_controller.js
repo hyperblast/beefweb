@@ -139,7 +139,14 @@ class PlayerController
 
     async startProcess(environment)
     {
-        const env = Object.assign({}, process.env, { HOME: this.paths.profileDir }, environment);
+        const env = Object.assign(
+            {},
+            process.env,
+            {
+                HOME: this.paths.profileDir,
+                XDG_CONFIG_HOME: path.join(this.paths.profileDir, '.config')
+            },
+            environment);
 
         const logFile = await open(this.paths.logFile, 'w');
 
