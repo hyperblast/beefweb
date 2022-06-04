@@ -3,8 +3,7 @@ Web interface plugin for [DeaDBeeF](https://deadbeef.sourceforge.io/)
 and [foobar2000](https://foobar2000.org/) music players.
 
 [![License](https://img.shields.io/github/license/hyperblast/beefweb.svg)](LICENSE)
-[![Build Status - Travis](https://travis-ci.com/hyperblast/beefweb.svg?branch=master)](https://travis-ci.com/hyperblast/beefweb)
-[![Build Status - AppVeyor](https://ci.appveyor.com/api/projects/status/github/hyperblast/beefweb?branch=master&svg=true)](https://ci.appveyor.com/project/hyperblast/beefweb)
+[![Build Status](https://img.shields.io/github/workflow/status/hyperblast/beefweb/build)](https://github.com/hyperblast/beefweb/actions/workflows/build.yml)
 
 ### Features
 - Lightweight web user interface
