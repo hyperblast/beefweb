@@ -15,6 +15,7 @@ import urls, { getPathFromUrl } from './urls'
 import { playlistTableKey } from './playlist_content';
 import { PlaybackState } from 'beefweb-client/src';
 import { SettingsView, View } from './navigation_model';
+import MediaSessionController from './mediasession_controller';
 
 const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();
@@ -34,6 +35,7 @@ const touchModeController = new TouchModeController(settingsModel);
 const cssSettingsController = new CssSettingsController(settingsModel);
 const windowController = new WindowController(playerModel);
 const router = new Navigo(null, true);
+const mediaSessionController = new MediaSessionController(playerModel);
 
 router.on({
     '/': () => {
@@ -119,7 +121,6 @@ playerModel.on('trackSwitch', () => {
 });
 
 playlistModel.on('playlistsChange', () => {
-
     if (navigationModel.view !== View.playlist)
         return;
 
@@ -129,12 +130,24 @@ playlistModel.on('playlistsChange', () => {
         router.navigate(urls.viewCurrentPlaylist);
 });
 
+settingsModel.on('enableNotificationChange', () => {
+    if (settingsModel.enableNotification) {
+        mediaSessionController.start();
+    }
+    else {
+        mediaSessionController.stop();
+    }
+});
+
 appModel.load();
 mediaSizeController.start();
 touchModeController.start();
 cssSettingsController.start();
 appModel.start();
 windowController.start();
+if (settingsModel.enableNotification) {
+    mediaSessionController.start();
+}
 router.resolve();
 
 const appComponent = (
