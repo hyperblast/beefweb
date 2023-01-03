@@ -3,6 +3,7 @@
     <Import Project="$(MSBuildProjectDirectory)\config.props" />
 
     <PropertyGroup>
+        <Platform Condition="'$(Platform)' == ''">Win32</Platform>
         <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
         <ConfigLower>$(Configuration.ToLowerInvariant())</ConfigLower>
 
@@ -28,6 +29,8 @@
 
         <PackageBuildDir>$(RootDir)\build\$(Configuration)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
+        <PackageArch>$(Platform)</PackageArch>
+        <PackageArch Condition="'$(Platform)' == 'Win32'">x86</PackageArch>
 
         <BuildPackageDependsOn>CleanPackage</BuildPackageDependsOn>
         <BuildPackageDependsOn Condition="'$(PackageVersionFinal)' == 'False'">$(BuildPackageDependsOn);DetectGitRevision</BuildPackageDependsOn>
@@ -35,7 +38,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ServerBuildFlags Include="-A Win32" />
+        <ServerBuildFlags Include="-A $(Platform)" />
         <ServerBuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
@@ -62,7 +65,7 @@
     <Target Name="BuildServer" DependsOnTargets="InitServer">
         <MSBuild
             Projects="$(CppBuildDir)\beefweb.sln"
-            Properties="Configuration=$(Configuration);Platform=Win32" />
+            Properties="Configuration=$(Configuration);Platform=$(Platform)" />
     </Target>
 
     <Target Name="InitJs">
@@ -104,6 +107,8 @@
         <PropertyGroup>
             <PackageFullName>$(PackageFile)-$(PackageVersion)</PackageFullName>
             <PackageFullName Condition="'$(PackageVersionFinal)' == 'False'">$(PackageFullName)_$(GitRevision)</PackageFullName>
+            <PackageFullName>$(PackageFullName)-$(PackageArch)</PackageFullName>
+
             <PluginBuildDir>$(CppBuildDir)\server\foobar2000\$(Configuration)</PluginBuildDir>
             <PluginDebugInfoFile>$([System.IO.Path]::ChangeExtension($(PluginFile), '.pdb'))</PluginDebugInfoFile>
             <PackageLicensesFile>$(ProjectName).licenses.zip</PackageLicensesFile>
