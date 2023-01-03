@@ -5,10 +5,9 @@
     <PropertyGroup>
         <Platform Condition="'$(Platform)' == ''">Win32</Platform>
         <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
-        <ConfigLower>$(Configuration.ToLowerInvariant())</ConfigLower>
 
         <ConfigWebui>release</ConfigWebui>
-        <ConfigWebui Condition="'$(ConfigLower)' == 'debug'">debug</ConfigWebui>
+        <ConfigWebui Condition="'$(Configuration)' == 'Debug'">debug</ConfigWebui>
 
         <EnableTests Condition="'$(EnableTests)' == ''">False</EnableTests>
         <EnableDebugInfo>False</EnableDebugInfo>
