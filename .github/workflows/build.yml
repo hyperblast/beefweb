@@ -54,7 +54,6 @@ jobs:
 
     env:
       BUILD_TYPE: RelWithDebInfo
-      BUILD_TYPE_L: relwithdebinfo
 
     steps:
     - name: Set git to use LF
@@ -87,5 +86,5 @@ jobs:
         name: beefweb_windows
         if-no-files-found: error
         path: |
-          build\${{ env.BUILD_TYPE_L }}\*.fb2k-component
-          build\${{ env.BUILD_TYPE_L }}\*.zip
+          build\${{ env.BUILD_TYPE }}\*.fb2k-component
+          build\${{ env.BUILD_TYPE }}\*.zip
