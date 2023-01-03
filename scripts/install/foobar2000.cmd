@@ -1,18 +1,18 @@
-setlocal
+@setlocal
 
-if "%1" == "v1.3" (
-    set pkg_file=foobar2000_v1.3.20.exe
-    goto :install
+@if "%1" == "v1.3" (
+    @set pkg_file=foobar2000_v1.3.20.exe
+    @goto :install
 )
 
-if "%1" == "v1.4" (
-    set pkg_file=foobar2000_v1.4.3.exe
-    goto :install
+@if "%1" == "v1.4" (
+    @set pkg_file=foobar2000_v1.4.3.exe
+    @goto :install
 )
 
-if "%1" == "v1.5" (
-    set pkg_file=foobar2000_v1.5.1.exe
-    goto :install
+@if "%1" == "v1.5" (
+    @set pkg_file=foobar2000_v1.5.1.exe
+    @goto :install
 )
 
 @if "%1" == "v1.6" (
@@ -33,7 +33,7 @@ if "%1" == "v1.5" (
 @echo Usage: %~nx0 version
 @echo Supported versions: v1.3 v1.4 v1.5 v1.6 v2.0 v2.0-x64
 @cmd /c exit 1
-goto :end
+@goto :end
 
 :install
 
