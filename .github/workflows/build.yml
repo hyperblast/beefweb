@@ -70,9 +70,7 @@ jobs:
         arch: win32
 
     - name: Install tools
-      run: |
-        cmd /c ci\github\install.cmd
-        cmd /c "echo %cd%\tools\patch >> %GITHUB_PATH%"
+      run: cmd /c ci\github\install.cmd
 
     - name: Build
       run: cmd /c ci\github\build.cmd
