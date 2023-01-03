@@ -1,5 +1,5 @@
 setlocal
-cd "%~dp0..\.."
+cd "%~dp0.."
 
 cmd /c scripts\install\patch.cmd
 @if errorlevel 1 goto :end

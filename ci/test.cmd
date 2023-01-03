@@ -1,5 +1,5 @@
 setlocal
-cd "%~dp0..\.."
+cd "%~dp0.."
 
 set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 
