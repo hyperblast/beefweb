@@ -1,15 +1,5 @@
 @setlocal
 
-@if "%1" == "v1.3" (
-    @set pkg_file=foobar2000_v1.3.20.exe
-    @goto :install
-)
-
-@if "%1" == "v1.4" (
-    @set pkg_file=foobar2000_v1.4.3.exe
-    @goto :install
-)
-
 @if "%1" == "v1.5" (
     @set pkg_file=foobar2000_v1.5.1.exe
     @goto :install

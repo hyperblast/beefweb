@@ -4,16 +4,18 @@ cd "%~dp0..\.."
 cmd /c scripts\install\patch.cmd
 @if errorlevel 1 goto :end
 
-cmd /c scripts\install\foobar2000.cmd v1.3
-@if errorlevel 1 goto :end
+if "%Platform%" == "x64" (
+    cmd /c scripts\install\foobar2000.cmd v2.0-x64
+    @if errorlevel 1 goto :end
+) else (
+    cmd /c scripts\install\foobar2000.cmd v1.5
+    @if errorlevel 1 goto :end
 
-cmd /c scripts\install\foobar2000.cmd v1.4
-@if errorlevel 1 goto :end
+    cmd /c scripts\install\foobar2000.cmd v1.6
+    @if errorlevel 1 goto :end
 
-cmd /c scripts\install\foobar2000.cmd v1.5
-@if errorlevel 1 goto :end
-
-cmd /c scripts\install\foobar2000.cmd v1.6
-@if errorlevel 1 goto :end
+    cmd /c scripts\install\foobar2000.cmd v2.0
+    @if errorlevel 1 goto :end
+)
 
 :end
