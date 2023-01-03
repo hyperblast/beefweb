@@ -20,8 +20,18 @@ if "%1" == "v1.5" (
     @goto :install
 )
 
+@if "%1" == "v2.0" (
+    @set pkg_file=foobar2000_v2.0_beta_20.exe
+    @goto :install
+)
+
+@if "%1" == "v2.0-x64" (
+    @set pkg_file=foobar2000-x64_v2.0_beta_20.exe
+    @goto :install
+)
+
 @echo Usage: %~nx0 version
-@echo Supported versions: v1.3 v1.4 v1.5 v1.6
+@echo Supported versions: v1.3 v1.4 v1.5 v1.6 v2.0 v2.0-x64
 @cmd /c exit 1
 goto :end
 
