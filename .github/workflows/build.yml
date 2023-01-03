@@ -20,7 +20,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Prepare docker image
       run: ci/prepare.sh
@@ -38,7 +38,7 @@ jobs:
       run: ci/test.sh
 
     - name: Upload binaries
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: beefweb_linux
         if-no-files-found: error
@@ -69,7 +69,7 @@ jobs:
         git config --global core.eol lf
 
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
@@ -87,7 +87,7 @@ jobs:
       run: cmd /c ci\test.cmd
 
     - name: Upload binaries
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: beefweb_windows
         if-no-files-found: error
