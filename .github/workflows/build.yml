@@ -13,6 +13,7 @@ on:
 jobs:
 
   build_linux:
+
     runs-on: ubuntu-20.04
 
     env:
@@ -94,3 +95,32 @@ jobs:
         path: |
           build\${{ env.BUILD_TYPE }}\*.fb2k-component
           build\${{ env.BUILD_TYPE }}\*.zip
+
+  merge_packages:
+
+    runs-on: ubuntu-20.04
+
+    needs: build_windows
+
+    - name: Download original packages
+      uses: actions/download-artifact@v3
+      with:
+        name: beefweb_windows
+        path: input
+
+    - name: Merge packages
+      run: |
+        mkdir -p work/x64 output
+        cd work
+        unzip ../input/*-x86.fb2k-component
+        cd x64
+        unzip ../../input/*-x64.fb2k-component foo_beefweb.dll
+        cd ..
+        zip -r ../output/foo_beefweb.fb2k-component *
+
+    - name: Upload merged package
+      uses: actions/upload-artifact@v3
+      with:
+        name: beefweb_windows_unified
+        if-no-files-found: error
+        path: output/*.fb2k-component
