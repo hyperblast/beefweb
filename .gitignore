@@ -13,9 +13,9 @@ js/client/node_modules/*
 js/webui/build/*
 js/webui/node_modules/*
 
-server/.idea/*
-server/build/*
-server/extlibs/.cache/*
+cpp/.idea/*
+cpp/build/*
+cpp/extlibs/.cache/*
 
 *.user
 *.orig
