@@ -17,7 +17,7 @@
         <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
 
         <CppSourceDir>$(RootDir)\cpp</CppSourceDir>
-        <CppBuildDir>$(CppSourceDir)\build\$(ConfigLower)</CppBuildDir>
+        <CppBuildDir>$(CppSourceDir)\build\$(Configuration)</CppBuildDir>
 
         <JsSourceDir>$(RootDir)\js</JsSourceDir>
 
@@ -26,7 +26,7 @@
         <WebuiSourceDir>$(JsSourceDir)\webui</WebuiSourceDir>
         <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigWebui)</WebuiBuildDir>
 
-        <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
+        <PackageBuildDir>$(RootDir)\build\$(Configuration)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
 
         <BuildPackageDependsOn>CleanPackage</BuildPackageDependsOn>
