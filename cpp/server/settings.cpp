@@ -82,20 +82,20 @@ bool SettingsData::isAllowedPath(const Path& path) const
 
 void SettingsData::loadAll(const char* appName)
 {
-    load(getBundledConfigFile());
+    loadFromFile(getBundledConfigFile());
 
     auto configPath = getUserConfigFile(appName);
     if (!configPath.empty())
-        load(configPath);
+        loadFromFile(configPath);
 
     configPath = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
     if (!configPath.empty())
-        load(configPath);
+        loadFromFile(configPath);
 
     initialize();
 }
 
-bool SettingsData::load(const Path& path)
+bool SettingsData::loadFromFile(const Path& path)
 {
     auto result = false;
 
@@ -106,14 +106,14 @@ bool SettingsData::load(const Path& path)
 
         logInfo("loading config file: %s", pathToUtf8(path).c_str());
         auto data = file_io::readToEnd(file.get());
-        load(Json::parse(data));
+        loadFromJson(Json::parse(data));
         result = true;
     });
 
     return result;
 }
 
-void SettingsData::load(const Json& json)
+void SettingsData::loadFromJson(const Json& json)
 {
     if (!json.is_object())
         throw std::invalid_argument("Expected json object");

@@ -32,8 +32,8 @@ public:
     void initialize();
     bool isAllowedPath(const Path& path) const;
 
-    void load(const Json& json);
-    bool load(const Path& path);
+    void loadFromJson(const Json& json);
+    bool loadFromFile(const Path& path);
     void loadAll(const char* appName);
 };
 
