@@ -13,7 +13,7 @@ set API_TEST_ERROR=0
 
 @pushd js\api_tests
 
-if "%Platform%" == "x64" (
+if "%BUILD_ARCH%" == "x64" (
     @echo.
     @echo === Running API tests on foobar2000 v2.0-x64 ===
     @echo.
