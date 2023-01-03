@@ -23,19 +23,19 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Prepare docker image
-      run: ci/github/prepare.sh
+      run: ci/prepare.sh
 
     - name: Install tools
-      run: ci/github/install.sh
+      run: ci/install.sh
 
     - name: Build server
-      run: ci/github/build-server.sh
+      run: ci/build-server.sh
 
     - name: Build rest
-      run: ci/github/build-rest.sh
+      run: ci/build-rest.sh
 
     - name: Test
-      run: ci/github/test.sh
+      run: ci/test.sh
 
     - name: Upload binaries
       uses: actions/upload-artifact@v2
@@ -78,13 +78,13 @@ jobs:
         arch: ${{ matrix.arch }}
 
     - name: Install tools
-      run: cmd /c ci\github\install.cmd
+      run: cmd /c ci\install.cmd
 
     - name: Build
-      run: cmd /c ci\github\build.cmd
+      run: cmd /c ci\build.cmd
 
     - name: Test
-      run: cmd /c ci\github\test.cmd
+      run: cmd /c ci\test.cmd
 
     - name: Upload binaries
       uses: actions/upload-artifact@v2
