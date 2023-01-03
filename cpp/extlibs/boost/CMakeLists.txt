@@ -67,9 +67,9 @@ if(OS_POSIX)
         PREFIX
             ${EXTLIB_INSTALL_DIR}
         URL
-            https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.bz2
+            https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_1_81_0.tar.bz2
         URL_HASH
-            SHA256=f0397ba6e982c4450f27bf32a2a83292aba035b827a5623a14636ea583318c41
+            SHA256=71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa
         DOWNLOAD_DIR
             ${EXTLIB_CACHE_DIR}/boost
         BUILD_IN_SOURCE 1
@@ -91,9 +91,9 @@ if(OS_WINDOWS)
         PREFIX
             ${EXTLIB_INSTALL_DIR}
         URL
-            https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.zip
+            https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_1_81_0.zip
         URL_HASH
-            SHA256=0fd43bb53580ca54afc7221683dfe8c6e3855b351cd6dce53b1a24a7d7fbeedd
+            SHA256=6e689b266b27d4db57f648b1e5c905c8acd6716b46716a12f6fc73fc80af842e
         DOWNLOAD_DIR
             ${EXTLIB_CACHE_DIR}/boost
         BUILD_IN_SOURCE 1
