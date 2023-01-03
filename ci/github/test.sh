@@ -12,7 +12,7 @@ function banner
 function run_server_tests
 {
     banner 'Running server tests'
-    server/build/$BUILD_TYPE/src/tests/core_tests
+    cpp/build/$BUILD_TYPE/server/tests/core_tests
 }
 
 function run_api_tests

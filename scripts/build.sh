@@ -122,9 +122,9 @@ pkg_build_dir=$(pwd)/build/$build_type
 pkg_tmp_dir=$pkg_build_dir/tmp
 pkg_licenses_file=$project_name.licenses.tar.gz
 
-server_src_dir=$(pwd)/server
-server_build_dir=$server_src_dir/build/$build_type
-server_plugin_file=$server_build_dir/src/deadbeef/$plugin_file
+cpp_src_dir=$(pwd)/cpp
+cpp_build_dir=$cpp_src_dir/build/$build_type
+server_plugin_file=$cpp_build_dir/server/deadbeef/$plugin_file
 
 js_src_dir=$(pwd)/js
 js_client_src_dir=$js_src_dir/client
@@ -166,15 +166,15 @@ function build_server
 {
     banner 'Building server'
 
-    rm -rf $server_build_dir
-    mkdir -p $server_build_dir
-    cd $server_build_dir
+    rm -rf $cpp_build_dir
+    mkdir -p $cpp_build_dir
+    cd $cpp_build_dir
 
     cmake \
         -DCMAKE_BUILD_TYPE=$build_type_cmake \
         -DENABLE_TESTS=$enable_tests \
         $cmake_options \
-        $server_src_dir
+        $cpp_src_dir
 
     if ! cmake --build . ; then
         if [ "$verbose" = ON ]; then
@@ -225,7 +225,7 @@ function build_pkg()
     cd $pkg_tmp_dir
 
     cp -v -t . $server_plugin_file
-    cp -v -t . $server_src_dir/extlibs/server-licenses.txt
+    cp -v -t . $cpp_src_dir/extlibs/server-licenses.txt
 
     cp -v -t $webui_root $webui_build_dir/*.*
     (

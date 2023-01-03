@@ -15,8 +15,9 @@
         <EnableDebugInfo Condition="'$(Configuration)' == 'RelWithDebInfo'">True</EnableDebugInfo>
 
         <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
-        <ServerSourceDir>$(RootDir)\server</ServerSourceDir>
-        <ServerBuildDir>$(ServerSourceDir)\build\$(ConfigLower)</ServerBuildDir>
+
+        <CppSourceDir>$(RootDir)\cpp</CppSourceDir>
+        <CppBuildDir>$(CppSourceDir)\build\$(ConfigLower)</CppBuildDir>
 
         <JsSourceDir>$(RootDir)\js</JsSourceDir>
 
@@ -27,6 +28,7 @@
 
         <PackageBuildDir>$(RootDir)\build\$(ConfigLower)</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
+
         <BuildPackageDependsOn>CleanPackage</BuildPackageDependsOn>
         <BuildPackageDependsOn Condition="'$(PackageVersionFinal)' == 'False'">$(BuildPackageDependsOn);DetectGitRevision</BuildPackageDependsOn>
         <BuildPackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(BuildPackageDependsOn);BuildServer;BuildWebui</BuildPackageDependsOn>
@@ -44,22 +46,22 @@
 
     <Target Name="CleanServer">
         <!-- <RemoveDir> can't handle long path names used by Boost -->
-        <Exec Command="rmdir /s /q &quot;$(ServerBuildDir)&quot;" />
+        <Exec Command="rmdir /s /q &quot;$(CppBuildDir)&quot;" />
     </Target>
 
     <Target Name="InitServer" DependsOnTargets="CleanServer">
         <CreateItem Include="$(ServerBuildFlags)">
             <Output TaskParameter="Include" ItemName="ServerBuildFlags" />
         </CreateItem>
-        <MakeDir Directories="$(ServerBuildDir)" />
+        <MakeDir Directories="$(CppBuildDir)" />
         <Exec
-            Command="cmake @(ServerBuildFlags -> '%(Identity)', ' ') $(ServerSourceDir)"
-            WorkingDirectory="$(ServerBuildDir)" />
+            Command="cmake @(ServerBuildFlags -> '%(Identity)', ' ') $(CppSourceDir)"
+            WorkingDirectory="$(CppBuildDir)" />
     </Target>
 
     <Target Name="BuildServer" DependsOnTargets="InitServer">
         <MSBuild
-            Projects="$(ServerBuildDir)\beefweb.sln"
+            Projects="$(CppBuildDir)\beefweb.sln"
             Properties="Configuration=$(Configuration);Platform=Win32" />
     </Target>
 
@@ -102,7 +104,7 @@
         <PropertyGroup>
             <PackageFullName>$(PackageFile)-$(PackageVersion)</PackageFullName>
             <PackageFullName Condition="'$(PackageVersionFinal)' == 'False'">$(PackageFullName)_$(GitRevision)</PackageFullName>
-            <PluginBuildDir>$(ServerBuildDir)\src\foobar2000\$(Configuration)</PluginBuildDir>
+            <PluginBuildDir>$(CppBuildDir)\server\foobar2000\$(Configuration)</PluginBuildDir>
             <PluginDebugInfoFile>$([System.IO.Path]::ChangeExtension($(PluginFile), '.pdb'))</PluginDebugInfoFile>
             <PackageLicensesFile>$(ProjectName).licenses.zip</PackageLicensesFile>
         </PropertyGroup>
@@ -123,7 +125,7 @@
             DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
         <Exec
             Command="type server-licenses.txt | find /v &quot;ThisLineDoesNotExistInInputFile&quot; > $(PackageTempDir)\server-licenses.txt"
-            WorkingDirectory="$(ServerSourceDir)\extlibs" />
+            WorkingDirectory="$(CppSourceDir)\extlibs" />
         <Exec
             Command="yarn licenses generate-disclaimer --ignore-engines --ignore-platform --prod | find /v &quot;info &quot; > $(PackageTempDir)\webui-licenses.txt"
             WorkingDirectory="$(WebuiSourceDir)" />

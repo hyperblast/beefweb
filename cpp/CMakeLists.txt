@@ -74,4 +74,4 @@ print_status()
 add_custom_target(ext_all)
 
 add_subdirectory(extlibs)
-add_subdirectory(src)
+add_subdirectory(server)
