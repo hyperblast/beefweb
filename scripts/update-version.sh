@@ -65,7 +65,7 @@ function update_app
     sed -i "s|<PackageVersion>.*|<PackageVersion>$version</PackageVersion>|" config.props
     sed -i "s|<PackageVersionFinal>.*|<PackageVersionFinal>$final_bool</PackageVersionFinal>|" config.props
 
-    cd "$root_dir/server/src"
+    cd "$root_dir/cpp/server"
     sed -i "s|#define MSRV_VERSION_MAJOR.*|#define MSRV_VERSION_MAJOR      $major|" project_info.hpp
     sed -i "s|#define MSRV_VERSION_MINOR.*|#define MSRV_VERSION_MINOR      $minor|" project_info.hpp
     sed -i "s|#define MSRV_VERSION_FINAL.*|#define MSRV_VERSION_FINAL      $final|" project_info.hpp
