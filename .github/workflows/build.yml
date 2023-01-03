@@ -102,6 +102,7 @@ jobs:
 
     needs: build_windows
 
+    steps:
     - name: Download original packages
       uses: actions/download-artifact@v3
       with:
