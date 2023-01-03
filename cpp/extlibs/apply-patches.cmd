@@ -1,15 +1,23 @@
+@setlocal
+
 @if "%1" == "" @goto :usage
 
 @set src_dir=%~dp0%1
+@set patch_tool_dir=%~dp0..\..\tools\patch
+
+@if exist "%patch_tool_dir%\patch.exe" set PATH=%patch_tool_dir%;%PATH%
 
 @call :apply_patches "%src_dir%\patches"
-if %errorlevel% neq 0 goto :error
+@if errorlevel 1 goto :error
+
 @call :apply_patches "%src_dir%\patches.windows"
-if %errorlevel% neq 0 goto :error
+@if errorlevel 1 goto :error
+
 @call :copy_files "%src_dir%\files"
-if %errorlevel% neq 0 goto :error
+@if errorlevel 1 goto :error
+
 @call :copy_files "%src_dir%\files.windows"
-if %errorlevel% neq 0 goto :error
+@if errorlevel 1 goto :error
 
 @goto :end
 
@@ -18,8 +26,8 @@ if %errorlevel% neq 0 goto :error
 
 @for %%f in (%1\*.patch) do @(
     @echo applying %%~nxf
-    @patch -p1 --batch --binary < "%%f"
-    @if errorlevel 1 goto :end
+    @patch.exe -p1 --batch --binary < "%%f"
+    @if errorlevel 1 goto :error
 )
 
 @goto :end
