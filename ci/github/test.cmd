@@ -20,6 +20,7 @@ if "%BUILD_ARCH%" == "x64" (
     set BEEFWEB_TEST_FOOBAR2000_VERSION=v2.0-x64
     cmd /c yarn test
     @if errorlevel 1 set API_TEST_ERROR=1
+    @goto :end
 ) else (
     @echo.
     @echo === Running API tests on foobar2000 v1.5 ===
