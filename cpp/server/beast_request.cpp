@@ -209,8 +209,8 @@ HttpKeyValueMap BeastRequest::headers()
     for (auto& header : *request_)
     {
         headers.emplace(
-            header.name_string().to_string(),
-            header.value().to_string());
+            static_cast<std::string>(header.name_string()),
+            static_cast<std::string>(header.value()));
     }
 
     return headers;
