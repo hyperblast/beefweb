@@ -5,9 +5,9 @@ ExternalProject_Add(
     PREFIX
         ${EXTLIB_INSTALL_DIR}
     URL
-        https://github.com/catchorg/Catch2/releases/download/v2.13.0/catch.hpp
+        https://github.com/catchorg/Catch2/releases/download/v2.13.10/catch.hpp
     URL_HASH
-        SHA256=a1f66a0871edcb23231cba4b2fbf1bd7afa91488beed389c52a3bd641b89dae4
+        SHA256=3725c0f0a75f376a5005dde31ead0feb8f7da7507644c201b814443de8355170
     DOWNLOAD_DIR
         ${EXTLIB_CACHE_DIR}/catch
     DOWNLOAD_NO_EXTRACT 1
