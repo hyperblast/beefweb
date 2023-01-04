@@ -114,10 +114,8 @@ jobs:
         mkdir -p work/x64 output
         cd work
         unzip ../input/*-x86.fb2k-component
-        cd x64
-        unzip ../../input/*-x64.fb2k-component foo_beefweb.dll
-        cd ..
-        zip -r ../output/foo_beefweb.fb2k-component *
+        (cd x64 && unzip ../../input/*-x64.fb2k-component foo_beefweb.dll)
+        zip -r ../output/$(basename ../input/*-x86.fb2k-component -x86.fb2k-component).fb2k-component *
 
     - name: Upload merged package
       uses: actions/upload-artifact@v3
