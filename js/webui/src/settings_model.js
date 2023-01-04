@@ -32,6 +32,11 @@ export const MediaSize = Object.freeze({
     large: 'large',
 });
 
+export const UITheme = Object.freeze({
+    light: 'light',
+    dark: 'dark',
+})
+
 export const MediaSizeIndex = Object.freeze({
     [MediaSize.small]: 0,
     [MediaSize.medium]: 1,
@@ -64,6 +69,7 @@ const defaultSettingProps = Object.freeze({
  * @property {boolean} touchMode
  * @property {string} mediaSize
  * @property {boolean} showPlaybackInfo
+ * @property {string} uiTheme
  */
 export default class SettingsModel extends EventEmitter
 {
@@ -129,6 +135,20 @@ export default class SettingsModel extends EventEmitter
                 [InputMode.auto]: 'Auto',
                 [InputMode.forceMouse]: 'Force mouse',
                 [InputMode.forceTouch]: 'Force touch'
+            }
+        });
+
+        this.define({
+            key: 'uiTheme',
+            type: SettingType.enum,
+            defaultValue: UITheme.light,
+            title: 'UI Theme',
+            persistent: true,
+            cssVisible: true,
+            enumKeys: UITheme,
+            enumNames: {
+                [UITheme.light]: 'Light',
+                [UITheme.dark]: 'Dark',
             }
         });
 

@@ -27,6 +27,7 @@ class GeneralSettings extends React.PureComponent
 
         return (
             <form>
+                <SettingEditor settingKey='uiTheme' />
                 <SettingEditor settingKey='windowTitleExpression' />
                 <SettingEditor settingKey='fullWidth' />
                 <SettingEditor settingKey='fontSize' />
