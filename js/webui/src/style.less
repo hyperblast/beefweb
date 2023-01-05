@@ -14,7 +14,7 @@
 .dropdown-box() {
     padding: 0.5rem;
     background: var(--color-background);
-    box-shadow: 0.0625rem 0.0625rem 0.0625rem 0 rgba(189,189,189,0.7);
+    box-shadow: 0.0625rem 0.0625rem 0.0625rem 0 var(--color-shadow);
 
     .border();
 }
@@ -76,14 +76,20 @@ body {
     --color-border: #BDBDBD;
     --color-spacer: #EEEEEE;
     --color-background: #FFFFFF;
+    --color-shadow: rgba(189, 189, 189, 0.7);
+    --color-play-button: #006600;
+    --color-stop-button: #b30000;
 }
 
 .st-uitheme-dark {
-    --color-text: #FFFFFF;
-    --color-hover: #E0E0E0;
-    --color-border: #BDBDBD;
-    --color-spacer: #333333;
-    --color-background: #000000;
+    --color-text: #ebf0ea;
+    --color-hover: #b0b0b0;
+    --color-border: #808080;
+    --color-spacer: #1b2934;
+    --color-background: #383e4c;
+    --color-shadow: rgba(0, 0, 0, 0.7);
+    --color-play-button: #00aa00;
+    --color-stop-button: #e30000;
 }
 
 /* Elements */
@@ -620,11 +626,11 @@ body {
 }
 
 .playback-control .icon-media-play > use {
-    fill: #006600;
+    fill: var(--color-play-button);
 }
 
 .playback-control .icon-media-stop > use {
-    fill: #b30000;
+    fill: var(--color-stop-button);
 }
 
 .position-control {
