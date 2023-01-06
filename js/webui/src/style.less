@@ -19,6 +19,14 @@
     .border();
 }
 
+.input-element() {
+    background: var(--color-background);
+    color: var(--color-text);
+    height: 2rem;
+
+    .border();
+}
+
 .no-text-overflow() {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -414,6 +422,8 @@ body {
     display: block;
     padding: 0.125rem;
     width: 100%;
+
+    .input-element();
 }
 
 .dialog-header {
@@ -681,6 +691,11 @@ body {
     margin-left: 0.25rem;
 }
 
+.setting-editor-enum,
+.setting-editor-text {
+    .input-element();
+}
+
 .st-mediasize-medium-up {
     .settings-form {
         display: grid;
@@ -690,6 +705,7 @@ body {
 
     .setting-editor-label {
         text-align: right;
+        padding-top: 0.5rem;
     }
 
     .setting-editor-enum {
