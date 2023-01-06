@@ -677,16 +677,51 @@ body {
     overflow: auto;
 }
 
-.setting-editor {
-    display: block;
-    margin-bottom: 0.5rem;
+.setting-editor-bool-label {
+    margin-left: 0.25rem;
+}
 
-    & > span {
-        margin: 0 0.5rem;
+.st-mediasize-medium-up {
+    .settings-form {
+        display: grid;
+        grid-gap: 0.5rem;
+        grid-template-columns: 13rem 1fr;
     }
 
-    & > span:first-child {
-        margin-left: 0;
+    .setting-editor-label {
+        text-align: right;
+    }
+
+    .setting-editor-enum {
+        max-width: 15rem;
+    }
+
+    .setting-editor-text {
+        max-width: 30rem;
+    }
+
+    .setting-editor-bool {
+        grid-column: 2;
+    }
+}
+
+.st-mediasize-small-down {
+    .setting-editor-label,
+    .setting-editor-bool,
+    .setting-editor-enum,
+    .setting-editor-text {
+        display: block;
+        width: 100%;
+    }
+
+    .setting-editor-label {
+        margin-bottom: 0.5rem;
+    }
+
+    .setting-editor-bool,
+    .setting-editor-enum,
+    .setting-editor-text {
+        margin-bottom: 1rem;
     }
 }
 

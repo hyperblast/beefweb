@@ -2,6 +2,7 @@ import React from 'react'
 import SettingEditor from './setting_editor';
 import ModelBinding from './model_binding';
 import ServiceContext from './service_context';
+import { MediaSize } from "./settings_model";
 
 class GeneralSettings extends React.PureComponent
 {
@@ -17,19 +18,22 @@ class GeneralSettings extends React.PureComponent
         const { showPlaybackInfo } = this.context.settingsModel;
 
         return {
-            showPlaybackInfo
+            showPlaybackInfo,
+            showFullWidth: this.context.settingsModel.mediaSizeUp(MediaSize.large),
         };
     }
 
     render()
     {
-        const { showPlaybackInfo } = this.state;
+        const { showPlaybackInfo, showFullWidth } = this.state;
 
         return (
-            <form>
+            <form className='settings-form'>
                 <SettingEditor settingKey='uiTheme' />
                 <SettingEditor settingKey='windowTitleExpression' />
-                <SettingEditor settingKey='fullWidth' />
+                {
+                    showFullWidth ? <SettingEditor settingKey='fullWidth' /> : null
+                }
                 <SettingEditor settingKey='fontSize' />
                 <SettingEditor settingKey='inputMode' />
                 <SettingEditor settingKey='defaultAddAction' />
@@ -43,5 +47,5 @@ class GeneralSettings extends React.PureComponent
 GeneralSettings.contextType = ServiceContext;
 
 export default ModelBinding(GeneralSettings, {
-    settingsModel: 'showPlaybackInfoChange',
+    settingsModel: ['showPlaybackInfoChange', 'mediaSizeChange'],
 });
