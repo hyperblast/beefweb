@@ -63,9 +63,15 @@ Get `ddb_beefweb-*.tar.gz` from `build/release` directory.
 You could also build debug version by switching `--release` to `--debug`.
 
 #### foobar2000
-You'll need to install Visual Studio (currently tested with VS2015 Community).
+You'll need to install Visual Studio (currently tested with VS2022 Community).
+
 The following programs should be installed in addition:
-`git` version control system, `node` runtime, `yarn` package manager, `cmake` build system, `7z` archiver and `curl` HTTP client.
+- `git` version control system
+- `node` runtime
+- `yarn` package manager (`npm i -g yarn`)
+- `cmake` build system (could be installed with Visual Studio or separately)
+- `7z` archiver
+
 These programs should be available in `PATH`.
 
 Open Visual Studio command prompt, navigate to project directory, run the following command:
