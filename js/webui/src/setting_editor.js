@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import objectValues from 'lodash/values'
 import SettingsModel, { SettingType } from './settings_model'
 import ServiceContext from './service_context';
+import kebabCase from 'lodash/kebabCase'
 
 class BoolSettingEditor extends React.PureComponent
 {
@@ -50,9 +51,9 @@ class BoolSettingEditor extends React.PureComponent
         const { disabled } = this.props;
 
         return (
-            <label className='setting-editor setting-editor-bool'>
+            <label className='setting-editor-bool'>
                 <input type='checkbox' checked={value} onChange={this.handleInput} disabled={disabled} />
-                <span>{metadata.title}</span>
+                <span className='setting-editor-bool-label'>{metadata.title}</span>
             </label>
         );
     }
@@ -93,7 +94,7 @@ class EnumSettingEditor extends React.PureComponent
 
         return {
             value: settingsModel[settingKey],
-            metadata:settingsModel.metadata[settingKey]
+            metadata: settingsModel.metadata[settingKey]
         };
     }
 
@@ -118,11 +119,17 @@ class EnumSettingEditor extends React.PureComponent
             );
         });
 
+        const id = kebabCase(this.props.settingKey);
+
         return (
-            <label className='setting-editor setting-editor-enum'>
-                <span>{metadata.title + ':'}</span>
-                <select value={value} onChange={this.handleInput} disabled={disabled}>{ options }</select>
-            </label>
+            <React.Fragment>
+                <label className='setting-editor-label' htmlFor={id}>{metadata.title + ':'}</label>
+                <select
+                    id={id}
+                    className='setting-editor-enum'
+                    value={value}
+                    onChange={this.handleInput} disabled={disabled}>{ options }</select>
+            </React.Fragment>
         );
     }
 }
@@ -179,11 +186,13 @@ class TextSettingEditor extends React.PureComponent
         const { value, metadata } = this.state;
         const { disabled } = this.props;
 
+        const id = kebabCase(this.props.settingKey);
+
         return (
-            <label className='setting-editor setting-editor-text'>
-                <span>{metadata.title + ':'}</span>
-                <input value={value} onChange={this.handleInput} disabled={disabled} />
-            </label>
+            <React.Fragment>
+                <label htmlFor={id} className='setting-editor-label'>{metadata.title + ':'}</label>
+                <input id={id} className='setting-editor-text' value={value} onChange={this.handleInput} disabled={disabled} />
+            </React.Fragment>
         );
     }
 }
