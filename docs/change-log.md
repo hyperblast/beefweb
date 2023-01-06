@@ -1,4 +1,12 @@
 ### Changes in v0.6 (not released):
+- Added dark theme for web UI
+- Added x64 builds of foobar2000 plugin
+- Improved settings screen styling
+- "Use full screen width" checkbox is no longer displayed on small screens
+- Binaries for foobar2000 are built with VS2022
+- Updated foobar2000 SDK to 2022-11-16
+- Updated boost to v1.81.0
+- Updated nlohmann/json to v3.11.2
 - Removed support for browsers without native EventSource implementation
 
 ### Changes in v0.5 (released 2021-10-24):
