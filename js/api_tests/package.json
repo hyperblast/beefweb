@@ -10,7 +10,7 @@
   "scripts": {
     "test": "qunit src/main.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "axios": "^0.21.2",
     "eventsource": "^1.0.5",
     "lodash": "^4.17.21",
