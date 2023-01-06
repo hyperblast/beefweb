@@ -83,10 +83,10 @@ export default function ModelBinding(InnerComponent, eventBindings)
                     continue;
 
                 if (oldModel)
-                    oldModel.off(event, this.handleModelUpdate);
+                    oldModel.off(binding.event, this.handleModelUpdate);
 
                 if (newModel)
-                    newModel.on(event, this.handleModelUpdate);
+                    newModel.on(binding.event, this.handleModelUpdate);
 
                 wantUpdate = true;
             }
