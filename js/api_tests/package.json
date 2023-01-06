@@ -11,7 +11,7 @@
     "test": "qunit src/main.js"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.2",
     "eventsource": "^1.0.5",
     "lodash": "^4.17.21",
     "mkdirp": "^0.5.1",
