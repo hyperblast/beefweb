@@ -111,11 +111,14 @@ jobs:
 
     - name: Merge packages
       run: |
+        pkg_ext=fb2k-component
+        pkg_32=$(pwd)/input/*-x86.$pkg_ext
+        pkg_64=$(pwd)/input/*-x64.$pkg_ext
+        pkg_single=$(pwd)/output/$(basename $pkg_32 -x86.$pkg_ext).$pkg_ext
         mkdir -p work/x64 output
-        cd work
-        unzip ../input/*-x86.fb2k-component
-        (cd x64 && unzip ../../input/*-x64.fb2k-component foo_beefweb.dll)
-        zip -r ../output/$(basename ../input/*-x86.fb2k-component -x86.fb2k-component).fb2k-component *
+        (cd work/x64 && unzip $pkg_64 foo_beefweb.dll)
+        cp $pkg_32 $pkg_single
+        (cd work && zip -r -9 $pkg_single *)
 
     - name: Upload merged package
       uses: actions/upload-artifact@v3
