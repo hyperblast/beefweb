@@ -26,7 +26,7 @@ q.test('get from folder', async assert =>
     await client.addPlaylistItems(0, [tracks.t1]);
     await client.waitPlaybackMetadata();
 
-    const expected = await getFile('cover-black.png');
+    const expected = await getFile('cover.png');
     const response = await getArtwork(0, 0);
 
     assert.equal(response.status, 200);

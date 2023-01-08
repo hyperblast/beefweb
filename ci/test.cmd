@@ -13,14 +13,13 @@ set API_TEST_ERROR=0
 
 @pushd js\api_tests
 
-if "%BUILD_ARCH%" == "x64" (
+@if "%BUILD_ARCH%" == "x64" (
     @echo.
     @echo === Running API tests on foobar2000 v2.0-x64 ===
     @echo.
     set BEEFWEB_TEST_FOOBAR2000_VERSION=v2.0-x64
     cmd /c yarn test
-    :: Known failure:
-    :: @if errorlevel 1 set API_TEST_ERROR=1
+    @if errorlevel 1 set API_TEST_ERROR=1
 ) else (
     @echo.
     @echo === Running API tests on foobar2000 v1.5 ===
@@ -42,8 +41,7 @@ if "%BUILD_ARCH%" == "x64" (
     @echo.
     set BEEFWEB_TEST_FOOBAR2000_VERSION=v2.0
     cmd /c yarn test
-    :: Known failure:
-    :: @if errorlevel 1 set API_TEST_ERROR=1
+    @if errorlevel 1 set API_TEST_ERROR=1
 )
 
 @popd
