@@ -114,11 +114,11 @@ jobs:
         pkg_ext=fb2k-component
         pkg_32=$(pwd)/input/*-x86.$pkg_ext
         pkg_64=$(pwd)/input/*-x64.$pkg_ext
-        pkg_single=$(pwd)/output/$(basename $pkg_32 -x86.$pkg_ext).$pkg_ext
+        pkg_unified=$(pwd)/output/$(basename $pkg_32 -x86.$pkg_ext).$pkg_ext
         mkdir -p work/x64 output
-        (cd work/x64 && unzip $pkg_64 foo_beefweb.dll)
-        cp $pkg_32 $pkg_single
-        (cd work && zip -r -9 $pkg_single *)
+        (cd work/x64 && unzip $pkg_64 '*.dll')
+        cp $pkg_32 $pkg_unified
+        (cd work && zip -r -9 $pkg_unified *)
 
     - name: Upload merged package
       uses: actions/upload-artifact@v3
