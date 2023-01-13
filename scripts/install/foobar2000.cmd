@@ -11,12 +11,12 @@
 )
 
 @if "%1" == "v2.0" (
-    @set pkg_file=foobar2000_v2.0_beta_22.exe
+    @set pkg_file=foobar2000_v2.0_beta_20.exe
     @goto :install
 )
 
 @if "%1" == "v2.0-x64" (
-    @set pkg_file=foobar2000-x64_v2.0_beta_22.exe
+    @set pkg_file=foobar2000-x64_v2.0_beta_20.exe
     @goto :install
 )
 
