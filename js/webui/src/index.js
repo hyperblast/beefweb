@@ -15,6 +15,7 @@ import urls, { getPathFromUrl } from './urls'
 import { playlistTableKey } from './playlist_content';
 import { PlaybackState } from 'beefweb-client/src';
 import { SettingsView, View } from './navigation_model';
+import MediaThemeController from "./media_theme_controller";
 
 const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();
@@ -30,6 +31,7 @@ const {
 } = appModel;
 
 const mediaSizeController = new MediaSizeController(settingsModel);
+const mediaThemeController = new MediaThemeController(settingsModel);
 const touchModeController = new TouchModeController(settingsModel);
 const cssSettingsController = new CssSettingsController(settingsModel);
 const windowController = new WindowController(playerModel);
@@ -131,6 +133,7 @@ playlistModel.on('playlistsChange', () => {
 
 appModel.load();
 mediaSizeController.start();
+mediaThemeController.start();
 touchModeController.start();
 cssSettingsController.start();
 appModel.start();

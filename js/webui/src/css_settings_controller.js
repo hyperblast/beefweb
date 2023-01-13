@@ -1,5 +1,5 @@
 import startsWith from 'lodash/startsWith'
-import SettingsModel, { MediaSize } from './settings_model'
+import { MediaSize } from './settings_model'
 
 const settingClassPrefix = 'st-';
 
@@ -27,11 +27,11 @@ export default class CssSettingsController
 
     start()
     {
-        this.settingsModel.on('change', this.handleUpdate.bind(this));
-        this.handleUpdate();
+        this.settingsModel.on('change', this.update.bind(this));
+        this.update();
     }
 
-    handleUpdate()
+    update()
     {
         const rootElement = document.documentElement;
 
