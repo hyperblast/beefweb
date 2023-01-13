@@ -33,6 +33,7 @@ export const MediaSize = Object.freeze({
 });
 
 export const UITheme = Object.freeze({
+    system: 'system',
     light: 'light',
     dark: 'dark',
 })
@@ -70,6 +71,7 @@ const defaultSettingProps = Object.freeze({
  * @property {string} mediaSize
  * @property {boolean} showPlaybackInfo
  * @property {string} uiTheme
+ * @property {string} uiThemePreference
  */
 export default class SettingsModel extends EventEmitter
 {
@@ -138,15 +140,24 @@ export default class SettingsModel extends EventEmitter
             }
         });
 
+        // Actual UI Theme (takes into account currently selected system theme)
         this.define({
             key: 'uiTheme',
             type: SettingType.enum,
             defaultValue: UITheme.light,
+            cssVisible: true
+        });
+
+        // What user selects in settings screen
+        this.define({
+            key: 'uiThemePreference',
+            type: SettingType.enum,
+            defaultValue: UITheme.system,
             title: 'UI Theme',
             persistent: true,
-            cssVisible: true,
             enumKeys: UITheme,
             enumNames: {
+                [UITheme.system]: 'Use system setting',
                 [UITheme.light]: 'Light',
                 [UITheme.dark]: 'Dark',
             }
