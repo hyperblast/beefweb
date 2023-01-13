@@ -1,22 +1,22 @@
 @setlocal
 
 @if "%1" == "v1.5" (
-    @set pkg_file=foobar2000_v1.5.1.exe
+    @set pkg_file=foobar2000_v1.5.11.exe.exe
     @goto :install
 )
 
 @if "%1" == "v1.6" (
-    @set pkg_file=foobar2000_v1.6.7.exe
+    @set pkg_file=foobar2000_v1.6.14.exe.exe
     @goto :install
 )
 
 @if "%1" == "v2.0" (
-    @set pkg_file=foobar2000_v2.0_beta_20.exe
+    @set pkg_file=foobar2000_v2.0_beta_22.exe.exe
     @goto :install
 )
 
 @if "%1" == "v2.0-x64" (
-    @set pkg_file=foobar2000-x64_v2.0_beta_20.exe
+    @set pkg_file=foobar2000-x64_v2.0_beta_22.exe.exe
     @goto :install
 )
 
