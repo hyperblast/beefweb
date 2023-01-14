@@ -48,12 +48,15 @@ SettingsPageInstance::~SettingsPageInstance()
 
 void SettingsPageInstance::initialize()
 {
+    darkModeHooks_.AddDialogWithControls(handle_);
+
     load();
 }
 
 t_uint32 SettingsPageInstance::get_state()
 {
     return preferences_state::resettable
+        | preferences_state::dark_mode_supported
         | (hasChanges() ? preferences_state::changed : 0);
 }
 

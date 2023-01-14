@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include <foobar2000/SDK/coreDarkMode.h>
+
 namespace msrv {
 namespace player_foobar2000 {
 
@@ -58,6 +60,7 @@ private:
     HWND handle_;
     std::vector<std::string> musicDirs_;
     preferences_page_callback::ptr callback_;
+    fb2k::CCoreDarkModeHooks darkModeHooks_;
 };
 
 }}
