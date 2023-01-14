@@ -21,8 +21,6 @@
 
         <JsSourceDir>$(RootDir)\js</JsSourceDir>
 
-        <JsClientSourceDir>$(JsSourceDir)\client</JsClientSourceDir>
-
         <WebuiSourceDir>$(JsSourceDir)\webui</WebuiSourceDir>
         <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigWebui)</WebuiBuildDir>
 
@@ -73,17 +71,11 @@
             WorkingDirectory="$(JsSourceDir)" />
     </Target>
 
-    <Target Name="BuildJsClient" DependsOnTargets="InitJs">
-        <Exec
-            Command="yarn build"
-            WorkingDirectory="$(JsClientSourceDir)" />
-    </Target>
-
     <Target Name="CleanWebui">
         <RemoveDir Directories="$(WebuiBuildDir)" />
     </Target>
 
-    <Target Name="BuildWebui" DependsOnTargets="InitJs;BuildJsClient;CleanWebui">
+    <Target Name="BuildWebui" DependsOnTargets="InitJs;CleanWebui">
         <Exec
             Command="yarn build @(WebuiBuildFlags -> '%(Identity)', ' ')"
             WorkingDirectory="$(WebuiSourceDir)" />

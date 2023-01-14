@@ -127,7 +127,6 @@ cpp_build_dir=$cpp_src_dir/build/$build_type
 server_plugin_file=$cpp_build_dir/server/deadbeef/$plugin_file
 
 js_src_dir=$(pwd)/js
-js_client_src_dir=$js_src_dir/client
 
 webui_src_dir=$js_src_dir/webui
 webui_build_dir=$webui_src_dir/build/$build_type_webui
@@ -199,9 +198,6 @@ function build_webui
 
     cd $js_src_dir
     yarn install
-
-    cd $js_client_src_dir
-    yarn build
 
     cd $webui_src_dir
     yarn build $webui_flags
