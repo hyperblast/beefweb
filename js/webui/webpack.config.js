@@ -1,8 +1,12 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+import path from 'path'
+import { fileURLToPath } from 'url'
+import webpack from 'webpack'
+import HtmlPlugin from 'html-webpack-plugin'
+import ExtractTextPlugin from 'extract-text-webpack-plugin'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function configCommon(config, params)
 {
@@ -171,7 +175,7 @@ function makeTarget(configTarget, params)
     return config;
 }
 
-module.exports = function(env)
+export default function(env)
 {
     const params = makeBuildParams(env || {});
     const allTargets = [makeTarget(configApp, params)];

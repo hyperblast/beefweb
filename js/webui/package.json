@@ -3,6 +3,7 @@
   "version": "0.7.0",
   "description": "Beefweb user interface",
   "main": "src/index.js",
+  "type": "module",
   "private": true,
   "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
@@ -39,6 +40,6 @@
     "url-loader": "^1.1.1",
     "webpack": "^4.16.5",
     "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-cli": "^3.1.0"
+    "webpack-cli": "^4.0.0"
   }
 }

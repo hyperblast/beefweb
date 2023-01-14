@@ -40,8 +40,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <WebuiBuildFlags Include="--env.release" Condition="'$(ConfigWebui)' == 'release'" />
-        <WebuiBuildFlags Include="--env.tests" Condition="'$(EnableTests)' == 'True'" />
+        <WebuiBuildFlags Include="--env release" Condition="'$(ConfigWebui)' == 'release'" />
+        <WebuiBuildFlags Include="--env tests" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
     <Target Name="CleanServer">
