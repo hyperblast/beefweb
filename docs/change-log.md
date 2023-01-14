@@ -1,4 +1,4 @@
-### Changes in v0.6 (not released):
+### Changes in v0.6 (released 2023-01-14):
 - Added dark theme for web UI
 - Added x64 builds of foobar2000 plugin
 - Improved settings screen styling
