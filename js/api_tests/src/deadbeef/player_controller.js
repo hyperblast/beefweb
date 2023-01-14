@@ -2,9 +2,9 @@ import path from 'path';
 import fs from 'fs';
 import childProcess from 'child_process';
 import { promisify } from 'util';
-import mkdirp0 from 'mkdirp';
-import rimraf0 from 'rimraf';
-import { dir } from 'tmp';
+import mkdirp from 'mkdirp';
+import rimrafWithCallback from 'rimraf';
+import tmp from 'tmp';
 
 const accessCheck = promisify(fs.access);
 const readFile = promisify(fs.readFile);
@@ -12,9 +12,8 @@ const writeFile = promisify(fs.writeFile);
 const symlink = promisify(fs.symlink);
 const open = promisify(fs.open);
 const close = promisify(fs.close);
-const mkdirp = promisify(mkdirp0);
-const rimraf = promisify(rimraf0);
-const tmpdir = promisify(dir);
+const rimraf = promisify(rimrafWithCallback)
+const tmpdir = promisify(tmp.dir);
 
 class PlayerController
 {
