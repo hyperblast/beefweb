@@ -35,7 +35,7 @@
     "html-webpack-plugin": "^3.2.0",
     "less": "^3.8.1",
     "less-loader": "^4.0.5",
-    "qunit": "^2.4.1",
+    "qunit": "^2.19.3",
     "style-loader": "^0.22.1",
     "url-loader": "^1.1.1",
     "webpack": "^4.16.5",
