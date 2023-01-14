@@ -1,7 +1,5 @@
-'use strict';
-
-const q = require('qunit');
-const { client, usePlayer, tracks } = require('./test_context');
+import q from 'qunit';
+import { client, tracks, usePlayer } from './test_context.js';
 
 q.module('query api', usePlayer());
 

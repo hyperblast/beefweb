@@ -1,10 +1,10 @@
-'use strict';
+import path from 'path';
+import { promisify } from 'util';
+import { readFile as readFile0 } from 'fs';
+import q from 'qunit';
+import { client, config, tracks, usePlayer } from './test_context.js';
 
-const path = require('path');
-const { promisify } = require('util');
-const readFile = promisify(require('fs').readFile);
-const q = require('qunit');
-const { client, usePlayer, config, tracks } = require('./test_context');
+const readFile = promisify(readFile0.readFile);
 
 function getFile(name)
 {

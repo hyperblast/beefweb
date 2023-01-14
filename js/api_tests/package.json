@@ -3,6 +3,7 @@
   "version": "0.7.0",
   "description": "Beefweb API tests",
   "main": "src/main.js",
+  "type": "module",
   "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
   "license": "MIT",

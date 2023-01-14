@@ -1,8 +1,6 @@
-'use strict';
-
-const { PlayerClient } = require('beefweb-client');
-const EventExpectation = require('./event_expectation');
-const { waitUntil } = require('./utils');
+import { PlayerClient } from 'beefweb-client';
+import EventExpectation from './event_expectation.js';
+import { waitUntil } from './utils.js';
 
 function createStateMatcher(condition)
 {
@@ -119,4 +117,4 @@ class TestPlayerClient extends PlayerClient
     }
 }
 
-module.exports = TestPlayerClient;
+export default TestPlayerClient;

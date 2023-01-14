@@ -1,13 +1,11 @@
-'use strict';
+import q from 'qunit';
+import { client, tracks, usePlayer } from './test_context.js';
 
-const q = require('qunit');
-const { client, usePlayer, tracks } = require('./test_context');
-
-const expectedValue = "Very Custom, Much Configurable, Wow";
+const expectedValue = 'Very Custom, Much Configurable, Wow';
 
 const pluginSettings = {
     responseHeaders: {
-        "X-CustomHeader": expectedValue
+        'X-CustomHeader': expectedValue
     }
 };
 

@@ -1,10 +1,8 @@
-'use strict';
-
-const path = require('path');
-const fs = require('fs');
-const childProcess = require('child_process');
-const { promisify } = require('util');
-const { waitForExit } = require('../utils');
+import path from 'path';
+import fs from 'fs';
+import childProcess from 'child_process';
+import { promisify } from 'util';
+import { waitForExit } from '../utils.js';
 
 const copyFile = promisify(fs.copyFile);
 const writeFile = promisify(fs.writeFile);

@@ -1,8 +1,10 @@
-'use strict';
+import path from 'path'
+import { fileURLToPath } from 'url'
+import RequestHandler from './request_handler.js';
+import TestPlayerClient from './test_player_client.js';
 
-const path = require('path');
-const RequestHandler = require('./request_handler');
-const TestPlayerClient = require('./test_player_client');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class TestContextBase
 {
@@ -117,4 +119,4 @@ class TestContextBase
     }
 }
 
-module.exports = TestContextBase;
+export default TestContextBase;

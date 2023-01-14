@@ -1,10 +1,8 @@
-const { config } = require('./test_context');
-
-require('./artwork_tests');
-require('./authentication_tests');
-require('./browser_api_tests');
-require('./http_features_tests');
-require('./player_api_tests');
-require('./playlists_api_tests');
-require('./query_api_tests');
-require('./static_files_tests');
+import './artwork_tests.js';
+import './authentication_tests.js';
+import './browser_api_tests.js';
+import './http_features_tests.js';
+import './player_api_tests.js';
+import './playlists_api_tests.js';
+import './query_api_tests.js';
+import './static_files_tests.js';

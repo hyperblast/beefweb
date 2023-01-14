@@ -1,9 +1,6 @@
-'use strict';
-
-const q = require('qunit');
-const isEqual = require('lodash/isEqual');
-const { client, usePlayer, tracks, config } = require('./test_context');
-const { waitUntil, pathCollectionsEqual } = require('./utils');
+import q from 'qunit';
+import { pathCollectionsEqual, waitUntil } from './utils.js';
+import { client, config, tracks, usePlayer } from './test_context.js';
 
 q.module('playlists api', usePlayer());
 

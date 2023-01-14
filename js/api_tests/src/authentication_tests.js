@@ -1,8 +1,6 @@
-'use strict';
-
-const q = require('qunit');
-const startsWith = require('lodash/startsWith');
-const { client, usePlayer } = require('./test_context');
+import q from 'qunit';
+import { startsWith } from 'lodash';
+import { client, usePlayer } from './test_context.js';
 
 const authUser = 'user1';
 const authPassword = 'password1';

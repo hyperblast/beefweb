@@ -1,8 +1,6 @@
-'use strict';
-
-const q = require('qunit');
-const isArray = require('lodash/isArray');
-const { config, client, usePlayer, tracks } = require('./test_context');
+import q from 'qunit';
+import { isArray } from 'lodash';
+import { client, config, tracks, usePlayer } from './test_context.js';
 
 q.module('player api', usePlayer());
 

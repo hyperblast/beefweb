@@ -1,19 +1,17 @@
-'use strict';
+import os from 'os';
 
-const os = require('os');
-
-function getContextType()
+async function getContextType()
 {
     switch (os.type())
     {
     case 'Windows_NT':
-        return require('./foobar2000/test_context');
+        return await import('./foobar2000/test_context.js');
 
     default:
-        return require('./deadbeef/test_context');
+        return await import('./deadbeef/test_context.js');
     }
 }
 
-const TestContext = getContextType();
+const TestContext = await getContextType();
 
-module.exports = new TestContext();
+export default new TestContext();
