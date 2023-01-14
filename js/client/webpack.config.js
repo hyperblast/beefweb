@@ -1,5 +1,9 @@
-const path = require('path');
-const webpack = require('webpack');
+import path from 'path'
+import { fileURLToPath } from 'url'
+import webpack from 'webpack'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function configCommon(config)
 {
@@ -50,7 +54,7 @@ function makeTarget(configTarget)
     return config;
 }
 
-module.exports = function()
+export default function()
 {
     return [
         makeTarget(configDebug),
