@@ -9,16 +9,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "rimraf dist/umd && webpack-cli"
+    "build": "webpack-cli"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.25.0",
-    "babel-loader": "^7.1.1",
-    "babel-preset-env": "^1.7.0",
-    "rimraf": "^2.6.2",
     "webpack": "^4.16.5",
-    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^4.0.0"
   }
 }
