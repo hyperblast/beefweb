@@ -127,4 +127,4 @@ class RequestHandler
     }
 }
 
-module.exports = RequestHandler;
+export default RequestHandler;

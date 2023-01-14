@@ -14,7 +14,7 @@ const open = promisify(fs.open);
 const close = promisify(fs.close);
 const mkdirp = promisify(mkdirp0);
 const rimraf = promisify(rimraf0);
-const tmpdir = promisify(dir.dir);
+const tmpdir = promisify(dir);
 
 class PlayerController
 {
@@ -174,4 +174,4 @@ class PlayerController
     }
 }
 
-module.exports = PlayerController;
+export default PlayerController;

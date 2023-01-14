@@ -1,6 +1,9 @@
 import q from 'qunit';
-import { isArray } from 'lodash';
-import { client, config, tracks, usePlayer } from './test_context.js';
+import lodash from 'lodash';
+import context from './test_context.js';
+
+const { client, config, tracks, usePlayer } = context;
+const { isArray } = lodash;
 
 q.module('player api', usePlayer());
 

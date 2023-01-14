@@ -2,8 +2,11 @@ import path from 'path';
 import { promisify } from 'util';
 import fs from 'fs';
 import q from 'qunit';
-import { omit, sortBy } from 'lodash';
-import { client, config, usePlayer } from './test_context.js';
+import lodash from 'lodash';
+import context  from './test_context.js';
+
+const { client, config, usePlayer } = context;
+const { omit, sortBy } = lodash;
 
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);

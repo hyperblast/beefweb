@@ -1,14 +1,15 @@
 import path from 'path';
 import { promisify } from 'util';
-import { readFile as readFile0 } from 'fs';
+import fs from 'fs';
 import q from 'qunit';
-import { client, config, tracks, usePlayer } from './test_context.js';
+import context from './test_context.js';
 
-const readFile = promisify(readFile0.readFile);
+const { client, config, tracks, usePlayer } = context;
+const readFile = promisify(fs.readFile);
 
 function getFile(name)
 {
-    return readFile(path.join(config.musicDir, name), null);
+    return readFile(path.join(config.musicDir, name));
 }
 
 function getArtwork(playlist, item)

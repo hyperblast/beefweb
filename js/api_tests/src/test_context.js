@@ -1,17 +1,19 @@
 import os from 'os';
+import Foobar2000TestContext from './foobar2000/test_context.js'
+import DeadbeefTestContext from './deadbeef/test_context.js'
 
-async function getContextType()
+function getContextType()
 {
     switch (os.type())
     {
     case 'Windows_NT':
-        return await import('./foobar2000/test_context.js');
+        return Foobar2000TestContext;
 
     default:
-        return await import('./deadbeef/test_context.js');
+        return DeadbeefTestContext;
     }
 }
 
-const TestContext = await getContextType();
-
-export default new TestContext();
+const TestContext = getContextType();
+const context = new TestContext();
+export default context;

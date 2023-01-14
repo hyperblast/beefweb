@@ -30,4 +30,4 @@ class TestContext extends TestContextBase
     }
 }
 
-module.exports = TestContext;
+export default TestContext;

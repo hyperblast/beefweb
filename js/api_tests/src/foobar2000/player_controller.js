@@ -90,4 +90,4 @@ class PlayerController
     }
 }
 
-module.exports = PlayerController;
+export default PlayerController;

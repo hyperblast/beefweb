@@ -4,7 +4,7 @@ import {
     parseRange,
     formatQueryOptions,
     isTransferBetweenPlaylists
-} from './utils'
+} from './utils.js'
 
 export default class PlayerClient
 {
