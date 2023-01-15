@@ -12,7 +12,6 @@ function configCommon(config)
     config.module.rules.push({
         test: /\.js$/,
         include: path.join(__dirname, 'src'),
-        loader: 'babel-loader',
     });
 
     config.output.path = path.join(__dirname, 'dist', 'umd');
