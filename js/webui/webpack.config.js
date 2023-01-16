@@ -3,6 +3,8 @@ import { fileURLToPath } from 'url'
 import webpack from 'webpack'
 import HtmlPlugin from 'html-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
+import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 
 const __filename = fileURLToPath(import.meta.url);
@@ -96,12 +98,8 @@ function configDebug(config)
 {
     // Debug configuration
 
+    config.mode = 'development';
     config.devtool = 'source-map';
-    config.mode = 'none';
-
-    config.plugins.push(new webpack.LoaderOptionsPlugin({
-        debug: true
-    }));
 
     config.module.rules.push({
         test: /\.(css|less)$/,
@@ -116,9 +114,9 @@ function configRelease(config)
     config.mode = 'production';
     config.node.process = false;
 
-    config.plugins.push(new webpack.LoaderOptionsPlugin({
-        minimize: true
-    }));
+    config.optimization.minimize = true;
+    config.optimization.minimizer.push(new TerserPlugin());
+    config.optimization.minimizer.push(new CssMinimizerPlugin());
 
     config.plugins.push(new MiniCssExtractPlugin({
         filename: 'bundle.css'
@@ -160,6 +158,10 @@ function makeTarget(configTarget, params)
         resolve: { alias: {} },
         node: {},
         performance: {},
+        optimization: {
+            minimize: false,
+            minimizer: []
+        }
     };
 
     configCommon(config, params);
