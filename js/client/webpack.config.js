@@ -9,11 +9,6 @@ function configCommon(config)
 {
     config.entry.push('./src/index.js');
 
-    config.module.rules.push({
-        test: /\.js$/,
-        include: path.join(__dirname, 'src'),
-    });
-
     config.output.path = path.join(__dirname, 'dist', 'umd');
     config.output.libraryTarget = 'umd';
     config.output.library = {
@@ -25,14 +20,14 @@ function configCommon(config)
 
 function configDebug(config)
 {
-    config.mode = 'none';
-    config.output.filename = 'beefweb-client.js'
+    config.mode = 'development';
+    config.output.filename = 'beefweb-client.dev.js'
 }
 
 function configRelease(config)
 {
     config.mode = 'production';
-    config.output.filename = 'beefweb-client.min.js'
+    config.output.filename = 'beefweb-client.prod.js'
 }
 
 function makeTarget(configTarget)
