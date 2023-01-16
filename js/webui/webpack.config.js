@@ -2,7 +2,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import webpack from 'webpack'
 import HtmlPlugin from 'html-webpack-plugin'
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 
 const __filename = fileURLToPath(import.meta.url);
@@ -120,18 +120,13 @@ function configRelease(config)
         minimize: true
     }));
 
-    const styleExtractor = new ExtractTextPlugin({
+    config.plugins.push(new MiniCssExtractPlugin({
         filename: 'bundle.css'
-    });
-
-    config.plugins.push(styleExtractor);
+    }));
 
     config.module.rules.push({
         test: /\.(css|less)$/,
-        use: styleExtractor.extract({
-            use: ['css-loader', 'less-loader'],
-            fallback: 'style-loader'
-        })
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader']
     });
 }
 
