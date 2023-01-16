@@ -14,7 +14,7 @@ function configCommon(config)
     config.output.library = {
         amd: 'beefweb-client',
         commonjs: 'beefweb-client',
-        root: 'BeefwebClient',
+        root: 'Beefweb',
     };
 }
 
