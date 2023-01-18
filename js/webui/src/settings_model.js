@@ -3,7 +3,7 @@ import pickBy from 'lodash/pickBy'
 import mapKeys from 'lodash/mapKeys'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
-import { defaultPlaylistColumns } from './columns';
+import { defaultPlaylistColumns } from './columns.js';
 
 const storageKey = 'player_settings';
 

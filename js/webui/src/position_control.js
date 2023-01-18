@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import clamp from 'lodash/clamp'
-import PlayerModel from './player_model'
-import { formatTime } from './utils'
-import ModelBinding from './model_binding';
+import PlayerModel from './player_model.js'
+import { formatTime } from './utils.js'
+import ModelBinding from './model_binding.js';
 
 class PositionControl extends React.PureComponent
 {

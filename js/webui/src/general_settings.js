@@ -1,8 +1,8 @@
 import React from 'react'
-import SettingEditor from './setting_editor';
-import ModelBinding from './model_binding';
-import ServiceContext from './service_context';
-import { MediaSize } from "./settings_model";
+import SettingEditor from './setting_editor.js';
+import ModelBinding from './model_binding.js';
+import ServiceContext from './service_context.js';
+import { MediaSize } from './settings_model.js';
 
 class GeneralSettings extends React.PureComponent
 {

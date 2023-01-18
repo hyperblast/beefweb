@@ -1,6 +1,6 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import { arrayMove } from 'react-sortable-hoc'
-import { AddAction } from "./settings_model";
+import { AddAction } from "./settings_model.js";
 
 const addOptions = {
     [AddAction.add]: {},

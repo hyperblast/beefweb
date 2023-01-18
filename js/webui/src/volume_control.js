@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlayerModel from './player_model'
-import { Button} from './elements'
-import { bindHandlers } from './utils'
-import ModelBinding from './model_binding';
-import { DropdownButton } from './dropdown';
+import PlayerModel from './player_model.js'
+import { Button} from './elements.js'
+import { bindHandlers } from './utils.js'
+import ModelBinding from './model_binding.js';
+import { DropdownButton } from './dropdown.js';
 
 function volumeIcon(isMuted)
 {

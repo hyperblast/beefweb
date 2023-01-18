@@ -2,20 +2,20 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import Navigo from 'navigo'
 import { PlayerClient } from 'beefweb-client'
-import ServiceContext from './service_context'
-import App from './app'
-import RequestHandler from './request_handler'
-import SettingsStore from './settings_store'
-import AppModel from './app_model'
-import MediaSizeController from './media_size_controller'
-import TouchModeController from './touch_mode_controller'
-import WindowController from './window_controller'
-import CssSettingsController from './css_settings_controller'
-import urls, { getPathFromUrl } from './urls'
-import { playlistTableKey } from './playlist_content';
-import { PlaybackState } from 'beefweb-client/src';
-import { SettingsView, View } from './navigation_model';
-import MediaThemeController from "./media_theme_controller";
+import ServiceContext from './service_context.js'
+import App from './app.js'
+import RequestHandler from './request_handler.js'
+import SettingsStore from './settings_store.js'
+import AppModel from './app_model.js'
+import MediaSizeController from './media_size_controller.js'
+import TouchModeController from './touch_mode_controller.js'
+import WindowController from './window_controller.js'
+import CssSettingsController from './css_settings_controller.js'
+import urls, { getPathFromUrl } from './urls.js'
+import { playlistTableKey } from './playlist_content.js';
+import { PlaybackState } from 'beefweb-client';
+import { SettingsView, View } from './navigation_model.js';
+import MediaThemeController from "./media_theme_controller.js";
 
 const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();

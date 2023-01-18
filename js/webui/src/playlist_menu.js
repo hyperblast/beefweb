@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlaylistModel from './playlist_model'
-import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
-import { ConfirmDialog, InputDialog } from './dialogs'
-import { bindHandlers } from './utils'
-import ModelBinding from './model_binding';
-import { DropdownButton } from './dropdown';
-import SettingsModel, { AddAction } from './settings_model';
-import { sortMenuColumns } from './columns';
+import PlaylistModel from './playlist_model.js'
+import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js'
+import { ConfirmDialog, InputDialog } from './dialogs.js'
+import { bindHandlers } from './utils.js'
+import ModelBinding from './model_binding.js';
+import { DropdownButton } from './dropdown.js';
+import SettingsModel, { AddAction } from './settings_model.js';
+import { sortMenuColumns } from './columns.js';
 
 class PlaylistMenu extends React.PureComponent
 {

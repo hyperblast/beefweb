@@ -1,5 +1,5 @@
 import startsWith from 'lodash/startsWith'
-import { MediaSize } from './settings_model'
+import { MediaSize } from './settings_model.js'
 
 const settingClassPrefix = 'st-';
 

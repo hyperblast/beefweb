@@ -2,14 +2,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { PlaybackState } from 'beefweb-client'
-import PlayerModel from './player_model'
-import PlaylistModel from './playlist_model'
-import SettingsModel from './settings_model'
-import { Icon } from './elements'
-import urls from './urls'
-import { bindHandlers } from './utils'
-import { makeClassName } from './dom_utils'
-import ModelBinding from './model_binding';
+import PlayerModel from './player_model.js'
+import PlaylistModel from './playlist_model.js'
+import SettingsModel from './settings_model.js'
+import { Icon } from './elements.js'
+import urls from './urls.js'
+import { bindHandlers } from './utils.js'
+import { makeClassName } from './dom_utils.js'
+import ModelBinding from './model_binding.js';
 
 const playbackStateIcons = {
     [PlaybackState.playing]: 'media-play',

@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button } from './elements'
-import urls from './urls'
-import ModelBinding from './model_binding';
-import NavigationModel, { View } from './navigation_model';
+import { Button } from './elements.js'
+import urls from './urls.js'
+import ModelBinding from './model_binding.js';
+import NavigationModel, { View } from './navigation_model.js';
 
 class ViewSwitcher extends React.PureComponent
 {

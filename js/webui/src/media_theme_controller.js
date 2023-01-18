@@ -1,4 +1,4 @@
-import { UITheme } from "./settings_model";
+import { UITheme } from "./settings_model.js";
 
 export default class MediaThemeController
 {

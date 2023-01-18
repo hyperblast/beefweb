@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import ColumnsSettingsModel from './columns_settings_model';
-import { DropdownButton } from './dropdown';
-import { bindHandlers } from './utils';
-import { MenuItem, MenuLabel, MenuSeparator } from './elements';
-import { allColumns, Visibility } from './columns';
+import ColumnsSettingsModel from './columns_settings_model.js';
+import { DropdownButton } from './dropdown.js';
+import { bindHandlers } from './utils.js';
+import { MenuItem, MenuLabel, MenuSeparator } from './elements.js';
+import { allColumns, Visibility } from './columns.js';
 
 export default class ColumnsSettingsMenu extends React.PureComponent
 {

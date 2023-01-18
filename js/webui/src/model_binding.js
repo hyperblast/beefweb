@@ -1,5 +1,5 @@
 import React from 'react';
-import ServiceContext from './service_context'
+import ServiceContext from './service_context.js'
 
 function makeBindingList(bindings)
 {

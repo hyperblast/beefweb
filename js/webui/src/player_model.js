@@ -1,10 +1,10 @@
 import EventEmitter from 'wolfy87-eventemitter'
 import debounce from 'lodash/debounce'
 import clamp from 'lodash/clamp'
-import Timer from './timer'
+import Timer from './timer.js'
 import { PlaybackState } from 'beefweb-client'
-import { dbToLinear, linearToDb } from './utils';
-import { defaultPlayerFeatures, getPlayerFeatures } from './player_features';
+import { dbToLinear, linearToDb } from './utils.js';
+import { defaultPlayerFeatures, getPlayerFeatures } from './player_features.js';
 
 const initialPlayerInfo = Object.freeze({
     features: defaultPlayerFeatures,

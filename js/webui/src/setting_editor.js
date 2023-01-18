@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import objectValues from 'lodash/values'
-import SettingsModel, { SettingType } from './settings_model'
-import ServiceContext from './service_context';
+import SettingsModel, { SettingType } from './settings_model.js'
+import ServiceContext from './service_context.js';
 import kebabCase from 'lodash/kebabCase'
 
 class BoolSettingEditor extends React.PureComponent

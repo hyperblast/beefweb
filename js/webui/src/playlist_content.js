@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
-import PlayerModel from './player_model'
-import PlaylistModel from './playlist_model'
-import DataTable from './data_table'
-import { bindHandlers } from './utils'
-import ScrollManager from './scroll_manager';
-import ModelBinding from './model_binding';
-import { Menu, MenuItem, MenuLabel } from './elements';
+import PlayerModel from './player_model.js'
+import PlaylistModel from './playlist_model.js'
+import DataTable from './data_table.js'
+import { bindHandlers } from './utils.js'
+import ScrollManager from './scroll_manager.js';
+import ModelBinding from './model_binding.js';
+import { Menu, MenuItem, MenuLabel } from './elements.js';
 
 const pageSize = 100;
 
