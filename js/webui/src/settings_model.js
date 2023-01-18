@@ -1,8 +1,8 @@
 import EventEmitter from 'wolfy87-eventemitter'
-import pickBy from 'lodash/pickBy'
-import mapKeys from 'lodash/mapKeys'
-import cloneDeep from 'lodash/cloneDeep'
-import isEqual from 'lodash/isEqual'
+import { pickBy } from 'lodash'
+import { mapKeys } from 'lodash'
+import { cloneDeep } from 'lodash'
+import { isEqual } from 'lodash'
 import { defaultPlaylistColumns } from './columns.js';
 
 const storageKey = 'player_settings';

@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import throttle from 'lodash/throttle'
-import sum from 'lodash/sum'
-import { Icon } from './elements';
+import { throttle } from 'lodash'
+import { sum } from 'lodash'
+import { Icon } from './elements.js';
 import { mapRange, once } from './utils.js'
 import { addStyleSheet, generateElementId, getFontSize, getScrollBarSize, makeClassName } from './dom_utils.js'
 import ScrollManager from './scroll_manager.js';

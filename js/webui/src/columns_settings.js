@@ -5,7 +5,7 @@ import { bindHandlers } from './utils.js';
 import { Button, Icon } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
-import cloneDeep from 'lodash/cloneDeep'
+import { cloneDeep } from 'lodash'
 import ModelBinding from './model_binding.js';
 import ColumnsSettingsModel from './columns_settings_model.js';
 import { Visibility } from './columns.js';

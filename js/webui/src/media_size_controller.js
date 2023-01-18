@@ -1,6 +1,6 @@
-import mapValues from 'lodash/mapValues'
-import objectValues from 'lodash/values'
-import SettingsModel, { FontSize, MediaSize, MediaSizeIndex } from './settings_model.js'
+import { mapValues } from 'lodash'
+import { values as objectValues } from 'lodash'
+import { MediaSize, MediaSizeIndex } from './settings_model.js'
 
 const MediaSizes = Object.freeze({
     small: 0,

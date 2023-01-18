@@ -1,6 +1,6 @@
 import EventEmitter from 'wolfy87-eventemitter'
-import debounce from 'lodash/debounce'
-import clamp from 'lodash/clamp'
+import { debounce } from 'lodash'
+import { clamp } from 'lodash'
 import Timer from './timer.js'
 import { PlaybackState } from 'beefweb-client'
 import { dbToLinear, linearToDb } from './utils.js';

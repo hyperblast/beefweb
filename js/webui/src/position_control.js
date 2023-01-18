@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import clamp from 'lodash/clamp'
+import { clamp } from 'lodash'
 import PlayerModel from './player_model.js'
 import { formatTime } from './utils.js'
 import ModelBinding from './model_binding.js';

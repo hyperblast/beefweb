@@ -1,11 +1,10 @@
-import startsWith from 'lodash/startsWith'
 import { formatQueryString } from 'beefweb-client'
 
 function buildUrl(url, params)
 {
     let result;
 
-    if (startsWith(url, '/'))
+    if (url.startsWith('/'))
         result = url;
     else
         result = '/' + url;
