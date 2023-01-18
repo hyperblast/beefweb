@@ -98,7 +98,7 @@ function configDebug(config)
 {
     // Debug configuration
 
-    config.mode = 'development';
+    config.mode = 'none';
     config.devtool = 'source-map';
 
     config.module.rules.push({
@@ -112,7 +112,6 @@ function configRelease(config)
     // Release configuration
 
     config.mode = 'production';
-    config.node.process = false;
 
     config.optimization.minimize = true;
     config.optimization.minimizer.push(new TerserPlugin());
@@ -156,7 +155,6 @@ function makeTarget(configTarget, params)
         plugins: [],
         module: { rules: [] },
         resolve: { alias: {} },
-        node: {},
         performance: {},
         optimization: {
             minimize: false,

@@ -20,7 +20,7 @@ function configCommon(config)
 
 function configDebug(config)
 {
-    config.mode = 'development';
+    config.mode = 'none';
     config.output.filename = 'beefweb-client.dev.js'
 }
 
