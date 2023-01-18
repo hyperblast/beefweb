@@ -185,7 +185,7 @@ class TextSettingEditor extends React.PureComponent
         const { value, metadata } = this.state;
         const { disabled } = this.props;
 
-        const id = kebabCase(this.props.settingKey);
+        const id = this.props.settingKey.toLowerCase() + '-cfg';
 
         return (
             <React.Fragment>

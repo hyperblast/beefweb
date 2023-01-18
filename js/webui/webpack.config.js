@@ -98,7 +98,7 @@ function configDebug(config)
 {
     // Debug configuration
 
-    config.mode = 'none';
+    config.mode = 'development';
     config.devtool = 'source-map';
 
     config.module.rules.push({
