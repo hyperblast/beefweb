@@ -14,7 +14,7 @@ jobs:
 
   build_linux:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     env:
       BUILD_TYPE: release
@@ -98,7 +98,7 @@ jobs:
 
   merge_packages:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     needs: build_windows
 
