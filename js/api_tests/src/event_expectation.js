@@ -1,5 +1,3 @@
-'use strict';
-
 const ExpectationState = Object.freeze({
     initializing: 0,
     waitingFirstEvent: 1,
@@ -96,4 +94,4 @@ class EventExpectation
     }
 }
 
-module.exports = EventExpectation;
+export default EventExpectation;

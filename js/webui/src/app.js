@@ -1,18 +1,18 @@
 import React from 'react'
-import { PanelHeader } from './elements'
-import ControlBar from './control_bar'
-import PlaylistSwitcher from './playlist_switcher'
-import PlaylistMenu from './playlist_menu'
-import PlaylistContent from './playlist_content'
-import FileBrowser from './file_browser'
-import FileBrowserHeader from './file_browser_header'
-import StatusBar from './status_bar'
-import ModelBinding from './model_binding';
-import { View } from './navigation_model';
-import SettingsHeader from './settings_header';
-import SettingsContent from './settings_content';
-import ServiceContext from './service_context';
-import PlaybackInfoBar from './playback_info_bar';
+import { PanelHeader } from './elements.js'
+import ControlBar from './control_bar.js'
+import PlaylistSwitcher from './playlist_switcher.js'
+import PlaylistMenu from './playlist_menu.js'
+import PlaylistContent from './playlist_content.js'
+import FileBrowser from './file_browser.js'
+import FileBrowserHeader from './file_browser_header.js'
+import StatusBar from './status_bar.js'
+import ModelBinding from './model_binding.js';
+import { View } from './navigation_model.js';
+import SettingsHeader from './settings_header.js';
+import SettingsContent from './settings_content.js';
+import ServiceContext from './service_context.js';
+import PlaybackInfoBar from './playback_info_bar.js';
 
 class App extends React.PureComponent
 {

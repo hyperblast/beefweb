@@ -1,14 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import FileBrowserModel, { rootPath } from './file_browser_model'
-import PlaylistModel from './playlist_model'
-import { Button, Menu, MenuItem, MenuSeparator } from './elements'
-import urls from './urls'
-import NotificationModel from './notification_model';
-import ModelBinding from './model_binding';
-import { DropdownButton } from './dropdown';
-import { bindHandlers } from './utils';
-import { AddAction } from "./settings_model";
+import FileBrowserModel, { rootPath } from './file_browser_model.js'
+import PlaylistModel from './playlist_model.js'
+import { Button, Menu, MenuItem, MenuSeparator } from './elements.js'
+import urls from './urls.js'
+import NotificationModel from './notification_model.js'
+import ModelBinding from './model_binding.js'
+import { DropdownButton } from './dropdown.js'
+import { bindHandlers } from './utils.js'
+import { AddAction } from './settings_model.js'
 
 class FileBrowserHeader extends React.PureComponent
 {

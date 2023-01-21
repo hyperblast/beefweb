@@ -1,14 +1,15 @@
-'use strict';
+import path from 'path';
+import { promisify } from 'util';
+import fs from 'fs';
+import q from 'qunit';
+import context from './test_context.js';
 
-const path = require('path');
-const { promisify } = require('util');
-const readFile = promisify(require('fs').readFile);
-const q = require('qunit');
-const { client, usePlayer, config, tracks } = require('./test_context');
+const { client, config, tracks, usePlayer } = context;
+const readFile = promisify(fs.readFile);
 
 function getFile(name)
 {
-    return readFile(path.join(config.musicDir, name), null);
+    return readFile(path.join(config.musicDir, name));
 }
 
 function getArtwork(playlist, item)

@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlaybackControl from './playback_control'
-import PositionControl from './position_control'
-import VolumeControl from './volume_control'
-import ViewSwitcher from './view_switcher'
-import SettingsModel from './settings_model';
-import NavigationModel from './navigation_model';
-import PlayerModel from './player_model';
+import PlaybackControl from './playback_control.js'
+import PositionControl from './position_control.js'
+import VolumeControl from './volume_control.js'
+import ViewSwitcher from './view_switcher.js'
+import SettingsModel from './settings_model.js';
+import NavigationModel from './navigation_model.js';
+import PlayerModel from './player_model.js';
 
 export default function ControlBar(props)
 {

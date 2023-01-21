@@ -1,11 +1,11 @@
-'use strict';
+import path from 'path';
+import { promisify } from 'util';
+import fs from 'fs';
+import q from 'qunit';
+import context from './test_context.js';
 
-const path = require('path');
-const { promisify } = require('util');
-const readFile = promisify(require('fs').readFile);
-const q = require('qunit');
-
-const { client, usePlayer, config } = require('./test_context');
+const { client, config, usePlayer } = context;
+const readFile = promisify(fs.readFile);
 
 const pluginSettings = {
     urlMappings: {

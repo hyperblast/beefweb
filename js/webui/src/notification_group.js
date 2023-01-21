@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button } from './elements';
+import { Button } from './elements.js';
 
 function smartSplit(message)
 {

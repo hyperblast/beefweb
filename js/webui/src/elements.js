@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
-import { makeClassName } from './dom_utils';
+import { makeClassName } from './dom_utils.js';
 
 function makeClickHandler(callback)
 {

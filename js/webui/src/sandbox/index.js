@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDom from 'react-dom'
-import { mapRange } from '../utils'
-import DataTable from '../data_table'
+import { mapRange } from '../utils.js'
+import DataTable from '../data_table.js'
 
 function createRow(index)
 {

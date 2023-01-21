@@ -1,9 +1,9 @@
 import React from 'react'
 import { PlaybackState } from 'beefweb-client'
-import { formatTime } from './utils'
-import ModelBinding from './model_binding';
-import ServiceContext from './service_context';
-import urls from './urls';
+import { formatTime } from './utils.js'
+import ModelBinding from './model_binding.js';
+import ServiceContext from './service_context.js';
+import urls from './urls.js';
 
 const stateToName = Object.freeze({
     [PlaybackState.playing]: 'Playing',

@@ -1,9 +1,10 @@
-'use strict';
-
-const path = require('path');
-const fs = require('fs');
-const childProcess = require('child_process');
-const { promisify } = require('util');
+import path from 'path';
+import fs from 'fs';
+import childProcess from 'child_process';
+import { promisify } from 'util';
+import mkdirp from 'mkdirp';
+import rimrafWithCallback from 'rimraf';
+import tmp from 'tmp';
 
 const accessCheck = promisify(fs.access);
 const readFile = promisify(fs.readFile);
@@ -11,10 +12,8 @@ const writeFile = promisify(fs.writeFile);
 const symlink = promisify(fs.symlink);
 const open = promisify(fs.open);
 const close = promisify(fs.close);
-
-const mkdirp = promisify(require('mkdirp'));
-const rimraf = promisify(require('rimraf'));
-const tmpdir = promisify(require('tmp').dir);
+const rimraf = promisify(rimrafWithCallback)
+const tmpdir = promisify(tmp.dir);
 
 class PlayerController
 {
@@ -174,4 +173,4 @@ class PlayerController
     }
 }
 
-module.exports = PlayerController;
+export default PlayerController;

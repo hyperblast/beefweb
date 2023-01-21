@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlayerModel from './player_model'
-import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements'
-import { bindHandlers } from './utils'
-import urls from './urls';
-import ModelBinding from './model_binding';
-import SettingsModel, { MediaSize } from './settings_model';
-import { DropdownButton } from './dropdown';
-import { navigationMenuColumns } from './columns';
+import PlayerModel from './player_model.js'
+import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js'
+import { bindHandlers } from './utils.js'
+import urls from './urls.js';
+import ModelBinding from './model_binding.js';
+import SettingsModel, { MediaSize } from './settings_model.js';
+import { DropdownButton } from './dropdown.js';
+import { navigationMenuColumns } from './columns.js';
 
 class PlaybackControl extends React.PureComponent
 {

@@ -1,5 +1,4 @@
-import startsWith from 'lodash/startsWith'
-import { MediaSize } from './settings_model'
+import { MediaSize } from './settings_model.js'
 
 const settingClassPrefix = 'st-';
 
@@ -37,7 +36,7 @@ export default class CssSettingsController
 
         const classNames = rootElement.className
             .split(' ')
-            .filter(i => i !== '' && !startsWith(i, settingClassPrefix));
+            .filter(i => i !== '' && !i.startsWith(settingClassPrefix));
 
         this.addSettingClasses(classNames);
         this.addMediaSizeClasses(classNames);

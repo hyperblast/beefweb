@@ -1,6 +1,6 @@
-import detectIt from 'detect-it'
+import { primaryInput } from 'detect-it'
 import EventEmitter from 'wolfy87-eventemitter'
-import SettingsModel, { InputMode } from './settings_model'
+import SettingsModel, { InputMode } from './settings_model.js'
 
 export default class TouchModeController
 {
@@ -30,6 +30,6 @@ export default class TouchModeController
         if (inputMode === InputMode.forceTouch)
             return true;
 
-        return detectIt.primaryInput === 'touch';
+        return primaryInput === 'touch';
     }
 }

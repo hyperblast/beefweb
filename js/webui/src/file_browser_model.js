@@ -1,5 +1,5 @@
 import EventEmitter from 'wolfy87-eventemitter'
-import { getBaseName, getParentDir, isSubpath } from './utils'
+import { getBaseName, getParentDir, isSubpath } from './utils.js'
 
 export const rootPath = 'roots';
 

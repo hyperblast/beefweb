@@ -1,6 +1,6 @@
 import EventEmitter from 'wolfy87-eventemitter'
-import Timer from './timer'
-import { looseDeepEqual } from './utils'
+import Timer from './timer.js'
+import { looseDeepEqual } from './utils.js'
 
 const eventNames = ['player', 'playlists', 'playlistItems'];
 

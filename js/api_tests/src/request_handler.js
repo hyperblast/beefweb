@@ -1,9 +1,7 @@
-'use strict';
-
-const { URL, URLSearchParams } = require('url');
-const axios = require('axios');
-const EventSource = require('eventsource');
-const { formatQueryString } = require('beefweb-client');
+import { URL, URLSearchParams } from 'url';
+import axios from 'axios';
+import EventSource from 'eventsource';
+import { formatQueryString } from 'beefweb-client';
 
 class TrackedEventSource extends EventSource
 {
@@ -129,4 +127,4 @@ class RequestHandler
     }
 }
 
-module.exports = RequestHandler;
+export default RequestHandler;

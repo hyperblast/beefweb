@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { bindHandlers } from './utils';
-import { Button, Icon } from './elements';
+import { bindHandlers } from './utils.js';
+import { Button, Icon } from './elements.js';
 import ReactModal from 'react-modal';
-import { ConfirmDialog, DialogButton } from './dialogs';
-import cloneDeep from 'lodash/cloneDeep'
-import ModelBinding from './model_binding';
-import ColumnsSettingsModel from './columns_settings_model';
-import { Visibility } from './columns';
-import { MediaSize } from './settings_model';
+import { ConfirmDialog, DialogButton } from './dialogs.js';
+import { cloneDeep } from 'lodash'
+import ModelBinding from './model_binding.js';
+import ColumnsSettingsModel from './columns_settings_model.js';
+import { Visibility } from './columns.js';
+import { MediaSize } from './settings_model.js';
 
 class ColumnEditorDialog extends React.PureComponent
 {

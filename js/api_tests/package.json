@@ -3,6 +3,7 @@
   "version": "0.7.0",
   "description": "Beefweb API tests",
   "main": "src/main.js",
+  "type": "module",
   "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
   "license": "MIT",
@@ -12,11 +13,11 @@
   },
   "devDependencies": {
     "axios": "^0.21.2",
-    "eventsource": "^1.0.5",
+    "eventsource": "^2.0.2",
     "lodash": "^4.17.21",
-    "mkdirp": "^0.5.1",
-    "qunit": "^2.4.1",
-    "rimraf": "^2.6.2",
-    "tmp": "^0.0.33"
+    "mkdirp": "^1.0.4",
+    "qunit": "^2.19.3",
+    "rimraf": "^3.0.2",
+    "tmp": "^0.2.1"
   }
 }

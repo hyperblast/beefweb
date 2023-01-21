@@ -1,9 +1,6 @@
-'use strict';
-
-const path = require('path');
-
-const TestContextBase = require('../test_context_base');
-const PlayerController = require('./player_controller');
+import path from 'path';
+import TestContextBase from '../test_context_base.js';
+import PlayerController from './player_controller.js';
 
 class TestContext extends TestContextBase
 {
@@ -33,4 +30,4 @@ class TestContext extends TestContextBase
     }
 }
 
-module.exports = TestContext;
+export default TestContext;

@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import throttle from 'lodash/throttle'
-import sum from 'lodash/sum'
-import { Icon } from './elements';
-import { mapRange, once } from './utils'
-import { addStyleSheet, generateElementId, getFontSize, getScrollBarSize, makeClassName } from './dom_utils'
-import ScrollManager from './scroll_manager';
-import { DropdownButton, DropdownLink } from './dropdown';
+import { throttle } from 'lodash'
+import { sum } from 'lodash'
+import { Icon } from './elements.js';
+import { mapRange, once } from './utils.js'
+import { addStyleSheet, generateElementId, getFontSize, getScrollBarSize, makeClassName } from './dom_utils.js'
+import ScrollManager from './scroll_manager.js';
+import { DropdownButton, DropdownLink } from './dropdown.js';
 
 const maxColumns = 100;
 const rowHeight = 1.75;

@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDom from 'react-dom'
-import NotificationGroup from './notification_group'
-import { bindHandlers } from './utils';
-import Timer from './timer';
+import NotificationGroup from './notification_group.js'
+import { bindHandlers } from './utils.js';
+import Timer from './timer.js';
 
 const maxNotifications = 5;
 const timeToLive = 3000;

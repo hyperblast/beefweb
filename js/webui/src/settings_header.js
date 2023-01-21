@@ -1,10 +1,10 @@
 import React from 'react';
-import { PanelHeaderTab } from './elements';
-import { SettingsView, SettingsViewMetadata } from './navigation_model';
-import ModelBinding from './model_binding';
-import urls from './urls';
-import ColumnsSettingsMenu from './columns_settings_menu';
-import ServiceContext from './service_context';
+import { PanelHeaderTab } from './elements.js';
+import { SettingsView, SettingsViewMetadata } from './navigation_model.js';
+import ModelBinding from './model_binding.js';
+import urls from './urls.js';
+import ColumnsSettingsMenu from './columns_settings_menu.js';
+import ServiceContext from './service_context.js';
 
 class SettingsHeader extends React.PureComponent
 {

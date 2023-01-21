@@ -1,15 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlaylistModel from './playlist_model'
-import FileBrowserModel from './file_browser_model'
-import urls from './urls'
-import { getDisplaySize, getDisplayDate, mapRange, bindHandlers } from './utils'
-import DataTable from './data_table'
-import NotificationModel from './notification_model';
-import ScrollManager from './scroll_manager';
-import ModelBinding from './model_binding';
-import { Menu, MenuItem } from './elements';
-import { AddAction } from "./settings_model";
+import PlaylistModel from './playlist_model.js'
+import FileBrowserModel from './file_browser_model.js'
+import urls from './urls.js'
+import { getDisplaySize, getDisplayDate, mapRange, bindHandlers } from './utils.js'
+import DataTable from './data_table.js'
+import NotificationModel from './notification_model.js';
+import ScrollManager from './scroll_manager.js';
+import ModelBinding from './model_binding.js';
+import { Menu, MenuItem } from './elements.js';
+import { AddAction } from './settings_model.js';
 
 const iconNames = Object.freeze({
     D: 'folder',

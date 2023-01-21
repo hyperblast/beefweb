@@ -1,35 +1,33 @@
-const path = require('path');
-const webpack = require('webpack');
+import path from 'path'
+import { fileURLToPath } from 'url'
+import webpack from 'webpack'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function configCommon(config)
 {
     config.entry.push('./src/index.js');
-
-    config.module.rules.push({
-        test: /\.js$/,
-        include: path.join(__dirname, 'src'),
-        loader: 'babel-loader',
-    });
 
     config.output.path = path.join(__dirname, 'dist', 'umd');
     config.output.libraryTarget = 'umd';
     config.output.library = {
         amd: 'beefweb-client',
         commonjs: 'beefweb-client',
-        root: 'BeefwebClient',
+        root: 'Beefweb',
     };
 }
 
 function configDebug(config)
 {
     config.mode = 'none';
-    config.output.filename = 'beefweb-client.js'
+    config.output.filename = 'beefweb-client.dev.js'
 }
 
 function configRelease(config)
 {
     config.mode = 'production';
-    config.output.filename = 'beefweb-client.min.js'
+    config.output.filename = 'beefweb-client.prod.js'
 }
 
 function makeTarget(configTarget)
@@ -50,7 +48,7 @@ function makeTarget(configTarget)
     return config;
 }
 
-module.exports = function()
+export default function()
 {
     return [
         makeTarget(configDebug),

@@ -1,7 +1,7 @@
 import React from 'react';
-import ModelBinding from './model_binding';
+import ModelBinding from './model_binding.js';
 import { PlaybackState } from 'beefweb-client';
-import ServiceContext from './service_context';
+import ServiceContext from './service_context.js';
 
 class PlaybackInfoBarInner extends React.PureComponent
 {

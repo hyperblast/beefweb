@@ -1,9 +1,9 @@
 import React from 'react';
-import { bindHandlers } from './utils';
+import { bindHandlers } from './utils.js';
 import PropTypes from 'prop-types';
-import { Button } from './elements';
-import { makeClassName } from './dom_utils';
-import pick from 'lodash/pick';
+import { Button } from './elements.js';
+import { makeClassName } from './dom_utils.js';
+import { pick } from 'lodash';
 
 const dropdownTarget = Symbol('dropdownTarget');
 

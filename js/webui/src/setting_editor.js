@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import objectValues from 'lodash/values'
-import SettingsModel, { SettingType } from './settings_model'
-import ServiceContext from './service_context';
-import kebabCase from 'lodash/kebabCase'
+import { values as objectValues } from 'lodash'
+import { SettingType } from './settings_model.js'
+import ServiceContext from './service_context.js';
 
 class BoolSettingEditor extends React.PureComponent
 {
@@ -119,7 +118,7 @@ class EnumSettingEditor extends React.PureComponent
             );
         });
 
-        const id = kebabCase(this.props.settingKey);
+        const id = this.props.settingKey.toLowerCase() + '-cfg';
 
         return (
             <React.Fragment>
@@ -186,7 +185,7 @@ class TextSettingEditor extends React.PureComponent
         const { value, metadata } = this.state;
         const { disabled } = this.props;
 
-        const id = kebabCase(this.props.settingKey);
+        const id = this.props.settingKey.toLowerCase() + '-cfg';
 
         return (
             <React.Fragment>

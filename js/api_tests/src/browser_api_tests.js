@@ -1,15 +1,15 @@
-'use strict';
+import path from 'path';
+import { promisify } from 'util';
+import fs from 'fs';
+import q from 'qunit';
+import lodash from 'lodash';
+import context  from './test_context.js';
 
-const path = require('path');
-const { promisify } = require('util');
-const fs = require('fs')
+const { client, config, usePlayer } = context;
+const { omit, sortBy } = lodash;
+
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
-const q = require('qunit');
-const omit = require('lodash/omit');
-const sortBy = require('lodash/sortBy');
-
-const { client, usePlayer, config, tracks } = require('./test_context');
 
 const musicSubdir = path.join(config.musicDir, 'subdir');
 

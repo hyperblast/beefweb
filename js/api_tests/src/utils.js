@@ -1,13 +1,11 @@
-'use strict';
+import os from 'os';
 
-const os = require('os');
-
-function sleep(timeout)
+export function sleep(timeout)
 {
     return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
-async function waitUntil(check, delay = 200, retry = 10)
+export async function waitUntil(check, delay = 200, retry = 10)
 {
     let ret;
 
@@ -29,7 +27,7 @@ async function waitUntil(check, delay = 200, retry = 10)
     return null;
 }
 
-function waitForExit(process, timeout = -1)
+export function waitForExit(process, timeout = -1)
 {
     return new Promise(resolve =>
     {
@@ -40,7 +38,7 @@ function waitForExit(process, timeout = -1)
     });
 }
 
-function getNormalizePath()
+function getNormalizePathFunction()
 {
     switch (os.type())
     {
@@ -51,14 +49,14 @@ function getNormalizePath()
     }
 }
 
-const normalizePath = getNormalizePath();
+export const normalizePath = getNormalizePathFunction();
 
-function pathsEqual(p1, p2)
+export function pathsEqual(p1, p2)
 {
     return normalizePath(p1) === normalizePath(p2);
 }
 
-function pathCollectionsEqual(paths1, paths2, ignoreOrder = false)
+export function pathCollectionsEqual(paths1, paths2, ignoreOrder = false)
 {
     if (paths1.length !== paths2.length)
         return false;
@@ -81,12 +79,3 @@ function pathCollectionsEqual(paths1, paths2, ignoreOrder = false)
 
     return true;
 }
-
-module.exports = {
-    sleep,
-    waitUntil,
-    waitForExit,
-    normalizePath,
-    pathsEqual,
-    pathCollectionsEqual,
-};

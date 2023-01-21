@@ -1,8 +1,14 @@
-const path = require('path');
-const webpack = require('webpack');
-const HtmlPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+import path from 'path'
+import { fileURLToPath } from 'url'
+import webpack from 'webpack'
+import HtmlPlugin from 'html-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
+import TerserPlugin from 'terser-webpack-plugin'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function configCommon(config, params)
 {
@@ -37,7 +43,7 @@ function configApp(config, params)
 
     if (params.buildType === 'release')
     {
-        const limit = 350 * 1024;
+        const limit = 400 * 1024;
         config.performance.hints = 'error';
         config.performance.maxEntrypointSize = limit;
         config.performance.maxAssetSize = limit;
@@ -92,12 +98,8 @@ function configDebug(config)
 {
     // Debug configuration
 
+    config.mode = 'development';
     config.devtool = 'source-map';
-    config.mode = 'none';
-
-    config.plugins.push(new webpack.LoaderOptionsPlugin({
-        debug: true
-    }));
 
     config.module.rules.push({
         test: /\.(css|less)$/,
@@ -110,24 +112,18 @@ function configRelease(config)
     // Release configuration
 
     config.mode = 'production';
-    config.node.process = false;
 
-    config.plugins.push(new webpack.LoaderOptionsPlugin({
-        minimize: true
-    }));
+    config.optimization.minimize = true;
+    config.optimization.minimizer.push(new TerserPlugin());
+    config.optimization.minimizer.push(new CssMinimizerPlugin());
 
-    const styleExtractor = new ExtractTextPlugin({
+    config.plugins.push(new MiniCssExtractPlugin({
         filename: 'bundle.css'
-    });
-
-    config.plugins.push(styleExtractor);
+    }));
 
     config.module.rules.push({
         test: /\.(css|less)$/,
-        use: styleExtractor.extract({
-            use: ['css-loader', 'less-loader'],
-            fallback: 'style-loader'
-        })
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader']
     });
 }
 
@@ -159,8 +155,11 @@ function makeTarget(configTarget, params)
         plugins: [],
         module: { rules: [] },
         resolve: { alias: {} },
-        node: {},
         performance: {},
+        optimization: {
+            minimize: false,
+            minimizer: []
+        }
     };
 
     configCommon(config, params);
@@ -171,7 +170,7 @@ function makeTarget(configTarget, params)
     return config;
 }
 
-module.exports = function(env)
+export default function(env)
 {
     const params = makeBuildParams(env || {});
     const allTargets = [makeTarget(configApp, params)];

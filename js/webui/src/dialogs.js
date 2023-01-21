@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
-import { bindHandlers } from './utils'
+import { bindHandlers } from './utils.js'
 
 const dialogTitles = Object.freeze({
     ok: 'OK',
