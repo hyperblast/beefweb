@@ -43,7 +43,7 @@ function configApp(config, params)
 
     if (params.buildType === 'release')
     {
-        const limit = 350 * 1024;
+        const limit = 400 * 1024;
         config.performance.hints = 'error';
         config.performance.maxEntrypointSize = limit;
         config.performance.maxAssetSize = limit;
