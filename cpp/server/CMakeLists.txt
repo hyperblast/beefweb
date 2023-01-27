@@ -1,10 +1,6 @@
 include(Utils)
 
-if(OS_WINDOWS)
-    set(CMAKE_CXX_STANDARD 17)
-else()
-    set(CMAKE_CXX_STANDARD 14) # To allow building with old toolchain
-endif()
+set(CMAKE_CXX_STANDARD 17)
 
 if(CXX_GCC OR CXX_CLANG)
     add_cxx_compiler_flag(-Wall)
