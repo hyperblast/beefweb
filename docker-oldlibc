@@ -7,9 +7,8 @@ RUN apt-get update && \
     apt-get install -y \
         tzdata software-properties-common build-essential file curl git zlib1g-dev && \
     add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
-    add-apt-repository -y ppa:adrozdoff/cmake && \
     apt-get update && \
-    apt-get install -y gcc-9 g++-9 cmake
+    apt-get install -y gcc-9 g++-9
 
 ENV CC=gcc-9
 ENV CXX=g++-9
