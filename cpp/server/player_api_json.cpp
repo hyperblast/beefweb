@@ -151,23 +151,23 @@ void to_json(Json& json, const PlaylistItemsResult& value)
     json["items"] = value.items;
 }
 
-void to_json(Json& json, const std::unordered_map<std::string, PlayerOption*>& value)
+void to_json(Json& json, const std::vector<PlayerOption*>& value)
 {
-    auto result = Json::object();
+    auto result = Json::array();
 
-    for (auto& pair : value)
+    for (auto option : value)
     {
         Json item;
 
-        item["displayName"] = pair.second->displayName();
-        item["displayOrder"] = pair.second->displayOrder();
+        item["id"] = option->id();
+        item["name"] = option->name();
 
-        if (auto boolOption = dynamic_cast<BoolPlayerOption*>(pair.second))
+        if (auto boolOption = dynamic_cast<BoolPlayerOption*>(option))
         {
             item["type"] = "bool";
             item["value"] = boolOption->getValue();
         }
-        else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(pair.second))
+        else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(option))
         {
             item["type"] = "enum";
             item["value"] = enumOption->getValue();
@@ -178,7 +178,7 @@ void to_json(Json& json, const std::unordered_map<std::string, PlayerOption*>& v
             throw std::invalid_argument("unknown option type");
         }
 
-        result[pair.first] = std::move(item);
+        result.emplace_back(std::move(item));
     }
 
     json = std::move(result);
