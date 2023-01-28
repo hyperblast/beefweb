@@ -105,4 +105,4 @@ void LegacyPlaybackModeOption::setModes(int order, int loop)
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
-} // deadbeef_player
+}
