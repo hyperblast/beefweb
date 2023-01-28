@@ -3,7 +3,6 @@ import { debounce } from 'lodash'
 import { clamp } from 'lodash'
 import Timer from './timer.js'
 import { PlaybackState } from 'beefweb-client'
-import { dbToLinear, linearToDb } from './utils.js';
 import { defaultPlayerFeatures, getPlayerFeatures } from './player_features.js';
 
 const initialPlayerInfo = Object.freeze({
@@ -62,9 +61,7 @@ export default class PlayerModel extends EventEmitter
         this.defineEvent('change');
         this.defineEvent('trackSwitch');
 
-        this.setVolumeRemote = debounce(
-            value => this.client.setVolume(this.convertVolumeToServer(value)), 80);
-
+        this.setVolumeRemote = debounce(value => this.client.setVolume(value), 80);
         this.reloadWithDelay = debounce(this.reload.bind(this), 1000);
     }
 
@@ -152,8 +149,6 @@ export default class PlayerModel extends EventEmitter
             this.featuresInitialized = true;
         }
 
-        this.convertVolumeFromServer();
-
         if (this.playbackState === PlaybackState.playing)
             this.positionTimer.restart();
         else
@@ -204,26 +199,5 @@ export default class PlayerModel extends EventEmitter
         {
             this.emit('trackSwitch');
         }
-    }
-
-    convertVolumeFromServer()
-    {
-        if (!this.features.linearVolumeControl)
-            return;
-
-        this.volume = {
-            type: 'linear',
-            min: 0.0,
-            max: 100.0,
-            value: dbToLinear(this.volume.value) * 100.0,
-            isMuted: this.volume.isMuted,
-        };
-    }
-
-    convertVolumeToServer(value)
-    {
-        return this.features.linearVolumeControl
-            ? linearToDb(value / 100.0)
-            : value;
     }
 }
