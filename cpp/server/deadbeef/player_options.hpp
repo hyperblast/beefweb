@@ -12,13 +12,30 @@ public:
 
     int32_t getValue() override;
     void setValue(int32_t value) override;
-    const std::vector<std::string>& enumNames() override;
 
 private:
     ConfigMutex configMutex_;
-    std::vector<std::string> modes_;
 
     void setModes(int order, int loop);
 };
+
+class ShuffleOption : public EnumPlayerOption
+{
+public:
+    ShuffleOption();
+
+    int32_t getValue() override;
+    void setValue(int32_t value) override;
+};
+
+class RepeatOption : public EnumPlayerOption
+{
+public:
+    RepeatOption();
+
+    int32_t getValue() override;
+    void setValue(int32_t value) override;
+};
+
 
 }

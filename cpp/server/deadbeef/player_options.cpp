@@ -2,7 +2,15 @@
 #include "player_options.hpp"
 #include "../string_utils.hpp"
 
+#define CONF_PLAYBACK_ORDER "playback.order"
+#define CONF_PLAYBACK_LOOP "playback.loop"
+
 namespace msrv::player_deadbeef {
+
+LegacyPlaybackModeOption::LegacyPlaybackModeOption()
+    : EnumPlayerOption("", "", {"Default", "Loop track", "Loop playlist", "Shuffle tracks", "Shuffle albums", "Random"})
+{
+}
 
 int32_t LegacyPlaybackModeOption::getValue()
 {
@@ -11,8 +19,8 @@ int32_t LegacyPlaybackModeOption::getValue()
 
     {
         ConfigLockGuard lock(configMutex_);
-        order = ddbApi->conf_get_int("playback.order", 0);
-        loop = ddbApi->conf_get_int("playback.loop", 0);
+        order = ddbApi->conf_get_int(CONF_PLAYBACK_ORDER, 0);
+        loop = ddbApi->conf_get_int(CONF_PLAYBACK_LOOP, 0);
     }
 
     switch (order)
@@ -80,28 +88,43 @@ void LegacyPlaybackModeOption::setValue(int32_t value)
     }
 }
 
-const std::vector<std::string>& LegacyPlaybackModeOption::enumNames()
-{
-    return modes_;
-}
-
-LegacyPlaybackModeOption::LegacyPlaybackModeOption()
-    : EnumPlayerOption("", "", 0)
-{
-    modes_.reserve(6);
-    modes_.emplace_back("Default");
-    modes_.emplace_back("Loop track");
-    modes_.emplace_back("Loop playlist");
-    modes_.emplace_back("Shuffle tracks");
-    modes_.emplace_back("Shuffle albums");
-    modes_.emplace_back("Random");
-}
-
 void LegacyPlaybackModeOption::setModes(int order, int loop)
 {
     ConfigLockGuard lock(configMutex_);
-    ddbApi->conf_set_int("playback.order", order);
-    ddbApi->conf_set_int("playback.loop", loop);
+    ddbApi->conf_set_int(CONF_PLAYBACK_ORDER, order);
+    ddbApi->conf_set_int(CONF_PLAYBACK_LOOP, loop);
+    ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+ShuffleOption::ShuffleOption()
+    : EnumPlayerOption("shuffle", "Shuffle", {"Off", "Tracks", "Random Tracks", "Albums"})
+{
+}
+
+int32_t ShuffleOption::getValue()
+{
+    return ddbApi->conf_get_int("playback.order", 0);
+}
+
+void ShuffleOption::setValue(int32_t value)
+{
+    ddbApi->conf_set_int(CONF_PLAYBACK_ORDER, value);
+    ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+RepeatOption::RepeatOption()
+    : EnumPlayerOption("repeat", "Repeat", {"All Tracks", "Off", "One Track"})
+{
+}
+
+int32_t RepeatOption::getValue()
+{
+    return ddbApi->conf_get_int(CONF_PLAYBACK_LOOP, 0);
+}
+
+void RepeatOption::setValue(int32_t value)
+{
+    ddbApi->conf_set_int("playback.loop", value);
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 

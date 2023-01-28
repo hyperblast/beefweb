@@ -9,6 +9,8 @@ PlayerImpl::PlayerImpl()
     : artworkPlugin_(nullptr)
 {
     setPlaybackModeOption(&playbackModeOption_);
+    addOption(&shuffleOption_);
+    addOption(&repeatOption_);
 }
 
 PlayerImpl::~PlayerImpl() = default;

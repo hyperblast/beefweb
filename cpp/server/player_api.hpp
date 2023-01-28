@@ -82,7 +82,7 @@ struct PlayerState
     VolumeInfo volume;
     ActiveItemInfo activeItem;
 
-    const std::unordered_map<std::string, PlayerOption*>* options = nullptr;
+    const std::vector<PlayerOption*>* options = nullptr;
     EnumPlayerOption* playbackModeOption = nullptr; // compat with versions < 0.7
 };
 
@@ -231,19 +231,17 @@ struct ArtworkResult
 class PlayerOption
 {
 public:
-    PlayerOption(std::string id, std::string displayName, int32_t displayOrder)
-        : id_(std::move(id)), displayName_(std::move(displayName)), displayOrder_(displayOrder) { }
+    PlayerOption(std::string id, std::string name)
+        : id_(std::move(id)), name_(std::move(name)) { }
 
     virtual ~PlayerOption() = default;
 
     const std::string& id() const { return id_; }
-    const std::string& displayName() const { return displayName_; }
-    int32_t displayOrder() const { return displayOrder_; }
+    const std::string& name() const { return name_; }
 
 private:
     const std::string id_;
-    const std::string displayName_;
-    const int32_t displayOrder_;
+    const std::string name_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerOption);
 };
@@ -251,8 +249,8 @@ private:
 class BoolPlayerOption : public PlayerOption
 {
 public:
-    BoolPlayerOption(std::string id, std::string displayName, int32_t displayOrder)
-        : PlayerOption(std::move(id), std::move(displayName), displayOrder) { }
+    BoolPlayerOption(std::string id, std::string name)
+        : PlayerOption(std::move(id), std::move(name)) { }
 
     virtual bool getValue() = 0;
     virtual void setValue(bool value) = 0;
@@ -261,12 +259,16 @@ public:
 class EnumPlayerOption : public PlayerOption
 {
 public:
-    EnumPlayerOption(std::string id, std::string displayName, int32_t displayOrder)
-        : PlayerOption(std::move(id), std::move(displayName), displayOrder) { }
+    EnumPlayerOption(std::string id, std::string name, std::vector<std::string> enumNames)
+        : PlayerOption(std::move(id), std::move(name)), enumNames_(std::move(enumNames)) { }
+
+    const std::vector<std::string>& enumNames() const { return enumNames_; }
 
     virtual int32_t getValue() = 0;
     virtual void setValue(int32_t value) = 0;
-    virtual const std::vector<std::string>& enumNames() = 0;
+
+private:
+    std::vector<std::string> enumNames_;
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
@@ -302,7 +304,7 @@ public:
     virtual void seekRelative(double offsetSeconds) = 0;
     virtual void setVolume(double val) = 0;
 
-    const std::unordered_map<std::string, PlayerOption*>& options() { return options_; }
+    const std::vector<PlayerOption*>& options() { return options_; }
     EnumPlayerOption* playbackModeOption() { return playbackModeOption_; }
 
     virtual TrackQueryPtr createTrackQuery(
@@ -366,7 +368,7 @@ protected:
     void addOption(PlayerOption* option)
     {
         assert(option);
-        options_.emplace(option->id(), option);
+        options_.push_back(option);
     }
 
     void setPlaybackModeOption(EnumPlayerOption* option)
@@ -383,7 +385,7 @@ protected:
 
 private:
     PlayerEventCallback eventCallback_;
-    std::unordered_map<std::string, PlayerOption*> options_;
+    std::vector<PlayerOption*> options_;
     EnumPlayerOption* playbackModeOption_ = nullptr;
 
     MSRV_NO_COPY_AND_ASSIGN(Player);
