@@ -12,7 +12,7 @@ function volumeIcon(isMuted)
     return isMuted ? 'volume-off' : 'volume-high';
 }
 
-class VolumeControlPanelInner extends React.PureComponent
+class VolumeControlPanelContent extends React.PureComponent
 {
     constructor(props, context)
     {
@@ -66,13 +66,13 @@ class VolumeControlPanelInner extends React.PureComponent
     }
 }
 
-VolumeControlPanelInner.propTypes = {
+VolumeControlPanelContent.propTypes = {
     onAfterMuteClick: PropTypes.func,
 };
 
-VolumeControlPanelInner.contextType = ServiceContext;
+VolumeControlPanelContent.contextType = ServiceContext;
 
-const VolumeControlPanel = ModelBinding(VolumeControlPanelInner, { playerModel: 'change' });
+const VolumeControlPanel = ModelBinding(VolumeControlPanelContent, { playerModel: 'change' });
 
 class VolumeControl extends React.PureComponent
 {
