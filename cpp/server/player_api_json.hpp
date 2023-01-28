@@ -16,5 +16,6 @@ void to_json(Json& json, const PlayerState& value);
 void to_json(Json& json, const PlaylistInfo& value);
 void to_json(Json& json, const PlaylistItemInfo& value);
 void to_json(Json& json, const PlaylistItemsResult& value);
+void to_json(Json& json, const std::unordered_map<std::string, PlayerOption*>& value);
 
 }

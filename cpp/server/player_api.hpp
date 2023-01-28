@@ -14,6 +14,9 @@
 namespace msrv {
 
 class WorkQueue;
+class PlayerOption;
+class BoolPlayerOption;
+class EnumPlayerOption;
 
 enum class PlaybackState
 {
@@ -78,8 +81,9 @@ struct PlayerState
     PlaybackState playbackState;
     VolumeInfo volume;
     ActiveItemInfo activeItem;
-    int32_t playbackMode;
-    const std::vector<std::string>* playbackModes;
+
+    const std::unordered_map<std::string, PlayerOption*>* options = nullptr;
+    EnumPlayerOption* playbackModeOption = nullptr; // compat with versions < 0.7
 };
 
 struct PlaylistInfo
@@ -224,6 +228,47 @@ struct ArtworkResult
     std::vector<uint8_t> fileData;
 };
 
+class PlayerOption
+{
+public:
+    PlayerOption(std::string id, std::string displayName, int32_t displayOrder)
+        : id_(std::move(id)), displayName_(std::move(displayName)), displayOrder_(displayOrder) { }
+
+    virtual ~PlayerOption() = default;
+
+    const std::string& id() const { return id_; }
+    const std::string& displayName() const { return displayName_; }
+    int32_t displayOrder() const { return displayOrder_; }
+
+private:
+    const std::string id_;
+    const std::string displayName_;
+    const int32_t displayOrder_;
+
+    MSRV_NO_COPY_AND_ASSIGN(PlayerOption);
+};
+
+class BoolPlayerOption : public PlayerOption
+{
+public:
+    BoolPlayerOption(std::string id, std::string displayName, int32_t displayOrder)
+        : PlayerOption(std::move(id), std::move(displayName), displayOrder) { }
+
+    virtual bool getValue() = 0;
+    virtual void setValue(bool value) = 0;
+};
+
+class EnumPlayerOption : public PlayerOption
+{
+public:
+    EnumPlayerOption(std::string id, std::string displayName, int32_t displayOrder)
+        : PlayerOption(std::move(id), std::move(displayName), displayOrder) { }
+
+    virtual int32_t getValue() = 0;
+    virtual void setValue(int32_t value) = 0;
+    virtual const std::vector<std::string>& enumNames() = 0;
+};
+
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
 using TrackQueryPtr = std::unique_ptr<TrackQuery>;
 using PlaylistQueryPtr = std::unique_ptr<PlaylistQuery>;
@@ -256,7 +301,9 @@ public:
     virtual void seekAbsolute(double offsetSeconds) = 0;
     virtual void seekRelative(double offsetSeconds) = 0;
     virtual void setVolume(double val) = 0;
-    virtual void setPlaybackMode(int32_t val) = 0;
+
+    const std::unordered_map<std::string, PlayerOption*>& options() { return options_; }
+    EnumPlayerOption* playbackModeOption() { return playbackModeOption_; }
 
     virtual TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) = 0;
@@ -316,6 +363,18 @@ public:
     void onEvent(PlayerEventCallback callback) { eventCallback_ = std::move(callback); }
 
 protected:
+    void addOption(PlayerOption* option)
+    {
+        assert(option);
+        options_.emplace(option->id(), option);
+    }
+
+    void setPlaybackModeOption(EnumPlayerOption* option)
+    {
+        assert(option);
+        playbackModeOption_ = option;
+    }
+
     void emitEvent(PlayerEvent event)
     {
         if (eventCallback_)
@@ -324,6 +383,8 @@ protected:
 
 private:
     PlayerEventCallback eventCallback_;
+    std::unordered_map<std::string, PlayerOption*> options_;
+    EnumPlayerOption* playbackModeOption_ = nullptr;
 
     MSRV_NO_COPY_AND_ASSIGN(Player);
 };

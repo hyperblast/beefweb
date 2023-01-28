@@ -3,13 +3,12 @@
 #include "artwork_request.hpp"
 #include <stdlib.h>
 
-namespace msrv {
-namespace player_deadbeef {
+namespace msrv::player_deadbeef {
 
 PlayerImpl::PlayerImpl()
     : artworkPlugin_(nullptr)
 {
-    initPlaybackModes();
+    setPlaybackModeOption(&playbackModeOption_);
 }
 
 PlayerImpl::~PlayerImpl() = default;
@@ -109,4 +108,4 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
     }
 }
 
-}}
+}

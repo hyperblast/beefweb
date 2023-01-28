@@ -8,9 +8,9 @@
 #include "artwork_request.hpp"
 #include "utils.hpp"
 #include "playlist_mapping.hpp"
+#include "player_options.hpp"
 
-namespace msrv {
-namespace player_deadbeef {
+namespace msrv::player_deadbeef {
 
 class PlayerImpl : public Player
 {
@@ -39,7 +39,6 @@ public:
     void seekAbsolute(double offsetSeconds) override;
     void seekRelative(double offsetSeconds) override;
     void setVolume(double val) override;
-    void setPlaybackMode(int32_t val) override;
 
     TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) override;
@@ -101,9 +100,6 @@ private:
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
     void queryVolume(VolumeInfo* info);
     void queryInfo(PlayerInfo* info);
-    void initPlaybackModes();
-    void setModes(int order, int loop);
-    int32_t getPlaybackMode();
     void initVersion();
     void initArtwork();
     boost::intrusive_ptr<ArtworkRequest> buildArtworkRequest(const ArtworkQuery& query);
@@ -112,7 +108,7 @@ private:
     PlaylistMutex playlistMutex_;
     ConfigMutex configMutex_;
     PlaylistMapping playlists_;
-    std::vector<std::string> playbackModes_;
+    LegacyPlaybackModeOption playbackModeOption_;
     DB_artwork_plugin_t* artworkPlugin_;
     std::string version_;
     std::vector<TitleFormatPtr> artworkRequestColumns_;
@@ -120,4 +116,4 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };
 
-}}
+}

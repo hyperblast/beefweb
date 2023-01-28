@@ -39,7 +39,10 @@ void PlayerController::setState()
         player_->seekRelative(*relativePosition);
 
     if (auto playbackMode = optionalParam<int32_t>("playbackMode"))
-        player_->setPlaybackMode(*playbackMode);
+    {
+        if (auto mode = player_->playbackModeOption())
+            mode->setValue(*playbackMode);
+    }
 }
 
 void PlayerController::playItem()
