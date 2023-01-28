@@ -16,7 +16,7 @@ export default function ControlBar(props)
         <div key='control-bar' className='panel control-bar'>
             <PlaybackControl playerModel={playerModel} settingsModel={settingsModel} />
             <PositionControl playerModel={playerModel} />
-            <VolumeControl playerModel={playerModel} />
+            <VolumeControl />
             <ViewSwitcher navigationModel={navigationModel} />
         </div>
     );
