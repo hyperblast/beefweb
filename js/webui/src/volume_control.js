@@ -5,6 +5,7 @@ import { Button} from './elements.js'
 import { bindHandlers } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
+import ServiceContext from "./service_context.js";
 
 function volumeIcon(isMuted)
 {
@@ -13,22 +14,21 @@ function volumeIcon(isMuted)
 
 class VolumeControlPanelInner extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
-
+        super(props, context);
         this.state = this.getStateFromModel();
         bindHandlers(this);
     }
 
     getStateFromModel()
     {
-        return this.props.playerModel.volume;
+        return this.context.playerModel.volume;
     }
 
     handleMuteClick()
     {
-        this.props.playerModel.mute();
+        this.context.playerModel.mute();
 
         if (this.props.onAfterMuteClick)
             this.props.onAfterMuteClick();
@@ -38,7 +38,7 @@ class VolumeControlPanelInner extends React.PureComponent
     {
         e.preventDefault();
         const newVolume = Number(e.target.value);
-        this.props.playerModel.setVolume(newVolume);
+        this.context.playerModel.setVolume(newVolume);
     }
 
     render()
@@ -67,17 +67,18 @@ class VolumeControlPanelInner extends React.PureComponent
 }
 
 VolumeControlPanelInner.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
     onAfterMuteClick: PropTypes.func,
 };
+
+VolumeControlPanelInner.contextType = ServiceContext;
 
 const VolumeControlPanel = ModelBinding(VolumeControlPanelInner, { playerModel: 'change' });
 
 class VolumeControl extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = Object.assign(this.getStateFromModel(), {
            panelOpen: false
@@ -89,7 +90,7 @@ class VolumeControl extends React.PureComponent
     getStateFromModel()
     {
         return {
-            isMuted: this.props.playerModel.volume.isMuted
+            isMuted: this.context.playerModel.volume.isMuted
         };
     }
 
@@ -133,8 +134,7 @@ class VolumeControl extends React.PureComponent
     }
 }
 
-VolumeControl.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired
-};
+VolumeControl.propTypes = {};
+VolumeControl.contextType = ServiceContext;
 
 export default ModelBinding(VolumeControl, { playerModel: 'change' });
