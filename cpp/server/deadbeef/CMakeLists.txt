@@ -18,7 +18,7 @@ set(
     playlist_mapping.cpp playlist_mapping.hpp
     plugin.cpp plugin.hpp
     utils.cpp utils.hpp
-)
+        player_options.cpp player_options.hpp)
 
 add_library(
     deadbeef_plugin MODULE

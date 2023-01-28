@@ -1,11 +1,14 @@
 #include "player_api_json.hpp"
+#include <stdexcept>
 
 namespace msrv {
 
 namespace {
+
 const char INVALID_PLAYLIST_REF[] = "Invalid playlist reference";
 const char INVALID_PLAYBACK_STATE[] = "Invalid playback state";
 const char INVALID_VOLUME_TYPE[] = "Invalid volume type";
+
 }
 
 void from_json(const Json& json, PlaylistRef& value)
@@ -113,8 +116,17 @@ void to_json(Json& json, const PlayerState& value)
     json["playbackState"] = value.playbackState;
     json["volume"] = value.volume;
     json["activeItem"] = value.activeItem;
-    json["playbackMode"] = value.playbackMode;
-    json["playbackModes"] = *value.playbackModes;
+
+    if (value.playbackModeOption != nullptr)
+    {
+        json["playbackMode"] = value.playbackModeOption->getValue();
+        json["playbackModes"] = value.playbackModeOption->enumNames();
+    }
+
+    if (value.options != nullptr)
+    {
+        json["options"] = *value.options;
+    }
 }
 
 void to_json(Json& json, const PlaylistInfo& value)
@@ -137,6 +149,39 @@ void to_json(Json& json, const PlaylistItemsResult& value)
     json["offset"] = value.offset;
     json["totalCount"] = value.totalCount;
     json["items"] = value.items;
+}
+
+void to_json(Json& json, const std::unordered_map<std::string, PlayerOption*>& value)
+{
+    auto result = Json::object();
+
+    for (auto& pair : value)
+    {
+        Json item;
+
+        item["displayName"] = pair.second->displayName();
+        item["displayOrder"] = pair.second->displayOrder();
+
+        if (auto boolOption = dynamic_cast<BoolPlayerOption*>(pair.second))
+        {
+            item["type"] = "bool";
+            item["value"] = boolOption->getValue();
+        }
+        else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(pair.second))
+        {
+            item["type"] = "enum";
+            item["value"] = enumOption->getValue();
+            item["enumNames"] = enumOption->enumNames();
+        }
+        else
+        {
+            throw std::invalid_argument("unknown option type");
+        }
+
+        result[pair.first] = std::move(item);
+    }
+
+    json = std::move(result);
 }
 
 }
