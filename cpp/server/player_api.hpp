@@ -305,6 +305,22 @@ public:
     virtual void setVolume(double val) = 0;
 
     const std::vector<PlayerOption*>& options() { return options_; }
+
+    PlayerOption* getOption(const std::string& id)
+    {
+        auto it = std::find_if(
+            options_.begin(),
+            options_.end(),
+            [&id](PlayerOption* option){ return option->id() == id; });
+
+        if (it == options_.end())
+        {
+            throw InvalidRequestException("invalid option id: " + id);
+        }
+
+        return *it;
+    }
+
     EnumPlayerOption* playbackModeOption() { return playbackModeOption_; }
 
     virtual TrackQueryPtr createTrackQuery(

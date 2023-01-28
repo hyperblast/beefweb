@@ -9,6 +9,18 @@
 
 namespace msrv {
 
+struct SetOptionRequest
+{
+    std::string id;
+    Json value;
+};
+
+void from_json(const Json& json, SetOptionRequest& request)
+{
+    request.id = json["id"];
+    request.value = json["value"];
+}
+
 PlayerController::PlayerController(Request* request, Player* player)
     : ControllerBase(request), player_(player) { }
 
@@ -42,6 +54,38 @@ void PlayerController::setState()
     {
         if (auto mode = player_->playbackModeOption())
             mode->setValue(*playbackMode);
+    }
+
+    const Json& postData = request()->postData;
+    auto options = postData.find("options");
+
+    if (options != postData.end() && options->is_object())
+    {
+        for (const auto& request : options->get<std::vector<SetOptionRequest>>())
+        {
+            setOption(request);
+        }
+    }
+}
+
+void PlayerController::setOption(const SetOptionRequest& request)
+{
+    auto option = player_->getOption(request.id);
+
+    if (auto boolOption = dynamic_cast<BoolPlayerOption*>(option))
+    {
+        boolOption->setValue(request.value.get<bool>());
+    }
+    else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(option))
+    {
+        auto value = request.value.get<int32_t>();
+
+        if (value < 0 || (size_t)value >= enumOption->enumNames().size())
+        {
+            throw InvalidRequestException("value for option is out of range: " + request.id);
+        }
+
+        enumOption->setValue(value);
     }
 }
 

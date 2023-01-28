@@ -7,6 +7,7 @@ namespace msrv {
 
 class Player;
 class Router;
+struct SetOptionRequest;
 
 class PlayerController : public ControllerBase
 {
@@ -24,6 +25,8 @@ public:
     void stop();
     void pause();
     void togglePause();
+
+    void setOption(const SetOptionRequest& request);
 
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player);
 
