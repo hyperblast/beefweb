@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import PlayerModel from './player_model.js'
 import { Button} from './elements.js'
-import { bindHandlers } from './utils.js'
+import { bindHandlers, dbToLinear, linearToDb } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
 import ServiceContext from "./service_context.js";
@@ -23,7 +22,21 @@ class VolumeControlPanelContent extends React.PureComponent
 
     getStateFromModel()
     {
-        return this.context.playerModel.volume;
+        const {type, min, max, value, isMuted} = this.context.playerModel.volume;
+
+        if (type !== 'db')
+        {
+            return {type, min, max, value, hintText: value.toFixed(0), isMuted};
+        }
+
+        return {
+            type: 'db',
+            min: 0.0,
+            max: 100.0,
+            value: dbToLinear(value) * 100.0,
+            hintText: Number.isFinite(value) ? value.toFixed(0) + ' dB' : 'Mute',
+            isMuted,
+        };
     }
 
     handleMuteClick()
@@ -37,14 +50,18 @@ class VolumeControlPanelContent extends React.PureComponent
     handleVolumeChange(e)
     {
         e.preventDefault();
-        const newVolume = Number(e.target.value);
-        this.context.playerModel.setVolume(newVolume);
+
+        const value = Number(e.target.value);
+        const volume = this.state.type === 'db'
+            ? linearToDb(value / 100.0)
+            : value;
+
+        this.context.playerModel.setVolume(volume);
     }
 
     render()
     {
-        const { type, min, max, value, isMuted } = this.state;
-        const title = value.toFixed(0) + (type === 'db' ? 'dB' : '');
+        const { hintText, min, max, value, isMuted } = this.state;
 
         return (
             <div className='volume-control-panel'>
@@ -59,7 +76,7 @@ class VolumeControlPanelContent extends React.PureComponent
                     max={max}
                     min={min}
                     value={value}
-                    title={title}
+                    title={hintText}
                     onChange={this.handleVolumeChange} />
             </div>
         );
