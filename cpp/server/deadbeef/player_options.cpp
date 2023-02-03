@@ -7,50 +7,28 @@
 
 namespace msrv::player_deadbeef {
 
-struct OptionMapping
+const int32_t repeatOptionValues[] = {
+    PLAYBACK_MODE_NOLOOP,
+    PLAYBACK_MODE_LOOP_SINGLE,
+    PLAYBACK_MODE_LOOP_ALL,
+    -1,
+};
+
+const int32_t shuffleOptionValues[] = {
+    PLAYBACK_ORDER_LINEAR,
+    PLAYBACK_ORDER_SHUFFLE_TRACKS,
+    PLAYBACK_ORDER_SHUFFLE_ALBUMS,
+    PLAYBACK_ORDER_RANDOM,
+    -1,
+};
+
+int32_t internalToApi(int32_t internalValue, const int32_t* values)
 {
-    constexpr OptionMapping(int32_t apiVal, int32_t internalValue)
-        : api(apiVal), internal(internalValue) { }
-
-    int32_t api;
-    int32_t internal;
-};
-
-OptionMapping repeatOptionMapping[] = {
-    OptionMapping(0, PLAYBACK_MODE_NOLOOP),
-    OptionMapping(1, PLAYBACK_MODE_LOOP_SINGLE),
-    OptionMapping(2, PLAYBACK_MODE_LOOP_ALL),
-    OptionMapping(-1, -1),
-};
-
-OptionMapping shuffleOptionMapping[] = {
-    OptionMapping(0, PLAYBACK_ORDER_LINEAR),
-    OptionMapping(1, PLAYBACK_ORDER_SHUFFLE_TRACKS),
-    OptionMapping(2, PLAYBACK_ORDER_SHUFFLE_ALBUMS),
-    OptionMapping(3, PLAYBACK_ORDER_RANDOM),
-    OptionMapping(-1, -1),
-};
-
-int32_t toInternalValue(int32_t api, OptionMapping* mappings)
-{
-    for (size_t i = 0; mappings[i].api != -1; i++)
+    for (int32_t i = 0; values[i] != -1; i++)
     {
-        if (mappings[i].api == api)
+        if (values[i] == internalValue)
         {
-            return mappings[i].internal;
-        }
-    }
-
-    return 0;
-}
-
-int32_t toApiValue(int32_t internal, OptionMapping* mappings)
-{
-    for (size_t i = 0; mappings[i].internal != -1; i++)
-    {
-        if (mappings[i].internal == internal)
-        {
-            return mappings[i].internal;
+            return i;
         }
     }
 
@@ -153,12 +131,12 @@ ShuffleOption::ShuffleOption()
 
 int32_t ShuffleOption::getValue()
 {
-    return toApiValue(ddbApi->conf_get_int(CONF_PLAYBACK_ORDER, 0), shuffleOptionMapping);
+    return internalToApi(ddbApi->conf_get_int(CONF_PLAYBACK_ORDER, 0), shuffleOptionValues);
 }
 
 void ShuffleOption::setValue(int32_t value)
 {
-    ddbApi->conf_set_int(CONF_PLAYBACK_ORDER, toInternalValue(value, shuffleOptionMapping));
+    ddbApi->conf_set_int(CONF_PLAYBACK_ORDER, shuffleOptionValues[value]);
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
@@ -169,12 +147,12 @@ RepeatOption::RepeatOption()
 
 int32_t RepeatOption::getValue()
 {
-    return toApiValue(ddbApi->conf_get_int(CONF_PLAYBACK_LOOP, 0), repeatOptionMapping);
+    return internalToApi(ddbApi->conf_get_int(CONF_PLAYBACK_LOOP, 0), repeatOptionValues);
 }
 
 void RepeatOption::setValue(int32_t value)
 {
-    ddbApi->conf_set_int(CONF_PLAYBACK_LOOP, toInternalValue(value, repeatOptionMapping));
+    ddbApi->conf_set_int(CONF_PLAYBACK_LOOP, repeatOptionValues[value]);
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
