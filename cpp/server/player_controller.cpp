@@ -52,11 +52,11 @@ void PlayerController::setState()
 
     if (auto playbackMode = optionalParam<int32_t>("playbackMode"))
     {
-        if (auto mode = player_->playbackModeOption())
+        if (auto option = player_->playbackModeOption())
         {
             auto newValue = *playbackMode;
-            mode->validate(newValue);
-            mode->setValue(newValue);
+            option->validate(newValue);
+            option->setValue(newValue);
         }
     }
 
