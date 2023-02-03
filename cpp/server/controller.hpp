@@ -25,13 +25,13 @@ public:
     template<typename T>
     T param(const std::string& key)
     {
-        return request()->getParam<T>(key);
+        return request()->param<T>(key);
     }
 
     template<typename T>
     boost::optional<T> optionalParam(const std::string& key)
     {
-        return request()->getOptionalParam<T>(key);
+        return request()->optionalParam<T>(key);
     }
 
     template<typename T>
@@ -39,6 +39,18 @@ public:
     {
         auto result = optionalParam<T>(key);
         return result ? *result : fallback;
+    }
+
+    template<typename T>
+    T bodyParam(const std::string& key)
+    {
+        return request()->bodyParam<T>(key);
+    }
+
+    template<typename T>
+    boost::optional<T> optionalBodyParam(const std::string& key)
+    {
+        return request()->optionalBodyParam<T>(key);
     }
 
 private:
