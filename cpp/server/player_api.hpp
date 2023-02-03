@@ -14,6 +14,7 @@
 namespace msrv {
 
 class WorkQueue;
+class Player;
 class PlayerOption;
 class BoolPlayerOption;
 class EnumPlayerOption;
@@ -308,23 +309,20 @@ public:
 
     PlayerOption* getOption(const std::string& id)
     {
-        auto it = std::find_if(
-            options_.begin(),
-            options_.end(),
-            [&id](PlayerOption* option){ return option->id() == id; });
-
-        if (it == options_.end())
+        for (auto option : options_)
         {
-            throw InvalidRequestException("invalid option id: " + id);
+            if (option->id() == id)
+            {
+                return option;
+            }
         }
 
-        return *it;
+        throw InvalidRequestException("invalid option id: " + id);
     }
 
     EnumPlayerOption* playbackModeOption() { return playbackModeOption_; }
 
-    virtual TrackQueryPtr createTrackQuery(
-        const std::vector<std::string>& columns) = 0;
+    virtual TrackQueryPtr createTrackQuery(const std::vector<std::string>& columns) = 0;
 
     // Playlists API
 
@@ -391,6 +389,12 @@ protected:
     {
         assert(option);
         playbackModeOption_ = option;
+    }
+
+    void queryOptions(PlayerState* state)
+    {
+        state->options = &options_;
+        state->playbackModeOption = playbackModeOption_;
     }
 
     void emitEvent(PlayerEvent event)

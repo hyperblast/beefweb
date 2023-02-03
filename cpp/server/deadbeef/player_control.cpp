@@ -45,8 +45,7 @@ std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(TrackQuery* activeItem
     queryInfo(&state->info);
     queryActiveItem(&state->activeItem, activeItemQuery);
     queryVolume(&state->volume);
-    state->playbackModeOption = &playbackModeOption_;
-    state->options = &options();
+    queryOptions(state.get());
     return state;
 }
 
