@@ -267,7 +267,7 @@ public:
 
     void validate(int32_t value)
     {
-        if (value < 0 || static_cast<size_t>(value) > enumNames_.size())
+        if (value < 0 || static_cast<size_t>(value) >= enumNames_.size())
             throw InvalidRequestException("value for option '" + id() + "' is out of range");
     }
 
