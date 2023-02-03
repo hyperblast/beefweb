@@ -9,19 +9,19 @@ PlayerImpl::PlayerImpl()
       incomingItemFilter_(playlist_incoming_item_filter_v3::get()),
       albumArtManager_(album_art_manager_v3::get()),
       titleFormatCompiler_(titleformat_compiler::get()),
-      playlists_(std::make_shared<PlaylistMapping>())
+      playlists_(std::make_shared<PlaylistMapping>()),
+      playbackOrderOption_(playlistManager_.get_ptr())
 {
     auto callback = [this] (PlayerEvent ev) { emitEvent(ev); };
 
     playerEventAdapter_.setCallback(callback);
     playlistEventAdapter_.setCallback(callback);
 
-    initPlaybackModes();
+    setPlaybackModeOption(&playbackOrderOption_);
+    addOption(&playbackOrderOption_);
 }
 
-PlayerImpl::~PlayerImpl()
-{
-}
+PlayerImpl::~PlayerImpl() = default;
 
 std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 {

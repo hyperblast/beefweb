@@ -1,12 +1,12 @@
 #pragma once
 
 #include "common.hpp"
+#include "player_options.hpp"
 #include "../player_api.hpp"
 #include "playlist_mapping.hpp"
 #include "utils.hpp"
 
-namespace msrv {
-namespace player_foobar2000 {
+namespace msrv::player_foobar2000 {
 
 class PlayerImpl : public Player
 {
@@ -33,7 +33,6 @@ public:
     void seekAbsolute(double offsetSeconds) override;
     void seekRelative(double offsetSeconds) override;
     void setVolume(double val) override;
-    void setPlaybackMode(int32_t val) override;
 
     TrackQueryPtr createTrackQuery(
         const std::vector<std::string>& columns) override;
@@ -95,7 +94,6 @@ private:
     void queryInfo(PlayerInfo* info);
     void queryVolume(VolumeInfo* volume);
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
-    void initPlaybackModes();
 
     TitleFormatVector compileColumns(const std::vector<std::string>& columns);
 
@@ -124,9 +122,9 @@ private:
     std::shared_ptr<PlaylistMapping> playlists_;
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
-    std::vector<std::string> playbackModes_;
+    PlaybackOrderOption playbackOrderOption_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };
 
-}}
+}
