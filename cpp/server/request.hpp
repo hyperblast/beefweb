@@ -38,10 +38,16 @@ public:
     std::unique_ptr<Response> response;
 
     template<typename T>
-    T getParam(const std::string& key);
+    T param(const std::string& key);
 
     template<typename T>
-    boost::optional<T> getOptionalParam(const std::string& key);
+    boost::optional<T> optionalParam(const std::string& key);
+
+    template<typename T>
+    T bodyParam(const std::string& key);
+
+    template<typename T>
+    boost::optional<T> optionalBodyParam(const std::string& key);
 
     bool isProcessed() const { return isProcessed_; }
     void setProcessed() { isProcessed_ = true; }
@@ -149,7 +155,7 @@ bool Request::tryGetParam(const std::string& key, T* outVal)
 }
 
 template<typename T>
-T Request::getParam(const std::string& key)
+T Request::param(const std::string& key)
 {
     T result;
 
@@ -161,11 +167,34 @@ T Request::getParam(const std::string& key)
 }
 
 template<typename T>
-boost::optional<T> Request::getOptionalParam(const std::string& key)
+boost::optional<T> Request::optionalParam(const std::string& key)
 {
     T result;
 
     if (tryGetParam(key, &result))
+        return result;
+
+    return boost::none;
+}
+
+template<typename T>
+T Request::bodyParam(const std::string& key)
+{
+    T result;
+
+    if (tryGetParam(postData, key, &result))
+        return result;
+
+    setErrorResponse("parameter is required", key);
+    throw InvalidRequestException();
+}
+
+template<typename T>
+boost::optional<T> Request::optionalBodyParam(const std::string& key)
+{
+    T result;
+
+    if (tryGetParam(postData, key, &result))
         return result;
 
     return boost::none;

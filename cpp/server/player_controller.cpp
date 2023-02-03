@@ -56,12 +56,9 @@ void PlayerController::setState()
             mode->setValue(*playbackMode);
     }
 
-    const Json& postData = request()->postData;
-    auto options = postData.find("options");
-
-    if (options != postData.end() && options->is_object())
+    if (auto options = optionalBodyParam<std::vector<SetOptionRequest>>("options"))
     {
-        for (const auto& request : options->get<std::vector<SetOptionRequest>>())
+        for (const auto& request : *options)
         {
             setOption(request);
         }
