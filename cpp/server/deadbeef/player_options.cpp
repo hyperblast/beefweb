@@ -36,7 +36,8 @@ int32_t internalToApi(int32_t internalValue, const int32_t* values)
 }
 
 LegacyPlaybackModeOption::LegacyPlaybackModeOption()
-    : EnumPlayerOption("", "", {"Default", "Loop track", "Loop playlist", "Shuffle tracks", "Shuffle albums", "Random"})
+    : EnumPlayerOption("playbackMode", "Playback mode",
+       {"Default", "Loop track", "Loop playlist", "Shuffle tracks", "Shuffle albums", "Random"})
 {
 }
 

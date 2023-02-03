@@ -265,6 +265,12 @@ public:
 
     const std::vector<std::string>& enumNames() const { return enumNames_; }
 
+    void validate(int32_t value)
+    {
+        if (value < 0 || static_cast<size_t>(value) > enumNames_.size())
+            throw InvalidRequestException("value for option '" + id() + "' is out of range");
+    }
+
     virtual int32_t getValue() = 0;
     virtual void setValue(int32_t value) = 0;
 
