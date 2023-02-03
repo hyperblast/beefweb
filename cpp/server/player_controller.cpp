@@ -53,7 +53,11 @@ void PlayerController::setState()
     if (auto playbackMode = optionalParam<int32_t>("playbackMode"))
     {
         if (auto mode = player_->playbackModeOption())
-            mode->setValue(*playbackMode);
+        {
+            auto newValue = *playbackMode;
+            mode->validate(newValue);
+            mode->setValue(newValue);
+        }
     }
 
     if (auto options = optionalBodyParam<std::vector<SetOptionRequest>>("options"))
@@ -75,14 +79,9 @@ void PlayerController::setOption(const SetOptionRequest& request)
     }
     else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(option))
     {
-        auto value = request.value.get<int32_t>();
-
-        if (value < 0 || (size_t)value >= enumOption->enumNames().size())
-        {
-            throw InvalidRequestException("value for option is out of range: " + request.id);
-        }
-
-        enumOption->setValue(value);
+        auto newValue = request.value.get<int32_t>();
+        enumOption->validate(newValue);
+        enumOption->setValue(newValue);
     }
 }
 

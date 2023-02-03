@@ -26,12 +26,12 @@ public:
     void pause();
     void togglePause();
 
-    void setOption(const SetOptionRequest& request);
-
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player);
 
 private:
     Player* player_;
+
+    void setOption(const SetOptionRequest& request);
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerController);
 };
