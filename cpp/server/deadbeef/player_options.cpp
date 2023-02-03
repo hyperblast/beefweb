@@ -7,6 +7,56 @@
 
 namespace msrv::player_deadbeef {
 
+struct OptionMapping
+{
+    constexpr OptionMapping(int32_t apiVal, int32_t internalValue)
+        : api(apiVal), internal(internalValue) { }
+
+    int32_t api;
+    int32_t internal;
+};
+
+OptionMapping repeatOptionMapping[] = {
+    OptionMapping(0, PLAYBACK_MODE_NOLOOP),
+    OptionMapping(1, PLAYBACK_MODE_LOOP_SINGLE),
+    OptionMapping(2, PLAYBACK_MODE_LOOP_ALL),
+    OptionMapping(-1, -1),
+};
+
+OptionMapping shuffleOptionMapping[] = {
+    OptionMapping(0, PLAYBACK_ORDER_LINEAR),
+    OptionMapping(1, PLAYBACK_ORDER_SHUFFLE_TRACKS),
+    OptionMapping(2, PLAYBACK_ORDER_SHUFFLE_ALBUMS),
+    OptionMapping(3, PLAYBACK_ORDER_RANDOM),
+    OptionMapping(-1, -1),
+};
+
+int32_t toInternalValue(int32_t api, OptionMapping* mappings)
+{
+    for (size_t i = 0; mappings[i].api != -1; i++)
+    {
+        if (mappings[i].api == api)
+        {
+            return mappings[i].internal;
+        }
+    }
+
+    return 0;
+}
+
+int32_t toApiValue(int32_t internal, OptionMapping* mappings)
+{
+    for (size_t i = 0; mappings[i].internal != -1; i++)
+    {
+        if (mappings[i].internal == internal)
+        {
+            return mappings[i].internal;
+        }
+    }
+
+    return 0;
+}
+
 LegacyPlaybackModeOption::LegacyPlaybackModeOption()
     : EnumPlayerOption("", "", {"Default", "Loop track", "Loop playlist", "Shuffle tracks", "Shuffle albums", "Random"})
 {
@@ -97,34 +147,34 @@ void LegacyPlaybackModeOption::setModes(int order, int loop)
 }
 
 ShuffleOption::ShuffleOption()
-    : EnumPlayerOption("shuffle", "Shuffle", {"Off", "Tracks", "Random Tracks", "Albums"})
+    : EnumPlayerOption("shuffle", "Shuffle", {"Off", "Tracks", "Albums", "Random Tracks"})
 {
 }
 
 int32_t ShuffleOption::getValue()
 {
-    return ddbApi->conf_get_int("playback.order", 0);
+    return toApiValue(ddbApi->conf_get_int(CONF_PLAYBACK_ORDER, 0), shuffleOptionMapping);
 }
 
 void ShuffleOption::setValue(int32_t value)
 {
-    ddbApi->conf_set_int(CONF_PLAYBACK_ORDER, value);
+    ddbApi->conf_set_int(CONF_PLAYBACK_ORDER, toInternalValue(value, shuffleOptionMapping));
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 RepeatOption::RepeatOption()
-    : EnumPlayerOption("repeat", "Repeat", {"All Tracks", "Off", "One Track"})
+    : EnumPlayerOption("repeat", "Repeat", {"Off", "One Track", "All Tracks"})
 {
 }
 
 int32_t RepeatOption::getValue()
 {
-    return ddbApi->conf_get_int(CONF_PLAYBACK_LOOP, 0);
+    return toApiValue(ddbApi->conf_get_int(CONF_PLAYBACK_LOOP, 0), repeatOptionMapping);
 }
 
 void RepeatOption::setValue(int32_t value)
 {
-    ddbApi->conf_set_int("playback.loop", value);
+    ddbApi->conf_set_int(CONF_PLAYBACK_LOOP, toInternalValue(value, repeatOptionMapping));
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
