@@ -108,9 +108,13 @@ private:
     PlaylistMutex playlistMutex_;
     ConfigMutex configMutex_;
     PlaylistMapping playlists_;
+
     LegacyPlaybackModeOption playbackModeOption_;
     ShuffleOption shuffleOption_;
     RepeatOption repeatOption_;
+    StopAfterCurrentTrackOption stopAfterCurrentTrackOption_;
+    StopAfterCurrentAlbumOption stopAfterCurrentAlbumOption_;
+
     DB_artwork_plugin_t* artworkPlugin_;
     std::string version_;
     std::vector<TitleFormatPtr> artworkRequestColumns_;

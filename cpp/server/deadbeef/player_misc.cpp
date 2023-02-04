@@ -1,7 +1,6 @@
 #include "player.hpp"
 #include "../log.hpp"
 #include "artwork_request.hpp"
-#include <stdlib.h>
 
 namespace msrv::player_deadbeef {
 
@@ -11,6 +10,8 @@ PlayerImpl::PlayerImpl()
     setPlaybackModeOption(&playbackModeOption_);
     addOption(&shuffleOption_);
     addOption(&repeatOption_);
+    addOption(&stopAfterCurrentTrackOption_);
+    addOption(&stopAfterCurrentAlbumOption_);
 }
 
 PlayerImpl::~PlayerImpl() = default;

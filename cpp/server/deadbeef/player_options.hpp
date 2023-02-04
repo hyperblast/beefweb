@@ -37,5 +37,22 @@ public:
     void setValue(int32_t value) override;
 };
 
+class StopAfterCurrentTrackOption : public BoolPlayerOption
+{
+public:
+    StopAfterCurrentTrackOption();
+
+    bool getValue() override;
+    void setValue(bool value) override;
+};
+
+class StopAfterCurrentAlbumOption : public BoolPlayerOption
+{
+public:
+    StopAfterCurrentAlbumOption();
+
+    bool getValue() override;
+    void setValue(bool value) override;
+};
 
 }
