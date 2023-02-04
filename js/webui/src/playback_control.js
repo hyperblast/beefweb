@@ -8,12 +8,13 @@ import ModelBinding from './model_binding.js';
 import SettingsModel, { MediaSize } from './settings_model.js';
 import { DropdownButton } from './dropdown.js';
 import { navigationMenuColumns } from './columns.js';
+import ServiceContext from "./service_context.js";
 
 class PlaybackControl extends React.PureComponent
 {
-    constructor(props)
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = Object.assign(this.getStateFromModel(), {
             playbackModeOpen: false,
@@ -25,7 +26,7 @@ class PlaybackControl extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playerModel, settingsModel } = this.props;
+        const { playerModel, settingsModel } = this.context;
         const { playbackMode, playbackModes } = playerModel;
         const { cursorFollowsPlayback } = settingsModel;
 
@@ -43,47 +44,47 @@ class PlaybackControl extends React.PureComponent
 
     handleStop()
     {
-        this.props.playerModel.stop();
+        this.context.playerModel.stop();
     }
 
     handlePlay()
     {
-        this.props.playerModel.play();
+        this.context.playerModel.play();
     }
 
     handlePlayRandom()
     {
-        this.props.playerModel.playRandom();
+        this.context.playerModel.playRandom();
     }
 
     handlePause()
     {
-        this.props.playerModel.pause();
+        this.context.playerModel.pause();
     }
 
     handlePrevious()
     {
-        this.props.playerModel.previous();
+        this.context.playerModel.previous();
     }
 
     playPreviousBy(index)
     {
-        this.props.playerModel.previousBy(navigationMenuColumns[index].expression);
+        this.context.playerModel.previousBy(navigationMenuColumns[index].expression);
     }
 
     handleNext()
     {
-        this.props.playerModel.next();
+        this.context.playerModel.next();
     }
 
     playNextBy(index)
     {
-        this.props.playerModel.nextBy(navigationMenuColumns[index].expression);
+        this.context.playerModel.nextBy(navigationMenuColumns[index].expression);
     }
 
     setPlaybackMode(value)
     {
-        this.props.playerModel.setPlaybackMode(value);
+        this.context.playerModel.setPlaybackMode(value);
     }
 
     handlePlaybackModeRequestOpen(value)
@@ -98,7 +99,7 @@ class PlaybackControl extends React.PureComponent
 
     handleCursorFollowsPlaybackClick()
     {
-        const { settingsModel } = this.props;
+        const { settingsModel } = this.context;
         settingsModel.cursorFollowsPlayback = !settingsModel.cursorFollowsPlayback;
     }
 
@@ -203,10 +204,8 @@ class PlaybackControl extends React.PureComponent
     }
 }
 
-PlaybackControl.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
-};
+PlaybackControl.contextType = ServiceContext;
+PlaybackControl.propTypes = {};
 
 export default ModelBinding(PlaybackControl, {
     playerModel: 'change',
