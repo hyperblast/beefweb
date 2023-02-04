@@ -4,6 +4,8 @@
 
 #define CONF_PLAYBACK_ORDER "playback.order"
 #define CONF_PLAYBACK_LOOP "playback.loop"
+#define CONF_PLAYLIST_STOP_AFTER_CURRENT "playlist.stop_after_current"
+#define CONF_PLAYLIST_STOP_AFTER_ALBUM "playlist.stop_after_album"
 
 namespace msrv::player_deadbeef {
 
@@ -154,6 +156,38 @@ int32_t RepeatOption::getValue()
 void RepeatOption::setValue(int32_t value)
 {
     ddbApi->conf_set_int(CONF_PLAYBACK_LOOP, repeatOptionValues[value]);
+    ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+StopAfterCurrentTrackOption::StopAfterCurrentTrackOption()
+    : BoolPlayerOption("stopAfterCurrentTrack", "Stop after current track")
+{
+}
+
+bool StopAfterCurrentTrackOption::getValue()
+{
+    return ddbApi->conf_get_int(CONF_PLAYLIST_STOP_AFTER_CURRENT, 0) != 0;
+}
+
+void StopAfterCurrentTrackOption::setValue(bool value)
+{
+    ddbApi->conf_set_int(CONF_PLAYLIST_STOP_AFTER_CURRENT, value ? 1 : 0);
+    ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
+}
+
+StopAfterCurrentAlbumOption::StopAfterCurrentAlbumOption()
+    : BoolPlayerOption("stopAfterCurrentAlbum", "Stop after current album")
+{
+}
+
+bool StopAfterCurrentAlbumOption::getValue()
+{
+    return ddbApi->conf_get_int(CONF_PLAYLIST_STOP_AFTER_ALBUM, 0) != 0;
+}
+
+void StopAfterCurrentAlbumOption::setValue(bool value)
+{
+    ddbApi->conf_set_int(CONF_PLAYLIST_STOP_AFTER_ALBUM, value ? 1 : 0);
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
