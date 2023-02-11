@@ -66,6 +66,11 @@ export default class PlayerClient
         return this.setPlayerState({ playbackMode: value });
     }
 
+    setOption(id, value)
+    {
+        return this.setPlayerState({ options: [{id, value}] });
+    }
+
     play(plref, item)
     {
         return this.post(`api/player/play/${plref}/${item}`);
