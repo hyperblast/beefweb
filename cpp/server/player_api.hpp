@@ -255,6 +255,24 @@ public:
 
     virtual bool getValue() = 0;
     virtual void setValue(bool value) = 0;
+
+    void setValue(Switch value)
+    {
+        switch (value)
+        {
+        case Switch::FALSE:
+            setValue(false);
+            break;
+
+        case Switch::TRUE:
+            setValue(true);
+            break;
+
+        case Switch::TOGGLE:
+            setValue(!getValue());
+            break;
+        }
+    }
 };
 
 class EnumPlayerOption : public PlayerOption
