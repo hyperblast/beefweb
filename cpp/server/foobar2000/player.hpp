@@ -84,7 +84,7 @@ public:
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
 private:
-    bool isValidItemIndex(t_size playlist, t_size item)
+    bool isValidItemIndex(t_size playlist, int32_t item)
     {
         return item >= 0
             && static_cast<t_size>(item) < playlistManager_->playlist_get_item_count(playlist);
