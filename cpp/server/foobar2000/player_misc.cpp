@@ -10,7 +10,8 @@ PlayerImpl::PlayerImpl()
       albumArtManager_(album_art_manager_v3::get()),
       titleFormatCompiler_(titleformat_compiler::get()),
       playlists_(std::make_shared<PlaylistMapping>()),
-      playbackOrderOption_(playlistManager_.get_ptr())
+      playbackOrderOption_(playlistManager_.get_ptr()),
+      stopAfterCurrentTrackOption_(playbackControl_.get_ptr())
 {
     auto callback = [this] (PlayerEvent ev) { emitEvent(ev); };
 
@@ -19,6 +20,7 @@ PlayerImpl::PlayerImpl()
 
     setPlaybackModeOption(&playbackOrderOption_);
     addOption(&playbackOrderOption_);
+    addOption(&stopAfterCurrentTrackOption_);
 }
 
 PlayerImpl::~PlayerImpl() = default;

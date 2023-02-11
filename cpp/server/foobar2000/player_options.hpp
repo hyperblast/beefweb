@@ -18,4 +18,15 @@ private:
     static std::vector<std::string> getEnumNames(playlist_manager_v4* playlistManager);
 };
 
+class StopAfterCurrentTrackOption : public BoolPlayerOption
+{
+public:
+    explicit StopAfterCurrentTrackOption(playback_control* playbackControl);
+    bool getValue() override;
+    void setValue(bool value) override;
+
+private:
+    playback_control* playbackControl_;
+};
+
 }

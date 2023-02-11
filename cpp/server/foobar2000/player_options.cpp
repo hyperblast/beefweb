@@ -33,4 +33,19 @@ std::vector<std::string> PlaybackOrderOption::getEnumNames(playlist_manager_v4* 
     return names;
 }
 
+StopAfterCurrentTrackOption::StopAfterCurrentTrackOption(playback_control* playbackControl)
+    : BoolPlayerOption("stopAfterCurrentTrack", "Stop after current track"), playbackControl_(playbackControl)
+{
+}
+
+bool StopAfterCurrentTrackOption::getValue()
+{
+    return playbackControl_->get_stop_after_current();
+}
+
+void StopAfterCurrentTrackOption::setValue(bool value)
+{
+    playbackControl_->set_stop_after_current(value);
+}
+
 }
