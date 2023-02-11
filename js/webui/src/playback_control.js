@@ -1,11 +1,9 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import PlayerModel from './player_model.js'
 import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js'
 import { bindHandlers } from './utils.js'
 import urls from './urls.js';
 import ModelBinding from './model_binding.js';
-import SettingsModel, { MediaSize } from './settings_model.js';
+import { MediaSize } from './settings_model.js';
 import { DropdownButton } from './dropdown.js';
 import { navigationMenuColumns } from './columns.js';
 import ServiceContext from "./service_context.js";
@@ -17,7 +15,7 @@ class PlaybackControl extends React.PureComponent
         super(props, context);
 
         this.state = Object.assign(this.getStateFromModel(), {
-            playbackModeOpen: false,
+            optionsOpen: false,
             navigationOpen: false,
         });
 
@@ -27,7 +25,7 @@ class PlaybackControl extends React.PureComponent
     getStateFromModel()
     {
         const { playerModel, settingsModel } = this.context;
-        const { playbackMode, playbackModes } = playerModel;
+        const { options } = playerModel;
         const { cursorFollowsPlayback } = settingsModel;
 
         const menuDirection = settingsModel.mediaSizeUp(MediaSize.medium)
@@ -35,8 +33,7 @@ class PlaybackControl extends React.PureComponent
             : 'center';
 
         return {
-            playbackMode,
-            playbackModes,
+            options,
             cursorFollowsPlayback,
             menuDirection
         };
@@ -82,14 +79,14 @@ class PlaybackControl extends React.PureComponent
         this.context.playerModel.nextBy(navigationMenuColumns[index].expression);
     }
 
-    setPlaybackMode(value)
+    setOption(id, value)
     {
-        this.context.playerModel.setPlaybackMode(value);
+        this.context.playerModel.setOption(id, value);
     }
 
-    handlePlaybackModeRequestOpen(value)
+    handleOptionsRequestOpen(value)
     {
-        this.setState({ playbackModeOpen: value });
+        this.setState({ optionsOpen: value });
     }
 
     handleNavigationRequestOpen(value)
@@ -106,21 +103,12 @@ class PlaybackControl extends React.PureComponent
     render()
     {
         const {
-            playbackMode,
-            playbackModes,
             cursorFollowsPlayback,
             menuDirection,
-            playbackModeOpen,
+            options,
+            optionsOpen,
             navigationOpen,
         } = this.state;
-
-        const playbackModeMenuItems = playbackModes.map((mode, index) => (
-            <MenuItem
-                key={'plmode' + index}
-                title={mode}
-                checked={index === playbackMode}
-                onClick={() => this.setPlaybackMode(index)} />
-        ));
 
         const nextByMenuItems = navigationMenuColumns.map((column, index) => (
             <MenuItem
@@ -162,13 +150,12 @@ class PlaybackControl extends React.PureComponent
                     onClick={this.handleNext} />
                 <DropdownButton
                     iconName='audio'
-                    title='Playback mode'
+                    title='Options'
                     direction={menuDirection}
-                    isOpen={playbackModeOpen}
-                    onRequestOpen={this.handlePlaybackModeRequestOpen}>
+                    isOpen={optionsOpen}
+                    onRequestOpen={this.handleOptionsRequestOpen}>
                     <Menu>
-                        <MenuLabel title='Playback mode' />
-                        { playbackModeMenuItems }
+                        { this.renderOptions(options) }
                     </Menu>
                 </DropdownButton>
                 <DropdownButton
@@ -201,6 +188,52 @@ class PlaybackControl extends React.PureComponent
                 </DropdownButton>
             </div>
         );
+    }
+
+    renderOptions(options)
+    {
+        const menuItems = [];
+
+        const enumOptions = options.filter(o => o.type === 'enum');
+        const boolOptions = options.filter(o => o.type === 'bool');
+
+        for (let option of enumOptions)
+        {
+            const { id, name, value, enumNames } = option;
+
+            menuItems.push(<MenuLabel key={id + 'Name'} title={name} />);
+
+            for (let i = 0; i < enumNames.length; i++)
+            {
+                menuItems.push(
+                    <MenuItem
+                        key={id + i}
+                        title={enumNames[i]}
+                        checked={value === i}
+                        onClick={() => this.setOption(id, i)} />);
+            }
+
+            menuItems.push(<MenuSeparator key={id + 'Sep'} />)
+        }
+
+        for (let option of boolOptions)
+        {
+            const { id, name, value } = option;
+
+            menuItems.push(
+                <MenuItem
+                    key={id}
+                    title={name}
+                    checked={value}
+                    onClick={() => this.setOption(id, !value)}/>);
+        }
+
+        if (boolOptions.length === 0 && enumOptions.length > 0)
+        {
+            menuItems.pop();
+        }
+
+        return menuItems;
     }
 }
 

@@ -16,6 +16,7 @@ const initialPlayerInfo = Object.freeze({
     playbackState: PlaybackState.stopped,
     playbackMode: 0,
     playbackModes: ['Default'],
+    options: [],
     volume: {
         type: 'db',
         min: 0.0,
@@ -133,9 +134,9 @@ export default class PlayerModel extends EventEmitter
         this.client.setPlaybackPosition(value);
     }
 
-    setPlaybackMode(value)
+    setOption(id, value)
     {
-        this.client.setPlaybackMode(value);
+        this.client.setOption(id, value);
     }
 
     update(playerInfo)
