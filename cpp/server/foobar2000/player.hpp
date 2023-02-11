@@ -123,6 +123,7 @@ private:
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
     PlaybackOrderOption playbackOrderOption_;
+    StopAfterCurrentTrackOption stopAfterCurrentTrackOption_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };
