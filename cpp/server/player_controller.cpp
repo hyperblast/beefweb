@@ -75,7 +75,7 @@ void PlayerController::setOption(const SetOptionRequest& request)
 
     if (auto boolOption = dynamic_cast<BoolPlayerOption*>(option))
     {
-        boolOption->setValue(request.value.get<bool>());
+        boolOption->setValue(request.value.get<Switch>());
     }
     else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(option))
     {
