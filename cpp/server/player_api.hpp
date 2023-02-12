@@ -293,7 +293,7 @@ public:
     virtual void setValue(int32_t value) = 0;
 
 private:
-    std::vector<std::string> enumNames_;
+    const std::vector<std::string> enumNames_;
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;

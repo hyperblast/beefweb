@@ -151,37 +151,26 @@ void to_json(Json& json, const PlaylistItemsResult& value)
     json["items"] = value.items;
 }
 
-void to_json(Json& json, const std::vector<PlayerOption*>& value)
+void to_json(Json& json, PlayerOption* const& value)
 {
-    auto result = Json::array();
+    json["id"] = value->id();
+    json["name"] = value->name();
 
-    for (auto option : value)
+    if (auto boolOption = dynamic_cast<BoolPlayerOption*>(value))
     {
-        Json item;
-
-        item["id"] = option->id();
-        item["name"] = option->name();
-
-        if (auto boolOption = dynamic_cast<BoolPlayerOption*>(option))
-        {
-            item["type"] = "bool";
-            item["value"] = boolOption->getValue();
-        }
-        else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(option))
-        {
-            item["type"] = "enum";
-            item["value"] = enumOption->getValue();
-            item["enumNames"] = enumOption->enumNames();
-        }
-        else
-        {
-            throw std::invalid_argument("unknown option type");
-        }
-
-        result.emplace_back(std::move(item));
+        json["type"] = "bool";
+        json["value"] = boolOption->getValue();
     }
-
-    json = std::move(result);
+    else if (auto enumOption = dynamic_cast<EnumPlayerOption*>(value))
+    {
+        json["type"] = "enum";
+        json["value"] = enumOption->getValue();
+        json["enumNames"] = enumOption->enumNames();
+    }
+    else
+    {
+        throw std::invalid_argument("unknown option type");
+    }
 }
 
 }
