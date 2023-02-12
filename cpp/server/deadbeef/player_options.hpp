@@ -10,11 +10,11 @@ class LegacyPlaybackModeOption : public EnumPlayerOption
 public:
     LegacyPlaybackModeOption();
 
-    int32_t getValue() override;
+    int32_t getValue() const override;
     void setValue(int32_t value) override;
 
 private:
-    ConfigMutex configMutex_;
+    mutable ConfigMutex configMutex_;
 
     void setModes(int order, int loop);
 };
@@ -24,7 +24,7 @@ class ShuffleOption : public EnumPlayerOption
 public:
     ShuffleOption();
 
-    int32_t getValue() override;
+    int32_t getValue() const override;
     void setValue(int32_t value) override;
 };
 
@@ -33,7 +33,7 @@ class RepeatOption : public EnumPlayerOption
 public:
     RepeatOption();
 
-    int32_t getValue() override;
+    int32_t getValue() const override;
     void setValue(int32_t value) override;
 };
 
@@ -42,7 +42,7 @@ class StopAfterCurrentTrackOption : public BoolPlayerOption
 public:
     StopAfterCurrentTrackOption();
 
-    bool getValue() override;
+    bool getValue() const override;
     void setValue(bool value) override;
 };
 
@@ -51,7 +51,7 @@ class StopAfterCurrentAlbumOption : public BoolPlayerOption
 public:
     StopAfterCurrentAlbumOption();
 
-    bool getValue() override;
+    bool getValue() const override;
     void setValue(bool value) override;
 };
 
