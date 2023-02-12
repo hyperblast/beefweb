@@ -9,7 +9,7 @@ PlaybackOrderOption::PlaybackOrderOption(playlist_manager_v4* playlistManager)
 {
 }
 
-int32_t PlaybackOrderOption::getValue()
+int32_t PlaybackOrderOption::getValue() const
 {
     return static_cast<int32_t>(playlistManager_->playback_order_get_active());
 }
@@ -38,7 +38,7 @@ StopAfterCurrentTrackOption::StopAfterCurrentTrackOption(playback_control* playb
 {
 }
 
-bool StopAfterCurrentTrackOption::getValue()
+bool StopAfterCurrentTrackOption::getValue() const
 {
     return playbackControl_->get_stop_after_current();
 }

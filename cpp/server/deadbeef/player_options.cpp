@@ -43,7 +43,7 @@ LegacyPlaybackModeOption::LegacyPlaybackModeOption()
 {
 }
 
-int32_t LegacyPlaybackModeOption::getValue()
+int32_t LegacyPlaybackModeOption::getValue() const
 {
     int order;
     int loop;
@@ -132,7 +132,7 @@ ShuffleOption::ShuffleOption()
 {
 }
 
-int32_t ShuffleOption::getValue()
+int32_t ShuffleOption::getValue() const
 {
     return internalToApi(ddbApi->conf_get_int(CONF_PLAYBACK_ORDER, 0), shuffleOptionValues);
 }
@@ -148,7 +148,7 @@ RepeatOption::RepeatOption()
 {
 }
 
-int32_t RepeatOption::getValue()
+int32_t RepeatOption::getValue() const
 {
     return internalToApi(ddbApi->conf_get_int(CONF_PLAYBACK_LOOP, 0), repeatOptionValues);
 }
@@ -164,7 +164,7 @@ StopAfterCurrentTrackOption::StopAfterCurrentTrackOption()
 {
 }
 
-bool StopAfterCurrentTrackOption::getValue()
+bool StopAfterCurrentTrackOption::getValue() const
 {
     return ddbApi->conf_get_int(CONF_PLAYLIST_STOP_AFTER_CURRENT, 0) != 0;
 }
@@ -180,7 +180,7 @@ StopAfterCurrentAlbumOption::StopAfterCurrentAlbumOption()
 {
 }
 
-bool StopAfterCurrentAlbumOption::getValue()
+bool StopAfterCurrentAlbumOption::getValue() const
 {
     return ddbApi->conf_get_int(CONF_PLAYLIST_STOP_AFTER_ALBUM, 0) != 0;
 }

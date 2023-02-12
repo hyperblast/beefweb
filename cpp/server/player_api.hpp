@@ -253,7 +253,7 @@ public:
     BoolPlayerOption(std::string id, std::string name)
         : PlayerOption(std::move(id), std::move(name)) { }
 
-    virtual bool getValue() = 0;
+    virtual bool getValue() const = 0;
     virtual void setValue(bool value) = 0;
 
     void setValue(Switch value)
@@ -289,7 +289,7 @@ public:
             throw InvalidRequestException("value for option '" + id() + "' is out of range");
     }
 
-    virtual int32_t getValue() = 0;
+    virtual int32_t getValue() const = 0;
     virtual void setValue(int32_t value) = 0;
 
 private:

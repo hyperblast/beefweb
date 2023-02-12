@@ -9,7 +9,7 @@ class PlaybackOrderOption : public EnumPlayerOption
 {
 public:
     explicit PlaybackOrderOption(playlist_manager_v4* playlistManager);
-    int32_t getValue() override;
+    int32_t getValue() const override;
     void setValue(int32_t value) override;
 
 private:
@@ -22,7 +22,7 @@ class StopAfterCurrentTrackOption : public BoolPlayerOption
 {
 public:
     explicit StopAfterCurrentTrackOption(playback_control* playbackControl);
-    bool getValue() override;
+    bool getValue() const override;
     void setValue(bool value) override;
 
 private:
