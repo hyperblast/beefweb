@@ -17,6 +17,7 @@ PlayerImpl::PlayerImpl()
 
     playerEventAdapter_.setCallback(callback);
     playlistEventAdapter_.setCallback(callback);
+    stopAfterCurrentTrackOption_.setCallback(callback);
 
     setPlaybackModeOption(&playbackOrderOption_);
     addOption(&playbackOrderOption_);
