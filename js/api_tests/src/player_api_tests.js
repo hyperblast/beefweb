@@ -105,6 +105,35 @@ q.test('set playback mode', async assert =>
     assert.equal(state.playbackMode, newMode);
 });
 
+q.test('set bool option', async assert =>
+{
+    let state = await client.getPlayerState();
+    let option = state.options.find(o => o.type === 'bool');
+    assert.ok(option.name);
+    assert.equal(option.value, false);
+
+    await client.setOption(option.id, true);
+
+    state = await client.getPlayerState();
+    option = state.options.find(o => o.id === option.id);
+    assert.ok(option.value);
+});
+
+q.test('set enum option', async assert =>
+{
+    let state = await client.getPlayerState();
+    let option = state.options.find(o => o.type === 'enum');
+    assert.ok(option.name);
+    assert.ok(Array.isArray(option.enumNames));
+    assert.equal(option.value, 0);
+
+    await client.setOption(option.id, 1);
+
+    state = await client.getPlayerState();
+    option = state.options.find(o => o.id === option.id);
+    assert.equal(option.value, 1);
+});
+
 q.test('play', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
