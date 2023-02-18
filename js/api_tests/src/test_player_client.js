@@ -21,6 +21,14 @@ function createStateMatcher(condition)
     }
 }
 
+function getDefaultState(option)
+{
+    return {
+        id: option.id,
+        value: option.type === 'enum' ? 0 : false
+    };
+}
+
 class TestPlayerClient extends PlayerClient
 {
     constructor(handler)
@@ -37,6 +45,7 @@ class TestPlayerClient extends PlayerClient
             isMuted: false,
             volume: state.volume.max,
             playbackMode: 0,
+            options: state.options.map(o => getDefaultState(o)),
         });
 
         const playlists = await this.getPlaylists();

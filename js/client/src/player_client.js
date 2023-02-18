@@ -36,9 +36,9 @@ export default class PlayerClient
         return this.get('api/player', { columns }).then(r => r.player);
     }
 
-    setPlayerState(options)
+    setPlayerState(newState)
     {
-        return this.post('api/player', options);
+        return this.post('api/player', newState);
     }
 
     setMuted(value)
