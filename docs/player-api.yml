@@ -50,26 +50,12 @@ paths:
       summary: Set player state
       tags: [ player ]
       parameters:
-      - name: volume
-        description: New volume value
-        in: query
-        type: number
-      - name: isMuted
-        description: New mute state
-        in: query
-        type: boolean
-      - name: position
-        description: New absolute playback position (seconds)
-        in: query
-        type: number
-      - name: relativePosition
-        description: New relative playback position (seconds)
-        in: query
-        type: number
-      - name: playbackMode
-        description: New playback mode index
-        in: query
-        type: number
+      - name: request
+        in: body
+        description: Request to modify player state
+        required: true
+        schema:
+          $ref: '#/definitions/SetPlayerStateRequest'
       responses:
         204:
           description: Success
@@ -327,7 +313,7 @@ paths:
         in: path
         required: true
         type: string
-      - name: content
+      - name: request
         in: body
         description: Items to add
         required: true
@@ -356,7 +342,7 @@ paths:
           Items are copied to the end of the playlist by default
         in: query
         type: number
-      - name: content
+      - name: request
         in: body
         description: Indexes of items to copy
         required: true
@@ -388,7 +374,7 @@ paths:
           Items are copied to the end of the playlist by default
         in: query
         type: number
-      - name: content
+      - name: request
         in: body
         description: Indexes of items to copy
         required: true
@@ -415,7 +401,7 @@ paths:
           Items are moved to the end of the playlist by default
         in: query
         type: number
-      - name: content
+      - name: request
         in: body
         description: Indexes of items to move
         required: true
@@ -447,7 +433,7 @@ paths:
           Items are moved to the end of the playlist by default
         in: query
         type: number
-      - name: content
+      - name: request
         in: body
         description: Indexes of items to move
         required: true
@@ -469,7 +455,7 @@ paths:
         in: path
         required: true
         type: string
-      - name: content
+      - name: request
         in: body
         description: Indexes of items to remove
         required: true
@@ -725,6 +711,37 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/PlaylistItemInfo'
+
+  SetPlayerStateRequest:
+    type: object
+    properties:
+      volume:
+        type: number
+        description: New volume value
+      isMuted:
+        type: boolean
+        description: New mute state
+      position:
+        type: number
+        description: New absolute playback position (seconds)
+      relativePosition:
+        type: number
+        description: New relative playback position (seconds)
+      playbackMode:
+        type: number
+        description: New playback mode index
+      options:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Option identifier
+            value:
+              type: number
+              description: New option value
+        description: Options to modify
 
   AddItemsRequest:
     type: object
