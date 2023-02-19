@@ -1,5 +1,10 @@
 ### Changes in v0.7 (not released):
-
+- DeaDBeeF: Use linear volume control in web UI
+- DeaDBeeF: "Playback mode" option is split into separate "Repeat" and "Order" options
+- DeaDBeeF: Added "Stop after current track" and "Stop after current album" options
+- foobar2000: Volume slider now displays current value in dB
+- foobar2000: Added "Stop after current" option
+- foobar2000: Fixed settings page in dark mode
 
 ### Changes in v0.6 (released 2023-01-14):
 - Added dark theme for web UI
