@@ -1,4 +1,5 @@
 ### Changes in v0.7 (not released):
+- Use case insensitive comparison for HTTP headers and query parameters
 - DeaDBeeF: Use linear volume control in web UI
 - DeaDBeeF: "Playback mode" option is split into separate "Repeat" and "Order" options
 - DeaDBeeF: Added "Stop after current track" and "Stop after current album" options
