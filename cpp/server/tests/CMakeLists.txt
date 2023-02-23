@@ -7,11 +7,12 @@ set(
     test_main.hpp
     base64_tests.cpp
     fnv_hash_tests.cpp
+    http_tests.cpp
     parsing_tests.cpp
     router_tests.cpp
     server_tests.cpp
     timers_tests.cpp
-        http_tests.cpp)
+)
 
 set(
     ECHO_SERVER_SOURCES
