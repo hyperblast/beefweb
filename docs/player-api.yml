@@ -50,7 +50,7 @@ paths:
       requestBody:
         description: Request to modify player state
         content:
-          '*/*':
+          application/json:
             schema:
               $ref: '#/components/schemas/SetPlayerStateRequest'
         required: true
