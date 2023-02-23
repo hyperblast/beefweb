@@ -11,7 +11,7 @@ set(
     router_tests.cpp
     server_tests.cpp
     timers_tests.cpp
-)
+        http_tests.cpp)
 
 set(
     ECHO_SERVER_SOURCES

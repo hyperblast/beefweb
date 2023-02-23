@@ -7,9 +7,7 @@ Response::Response(HttpStatus statusVal)
 {
 }
 
-Response::~Response()
-{
-}
+Response::~Response() = default;
 
 std::unique_ptr<SimpleResponse> Response::ok()
 {
@@ -71,23 +69,12 @@ std::unique_ptr<ErrorResponse> Response::error(
         status, std::move(message), std::move(parameter));
 }
 
-void Response::addHeaders(const HttpKeyValueMap& source)
-{
-    for (const auto& kv : source)
-    {
-        if (headers.find(kv.first) == headers.end())
-            headers[kv.first] = kv.second;
-    }
-}
-
 SimpleResponse::SimpleResponse(HttpStatus statusVal)
     : Response(statusVal)
 {
 }
 
-SimpleResponse::~SimpleResponse()
-{
-}
+SimpleResponse::~SimpleResponse() = default;
 
 void SimpleResponse::process(ResponseHandler* handler)
 {
@@ -101,9 +88,7 @@ DataResponse::DataResponse(std::vector<uint8_t> dataVal, std::string contentType
 {
 }
 
-DataResponse::~DataResponse()
-{
-}
+DataResponse::~DataResponse() = default;
 
 void DataResponse::process(ResponseHandler* handler)
 {

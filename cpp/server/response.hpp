@@ -27,7 +27,7 @@ using EventStreamSource = std::function<Json()>;
 class Response
 {
 public:
-    Response(HttpStatus statusVal);
+    explicit Response(HttpStatus statusVal);
     virtual ~Response();
 
     virtual void process(ResponseHandler* handler) = 0;
@@ -52,7 +52,14 @@ public:
     HttpStatus status;
     HttpKeyValueMap headers;
 
-    void addHeaders(const HttpKeyValueMap& source);
+    template<typename Source>
+    void addHeaders(Source const& source)
+    {
+        for (const auto& kv : source)
+        {
+            headers.try_emplace(kv.first, kv.second);
+        }
+    }
 
 private:
     MSRV_NO_COPY_AND_ASSIGN(Response);
@@ -61,10 +68,10 @@ private:
 class SimpleResponse : public Response
 {
 public:
-    SimpleResponse(HttpStatus statusVal);
-    virtual ~SimpleResponse();
+    explicit SimpleResponse(HttpStatus statusVal);
+    ~SimpleResponse() override;
 
-    virtual void process(ResponseHandler* handler) override;
+    void process(ResponseHandler* handler) override;
 };
 
 
@@ -72,9 +79,9 @@ class DataResponse : public Response
 {
 public:
     DataResponse(std::vector<uint8_t> dataVal, std::string contentTypeVal);
-    virtual ~DataResponse();
+    ~DataResponse() override;
 
-    virtual void process(ResponseHandler* handler) override;
+    void process(ResponseHandler* handler) override;
 
     std::vector<uint8_t> data;
     std::string contentType;
@@ -83,10 +90,10 @@ public:
 class JsonResponse : public Response
 {
 public:
-    JsonResponse(Json val);
-    virtual ~JsonResponse();
+    explicit JsonResponse(Json val);
+    ~JsonResponse() override;
 
-    virtual void process(ResponseHandler* handler) override;
+    void process(ResponseHandler* handler) override;
 
     Json value;
 };
@@ -100,9 +107,9 @@ public:
         FileInfo infoVal,
         std::string contentTypeVal);
 
-    virtual ~FileResponse();
+    ~FileResponse() override;
 
-    virtual void process(ResponseHandler* handler) override;
+    void process(ResponseHandler* handler) override;
 
     const Path path;
     FileHandle handle;
@@ -113,10 +120,10 @@ public:
 class EventStreamResponse : public Response
 {
 public:
-    EventStreamResponse(EventStreamSource sourceVal);
-    virtual ~EventStreamResponse();
+    explicit EventStreamResponse(EventStreamSource sourceVal);
+    ~EventStreamResponse() override;
 
-    virtual void process(ResponseHandler* handler) override;
+    void process(ResponseHandler* handler) override;
 
     EventStreamSource source;
 };
@@ -124,10 +131,10 @@ public:
 class AsyncResponse : public Response
 {
 public:
-    AsyncResponse(ResponseFuture response);
-    virtual ~AsyncResponse();
+    explicit AsyncResponse(ResponseFuture response);
+    ~AsyncResponse() override;
 
-    virtual void process(ResponseHandler* handler) override;
+    void process(ResponseHandler* handler) override;
 
     static ResponsePtr unpack(ResponseFuture response);
 
@@ -137,14 +144,14 @@ public:
 class ErrorResponse : public Response
 {
 public:
-    ErrorResponse(
+    explicit ErrorResponse(
         HttpStatus statusVal,
         std::string messageVal = std::string(),
         std::string parameterVal = std::string());
 
-    virtual ~ErrorResponse();
+    ~ErrorResponse() override;
 
-    virtual void process(ResponseHandler* handler) override;
+    void process(ResponseHandler* handler) override;
 
     std::string message;
     std::string parameter;
