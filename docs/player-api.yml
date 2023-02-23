@@ -727,10 +727,12 @@ components:
           $ref: '#/components/schemas/PlaybackState'
         playbackMode:
           type: number
+          deprecated: true
         playbackModes:
           type: array
           items:
             type: string
+          deprecated: true
         volume:
           type: object
           properties:
@@ -810,6 +812,7 @@ components:
         playbackMode:
           type: number
           description: New playback mode index
+          deprecated: true
         options:
           type: array
           description: Options to modify
