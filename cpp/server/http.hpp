@@ -49,7 +49,7 @@ struct HttpHeader
     static const char LOCATION[];
 };
 
-inline char httpKeyToLower(char ch)
+inline char asciiToLower(char ch)
 {
     return ch >= 'A' && ch <= 'Z' ? static_cast<char>(ch - 'A' + 'a') : ch;
 }
@@ -62,7 +62,7 @@ struct HttpKeyHash
 
         for (char ch : str)
         {
-            boost::hash_combine(h, httpKeyToLower(ch));
+            boost::hash_combine(h, asciiToLower(ch));
         }
 
         return h;
@@ -80,7 +80,7 @@ struct HttpKeyEqual
 
         for (size_t i = 0; i < s1.size(); i++)
         {
-            if (httpKeyToLower(s1[i]) != httpKeyToLower(s2[i]))
+            if (asciiToLower(s1[i]) != asciiToLower(s2[i]))
             {
                 return false;
             }
