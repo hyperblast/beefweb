@@ -1,11 +1,12 @@
 # Changes in v0.7 (not released)
 - API specification is converted to OpenAPI v3
 - Case insensitive string comparison is used for HTTP headers and query parameters
-## DeaDBeeF
+### DeaDBeeF
 - Linear volume control is now used in web UI
 - "Playback mode" option is split into separate "Repeat" and "Order" options
 - Added "Stop after current track" and "Stop after current album" options
-## foobar2000
+- Fixed occasional desync when switching tracks
+### foobar2000
 - Volume control now displays tooltip in dB
 - Added "Stop after current" option
 - Fixed settings page not honoring dark mode
