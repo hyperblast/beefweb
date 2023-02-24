@@ -53,7 +53,7 @@ class VolumeControlPanelContent extends React.PureComponent
 
         const value = Number(e.target.value);
         const volume = this.state.type === 'db'
-            ? linearToDb(value / 100.0)
+            ? Math.max(linearToDb(value / 100.0), this.context.playerModel.volume.min)
             : value;
 
         this.context.playerModel.setVolume(volume);
