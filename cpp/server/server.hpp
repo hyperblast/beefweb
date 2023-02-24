@@ -69,7 +69,7 @@ class Server
 {
 public:
     static DurationMs pingEventPeriod() { return std::chrono::seconds(15); }
-    static DurationMs eventDispatchDelay() { return DurationMs(35); }
+    static DurationMs eventDispatchDelay() { return DurationMs(40); }
 
     Server(ServerCorePtr core, ServerConfigPtr config);
     ~Server();
