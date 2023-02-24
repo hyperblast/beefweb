@@ -87,7 +87,7 @@ function add_change_log_entry
 {
     cd "$root_dir/docs"
 
-    change_log_data="### Changes in v$version (not released):
+    change_log_data="# Changes in v$version (not released)
 
 
 $(cat change-log.md)"

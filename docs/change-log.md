@@ -1,14 +1,16 @@
-### Changes in v0.7 (not released):
+# Changes in v0.7 (not released)
 - API specification is converted to OpenAPI v3
 - Case insensitive string comparison is used for HTTP headers and query parameters
-- DeaDBeeF: Linear volume control is now used in web UI
-- DeaDBeeF: "Playback mode" option is split into separate "Repeat" and "Order" options
-- DeaDBeeF: Added "Stop after current track" and "Stop after current album" options
-- foobar2000: Volume control now displays tooltip in dB
-- foobar2000: Added "Stop after current" option
-- foobar2000: Fixed settings page not honoring dark mode
+## DeaDBeeF
+- Linear volume control is now used in web UI
+- "Playback mode" option is split into separate "Repeat" and "Order" options
+- Added "Stop after current track" and "Stop after current album" options
+## foobar2000
+- Volume control now displays tooltip in dB
+- Added "Stop after current" option
+- Fixed settings page not honoring dark mode
 
-### Changes in v0.6 (released 2023-01-14):
+# Changes in v0.6 (released 2023-01-14)
 - Added dark theme for web UI
 - Added x64 builds of foobar2000 plugin
 - Improved settings screen styling
@@ -19,7 +21,7 @@
 - Updated nlohmann/json to v3.11.2
 - Removed support for browsers without native EventSource implementation
 
-### Changes in v0.5 (released 2021-10-24):
+# Changes in v0.5 (released 2021-10-24)
 - Added support for specifying custom response header (e.g. for CORS)
 - Added support for specifying custom web content directories
 - Added settings to customize window title and playback information panel content
@@ -36,7 +38,7 @@
 - Fixed browsing of root directory (e.g. C:\\)
 - Fixed volume slider vertical alignment
 
-### Changes in v0.4 (released 2020-02-02):
+# Changes in v0.4 (released 2020-02-02)
 - Added optional playback information panel
 - Added basic support for playlist column customization
 - Renamed "Audio menu" to "Playback mode"
@@ -47,7 +49,7 @@
 - Volume slider now uses linear scale instead of dB (foobar2000 only)
 - Fixed browsing directories with `!` in path
 
-### Changes in v0.3 (released 2018-09-20):
+# Changes in v0.3 (released 2018-09-20)
 - Added button that locates currently played track
 - Fixed volume and mute state not being synchronized
 - Added "Cursor follows playback" option
@@ -55,5 +57,5 @@
 - Added playlist sort operations
 - Added "Play next/previous artist/album" operations
 
-### Changes in v0.2 (released 2018-08-25):
+# Changes in v0.2 (released 2018-08-25)
 - First official release
