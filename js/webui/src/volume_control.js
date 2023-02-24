@@ -34,7 +34,7 @@ class VolumeControlPanelContent extends React.PureComponent
             min: 0.0,
             max: 100.0,
             value: dbToLinear(value) * 100.0,
-            hintText: Number.isFinite(value) ? value.toFixed(0) + ' dB' : 'Mute',
+            hintText: Math.max(value, min).toFixed(0) + ' dB',
             isMuted,
         };
     }
