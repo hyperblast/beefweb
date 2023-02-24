@@ -96,8 +96,8 @@ public:
 private:
     using PlaylistItemSelector = DB_playItem_t* (*)(DB_playItem_t*, int);
 
-    PlaybackState getPlaybackState();
-    void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
+    PlaybackState getPlaybackState(ddb_playItem_t* activeItem);
+    void queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, TrackQuery* query);
     void queryVolume(VolumeInfo* info);
     void queryInfo(PlayerInfo* info);
     void initVersion();

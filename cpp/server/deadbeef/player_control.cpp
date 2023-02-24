@@ -41,9 +41,12 @@ std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(TrackQuery* activeItem
 
     playlists_.ensureInitialized();
 
-    state->playbackState = getPlaybackState();
+
+    PlaylistItemPtr activeItem(ddbApi->streamer_get_playing_track());
+
+    state->playbackState = getPlaybackState(activeItem.get());
     queryInfo(&state->info);
-    queryActiveItem(&state->activeItem, activeItemQuery);
+    queryActiveItem(&state->activeItem, activeItem.get(), activeItemQuery);
     queryVolume(&state->volume);
     queryOptions(state.get());
     return state;
@@ -57,12 +60,14 @@ void PlayerImpl::queryInfo(PlayerInfo* info)
     info->pluginVersion = MSRV_VERSION_STRING;
 }
 
-PlaybackState PlayerImpl::getPlaybackState()
+PlaybackState PlayerImpl::getPlaybackState(ddb_playItem_t* activeItem)
 {
     switch (ddbApi->get_output()->state())
     {
     case OUTPUT_STATE_STOPPED:
-        return PlaybackState::STOPPED;
+        // Short period after initiating play action DeaDBeeF reports playback state as stopped
+        // Make adjustments to avoid sending invalid state to client
+        return activeItem != nullptr ? PlaybackState::PLAYING : PlaybackState::STOPPED;
 
     case OUTPUT_STATE_PLAYING:
         return PlaybackState::PLAYING;
@@ -75,7 +80,7 @@ PlaybackState PlayerImpl::getPlaybackState()
     }
 }
 
-void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* query)
+void PlayerImpl::queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, TrackQuery* query)
 {
     int playlistIndex = ddbApi->streamer_get_current_playlist();
 
@@ -87,25 +92,23 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* query)
     if (playlist)
         playlistId = playlists_.getId(playlist.get());
 
-    PlaylistItemPtr item(ddbApi->streamer_get_playing_track());
-
     int32_t itemIndex = -1;
     double itemPosition = -1.0;
     double itemDuration = -1.0;
     std::vector<std::string> columns;
 
-    if (item)
+    if (activeItem)
     {
         itemPosition = ddbApi->streamer_get_playpos();
-        itemDuration = ddbApi->pl_get_item_duration(item.get());
+        itemDuration = ddbApi->pl_get_item_duration(activeItem);
 
         if (playlist)
-            itemIndex = ddbApi->plt_get_item_idx(playlist.get(), item.get(), PL_MAIN);
+            itemIndex = ddbApi->plt_get_item_idx(playlist.get(), activeItem, PL_MAIN);
 
         if (query)
         {
-            TrackQueryImpl* queryImpl = static_cast<TrackQueryImpl*>(query);
-            columns = evaluateColumns(playlist.get(), item.get(), queryImpl->formatters);
+            auto queryImpl = static_cast<TrackQueryImpl*>(query);
+            columns = evaluateColumns(playlist.get(), activeItem, queryImpl->formatters);
         }
     }
 
