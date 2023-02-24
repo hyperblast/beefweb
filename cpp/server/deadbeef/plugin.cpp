@@ -10,11 +10,12 @@
 #define CONF_AUTH_USER      MSRV_PROJECT_ID ".auth_user"
 #define CONF_AUTH_PASSWORD  MSRV_PROJECT_ID ".auth_password"
 
-namespace msrv {
-namespace player_deadbeef {
+namespace msrv::player_deadbeef {
 
 DB_misc_t PluginWrapper::definition_;
 Plugin*  PluginWrapper::instance_;
+
+char PluginWrapper::licenseText_[] = MSRV_LICENSE_TEXT;
 
 const char PluginWrapper::configDialog_[] =
     "property \"Network port\" entry " CONF_PORT " " MSRV_STRINGIFY(MSRV_DEFAULT_PORT) ";"
@@ -123,6 +124,8 @@ void PluginWrapper::initDef()
     if (p.api_vmajor)
         return;
 
+    formatText(licenseText_, 60);
+
     p.api_vmajor = 1;
     p.api_vminor = DDB_API_LEVEL;
     p.version_major = MSRV_VERSION_MAJOR;
@@ -131,7 +134,7 @@ void PluginWrapper::initDef()
     p.id = MSRV_PROJECT_ID;
     p.name = MSRV_PROJECT_NAME;
     p.descr = MSRV_PROJECT_DESC "\n\n" MSRV_VERSION_STRING_DETAILED;
-    p.copyright = MSRV_LICENSE_TEXT;
+    p.copyright = licenseText_;
     p.website = MSRV_PROJECT_URL;
     p.start = start;
     p.stop = stop;
@@ -191,4 +194,4 @@ extern "C" DB_plugin_t* MSRV_DEADBEEF_ENTRY(DB_functions_t* api)
     return PluginWrapper::load(api);
 }
 
-}}
+}

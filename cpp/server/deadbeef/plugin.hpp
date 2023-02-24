@@ -57,6 +57,7 @@ private:
     static DB_misc_t definition_;
     static Plugin* instance_;
     static const char configDialog_[];
+    static char licenseText_[];
 
     MSRV_NO_COPY_AND_ASSIGN(PluginWrapper);
 };

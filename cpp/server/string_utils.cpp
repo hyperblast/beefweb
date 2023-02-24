@@ -87,4 +87,39 @@ std::string formatString(const char* fmt, ...)
     return std::string(buf);
 }
 
+void formatText(char* data, size_t maxWidth)
+{
+    size_t width = 0;
+    char* breakAt = nullptr;
+
+    while (*data != '\0')
+    {
+        if (*data == '\n')
+        {
+            breakAt = nullptr;
+            width = 0;
+            data++;
+            continue;
+        }
+
+        if (*data == ' ')
+        {
+            breakAt = data;
+        }
+
+        width++;
+
+        if (width <= maxWidth || breakAt == nullptr)
+        {
+            data++;
+            continue;
+        }
+
+        *breakAt = '\n';
+        data = breakAt + 1;
+        breakAt = nullptr;
+        width = 0;
+    }
+}
+
 }

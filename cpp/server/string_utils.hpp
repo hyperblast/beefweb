@@ -43,4 +43,6 @@ std::string formatString(const char* fmt, ...) MSRV_FORMAT_FUNC(1, 2);
 StringView trim(StringView str, char ch);
 StringView trimWhitespace(StringView str);
 
+void formatText(char* data, size_t maxWidth);
+
 }
