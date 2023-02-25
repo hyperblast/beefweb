@@ -4,7 +4,9 @@
 
 #include <string>
 #include <sstream>
+#include <unordered_map>
 
+#include <boost/functional/hash.hpp>
 #include <boost/utility/string_view.hpp>
 
 namespace msrv {
@@ -44,5 +46,49 @@ StringView trim(StringView str, char ch);
 StringView trimWhitespace(StringView str);
 
 void formatText(char* data, size_t maxWidth);
+
+inline char asciiToLower(char ch)
+{
+    return ch >= 'A' && ch <= 'Z' ? static_cast<char>(ch - 'A' + 'a') : ch;
+}
+
+struct AsciiLowerCaseHash
+{
+    size_t operator()(std::string const& str) const
+    {
+        size_t h = 0;
+
+        for (char ch : str)
+        {
+            boost::hash_combine(h, asciiToLower(ch));
+        }
+
+        return h;
+    }
+};
+
+struct AsciiLowerCaseEqual
+{
+    bool operator()(std::string const& s1, std::string const& s2) const
+    {
+        if (s1.size() != s2.size())
+        {
+            return false;
+        }
+
+        for (size_t i = 0; i < s1.size(); i++)
+        {
+            if (asciiToLower(s1[i]) != asciiToLower(s2[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+};
+
+template<typename T>
+using AsciiLowerCaseMap = std::unordered_map<std::string, T, AsciiLowerCaseHash, AsciiLowerCaseEqual>;
 
 }

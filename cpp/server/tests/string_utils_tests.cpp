@@ -1,14 +1,14 @@
-#include "../http.hpp"
+#include "../string_utils.hpp"
 
 #include <catch.hpp>
 
-namespace msrv::http_tests {
+namespace msrv::string_utils_tests {
 
-TEST_CASE("HttpKeyEqual")
+TEST_CASE("AsciiLowerCaseEqual")
 {
     SECTION("works")
     {
-        HttpKeyEqual equal;
+        AsciiLowerCaseEqual equal;
         REQUIRE(equal("hello", "hello") == true);
         REQUIRE(equal("hello", "Hello") == true);
         REQUIRE(equal("hello", "hallo") == false);
@@ -16,11 +16,11 @@ TEST_CASE("HttpKeyEqual")
     }
 }
 
-TEST_CASE("HttpKeyHash")
+TEST_CASE("AsciiLowerCaseHash")
 {
     SECTION("works")
     {
-        HttpKeyHash hash;
+        AsciiLowerCaseHash hash;
         REQUIRE(hash("hello") == hash("hello"));
         REQUIRE(hash("hello") == hash("Hello"));
         REQUIRE(hash("hello") != hash("hallo"));
@@ -28,23 +28,23 @@ TEST_CASE("HttpKeyHash")
     }
 }
 
-TEST_CASE("HttpKeyValueMap")
+TEST_CASE("AsciiLowerCaseMap")
 {
     SECTION("works")
     {
-        HttpKeyValueMap map;
+        AsciiLowerCaseMap<int> map;
 
-        map.emplace("test", "1");
+        map.emplace("test", 1);
         auto it = map.find("TEST");
         REQUIRE(it != map.end());
-        REQUIRE(it->second == "1");
+        REQUIRE(it->second == 1);
 
-        map["Test"] = "2";
+        map["Test"] = 2;
         it = map.find("TEST");
         REQUIRE(it != map.end());
-        REQUIRE(it->second == "2");
+        REQUIRE(it->second == 2);
 
-        auto ret = map.try_emplace("tEst", "3");
+        auto ret = map.try_emplace("tEst", 3);
         REQUIRE(ret.second == false);
     }
 }

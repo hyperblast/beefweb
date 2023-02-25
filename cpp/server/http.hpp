@@ -3,10 +3,9 @@
 #include "defines.hpp"
 #include "string_utils.hpp"
 
-#include <unordered_map>
-#include <boost/functional/hash.hpp>
-
 namespace msrv {
+
+using HttpKeyValueMap = AsciiLowerCaseMap<std::string>;
 
 enum class HttpMethod
 {
@@ -48,49 +47,6 @@ struct HttpHeader
     static const char CONTENT_ENCODING[];
     static const char LOCATION[];
 };
-
-inline char asciiToLower(char ch)
-{
-    return ch >= 'A' && ch <= 'Z' ? static_cast<char>(ch - 'A' + 'a') : ch;
-}
-
-struct HttpKeyHash
-{
-    size_t operator()(std::string const& str) const
-    {
-        size_t h = 0;
-
-        for (char ch : str)
-        {
-            boost::hash_combine(h, asciiToLower(ch));
-        }
-
-        return h;
-    }
-};
-
-struct HttpKeyEqual
-{
-    bool operator()(std::string const& s1, std::string const& s2) const
-    {
-        if (s1.size() != s2.size())
-        {
-            return false;
-        }
-
-        for (size_t i = 0; i < s1.size(); i++)
-        {
-            if (asciiToLower(s1[i]) != asciiToLower(s2[i]))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-};
-
-using HttpKeyValueMap = std::unordered_map<std::string, std::string, HttpKeyHash, HttpKeyEqual>;
 
 std::string toString(HttpMethod method);
 std::string toString(HttpStatus status);
