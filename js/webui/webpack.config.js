@@ -114,7 +114,11 @@ function configRelease(config)
     config.mode = 'production';
 
     config.optimization.minimize = true;
-    config.optimization.minimizer.push(new TerserPlugin());
+
+    config.optimization.minimizer.push(new TerserPlugin({
+        extractComments: false
+    }));
+
     config.optimization.minimizer.push(new CssMinimizerPlugin());
 
     config.plugins.push(new MiniCssExtractPlugin({
