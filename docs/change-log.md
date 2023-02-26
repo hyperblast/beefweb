@@ -1,4 +1,4 @@
-# Changes in v0.7 (not released)
+# Changes in v0.7 (released 2023-02-26)
 - API specification is converted to OpenAPI v3
 - Case insensitive string comparison is used for HTTP headers and query parameters
 ### DeaDBeeF
