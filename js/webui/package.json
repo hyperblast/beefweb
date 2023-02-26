@@ -1,6 +1,6 @@
 {
   "name": "beefweb-webui",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Beefweb user interface",
   "main": "src/index.js",
   "type": "module",
