@@ -175,7 +175,7 @@ function build_server
         $cmake_options \
         $cpp_src_dir
 
-    if ! cmake --build . ; then
+    if ! cmake --build . -j $(nproc) ; then
         if [ "$verbose" = ON ]; then
             show_server_build_logs
         fi
