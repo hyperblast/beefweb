@@ -62,7 +62,7 @@
     <Target Name="BuildServer" DependsOnTargets="InitServer">
         <MSBuild
             Projects="$(CppBuildDir)\beefweb.sln"
-            Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+            Properties="Configuration=$(Configuration);Platform=$(Platform);CL_MPCount=$(NUMBER_OF_PROCESSORS)" />
     </Target>
 
     <Target Name="InitJs">
