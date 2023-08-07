@@ -5,13 +5,14 @@ import { bindHandlers, dbToLinear, linearToDb } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
 import ServiceContext from "./service_context.js";
+import { MediaSize } from "./settings_model.js";
 
 function volumeIcon(isMuted)
 {
     return isMuted ? 'volume-off' : 'volume-high';
 }
 
-class VolumeControlPanelContent extends React.PureComponent
+class VolumeControlContent_ extends React.PureComponent
 {
     constructor(props, context)
     {
@@ -64,7 +65,7 @@ class VolumeControlPanelContent extends React.PureComponent
         const { hintText, min, max, value, isMuted } = this.state;
 
         return (
-            <div className='volume-control-panel'>
+            <div className='volume-control'>
                 <div className='button-bar'>
                     <Button
                         name={volumeIcon(isMuted)}
@@ -83,13 +84,13 @@ class VolumeControlPanelContent extends React.PureComponent
     }
 }
 
-VolumeControlPanelContent.propTypes = {
+VolumeControlContent_.propTypes = {
     onAfterMuteClick: PropTypes.func,
 };
 
-VolumeControlPanelContent.contextType = ServiceContext;
+VolumeControlContent_.contextType = ServiceContext;
 
-const VolumeControlPanel = ModelBinding(VolumeControlPanelContent, { playerModel: 'change' });
+const VolumeControlContent = ModelBinding(VolumeControlContent_, { playerModel: 'change' });
 
 class VolumeControl extends React.PureComponent
 {
@@ -106,8 +107,11 @@ class VolumeControl extends React.PureComponent
 
     getStateFromModel()
     {
+        const { playerModel, settingsModel } = this.context;
+
         return {
-            isMuted: this.context.playerModel.volume.isMuted
+            isMuted: playerModel.volume.isMuted,
+            showFullControl: settingsModel.mediaSizeUp(MediaSize.medium),
         };
     }
 
@@ -123,29 +127,27 @@ class VolumeControl extends React.PureComponent
 
     render()
     {
-        const { playerModel } = this.props;
-        const { isMuted, panelOpen } = this.state;
+        const { playerModel } = this.context;
+        const { isMuted, panelOpen, showFullControl } = this.state;
+
+        if (showFullControl)
+        {
+            return <VolumeControlContent />;
+        }
 
         return (
-            <div className='volume-control'>
-                <div className='volume-control-mini'>
-                    <div className='button-bar'>
-                        <DropdownButton
-                            title='Show volume panel'
-                            iconName={volumeIcon(isMuted)}
-                            hideOnContentClick={false}
-                            direction='center'
-                            isOpen={panelOpen}
-                            onRequestOpen={this.handlePanelRequestOpen}>
-                            <VolumeControlPanel
-                                playerModel={playerModel}
-                                onAfterMuteClick={this.handleMuteClick} />
-                        </DropdownButton>
-                    </div>
-                </div>
-                <div className='volume-control-full'>
-                    <VolumeControlPanel playerModel={playerModel} />
-                </div>
+            <div className='button-bar`'>
+                <DropdownButton
+                    title='Show volume panel'
+                    iconName={volumeIcon(isMuted)}
+                    hideOnContentClick={false}
+                    direction='center'
+                    isOpen={panelOpen}
+                    onRequestOpen={this.handlePanelRequestOpen}>
+                    <VolumeControlContent
+                        playerModel={playerModel}
+                        onAfterMuteClick={this.handleMuteClick}/>
+                </DropdownButton>
             </div>
         );
     }
@@ -154,4 +156,7 @@ class VolumeControl extends React.PureComponent
 VolumeControl.propTypes = {};
 VolumeControl.contextType = ServiceContext;
 
-export default ModelBinding(VolumeControl, { playerModel: 'change' });
+export default ModelBinding(VolumeControl, {
+    playerModel: 'change',
+    settingsModel: 'mediaSizeChange'
+});
