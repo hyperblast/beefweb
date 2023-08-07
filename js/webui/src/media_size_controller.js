@@ -4,8 +4,8 @@ import { MediaSize, MediaSizeIndex } from './settings_model.js'
 
 const MediaSizes = Object.freeze({
     small: 0,
-    medium: 31,
-    large: 43,
+    medium: 35,
+    large: 45,
 });
 
 const FontScale = Object.freeze({
