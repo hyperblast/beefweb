@@ -98,11 +98,10 @@ class VolumeControl extends React.PureComponent
     {
         super(props, context);
 
-        this.state = Object.assign(this.getStateFromModel(), {
-           panelOpen: false
-        });
-
         bindHandlers(this);
+
+        this.state = this.getStateFromModel();
+        this.state.panelOpen = false;
     }
 
     getStateFromModel()
@@ -111,7 +110,7 @@ class VolumeControl extends React.PureComponent
 
         return {
             isMuted: playerModel.volume.isMuted,
-            showFullControl: settingsModel.mediaSizeUp(MediaSize.medium),
+            displayInline: settingsModel.mediaSizeUp(MediaSize.medium),
         };
     }
 
@@ -128,9 +127,9 @@ class VolumeControl extends React.PureComponent
     render()
     {
         const { playerModel } = this.context;
-        const { isMuted, panelOpen, showFullControl } = this.state;
+        const { isMuted, panelOpen, displayInline } = this.state;
 
-        if (showFullControl)
+        if (displayInline)
         {
             return <VolumeControlContent />;
         }

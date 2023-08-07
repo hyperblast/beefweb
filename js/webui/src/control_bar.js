@@ -10,14 +10,14 @@ import PlayerModel from './player_model.js';
 
 export default function ControlBar(props)
 {
-    const { playerModel, navigationModel } = props;
+    const { playerModel } = props;
 
     return (
         <div key='control-bar' className='panel control-bar'>
             <PlaybackControl />
             <PositionControl playerModel={playerModel} />
             <VolumeControl />
-            <ViewSwitcher navigationModel={navigationModel} />
+            <ViewSwitcher />
         </div>
     );
 }
