@@ -1,9 +1,4 @@
 export const Visibility = Object.freeze({
-    never: Object.freeze({
-        small: false,
-        medium: false,
-        large: false,
-    }),
     always: Object.freeze({
         small: true,
         medium: true,
@@ -18,7 +13,12 @@ export const Visibility = Object.freeze({
         small: false,
         medium: false,
         large: true,
-    })
+    }),
+    never: Object.freeze({
+        small: false,
+        medium: false,
+        large: false,
+    }),
 });
 
 const defaultOptions = Object.freeze({
