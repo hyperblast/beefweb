@@ -9,6 +9,11 @@ export const Visibility = Object.freeze({
         medium: true,
         large: true
     }),
+    mediumAndLarge: Object.freeze({
+        small: false,
+        medium: true,
+        large: true
+    }),
     largeOnly: Object.freeze({
         small: false,
         medium: false,
@@ -43,7 +48,7 @@ function column(title, expression, opts = null)
 
 export const allColumns = [
     playlistColumn('Artist', '%artist%', Visibility.always),
-    playlistColumn('Album', '%album%', Visibility.largeOnly),
+    playlistColumn('Album', '%album%', Visibility.mediumAndLarge),
     playlistColumn('Track No', '%track%', Visibility.largeOnly),
     playlistColumn('Title', '%title%', Visibility.always),
     playlistColumn('Duration', '%length%', Visibility.largeOnly),
