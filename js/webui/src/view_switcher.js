@@ -4,11 +4,56 @@ import urls from './urls.js'
 import ModelBinding from './model_binding.js';
 import { View } from './navigation_model.js';
 import ServiceContext from "./service_context.js";
-import { MediaSize } from "./settings_model.js";
 import { DropdownButton } from "./dropdown.js";
 import { bindHandlers } from "./utils.js";
 
-class ViewSwitcher extends React.PureComponent
+class ViewSwitcher_ extends React.PureComponent
+{
+    constructor(props, context)
+    {
+        super(props, context);
+
+        this.state = this.getStateFromModel();
+    }
+
+    getStateFromModel()
+    {
+        return {
+            view: this.context.navigationModel.view,
+        };
+    }
+
+    render()
+    {
+        const { view } = this.state;
+
+        return (
+            <div className='view-switcher button-bar'>
+                <Button
+                    name='list'
+                    href={urls.viewCurrentPlaylist}
+                    active={view === View.playlist}
+                    title='Playlist'/>
+                <Button
+                    name='folder'
+                    href={urls.browseCurrentPath}
+                    active={view === View.fileBrowser}
+                    title='Files'/>
+                <Button
+                    name='cog'
+                    href={urls.viewCurrentSettings}
+                    active={view === View.settings}
+                    title='Settings'/>
+            </div>
+        );
+    }
+}
+
+ViewSwitcher_.contextType = ServiceContext;
+
+export const ViewSwitcher = ModelBinding(ViewSwitcher_, { navigationModel: 'viewChange' });
+
+class ViewSwitcherButton_ extends React.PureComponent
 {
     constructor(props, context)
     {
@@ -20,81 +65,49 @@ class ViewSwitcher extends React.PureComponent
         this.state.menuOpen = false;
     }
 
-    getStateFromModel()
-    {
-        const { navigationModel, settingsModel } = this.context;
-
-        return {
-            view: navigationModel.view,
-            displayInline: settingsModel.mediaSizeUp(MediaSize.medium),
-        };
-    }
-
     handleMenuRequestOpen(value)
     {
-        this.setState({ menuOpen: value });
+        this.setState({menuOpen: value});
+    }
+
+    getStateFromModel()
+    {
+        return {
+            view: this.context.navigationModel.view,
+        };
     }
 
     render()
     {
-        const { menuOpen, view, displayInline } = this.state;
-
-        if (displayInline)
-        {
-            return (
-                <div className='view-switcher button-bar'>
-                    <Button
-                        name='list'
-                        href={urls.viewCurrentPlaylist}
-                        active={view === View.playlist}
-                        title='Playlist'/>
-                    <Button
-                        name='folder'
-                        href={urls.browseCurrentPath}
-                        active={view === View.fileBrowser}
-                        title='Files'/>
-                    <Button
-                        name='cog'
-                        href={urls.viewCurrentSettings}
-                        active={view === View.settings}
-                        title='Settings'/>
-                </div>
-            );
-        }
+        const { view, menuOpen } = this.state;
 
         return (
-            <div className='view-switcher button-bar'>
-                <DropdownButton
-                    title='Switch view'
-                    iconName='list'
-                    hideOnContentClick={true}
-                    direction='left'
-                    isOpen={menuOpen}
-                    onRequestOpen={this.handleMenuRequestOpen}>
-                    <Menu>
-                        <MenuItem
-                            href={urls.viewCurrentPlaylist}
-                            checked={view === View.playlist}
-                            title='Playlist'/>
-                        <MenuItem
-                            href={urls.browseCurrentPath}
-                            checked={view === View.fileBrowser}
-                            title='Files'/>
-                        <MenuItem
-                            href={urls.viewCurrentSettings}
-                            checked={view === View.settings}
-                            title='Settings'/>
-                    </Menu>
-                </DropdownButton>
-            </div>
+            <DropdownButton
+                title='Switch view'
+                iconName='list'
+                hideOnContentClick={true}
+                direction='left'
+                isOpen={menuOpen}
+                onRequestOpen={this.handleMenuRequestOpen}>
+                <Menu>
+                    <MenuItem
+                        href={urls.viewCurrentPlaylist}
+                        checked={view === View.playlist}
+                        title='Playlist'/>
+                    <MenuItem
+                        href={urls.browseCurrentPath}
+                        checked={view === View.fileBrowser}
+                        title='Files'/>
+                    <MenuItem
+                        href={urls.viewCurrentSettings}
+                        checked={view === View.settings}
+                        title='Settings'/>
+                </Menu>
+            </DropdownButton>
         );
     }
 }
 
-ViewSwitcher.propTypes = {};
-ViewSwitcher.contextType = ServiceContext;
+ViewSwitcherButton_.contextType = ServiceContext;
 
-export default ModelBinding(ViewSwitcher, {
-    navigationModel: 'viewChange',
-    settingsModel: 'mediaSizeChange'
-});
+export const ViewSwitcherButton = ModelBinding(ViewSwitcherButton_, { navigationModel: 'viewChange' });

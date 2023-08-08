@@ -1,29 +1,55 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import PlaybackControl from './playback_control.js'
 import PositionControl from './position_control.js'
-import VolumeControl from './volume_control.js'
-import ViewSwitcher from './view_switcher.js'
-import SettingsModel from './settings_model.js';
-import NavigationModel from './navigation_model.js';
-import PlayerModel from './player_model.js';
+import { VolumeControl, VolumeControlButton } from './volume_control.js'
+import { ViewSwitcher, ViewSwitcherButton } from './view_switcher.js'
+import ServiceContext from "./service_context.js";
+import ModelBinding from "./model_binding.js";
+import { MediaSize } from "./settings_model.js";
 
-export default function ControlBar(props)
+class ControlBar_ extends React.PureComponent
 {
-    const { playerModel } = props;
+    constructor(props, context)
+    {
+        super(props, context);
 
-    return (
-        <div key='control-bar' className='panel control-bar'>
-            <PlaybackControl />
-            <PositionControl playerModel={playerModel} />
-            <VolumeControl />
-            <ViewSwitcher />
-        </div>
-    );
+        this.state = this.getStateFromModel();
+    }
+
+    getStateFromModel()
+    {
+        return {
+            inlineMode: this.context.settingsModel.mediaSizeUp(MediaSize.medium)
+        };
+    }
+
+    render()
+    {
+        const { inlineMode } = this.state;
+
+        return (
+            <div key='control-bar' className='panel control-bar'>
+                <PlaybackControl/>
+                <PositionControl playerModel={this.context.playerModel}/>
+                {
+                    inlineMode
+                        ? (
+                            <>
+                                <VolumeControl/>
+                                <ViewSwitcher/>
+                            </>)
+                        : (
+                            <div className='button-bar'>
+                                <VolumeControlButton/>
+                                <ViewSwitcherButton/>
+                            </div>
+                        )
+                }
+            </div>
+        );
+    }
 }
 
-ControlBar.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
-    navigationModel: PropTypes.instanceOf(NavigationModel).isRequired,
-};
+ControlBar_.contextType = ServiceContext;
+
+export const ControlBar = ModelBinding(ControlBar_, { settingsModel: 'mediaSizeChange' });

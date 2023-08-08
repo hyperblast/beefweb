@@ -1,18 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button} from './elements.js'
+import { Button } from './elements.js'
 import { bindHandlers, dbToLinear, linearToDb } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
 import ServiceContext from "./service_context.js";
-import { MediaSize } from "./settings_model.js";
 
 function volumeIcon(isMuted)
 {
     return isMuted ? 'volume-off' : 'volume-high';
 }
 
-class VolumeControlContent_ extends React.PureComponent
+class VolumeControl_ extends React.PureComponent
 {
     constructor(props, context)
     {
@@ -84,15 +83,15 @@ class VolumeControlContent_ extends React.PureComponent
     }
 }
 
-VolumeControlContent_.propTypes = {
+VolumeControl_.propTypes = {
     onAfterMuteClick: PropTypes.func,
 };
 
-VolumeControlContent_.contextType = ServiceContext;
+VolumeControl_.contextType = ServiceContext;
 
-const VolumeControlContent = ModelBinding(VolumeControlContent_, { playerModel: 'change' });
+export const VolumeControl = ModelBinding(VolumeControl_, { playerModel: 'change' });
 
-class VolumeControl extends React.PureComponent
+class VolumeControlButton_ extends React.PureComponent
 {
     constructor(props, context)
     {
@@ -106,11 +105,8 @@ class VolumeControl extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playerModel, settingsModel } = this.context;
-
         return {
-            isMuted: playerModel.volume.isMuted,
-            displayInline: settingsModel.mediaSizeUp(MediaSize.medium),
+            isMuted: this.context.playerModel.volume.isMuted,
         };
     }
 
@@ -126,36 +122,22 @@ class VolumeControl extends React.PureComponent
 
     render()
     {
-        const { playerModel } = this.context;
-        const { isMuted, panelOpen, displayInline } = this.state;
-
-        if (displayInline)
-        {
-            return <VolumeControlContent />;
-        }
+        const { isMuted, panelOpen } = this.state;
 
         return (
-            <div className='button-bar`'>
-                <DropdownButton
-                    title='Show volume panel'
-                    iconName={volumeIcon(isMuted)}
-                    hideOnContentClick={false}
-                    direction='center'
-                    isOpen={panelOpen}
-                    onRequestOpen={this.handlePanelRequestOpen}>
-                    <VolumeControlContent
-                        playerModel={playerModel}
-                        onAfterMuteClick={this.handleMuteClick}/>
-                </DropdownButton>
-            </div>
+            <DropdownButton
+                title='Show volume control'
+                iconName={volumeIcon(isMuted)}
+                hideOnContentClick={false}
+                direction='left'
+                isOpen={panelOpen}
+                onRequestOpen={this.handlePanelRequestOpen}>
+                <VolumeControl onAfterMuteClick={this.handleMuteClick} />
+            </DropdownButton>
         );
     }
 }
 
-VolumeControl.propTypes = {};
-VolumeControl.contextType = ServiceContext;
+VolumeControlButton_.contextType = ServiceContext;
 
-export default ModelBinding(VolumeControl, {
-    playerModel: 'change',
-    settingsModel: 'mediaSizeChange'
-});
+export const VolumeControlButton = ModelBinding(VolumeControlButton_, { playerModel: 'change' });

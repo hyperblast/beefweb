@@ -1,6 +1,6 @@
 import React from 'react'
 import { PanelHeader } from './elements.js'
-import ControlBar from './control_bar.js'
+import { ControlBar } from './control_bar.js'
 import PlaylistSwitcher from './playlist_switcher.js'
 import PlaylistMenu from './playlist_menu.js'
 import PlaylistContent from './playlist_content.js'
