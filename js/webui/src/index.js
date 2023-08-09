@@ -16,6 +16,7 @@ import { playlistTableKey } from './playlist_content.js';
 import { PlaybackState } from 'beefweb-client';
 import { SettingsView, View } from './navigation_model.js';
 import MediaThemeController from "./media_theme_controller.js";
+import { debounce } from "lodash";
 
 const client = new PlayerClient(new RequestHandler());
 const settingsStore = new SettingsStore();
@@ -132,6 +133,7 @@ playlistModel.on('playlistsChange', () => {
 });
 
 appModel.load();
+
 mediaSizeController.start();
 mediaThemeController.start();
 touchModeController.start();
@@ -140,10 +142,34 @@ appModel.start();
 windowController.start();
 router.resolve();
 
+const appContainer = document.getElementById('app-container');
+
+function updateViewHeight()
+{
+    // Adjust view height to exclude area occupied by the browser controls
+
+    if (settingsModel.touchMode)
+    {
+        appContainer.className = 'app-view-height-var';
+        appContainer.style.setProperty('--view-height', `${window.innerHeight}px`);
+        return;
+    }
+
+    if (appContainer.className !== '')
+    {
+        appContainer.className = '';
+        appContainer.style.removeProperty('--view-height');
+    }
+}
+
+updateViewHeight();
+settingsModel.on('touchModeChange', updateViewHeight);
+window.addEventListener('resize', debounce(updateViewHeight, 50));
+
 const appComponent = (
     <ServiceContext.Provider value={appModel}>
         <App />
     </ServiceContext.Provider>
 );
 
-ReactDom.render(appComponent, document.getElementById('app-container'));
+ReactDom.render(appComponent, appContainer);
