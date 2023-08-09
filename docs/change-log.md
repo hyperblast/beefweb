@@ -4,6 +4,7 @@
 - Convert view switcher to menu on small size screens
 - Display album column by default on medium size screens
 - Prevent default overscroll behavior (e.g. reload page)
+- Adjust UI height to avoid being hidden by the browser controls
 
 # Changes in v0.7 (released 2023-02-26)
 - API specification is converted to OpenAPI v3
