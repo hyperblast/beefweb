@@ -3,6 +3,8 @@
 - Adjust screen size breakpoints (approximately 640px for medium size and 960px for large size)
 - Convert view switcher to menu on small size screens
 - Display album column by default on medium size screens
+- Prevent default overscroll behavior (e.g. reload page)
+- Fix occasional vertical scroll bar appearing
 
 # Changes in v0.7 (released 2023-02-26)
 - API specification is converted to OpenAPI v3
