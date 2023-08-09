@@ -59,12 +59,14 @@
 
 html {
     box-sizing: border-box;
+    overscroll-behavior-y: none;
     background: var(--color-spacer);
     color: var(--color-text);
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    overscroll-behavior-y: none;
 }
 
 *, *:before, *:after {
@@ -487,6 +489,7 @@ body {
 .dtable-body {
     flex: 1;
     overflow-y: scroll;
+    overscroll-behavior-y: none;
 }
 
 .dtable-row {
@@ -578,6 +581,10 @@ body {
 }
 
 /* Components */
+
+#app-container {
+    overflow: hidden;
+}
 
 .app {
     display: flex;
