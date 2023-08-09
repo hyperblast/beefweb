@@ -150,12 +150,10 @@ function updateViewHeight()
 
     if (settingsModel.touchMode)
     {
-        appContainer.className = 'app-view-height-var';
+        appContainer.className = 'app-view-height-hack';
         appContainer.style.setProperty('--view-height', `${window.innerHeight}px`);
-        return;
     }
-
-    if (appContainer.className !== '')
+    else if (appContainer.className !== '')
     {
         appContainer.className = '';
         appContainer.style.removeProperty('--view-height');
