@@ -6,6 +6,8 @@ import ServiceContext from './service_context.js';
 
 class BoolSettingEditor extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -63,10 +65,10 @@ BoolSettingEditor.propTypes = {
     disabled: PropTypes.bool
 };
 
-BoolSettingEditor.contextType = ServiceContext;
-
 class EnumSettingEditor extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -138,10 +140,10 @@ EnumSettingEditor.propTypes = {
     disabled: PropTypes.bool
 };
 
-EnumSettingEditor.contextType = ServiceContext;
-
 class TextSettingEditor extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -201,8 +203,6 @@ TextSettingEditor.propTypes = {
     disabled: PropTypes.bool
 };
 
-TextSettingEditor.contextType = ServiceContext;
-
 const editorComponents = Object.freeze({
     [SettingType.bool]: BoolSettingEditor,
     [SettingType.enum]: EnumSettingEditor,
@@ -211,6 +211,8 @@ const editorComponents = Object.freeze({
 
 export default class SettingEditor extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     render()
     {
         const { settingKey, disabled } = this.props;
@@ -224,8 +226,6 @@ export default class SettingEditor extends React.PureComponent
         return <Editor settingKey={settingKey} disabled={disabled} />;
     }
 }
-
-SettingEditor.contextType = ServiceContext;
 
 SettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,

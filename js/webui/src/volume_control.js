@@ -13,6 +13,8 @@ function volumeIcon(isMuted)
 
 class VolumeControl_ extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -87,12 +89,12 @@ VolumeControl_.propTypes = {
     onAfterMuteClick: PropTypes.func,
 };
 
-VolumeControl_.contextType = ServiceContext;
-
 export const VolumeControl = ModelBinding(VolumeControl_, { playerModel: 'change' });
 
 class VolumeControlButton_ extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -137,7 +139,5 @@ class VolumeControlButton_ extends React.PureComponent
         );
     }
 }
-
-VolumeControlButton_.contextType = ServiceContext;
 
 export const VolumeControlButton = ModelBinding(VolumeControlButton_, { playerModel: 'change' });

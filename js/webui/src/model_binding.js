@@ -34,6 +34,8 @@ export default function ModelBinding(InnerComponent, eventBindings)
 
     class ModelBinder extends BaseComponent
     {
+        static contextType = ServiceContext;
+
         constructor(props)
         {
             super(props);
@@ -103,7 +105,6 @@ export default function ModelBinding(InnerComponent, eventBindings)
 
     ModelBinder.propTypes = InnerComponent.propTypes;
     ModelBinder.defaultProps = InnerComponent.defaultProps;
-    ModelBinder.contextType = ServiceContext;
     ModelBinder.displayName = `ModelBinding<${InnerComponent.displayName || InnerComponent.name}>`
 
     return ModelBinder;

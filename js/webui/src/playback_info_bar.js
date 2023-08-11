@@ -5,6 +5,8 @@ import ServiceContext from './service_context.js';
 
 class PlaybackInfoBarInner extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -30,8 +32,6 @@ class PlaybackInfoBarInner extends React.PureComponent
         return <div className='panel playback-info-bar' title={title}>{title}</div>;
     }
 }
-
-PlaybackInfoBarInner.contextType = ServiceContext;
 
 const PlaybackInfoBar = ModelBinding(PlaybackInfoBarInner, {
     playerModel: 'change',

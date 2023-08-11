@@ -9,6 +9,8 @@ import { MediaSize } from "./settings_model.js";
 
 class ControlBar_ extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -49,7 +51,5 @@ class ControlBar_ extends React.PureComponent
         );
     }
 }
-
-ControlBar_.contextType = ServiceContext;
 
 export const ControlBar = ModelBinding(ControlBar_, { settingsModel: 'mediaSizeChange' });
