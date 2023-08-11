@@ -40,12 +40,6 @@ class App extends React.PureComponent
 
     renderPlaylistView()
     {
-        const {
-            playerModel,
-            playlistModel,
-            scrollManager,
-        } = this.context;
-
         return {
             header: (
                 <div className='panel-header'>
@@ -54,10 +48,7 @@ class App extends React.PureComponent
                 </div>
             ),
             main: (
-                <PlaylistContent
-                    playerModel={playerModel}
-                    playlistModel={playlistModel}
-                    scrollManager={scrollManager} />
+                <PlaylistContent />
             )
         };
     }
