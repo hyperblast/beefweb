@@ -10,6 +10,7 @@ import ModelBinding from './model_binding.js';
 import ColumnsSettingsModel from './columns_settings_model.js';
 import { Visibility } from './columns.js';
 import { MediaSize } from './settings_model.js';
+import ServiceContext from "./service_context.js";
 
 class ColumnEditorDialog extends React.PureComponent
 {
@@ -169,7 +170,7 @@ class ColumnEditorInner extends React.PureComponent
         });
     }
 
-    handleEditOk(patch)
+    handleEditOk()
     {
         this.props.onUpdate(this.props.columnIndex, this.state.editedColumn);
         this.setState(ColumnEditorInner.editDialogClosed);
@@ -247,29 +248,31 @@ ColumnEditorInner.propTypes = {
 
 const ColumnEditor = SortableElement(ColumnEditorInner);
 
-class ColumnEditorListInner extends React.PureComponent
+class ColumnEditorList_ extends React.PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
         this.state = this.getStateFromModel();
         bindHandlers(this);
     }
 
     getStateFromModel()
     {
-        const { columns } = this.props.columnsSettingsModel;
+        const { columns } = this.context.columnsSettingsModel;
         return { columns };
     }
 
     handleUpdate(index, patch)
     {
-        this.props.columnsSettingsModel.updateColumn(index, patch);
+        this.context.columnsSettingsModel.updateColumn(index, patch);
     }
 
     handleDelete(index)
     {
-        this.props.columnsSettingsModel.removeColumn(index);
+        this.context.columnsSettingsModel.removeColumn(index);
     }
 
     render()
@@ -292,11 +295,7 @@ class ColumnEditorListInner extends React.PureComponent
     }
 }
 
-ColumnEditorListInner.propTypes = {
-    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
-};
-
-const ColumnEditorList = SortableContainer(ModelBinding(ColumnEditorListInner, { columnsSettingsModel: 'change' }));
+const ColumnEditorList = SortableContainer(ModelBinding(ColumnEditorList_, { columnsSettingsModel: 'change' }));
 
 export default class ColumnsSettings extends React.PureComponent
 {
