@@ -1,16 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types'
-import ColumnsSettingsModel from './columns_settings_model.js';
 import { DropdownButton } from './dropdown.js';
 import { bindHandlers } from './utils.js';
 import { MenuItem, MenuLabel, MenuSeparator } from './elements.js';
 import { allColumns, Visibility } from './columns.js';
+import ServiceContext from "./service_context.js";
 
 export default class ColumnsSettingsMenu extends React.PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
         this.state = { addMenuOpen: false, settingsMenuOpen: false };
         bindHandlers(this);
     }
@@ -27,18 +28,18 @@ export default class ColumnsSettingsMenu extends React.PureComponent
 
     handleRevertChanges(e)
     {
-        this.props.columnsSettingsModel.revertChanges();
+        this.context.columnsSettingsModel.revertChanges();
     }
 
     handleResetToDefault(e)
     {
-        this.props.columnsSettingsModel.resetToDefault();
+        this.context.columnsSettingsModel.resetToDefault();
     }
 
     addStandardColumn(index)
     {
         const column = Object.assign({}, allColumns[index], { visibility: Visibility.always });
-        this.props.columnsSettingsModel.addColumn(column);
+        this.context.columnsSettingsModel.addColumn(column);
     }
 
     render()
@@ -78,8 +79,3 @@ export default class ColumnsSettingsMenu extends React.PureComponent
         )
     }
 }
-
-ColumnsSettingsMenu.propTypes = {
-    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
-};
-
