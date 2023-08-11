@@ -54,9 +54,7 @@ class App extends React.PureComponent
                         playerModel={playerModel}
                         playlistModel={playlistModel}
                         settingsModel={settingsModel} />
-                    <PlaylistMenu
-                        playlistModel={playlistModel}
-                        settingsModel={settingsModel} />
+                    <PlaylistMenu />
                 </div>
             ),
             main: (
