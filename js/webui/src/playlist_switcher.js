@@ -23,7 +23,7 @@ function PlaylistTabHandleInner()
 
 const PlaylistTabHandle = SortableHandle(PlaylistTabHandleInner);
 
-class PlaylistTabInner extends React.PureComponent
+class PlaylistTab_ extends React.PureComponent
 {
     componentDidMount()
     {
@@ -69,7 +69,7 @@ class PlaylistTabInner extends React.PureComponent
     }
 }
 
-const PlaylistTab = SortableElement(PlaylistTabInner);
+const PlaylistTab = SortableElement(PlaylistTab_);
 
 function PlaylistTabListInner(props)
 {

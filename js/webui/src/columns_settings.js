@@ -130,21 +130,21 @@ ColumnEditorDialog.propTypes = {
     onUpdate: PropTypes.func.isRequired,
 };
 
-function ColumnEditorDragHandleInner()
+function ColumnEditorDragHandle_()
 {
     return <Icon name='ellipses' className='column-editor-drag-handle' />;
 }
 
-const ColumnEditorDragHandle = SortableHandle(ColumnEditorDragHandleInner);
+const ColumnEditorDragHandle = SortableHandle(ColumnEditorDragHandle_);
 
-class ColumnEditorInner extends React.PureComponent
+class ColumnEditor_ extends React.PureComponent
 {
     constructor(props)
     {
         super(props);
 
         this.state = Object.assign(
-            { deleteDialogOpen: false }, ColumnEditorInner.editDialogClosed());
+            { deleteDialogOpen: false }, ColumnEditor_.editDialogClosed());
 
         bindHandlers(this);
     }
@@ -173,12 +173,12 @@ class ColumnEditorInner extends React.PureComponent
     handleEditOk()
     {
         this.props.onUpdate(this.props.columnIndex, this.state.editedColumn);
-        this.setState(ColumnEditorInner.editDialogClosed);
+        this.setState(ColumnEditor_.editDialogClosed);
     }
 
     handleEditCancel()
     {
-        this.setState(ColumnEditorInner.editDialogClosed);
+        this.setState(ColumnEditor_.editDialogClosed);
     }
 
     handleEditUpdate(patch)
@@ -239,14 +239,14 @@ class ColumnEditorInner extends React.PureComponent
     }
 }
 
-ColumnEditorInner.propTypes = {
+ColumnEditor_.propTypes = {
     columnIndex: PropTypes.number.isRequired,
     column: PropTypes.object.isRequired,
     onUpdate: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
 };
 
-const ColumnEditor = SortableElement(ColumnEditorInner);
+const ColumnEditor = SortableElement(ColumnEditor_);
 
 class ColumnEditorList_ extends React.PureComponent
 {

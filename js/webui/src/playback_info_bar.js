@@ -3,7 +3,7 @@ import ModelBinding from './model_binding.js';
 import { PlaybackState } from 'beefweb-client';
 import ServiceContext from './service_context.js';
 
-class PlaybackInfoBarInner extends React.PureComponent
+class PlaybackInfoBar_ extends React.PureComponent
 {
     static contextType = ServiceContext;
 
@@ -33,7 +33,7 @@ class PlaybackInfoBarInner extends React.PureComponent
     }
 }
 
-const PlaybackInfoBar = ModelBinding(PlaybackInfoBarInner, {
+const PlaybackInfoBar = ModelBinding(PlaybackInfoBar_, {
     playerModel: 'change',
     settingsModel: 'change'
 });
