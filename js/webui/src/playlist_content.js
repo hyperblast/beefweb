@@ -1,13 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
-import PlayerModel from './player_model.js'
-import PlaylistModel from './playlist_model.js'
 import DataTable from './data_table.js'
 import { bindHandlers } from './utils.js'
-import ScrollManager from './scroll_manager.js';
 import ModelBinding from './model_binding.js';
 import { Menu, MenuItem, MenuLabel } from './elements.js';
+import ServiceContext from "./service_context.js";
 
 const pageSize = 100;
 
@@ -24,9 +21,11 @@ export function playlistTableKey(id)
 
 class PlaylistContent extends React.PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
 
@@ -35,8 +34,8 @@ class PlaylistContent extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playbackState } = this.props.playerModel;
-        const { columns, playlistItems, currentPlaylistId } = this.props.playlistModel;
+        const { playbackState } = this.context.playerModel;
+        const { columns, playlistItems, currentPlaylistId } = this.context.playlistModel;
         const { offset, totalCount, items } = playlistItems;
 
         return {
@@ -52,7 +51,7 @@ class PlaylistContent extends React.PureComponent
 
     getActiveItemIndex()
     {
-        const { playerModel, playlistModel } = this.props;
+        const { playerModel, playlistModel } = this.context;
         const { activeItem } = playerModel;
 
         if (activeItem.playlistId && (
@@ -66,12 +65,12 @@ class PlaylistContent extends React.PureComponent
 
     handleDoubleClick(index)
     {
-        this.props.playlistModel.activateItem(index);
+        this.context.playlistModel.activateItem(index);
     }
 
     handleLoadPage(offset)
     {
-        this.props.playlistModel.setItemsPage(offset, pageSize);
+        this.context.playlistModel.setItemsPage(offset, pageSize);
     }
 
     getTableData()
@@ -92,10 +91,10 @@ class PlaylistContent extends React.PureComponent
 
     handleRenderColumnMenu(index)
     {
-        const { title, expression } = this.props.playlistModel.columns[index];
+        const { title, expression } = this.context.playlistModel.columns[index];
 
-        const sortAsc = () => this.props.playlistModel.sortPlaylist(expression, false);
-        const sortDesc = () => this.props.playlistModel.sortPlaylist(expression, true);
+        const sortAsc = () => this.context.playlistModel.sortPlaylist(expression, false);
+        const sortDesc = () => this.context.playlistModel.sortPlaylist(expression, true);
 
         return (
             <Menu>
@@ -122,7 +121,7 @@ class PlaylistContent extends React.PureComponent
                 totalCount={this.state.totalCount}
                 pageSize={pageSize}
                 globalKey={playlistTableKey(this.state.currentPlaylistId)}
-                scrollManager={this.props.scrollManager}
+                scrollManager={this.context.scrollManager}
                 className='panel main-panel playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick}
@@ -130,12 +129,6 @@ class PlaylistContent extends React.PureComponent
         );
     }
 }
-
-PlaylistContent.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    scrollManager: PropTypes.instanceOf(ScrollManager).isRequired,
-};
 
 export default ModelBinding(PlaylistContent, {
     playerModel: 'change',
