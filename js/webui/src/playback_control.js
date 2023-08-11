@@ -10,6 +10,8 @@ import ServiceContext from "./service_context.js";
 
 class PlaybackControl extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -236,9 +238,6 @@ class PlaybackControl extends React.PureComponent
         return menuItems;
     }
 }
-
-PlaybackControl.contextType = ServiceContext;
-PlaybackControl.propTypes = {};
 
 export default ModelBinding(PlaybackControl, {
     playerModel: 'change',

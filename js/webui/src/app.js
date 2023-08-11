@@ -16,6 +16,8 @@ import PlaybackInfoBar from './playback_info_bar.js';
 
 class App extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -100,8 +102,6 @@ class App extends React.PureComponent
         );
     }
 }
-
-App.contextType = ServiceContext;
 
 export default ModelBinding(App, {
     navigationModel: 'viewChange',

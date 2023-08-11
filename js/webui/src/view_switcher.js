@@ -9,6 +9,8 @@ import { bindHandlers } from "./utils.js";
 
 class ViewSwitcher_ extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -49,12 +51,12 @@ class ViewSwitcher_ extends React.PureComponent
     }
 }
 
-ViewSwitcher_.contextType = ServiceContext;
-
 export const ViewSwitcher = ModelBinding(ViewSwitcher_, { navigationModel: 'viewChange' });
 
 class ViewSwitcherButton_ extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -107,7 +109,5 @@ class ViewSwitcherButton_ extends React.PureComponent
         );
     }
 }
-
-ViewSwitcherButton_.contextType = ServiceContext;
 
 export const ViewSwitcherButton = ModelBinding(ViewSwitcherButton_, { navigationModel: 'viewChange' });

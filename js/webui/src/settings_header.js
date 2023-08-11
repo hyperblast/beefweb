@@ -8,6 +8,8 @@ import ServiceContext from './service_context.js';
 
 class SettingsHeader extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -55,8 +57,6 @@ class SettingsHeader extends React.PureComponent
         );
     }
 }
-
-SettingsHeader.contextType = ServiceContext;
 
 export default ModelBinding(SettingsHeader, {
     navigationModel: 'settingsViewChange'

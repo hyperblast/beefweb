@@ -13,6 +13,8 @@ const stateToName = Object.freeze({
 
 class StatusBar extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -62,8 +64,6 @@ class StatusBar extends React.PureComponent
         );
     }
 }
-
-StatusBar.contextType = ServiceContext;
 
 export default ModelBinding(StatusBar, {
     playerModel: 'change',

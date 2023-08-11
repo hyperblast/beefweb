@@ -1,15 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types'
-import NavigationModel, { SettingsView } from './navigation_model.js';
+import { SettingsView } from './navigation_model.js';
 import ModelBinding from './model_binding.js';
 import GeneralSettings from './general_settings.js';
-import SettingsModel from './settings_model.js';
 import ColumnsSettings from './columns_settings.js';
-import ColumnsSettingsModel from './columns_settings_model.js';
 import ServiceContext from './service_context.js';
 
 class SettingsContent extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -50,8 +49,6 @@ class SettingsContent extends React.PureComponent
         )
     }
 }
-
-SettingsContent.contextType = ServiceContext;
 
 export default ModelBinding(SettingsContent, {
     navigationModel: 'settingsViewChange'

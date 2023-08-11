@@ -6,6 +6,8 @@ import { MediaSize } from './settings_model.js';
 
 class GeneralSettings extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props, context)
     {
         super(props, context);
@@ -43,8 +45,6 @@ class GeneralSettings extends React.PureComponent
         );
     }
 }
-
-GeneralSettings.contextType = ServiceContext;
 
 export default ModelBinding(GeneralSettings, {
     settingsModel: ['showPlaybackInfoChange', 'mediaSizeChange'],
