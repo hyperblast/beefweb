@@ -1,15 +1,11 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import PlaylistModel from './playlist_model.js'
-import FileBrowserModel from './file_browser_model.js'
 import urls from './urls.js'
 import { getDisplaySize, getDisplayDate, mapRange, bindHandlers } from './utils.js'
 import DataTable from './data_table.js'
-import NotificationModel from './notification_model.js';
-import ScrollManager from './scroll_manager.js';
 import ModelBinding from './model_binding.js';
 import { Menu, MenuItem } from './elements.js';
 import { AddAction } from './settings_model.js';
+import ServiceContext from "./service_context.js";
 
 const iconNames = Object.freeze({
     D: 'folder',
@@ -35,9 +31,11 @@ function getRowData(item)
 
 class FileBrowser extends React.PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         bindHandlers(this);
 
@@ -49,7 +47,7 @@ class FileBrowser extends React.PureComponent
         if (offset === undefined)
             offset = this.state.offset;
 
-        const { entries } = this.props.fileBrowserModel;
+        const { entries } = this.context.fileBrowserModel;
 
         const count = offset + pageSize > entries.length
             ? entries.length - offset
@@ -87,7 +85,7 @@ class FileBrowser extends React.PureComponent
 
     addItem(index, action)
     {
-        const { playlistModel, fileBrowserModel, notificationModel } = this.props;
+        const { playlistModel, fileBrowserModel, notificationModel } = this.context;
         const itemPath = fileBrowserModel.entries[index].path;
         playlistModel.addItems([itemPath], action);
         notificationModel.notifyAddItem(itemPath);
@@ -119,7 +117,7 @@ class FileBrowser extends React.PureComponent
                 pageSize={pageSize}
                 totalCount={this.state.totalCount}
                 globalKey='FileBrowser'
-                scrollManager={this.props.scrollManager}
+                scrollManager={this.context.scrollManager}
                 onClick={this.handleClick}
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
@@ -130,12 +128,5 @@ class FileBrowser extends React.PureComponent
         )
     }
 }
-
-FileBrowser.propTypes = {
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired,
-    notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
-    scrollManager: PropTypes.instanceOf(ScrollManager).isRequired,
-};
 
 export default ModelBinding(FileBrowser, { fileBrowserModel: 'change' });

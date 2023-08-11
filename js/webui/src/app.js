@@ -70,23 +70,12 @@ class App extends React.PureComponent
 
     renderFileBrowserView()
     {
-        const {
-            playlistModel,
-            fileBrowserModel,
-            notificationModel,
-            scrollManager,
-        } = this.context;
-
         return {
             header: (
                 <FileBrowserHeader />
             ),
             main: (
-                <FileBrowser
-                    fileBrowserModel={fileBrowserModel}
-                    playlistModel={playlistModel}
-                    notificationModel={notificationModel}
-                    scrollManager={scrollManager} />
+                <FileBrowser />
             )
         };
     }
