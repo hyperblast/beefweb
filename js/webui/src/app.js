@@ -83,12 +83,6 @@ class App extends React.PureComponent
 
     render()
     {
-        const {
-            playerModel,
-            settingsModel,
-            navigationModel
-        } = this.context;
-
         const view = this.renderView[this.state.view].call(this);
 
         const playbackInfoBar = this.state.showPlaybackInfo
@@ -98,10 +92,7 @@ class App extends React.PureComponent
         return (
             <div className='app'>
                 { playbackInfoBar }
-                <ControlBar
-                    playerModel={playerModel}
-                    settingsModel={settingsModel}
-                    navigationModel={navigationModel} />
+                <ControlBar />
                 { view.header }
                 { view.main }
                 <StatusBar />
