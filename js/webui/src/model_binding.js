@@ -54,7 +54,7 @@ export default function ModelBinding(InnerComponent, eventBindings)
         {
             for (let binding of bindings)
             {
-                const model = this.props[binding.model] || this.context[binding.model];
+                const model = this.context[binding.model];
 
                 if (model)
                     model.on(binding.event, this.handleModelUpdate);
@@ -65,36 +65,11 @@ export default function ModelBinding(InnerComponent, eventBindings)
         {
             for (let binding of bindings)
             {
-                const model = this.props[binding.model] || this.context[binding.model];
+                const model = this.context[binding.model];
 
                 if (model)
                     model.off(binding.event, this.handleModelUpdate);
             }
-        }
-
-        componentDidUpdate(prevProps)
-        {
-            let wantUpdate = false;
-
-            for (let binding of bindings)
-            {
-                const oldModel = prevProps[binding.model];
-                const newModel = this.props[binding.model];
-
-                if (oldModel === newModel)
-                    continue;
-
-                if (oldModel)
-                    oldModel.off(binding.event, this.handleModelUpdate);
-
-                if (newModel)
-                    newModel.on(binding.event, this.handleModelUpdate);
-
-                wantUpdate = true;
-            }
-
-            if (wantUpdate)
-                this.handleModelUpdate();
         }
 
         render()
