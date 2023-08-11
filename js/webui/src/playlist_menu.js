@@ -1,12 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import PlaylistModel from './playlist_model.js'
 import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js'
 import { ConfirmDialog, InputDialog } from './dialogs.js'
 import { bindHandlers } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
-import SettingsModel, { AddAction } from './settings_model.js';
+import { AddAction } from './settings_model.js';
 import { sortMenuColumns } from './columns.js';
 import ServiceContext from "./service_context.js";
 
