@@ -1,20 +1,20 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import FileBrowserModel, { rootPath } from './file_browser_model.js'
-import PlaylistModel from './playlist_model.js'
-import { Button, Menu, MenuItem, MenuSeparator } from './elements.js'
+import { rootPath } from './file_browser_model.js'
+import { Button, Menu, MenuItem } from './elements.js'
 import urls from './urls.js'
-import NotificationModel from './notification_model.js'
 import ModelBinding from './model_binding.js'
 import { DropdownButton } from './dropdown.js'
 import { bindHandlers } from './utils.js'
 import { AddAction } from './settings_model.js'
+import ServiceContext from "./service_context.js";
 
 class FileBrowserHeader extends React.PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         bindHandlers(this);
 
@@ -23,13 +23,13 @@ class FileBrowserHeader extends React.PureComponent
 
     getStateFromModel()
     {
-        const { currentPath, parentPath, pathStack } = this.props.fileBrowserModel;
+        const { currentPath, parentPath, pathStack } = this.context.fileBrowserModel;
         return { currentPath, parentPath, pathStack };
     }
 
     addCurrent(action)
     {
-        const { playlistModel, fileBrowserModel, notificationModel } = this.props;
+        const { playlistModel, fileBrowserModel, notificationModel } = this.context;
         const { currentPath } = fileBrowserModel;
 
         if (currentPath === rootPath)
@@ -117,11 +117,5 @@ class FileBrowserHeader extends React.PureComponent
         );
     }
 }
-
-FileBrowserHeader.propTypes = {
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    fileBrowserModel: PropTypes.instanceOf(FileBrowserModel).isRequired,
-    notificationModel: PropTypes.instanceOf(NotificationModel).isRequired,
-};
 
 export default ModelBinding(FileBrowserHeader, { fileBrowserModel: 'change' });

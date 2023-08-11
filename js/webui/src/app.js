@@ -79,10 +79,7 @@ class App extends React.PureComponent
 
         return {
             header: (
-                <FileBrowserHeader
-                    fileBrowserModel={fileBrowserModel}
-                    playlistModel={playlistModel}
-                    notificationModel={notificationModel} />
+                <FileBrowserHeader />
             ),
             main: (
                 <FileBrowser
@@ -114,7 +111,6 @@ class App extends React.PureComponent
     {
         const {
             playerModel,
-            playlistModel,
             settingsModel,
             navigationModel
         } = this.context;
