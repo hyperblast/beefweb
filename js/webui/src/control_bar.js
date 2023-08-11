@@ -29,8 +29,8 @@ class ControlBar_ extends React.PureComponent
 
         return (
             <div key='control-bar' className='panel control-bar'>
-                <PlaybackControl/>
-                <PositionControl playerModel={this.context.playerModel}/>
+                <PlaybackControl />
+                <PositionControl />
                 {
                     inlineMode
                         ? (
