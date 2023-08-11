@@ -43,17 +43,13 @@ class App extends React.PureComponent
         const {
             playerModel,
             playlistModel,
-            settingsModel,
             scrollManager,
         } = this.context;
 
         return {
             header: (
                 <div className='panel-header'>
-                    <PlaylistSwitcher
-                        playerModel={playerModel}
-                        playlistModel={playlistModel}
-                        settingsModel={settingsModel} />
+                    <PlaylistSwitcher />
                     <PlaylistMenu />
                 </div>
             ),

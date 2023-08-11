@@ -1,15 +1,12 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { PlaybackState } from 'beefweb-client'
-import PlayerModel from './player_model.js'
-import PlaylistModel from './playlist_model.js'
-import SettingsModel from './settings_model.js'
 import { Icon } from './elements.js'
 import urls from './urls.js'
 import { bindHandlers } from './utils.js'
 import { makeClassName } from './dom_utils.js'
 import ModelBinding from './model_binding.js';
+import ServiceContext from "./service_context.js";
 
 const playbackStateIcons = {
     [PlaybackState.playing]: 'media-play',
@@ -30,7 +27,7 @@ class PlaylistTabInner extends React.PureComponent
 {
     componentDidMount()
     {
-        const { playlist, currentPlaylistId} = this.props;
+        const { playlist, currentPlaylistId } = this.props;
 
         if (playlist.id === currentPlaylistId)
             this.element.scrollIntoView();
@@ -106,9 +103,11 @@ const PlaylistTabList = SortableContainer(PlaylistTabListInner);
 
 class PlaylistSwitcher extends React.PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = this.getStateFromModel();
         bindHandlers(this);
@@ -116,11 +115,11 @@ class PlaylistSwitcher extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playbackState, activeItem } = this.props.playerModel;
+        const { playbackState, activeItem } = this.context.playerModel;
         const activePlaylistId = activeItem.playlistId;
 
-        const { currentPlaylistId, playlists } = this.props.playlistModel;
-        const { touchMode } = this.props.settingsModel;
+        const { currentPlaylistId, playlists } = this.context.playlistModel;
+        const { touchMode } = this.context.settingsModel;
 
         return {
             playbackState,
@@ -133,7 +132,7 @@ class PlaylistSwitcher extends React.PureComponent
 
     handleSortEnd(e)
     {
-        this.props.playlistModel.movePlaylist(e.oldIndex, e.newIndex);
+        this.context.playlistModel.movePlaylist(e.oldIndex, e.newIndex);
     }
 
     render()
@@ -162,12 +161,6 @@ class PlaylistSwitcher extends React.PureComponent
         );
     }
 }
-
-PlaylistSwitcher.propTypes = {
-    playerModel: PropTypes.instanceOf(PlayerModel).isRequired,
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired
-};
 
 export default ModelBinding(PlaylistSwitcher, {
     playerModel: 'change',
