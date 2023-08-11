@@ -8,12 +8,15 @@ import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
 import SettingsModel, { AddAction } from './settings_model.js';
 import { sortMenuColumns } from './columns.js';
+import ServiceContext from "./service_context.js";
 
 class PlaylistMenu extends React.PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
 
         this.state = Object.assign(this.getStateFromModel(), {
             menuOpen: false,
@@ -32,7 +35,7 @@ class PlaylistMenu extends React.PureComponent
 
     getStateFromModel()
     {
-        const { currentPlaylistId, currentPlaylist } = this.props.playlistModel;
+        const { currentPlaylistId, currentPlaylist } = this.context.playlistModel;
 
         return {
             currentPlaylistId,
@@ -47,7 +50,7 @@ class PlaylistMenu extends React.PureComponent
 
     handleAddClick()
     {
-        this.props.playlistModel.addPlaylist();
+        this.context.playlistModel.addPlaylist();
     }
 
     handleRemoveClick()
@@ -58,7 +61,7 @@ class PlaylistMenu extends React.PureComponent
     handleRemoveOk()
     {
         this.setState({ removeDialogOpen: false });
-        this.props.playlistModel.removePlaylist();
+        this.context.playlistModel.removePlaylist();
     }
 
     handleRemoveCancel()
@@ -87,7 +90,7 @@ class PlaylistMenu extends React.PureComponent
         const newTitle = this.state.renameDialogValue;
 
         if (oldTitle !== newTitle)
-            this.props.playlistModel.renamePlaylist(newTitle);
+            this.context.playlistModel.renamePlaylist(newTitle);
     }
 
     handleRenameCancel()
@@ -103,7 +106,7 @@ class PlaylistMenu extends React.PureComponent
     handleClearOk()
     {
         this.setState({ clearDialogOpen: false });
-        this.props.playlistModel.clearPlaylist();
+        this.context.playlistModel.clearPlaylist();
     }
 
     handleClearCancel()
@@ -131,7 +134,7 @@ class PlaylistMenu extends React.PureComponent
         const url = this.state.addUrlDialogValue.trim();
 
         if (url)
-            this.props.playlistModel.addItems([ url ], AddAction.add);
+            this.context.playlistModel.addItems([ url ], AddAction.add);
     }
 
     handleAddUrlCancel()
@@ -143,7 +146,7 @@ class PlaylistMenu extends React.PureComponent
     {
         this.setState({
             sortDialogOpen: true,
-            sortDialogValue: this.props.settingsModel.customSortBy,
+            sortDialogValue: this.context.settingsModel.customSortBy,
         });
     }
 
@@ -153,8 +156,8 @@ class PlaylistMenu extends React.PureComponent
 
         const expression = this.state.sortDialogValue;
 
-        this.props.playlistModel.sortPlaylist(expression);
-        this.props.settingsModel.customSortBy = expression;
+        this.context.playlistModel.sortPlaylist(expression);
+        this.context.settingsModel.customSortBy = expression;
     }
 
     handleSortCancel()
@@ -169,7 +172,7 @@ class PlaylistMenu extends React.PureComponent
 
     sortBy(index)
     {
-        this.props.playlistModel.sortPlaylist(sortMenuColumns[index]);
+        this.context.playlistModel.sortPlaylist(sortMenuColumns[index]);
     }
 
     render()
@@ -273,10 +276,5 @@ class PlaylistMenu extends React.PureComponent
         );
     }
 }
-
-PlaylistMenu.propTypes = {
-    playlistModel: PropTypes.instanceOf(PlaylistModel).isRequired,
-    settingsModel: PropTypes.instanceOf(SettingsModel).isRequired,
-};
 
 export default ModelBinding(PlaylistMenu, { playlistModel: 'playlistsChange' });
