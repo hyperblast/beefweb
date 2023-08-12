@@ -7,7 +7,8 @@ const ExpectationState = Object.freeze({
 
 const defaultOptions = Object.freeze({
     useFirstEvent: false,
-    timeout: 3000
+    timeout: 3000,
+    includeEventData: false,
 });
 
 class EventExpectation
@@ -18,6 +19,7 @@ class EventExpectation
         this.condition = condition;
         this.options = Object.assign({}, defaultOptions, options);
         this.state = ExpectationState.initializing;
+        this.allEvents = [];
         this.ready = new Promise(this.runReadyPromise.bind(this));
     }
 
@@ -54,6 +56,9 @@ class EventExpectation
         if (this.state === ExpectationState.done)
             return;
 
+        if (this.options.includeEventData)
+            this.allEvents.push(event);
+
         if (this.state === ExpectationState.waitingFirstEvent)
         {
             this.state = ExpectationState.waitingCondition;
@@ -76,7 +81,15 @@ class EventExpectation
             return;
 
         const waitingFirstEvent = this.state === ExpectationState.waitingFirstEvent;
-        const error = new Error('Failed to recieve expected event');
+
+        let errorMessage = "Failed to receive expected event";
+
+        if (this.options.includeEventData)
+        {
+            errorMessage = errorMessage + ", events: " + JSON.stringify(this.allEvents, null, '  ');
+        }
+
+        const error = new Error(errorMessage);
 
         this.complete();
 
