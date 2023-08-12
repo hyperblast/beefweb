@@ -6,6 +6,7 @@
 - Prevent default overscroll behavior (e.g. reload page)
 - Adjust UI height to avoid being hidden by the browser controls
 - Fix desynchronization of current track when manipulating playlist items
+- Delay showing 'Processing files' UI when adding playlist items
 
 # Changes in v0.7 (released 2023-02-26)
 - API specification is converted to OpenAPI v3

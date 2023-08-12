@@ -308,7 +308,7 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
 
     incomingItemFilter_->process_locations_async(
         itemsList,
-        playlist_incoming_item_filter_v2::op_flag_background,
+        playlist_incoming_item_filter_v2::op_flag_background | playlist_incoming_item_filter_v2::op_flag_delay_ui,
         nullptr,
         nullptr,
         core_api::get_main_window(),
