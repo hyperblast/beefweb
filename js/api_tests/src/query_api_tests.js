@@ -231,13 +231,14 @@ q.test('expect mute state updates', async assert =>
 
 q.test('expect active item updates when sorting playlist items', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
     await client.play(0, 0);
     await client.waitForState('playing');
 
     const expectation = client.expectUpdate(
         { player: true },
-        e => e.player && e.player.activeItem.index === 2);
+        e => e.player && e.player.activeItem.index === 1);
 
     await expectation.ready;
     await client.sortPlaylistItems(0, { by: '%tracknumber%', desc: true });

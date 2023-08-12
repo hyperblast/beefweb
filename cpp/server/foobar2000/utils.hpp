@@ -99,13 +99,13 @@ private:
         t_size p_start,
         const pfc::list_base_const_t<metadb_handle_ptr> & p_data,
         const bit_array & p_selection)
-        override { notifyItems(); }
+        override { notifyPlayerAndItems(); }
 
     virtual void on_items_reordered(
         t_size p_playlist,
         const t_size * p_order,
         t_size p_count)
-        override { notifyItems(); }
+        override { notifyPlayerAndItems(); }
 
     virtual void on_items_removing(
         t_size p_playlist,
@@ -119,7 +119,7 @@ private:
         const bit_array & p_mask,
         t_size p_old_count,
         t_size p_new_count)
-        override { notifyItems(); }
+        override { notifyPlayerAndItems(); }
 
     virtual void on_items_selection_change(
         t_size p_playlist,
@@ -133,7 +133,7 @@ private:
 
     virtual void on_items_modified(
         t_size p_playlist, const bit_array & p_mask)
-        override { notifyItems(); }
+        override { notifyPlayerAndItems(); }
 
     virtual void on_items_modified_fromplayback(
         t_size p_playlist,
@@ -145,7 +145,7 @@ private:
         t_size p_playlist,
         const bit_array & p_mask,
         const pfc::list_base_const_t<t_on_items_replaced_entry> & p_data)
-        override { notifyItems(); }
+        override { notifyPlayerAndItems(); }
 
     virtual void on_item_ensure_visible(t_size p_playlist, t_size p_idx)
         override { /* ignore */ }
@@ -183,16 +183,19 @@ private:
             callback_(PlayerEvent::PLAYER_CHANGED);
     }
 
+    void notifyPlayerAndItems()
+    {
+        if (callback_)
+        {
+            callback_(PlayerEvent::PLAYER_CHANGED);
+            callback_(PlayerEvent::PLAYLIST_ITEMS_CHANGED);
+        }
+    }
+
     void notifyPlaylists()
     {
         if (callback_)
             callback_(PlayerEvent::PLAYLIST_SET_CHANGED);
-    }
-
-    void notifyItems()
-    {
-        if (callback_)
-            callback_(PlayerEvent::PLAYLIST_ITEMS_CHANGED);
     }
 
     PlayerEventCallback callback_;
