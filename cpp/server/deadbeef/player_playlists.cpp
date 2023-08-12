@@ -286,6 +286,8 @@ void PlayerImpl::removePlaylistItems(
 
         lastIndex = index;
     }
+
+    endModifyPlaylist(playlist.get());
 }
 
 void PlayerImpl::sortPlaylist(const PlaylistRef& plref, const std::string& expression, bool descending)

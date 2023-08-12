@@ -96,6 +96,8 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
         switch (p1)
         {
         case DDB_PLAYLIST_CHANGE_CONTENT:
+            // Notify player change for the case when currently played item is reordered or removed
+            emitEvent(PlayerEvent::PLAYER_CHANGED);
             emitEvent(PlayerEvent::PLAYLIST_ITEMS_CHANGED);
             break;
 
