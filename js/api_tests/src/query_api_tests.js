@@ -153,7 +153,7 @@ q.test('expect playlist updates', async assert =>
     assert.deepEqual(actual, expected);
 });
 
-q.test('expect playlist items updates', async assert =>
+q.test('expect playlist items updates when adding items', async assert =>
 {
     const columns = ['%title%'];
     const options = {
@@ -167,6 +167,30 @@ q.test('expect playlist items updates', async assert =>
 
     await expectation.ready;
     await client.addPlaylistItems(0, [tracks.t1]);
+    await expectation.done;
+
+    const expected = await client.getPlaylistItems(0, columns);
+    const actual = expectation.lastEvent.playlistItems;
+
+    assert.deepEqual(actual, expected);
+});
+
+q.test('expect playlist items updates when removing items', async assert =>
+{
+    const columns = ['%title%'];
+    const options = {
+        playlistItems: true,
+        plref: 0,
+        plcolumns: columns,
+    };
+
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2]);
+
+    const expectation = client.expectUpdate(
+        options, e => typeof e.playlistItems === 'object');
+
+    await expectation.ready;
+    await client.removePlaylistItems(0, [0]);
     await expectation.done;
 
     const expected = await client.getPlaylistItems(0, columns);
@@ -200,6 +224,57 @@ q.test('expect mute state updates', async assert =>
 
     await expectation.ready;
     await client.setMuted(true);
+    await expectation.done;
+
+    assert.ok(true);
+});
+
+q.test('expect active item updates when sorting playlist items', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.play(0, 0);
+    await client.waitForState('playing');
+
+    const expectation = client.expectUpdate(
+        { player: true },
+        e => e.player && e.player.activeItem.index === 2);
+
+    await expectation.ready;
+    await client.sortPlaylistItems(0, { by: '%tracknumber%', desc: true });
+    await expectation.done;
+
+    assert.ok(true);
+});
+
+q.test('expect active item updates when adding playlist items', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.play(0, 0);
+    await client.waitForState('playing');
+
+    const expectation = client.expectUpdate(
+        { player: true },
+        e => e.player && e.player.activeItem.index === 1);
+
+    await expectation.ready;
+    await client.addPlaylistItems(0, [tracks.t2], { index: 0 });
+    await expectation.done;
+
+    assert.ok(true);
+});
+
+q.test('expect active item updates when removing playlist items', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+    await client.play(0, 2);
+    await client.waitForState('playing');
+
+    const expectation = client.expectUpdate(
+        { player: true },
+        e => e.player && e.player.activeItem.index === 1);
+
+    await expectation.ready;
+    await client.removePlaylistItems(0, [0]);
     await expectation.done;
 
     assert.ok(true);
