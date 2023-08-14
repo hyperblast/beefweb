@@ -182,7 +182,7 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.enum,
             version: 2,
             defaultValue: FontSize.medium,
-            title: 'Font size',
+            title: 'UI elements size',
             persistent: true,
             cssVisible: true,
             enumKeys: FontSize,
