@@ -122,7 +122,7 @@ class PlaylistContent extends React.PureComponent
                 pageSize={pageSize}
                 globalKey={playlistTableKey(this.state.currentPlaylistId)}
                 scrollManager={this.context.scrollManager}
-                className='panel main-panel playlist-content'
+                className='panel panel-main playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick}
                 onRenderColumnMenu={this.handleRenderColumnMenu} />

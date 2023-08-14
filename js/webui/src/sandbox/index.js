@@ -53,7 +53,7 @@ class Sandbox extends React.PureComponent
                 <DataTable
                     useIcons={true}
                     data={this.state.data}
-                    className='panel main-panel'
+                    className='panel panel-main'
                     style={tableStyle}
                     columnNames={columnNames}
                     columnSizes={columnSizes}

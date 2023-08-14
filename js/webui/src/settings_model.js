@@ -228,7 +228,16 @@ export default class SettingsModel extends EventEmitter
             type: SettingType.bool,
             defaultValue: true,
             persistent: true,
-        })
+        });
+
+        this.define({
+            key: 'compactMode',
+            title: 'Remove gaps between panels',
+            type: SettingType.bool,
+            defaultValue: false,
+            persistent: true,
+            cssVisible: true,
+        });
 
         Object.freeze(this.metadata);
     }

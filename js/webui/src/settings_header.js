@@ -48,7 +48,7 @@ class SettingsHeader extends React.PureComponent
         const menu = renderMenu ? renderMenu.call(this) : null;
 
         return (
-            <div className='panel-header'>
+            <div className='panel panel-header'>
                 <ul className='header-block header-block-primary'>
                     { tabs }
                 </ul>

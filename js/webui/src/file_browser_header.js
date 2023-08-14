@@ -108,7 +108,7 @@ class FileBrowserHeader extends React.PureComponent
     render()
     {
         return (
-            <div className='panel-header'>
+            <div className='panel panel-header'>
                 <ul className='header-block header-block-primary'>
                     { this.renderBreadcrumbs() }
                 </ul>

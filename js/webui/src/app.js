@@ -44,7 +44,7 @@ class App extends React.PureComponent
     {
         return {
             header: (
-                <div className='panel-header'>
+                <div className='panel panel-header'>
                     <PlaylistSwitcher />
                     <PlaylistMenu />
                 </div>
@@ -79,7 +79,7 @@ class App extends React.PureComponent
     {
         return {
             header: <PanelHeader title='Invalid url' />,
-            main: <div className='panel main-panel'>Invalid url</div>
+            main: <div className='panel panel-main'>Invalid url</div>
         };
     }
 

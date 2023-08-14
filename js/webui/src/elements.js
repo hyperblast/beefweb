@@ -132,7 +132,7 @@ MenuLabel.propTypes = {
 export function PanelHeader(props)
 {
     return (
-        <div className='panel-header'>
+        <div className='panel panel-header'>
             <div className='header-block header-block-primary'>
                 <span className='header-label header-label-primary'>{props.title}</span>
             </div>

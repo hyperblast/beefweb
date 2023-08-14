@@ -41,7 +41,7 @@ class SettingsContent extends React.PureComponent
         const { settingsView } = this.state;
 
         return (
-            <div className='panel main-panel settings-content-wrapper'>
+            <div className='panel panel-main settings-content-wrapper'>
                 <div className='settings-content'>
                     { this.renderView[settingsView].call(this) }
                 </div>

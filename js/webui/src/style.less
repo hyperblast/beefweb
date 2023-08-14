@@ -552,32 +552,41 @@ body {
     .action-link();
 }
 
-.panel,
-.panel-header {
+.panel {
     background: var(--color-background);
-    margin: 0 0.5rem 0.5rem;
-
-    .border();
-}
-
-.panel:first-child {
-    margin-top: 0.5rem;
 }
 
 .panel-header {
     display: flex;
     min-height: 2.25rem;
-    margin-bottom: 0;
-    border-bottom: none;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
 }
 
-.main-panel {
+.panel-main {
     flex: 1;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
     overflow: hidden;
+}
+
+.st-no-compactmode {
+    .panel {
+        margin: 0 0.5rem 0.5rem;
+        .border();
+    }
+
+    .panel:first-child {
+        margin-top: 0.5rem;
+    }
+
+    .panel-header {
+        margin-bottom: 0;
+        border-bottom: none;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .panel-main {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
 }
 
 /* Components */
