@@ -464,5 +464,5 @@ DataTable.defaultProps = {
     useIcons: false,
     className: '',
     rowMenuTitle: 'Menu',
-    rowMenuIconName: 'menu'
+    rowMenuIconName: 'ellipses'
 };

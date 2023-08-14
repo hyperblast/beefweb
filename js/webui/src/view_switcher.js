@@ -86,7 +86,7 @@ class ViewSwitcherButton_ extends React.PureComponent
         return (
             <DropdownButton
                 title='Switch view'
-                iconName='list'
+                iconName='grid-three-up'
                 hideOnContentClick={true}
                 direction='left'
                 isOpen={menuOpen}

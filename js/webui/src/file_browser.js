@@ -122,7 +122,6 @@ class FileBrowser extends React.PureComponent
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
                 rowMenuTitle='Add...'
-                rowMenuIconName='menu'
                 onRenderRowMenu={this.handleRenderRowMenu}
                 className='panel panel-main file-browser' />
         )

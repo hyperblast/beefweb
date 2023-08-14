@@ -11,6 +11,7 @@
 - Add setting to remove gaps between panels
 - Rename 'Font size' setting to 'UI elements size'
 - Add playlist item row menu
+- Use ellipses as row menu icon
 
 # Changes in v0.7 (released 2023-02-26)
 - API specification is converted to OpenAPI v3
