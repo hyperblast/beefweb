@@ -14,14 +14,14 @@ const playbackStateIcons = {
     [PlaybackState.stopped]: 'none',
 };
 
-function PlaylistTabHandleInner()
+function PlaylistTabHandle_()
 {
     return (
         <Icon name='ellipses' className='drag-handle' />
     );
 }
 
-const PlaylistTabHandle = SortableHandle(PlaylistTabHandleInner);
+const PlaylistTabHandle = SortableHandle(PlaylistTabHandle_);
 
 class PlaylistTab_ extends React.PureComponent
 {
@@ -46,21 +46,15 @@ class PlaylistTab_ extends React.PureComponent
         const className = makeClassName({
             'header-tab': true,
             'header-tab-with-icon': true,
-            'header-tab-active': p.id === currentPlaylistId
+            'header-tab-active': p.id === currentPlaylistId,
+            'header-tab-playing': playbackState !== PlaybackState.stopped && p.id === activePlaylistId,
         });
 
-        const handle = drawHandle
-            ? <PlaylistTabHandle />
-            : null;
-
-        const icon = p.id === activePlaylistId
-            ? playbackStateIcons[playbackState]
-            : 'none';
+        const handle = drawHandle ? <PlaylistTabHandle /> : null;
 
         return (
             <li className={className} ref={el => this.element = el}>
                 {handle}
-                <Icon name={icon} className='header-tab-icon' />
                 <a href={urls.viewPlaylist(p.id)} title={p.title}>
                     {p.title}
                 </a>
@@ -71,7 +65,7 @@ class PlaylistTab_ extends React.PureComponent
 
 const PlaylistTab = SortableElement(PlaylistTab_);
 
-function PlaylistTabListInner(props)
+function PlaylistTabList_(props)
 {
     const {
         playbackState,
@@ -99,7 +93,7 @@ function PlaylistTabListInner(props)
     );
 }
 
-const PlaylistTabList = SortableContainer(PlaylistTabListInner);
+const PlaylistTabList = SortableContainer(PlaylistTabList_);
 
 class PlaylistSwitcher extends React.PureComponent
 {
@@ -108,7 +102,6 @@ class PlaylistSwitcher extends React.PureComponent
     constructor(props, context)
     {
         super(props, context);
-
         this.state = this.getStateFromModel();
         bindHandlers(this);
     }

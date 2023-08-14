@@ -13,6 +13,7 @@
 - Add playlist item row menu
 - Use ellipses as row menu icon
 - Enable "Show playback information panel" setting by default
+- Use italic font for playing playlist instead of tab icon
 
 # Changes in v0.7 (released 2023-02-26)
 - API specification is converted to OpenAPI v3
