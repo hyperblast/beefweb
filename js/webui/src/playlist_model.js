@@ -210,6 +210,11 @@ export default class PlaylistModel extends EventEmitter
         this.client.clearPlaylist(this.currentPlaylistId);
     }
 
+    removeItem(index)
+    {
+        this.client.removePlaylistItems(this.currentPlaylistId, [index]);
+    }
+
     sortPlaylist(column, desc = false)
     {
         switch (typeof column)

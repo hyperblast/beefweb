@@ -105,6 +105,19 @@ class PlaylistContent extends React.PureComponent
         );
     }
 
+    handleRenderRowMenu(index)
+    {
+        const play = () => this.context.playlistModel.activateItem(index);;
+        const remove = () => this.context.playlistModel.removeItem(index);
+
+        return (
+            <Menu>
+                <MenuItem title='Play' onClick={play} />
+                <MenuItem title='Remove' onClick={remove} />
+            </Menu>
+        );
+    }
+
     render()
     {
         const { columns } = this.state;
@@ -125,7 +138,8 @@ class PlaylistContent extends React.PureComponent
                 className='panel panel-main playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick}
-                onRenderColumnMenu={this.handleRenderColumnMenu} />
+                onRenderColumnMenu={this.handleRenderColumnMenu}
+                onRenderRowMenu={this.handleRenderRowMenu} />
         );
     }
 }
