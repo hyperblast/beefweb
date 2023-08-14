@@ -69,7 +69,9 @@ const defaultSettingProps = Object.freeze({
  * @property {string} playbackInfoExpression
  * @property {boolean} touchMode
  * @property {string} mediaSize
+ * @property {boolean} compactMode
  * @property {boolean} showPlaybackInfo
+ * @property {boolean} showStatusBar
  * @property {string} uiTheme
  * @property {string} uiThemePreference
  */
@@ -218,7 +220,7 @@ export default class SettingsModel extends EventEmitter
             key: 'showPlaybackInfo',
             title: 'Show playback information panel',
             type: SettingType.bool,
-            defaultValue: false,
+            defaultValue: true,
             persistent: true,
         });
 
