@@ -41,6 +41,7 @@ class GeneralSettings extends React.PureComponent
                 <SettingEditor settingKey='defaultAddAction' />
                 <SettingEditor settingKey='showPlaybackInfo' />
                 <SettingEditor settingKey='playbackInfoExpression' disabled={!showPlaybackInfo} />
+                <SettingEditor settingKey='showStatusBar' />
             </form>
         );
     }

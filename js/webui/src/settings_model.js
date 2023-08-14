@@ -211,7 +211,7 @@ export default class SettingsModel extends EventEmitter
             key: 'columns',
             type: SettingType.custom,
             defaultValue: defaultPlaylistColumns,
-            persistent: true
+            persistent: true,
         });
 
         this.define({
@@ -221,6 +221,14 @@ export default class SettingsModel extends EventEmitter
             defaultValue: false,
             persistent: true,
         });
+
+        this.define({
+            key: 'showStatusBar',
+            title: 'Show status bar',
+            type: SettingType.bool,
+            defaultValue: true,
+            persistent: true,
+        })
 
         Object.freeze(this.metadata);
     }

@@ -36,8 +36,8 @@ class App extends React.PureComponent
     {
         const { navigationModel, settingsModel } = this.context;
         const { view } = navigationModel;
-        const { showPlaybackInfo } = settingsModel;
-        return { view, showPlaybackInfo };
+        const { showPlaybackInfo, showStatusBar } = settingsModel;
+        return { view, showPlaybackInfo, showStatusBar };
     }
 
     renderPlaylistView()
@@ -85,19 +85,19 @@ class App extends React.PureComponent
 
     render()
     {
-        const view = this.renderView[this.state.view].call(this);
+        const { view, showPlaybackInfo, showStatusBar } = this.state;
+        const main = this.renderView[view].call(this);
 
-        const playbackInfoBar = this.state.showPlaybackInfo
-            ? <PlaybackInfoBar />
-            : null;
+        const playbackInfoBar = showPlaybackInfo ? <PlaybackInfoBar /> : null;
+        const statusBar = showStatusBar ? <StatusBar /> : null;
 
         return (
             <div className='app'>
                 { playbackInfoBar }
                 <ControlBar />
-                { view.header }
-                { view.main }
-                <StatusBar />
+                { main.header }
+                { main.main }
+                { statusBar }
             </div>
         );
     }
