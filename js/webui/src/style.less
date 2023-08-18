@@ -11,6 +11,12 @@
     border-radius: 0.125rem;
 }
 
+.border-vertical() {
+    border: 0.0625rem solid var(--color-border);
+    border-top: 0;
+    border-bottom: 0;
+}
+
 .dropdown-box() {
     padding: 0.5rem;
     background: var(--color-background);
@@ -608,6 +614,10 @@ body {
 
 .st-no-fullwidth .app {
     max-width: 62rem;
+}
+
+.st-compactmode .app {
+    .border-vertical();
 }
 
 .playback-info-bar {
