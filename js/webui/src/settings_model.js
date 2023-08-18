@@ -234,7 +234,7 @@ export default class SettingsModel extends EventEmitter
 
         this.define({
             key: 'compactMode',
-            title: 'Remove gaps between panels',
+            title: 'Hide gaps between panels',
             type: SettingType.bool,
             defaultValue: false,
             persistent: true,
