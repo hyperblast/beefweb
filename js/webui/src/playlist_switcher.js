@@ -8,12 +8,6 @@ import { makeClassName } from './dom_utils.js'
 import ModelBinding from './model_binding.js';
 import ServiceContext from "./service_context.js";
 
-const playbackStateIcons = {
-    [PlaybackState.playing]: 'media-play',
-    [PlaybackState.paused]: 'media-pause',
-    [PlaybackState.stopped]: 'none',
-};
-
 function PlaylistTabHandle_()
 {
     return (
