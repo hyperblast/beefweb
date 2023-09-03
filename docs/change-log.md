@@ -6,7 +6,7 @@
 - Prevent default overscroll behavior (e.g. reload page)
 - Adjust UI height to avoid being hidden by the browser controls
 - Fix desynchronization of current track when manipulating playlist items
-- Delay showing 'Processing files' UI when adding playlist items
+- Delay showing "Processing files" UI when adding playlist items
 - Add setting to hide status bar
 - Add setting to hide gaps between panels
 - Rename "Font size" setting to "UI elements size"
