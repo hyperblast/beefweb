@@ -1,3 +1,6 @@
+# Changes in v0.9 (not released)
+
+
 # Changes in v0.8 (released 2023-09-03)
 - Use imperative present tense for change log entries
 - Adjust screen size breakpoints (approximately 640px for medium size and 960px for large size)
