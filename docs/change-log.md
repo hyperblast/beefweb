@@ -1,5 +1,6 @@
 # Changes in v0.9 (not released)
-
+- Minimal DeaDBeeF API version is raised to v1.10 (corresponds to DeaDBeeF v1.8.0)
+- Added support for DeaDBeeF artwork plugin v2 (used since DeaDBeeF v1.9)
 
 # Changes in v0.8 (released 2023-09-03)
 - Use imperative present tense for change log entries

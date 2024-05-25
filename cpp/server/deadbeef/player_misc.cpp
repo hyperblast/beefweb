@@ -1,11 +1,9 @@
 #include "player.hpp"
 #include "../log.hpp"
-#include "artwork_request.hpp"
 
 namespace msrv::player_deadbeef {
 
 PlayerImpl::PlayerImpl()
-    : artworkPlugin_(nullptr)
 {
     setPlaybackModeOption(&playbackModeOption_);
     addOption(&shuffleOption_);
@@ -23,15 +21,12 @@ std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 
 void PlayerImpl::initArtwork()
 {
-    auto artwork = ddbApi->plug_get_for_id("artwork");
-    if (!artwork || !PLUG_TEST_COMPAT(artwork, 1, DDB_ARTWORK_VERSION))
-        return;
+    artworkFetcher_ = ArtworkFetcher::createV2();
 
-    artworkRequestColumns_ = compileColumns({ "%artist%", "%album%", "%path%" }, false);
-    if (artworkRequestColumns_.empty())
-        return;
-
-    artworkPlugin_ = reinterpret_cast<DB_artwork_plugin_t*>(artwork);
+    if (!artworkFetcher_)
+    {
+        artworkFetcher_ = ArtworkFetcher::createV1();
+    }
 }
 
 void PlayerImpl::initVersion()
@@ -48,19 +43,16 @@ void PlayerImpl::connect()
 
 void PlayerImpl::disconnect()
 {
-    if (artworkPlugin_)
-        artworkPlugin_->reset(0);
+    artworkFetcher_.reset();
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)
 {
-    return artworkPlugin_
-        ? buildArtworkRequest(query)->execute()
-        : boost::make_future(ArtworkResult());
-}
+    if (!artworkFetcher_)
+    {
+        return boost::make_future(ArtworkResult());
+    }
 
-boost::intrusive_ptr<ArtworkRequest> PlayerImpl::buildArtworkRequest(const ArtworkQuery& query)
-{
     PlaylistLockGuard lock(playlistMutex_);
 
     auto playlist = playlists_.resolve(query.playlist);
@@ -69,13 +61,7 @@ boost::intrusive_ptr<ArtworkRequest> PlayerImpl::buildArtworkRequest(const Artwo
     if (!item)
         throw InvalidRequestException("Playlist item index is out of range");
 
-    auto columns = evaluateColumns(playlist.get(), item.get(), artworkRequestColumns_);
-
-    return ArtworkRequest::create(
-        artworkPlugin_,
-        std::move(columns[0]),
-        std::move(columns[1]),
-        std::move(columns[2]));
+    return artworkFetcher_->fetchArtwork(std::move(playlist), std::move(item));
 }
 
 void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)

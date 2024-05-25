@@ -39,7 +39,7 @@ q.module('artwork 2', usePlayer());
 
 q.test('get from tag', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t2Alt]);
     await client.waitPlaybackMetadata();
 
     const expected = await getFile('cover-white.png.hidden');

@@ -41,7 +41,6 @@ std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(TrackQuery* activeItem
 
     playlists_.ensureInitialized();
 
-
     PlaylistItemPtr activeItem(ddbApi->streamer_get_playing_track());
 
     state->playbackState = getPlaybackState(activeItem.get());

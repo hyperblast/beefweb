@@ -1,13 +1,12 @@
 #pragma once
 
-#define DDB_API_LEVEL 8
+#define DDB_API_LEVEL 10
 #define DDB_WARN_DEPRECATED 1
 
 #include <deadbeef/deadbeef.h>
-#include <deadbeef/artwork.h>
 
-#if (DB_API_VERSION_MAJOR != 1) || (DB_API_VERSION_MINOR < 8)
-#error DB_API_VERSION should be at least 1.8
+#if (DB_API_VERSION_MAJOR != 1) || (DB_API_VERSION_MINOR < DDB_API_LEVEL)
+#error DB_API_VERSION should be at least 1.10
 #endif
 
 namespace msrv {

@@ -31,6 +31,8 @@
 #endif
 #include <stdio.h>
 #include <string.h>
+
+#define DDB_API_LEVEL 10
 #include <deadbeef/deadbeef.h>
 
 //#define trace(...) { fprintf(stderr, __VA_ARGS__); }

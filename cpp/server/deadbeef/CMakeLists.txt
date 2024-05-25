@@ -9,7 +9,7 @@ include_directories(
 set(
     DEADBEEF_PLUGIN_SOURCES
     add_items_scope.cpp add_items_scope.hpp
-    artwork_request.cpp artwork_request.hpp
+    artwork_fetcher_v1.cpp artwork_fetcher_v2.cpp artwork_fetcher.hpp
     common.cpp common.hpp
     player.hpp
     player_control.cpp

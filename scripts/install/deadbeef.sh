@@ -5,14 +5,14 @@ set -e
 version="$1"
 
 case "$version" in
-    'v0.7')
-        url='https://sourceforge.net/projects/deadbeef/files/deadbeef-static_0.7.2-2_x86_64.tar.bz2'
-        hash='f4ce44690ad80feddfb50b91a75d58b1edbd1cd6491f22d0a67f00debbaea6fc'
+    'v1.8')
+        url='https://sourceforge.net/projects/deadbeef/files/travis/linux/1.8.8/deadbeef-static_1.8.8-1_x86_64.tar.bz2'
+        hash='2e65b41ac39ddbc08e60ef25695a7a9a928f4342e038c1cdf3bb8b234f419b9b'
         ;;
 
-    'v1.8')
-        url='https://sourceforge.net/projects/deadbeef/files/deadbeef-static_1.8.0-1_x86_64.tar.bz2'
-        hash='57199b46aeca3ab057d97838e551a669218d6eb9638427c9cc6018686d888912'
+    'v1.9')
+        url='https://sourceforge.net/projects/deadbeef/files/travis/linux/1.9.6/deadbeef-static_1.9.6-1_x86_64.tar.bz2'
+        hash='aa17741053f63a7fceace003bf269bd4c4c9e55e42ee14286d9fbf34fbc8e014'
         ;;
 
     *)
