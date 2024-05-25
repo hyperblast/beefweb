@@ -69,11 +69,13 @@ private:
 
 void ArtworkRequestV2::callbackWrapper(int error, ddb_cover_query_t* query, ddb_cover_info_t* cover)
 {
-    boost::intrusive_ptr<ArtworkRequestV2> request(reinterpret_cast<ArtworkRequestV2*>(query->user_data), false);
+    boost::intrusive_ptr<ArtworkRequestV2> request(
+        reinterpret_cast<ArtworkRequestV2*>(query->user_data), false);
+
     tryCatchLog([&] { request->callback(error, cover); });
 }
 
-boost::unique_future<ArtworkResult> msrv::player_deadbeef::ArtworkRequestV2::execute()
+boost::unique_future<ArtworkResult> ArtworkRequestV2::execute()
 {
     auto result = resultPromise_.get_future();
     intrusive_ptr_add_ref(this);

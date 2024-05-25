@@ -108,7 +108,9 @@ void ArtworkRequestV1::callback(const char* filePath, const char* artist, const 
 
 void ArtworkRequestV1::callbackWrapper(const char* filePath, const char* artist, const char* album, void* data)
 {
-    boost::intrusive_ptr<ArtworkRequestV1> request(reinterpret_cast<ArtworkRequestV1*>(data), false);
+    boost::intrusive_ptr<ArtworkRequestV1> request(
+        reinterpret_cast<ArtworkRequestV1*>(data), false);
+
     tryCatchLog([&] { request->callback(filePath, artist, album); });
 }
 
