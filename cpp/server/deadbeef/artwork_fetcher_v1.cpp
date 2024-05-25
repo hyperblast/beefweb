@@ -100,8 +100,6 @@ void ArtworkRequestV1::callback(
     tryCatchLog([&] { request->complete(filePath, artist, album); });
 }
 
-}
-
 class ArtworkFetcherV1 : public ArtworkFetcher
 {
 public:
@@ -129,6 +127,8 @@ boost::unique_future<ArtworkResult> ArtworkFetcherV1::fetchArtwork(PlaylistPtr p
             std::move(columns[2])));
 
     return request->execute();
+}
+
 }
 
 std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV1()
