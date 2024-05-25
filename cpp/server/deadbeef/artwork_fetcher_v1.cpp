@@ -5,6 +5,8 @@
 
 #include <deadbeef/artwork-legacy.h>
 
+#include <utility>
+
 namespace msrv {
 namespace player_deadbeef {
 
@@ -14,38 +16,52 @@ class ArtworkRequestV1
     : public boost::intrusive_ref_counter<ArtworkRequestV1, boost::thread_safe_counter>
 {
 public:
-    static boost::intrusive_ptr<ArtworkRequestV1> create() { return {new ArtworkRequestV1()}; }
+    ArtworkRequestV1(
+        DB_artwork_plugin_t* plugin,
+        std::string filePath,
+        std::string artist,
+        std::string album)
+        : plugin_(plugin),
+          filePath_(std::move(filePath)),
+          artist_(std::move(artist)),
+          album_(std::move(album)) { }
 
     ~ArtworkRequestV1() = default;
 
-    boost::unique_future<ArtworkResult> execute(
-        DB_artwork_plugin_t* plugin, const char* filePath, const char* artist, const char* album);
+    boost::unique_future<ArtworkResult> execute();
 
 private:
-    ArtworkRequestV1() = default;
-
     static void callback(const char* filePath, const char* artist, const char* album, void* data);
 
     void complete(const char* filePath, const char* artist, const char* album);
 
+    DB_artwork_plugin_t* plugin_;
+    std::string filePath_;
+    std::string artist_;
+    std::string album_;
     std::string resultPath_;
     boost::promise<ArtworkResult> resultPromise_;
 
     MSRV_NO_COPY_AND_ASSIGN(ArtworkRequestV1);
 };
 
-boost::unique_future<ArtworkResult> ArtworkRequestV1::execute(
-    DB_artwork_plugin_t* plugin, const char* filePath, const char* artist, const char* album)
+boost::unique_future<ArtworkResult> ArtworkRequestV1::execute()
 {
-    logDebug("artwork query: filePath = %s; artist = %s; album = %s", filePath, artist, album);
+    logDebug(
+        "artwork query: filePath = %s; artist = %s; album = %s",
+         filePath_.c_str(), artist_.c_str(), album_.c_str());
+
+    auto filePath = filePath_.empty() ? nullptr : filePath_.c_str();
+    auto artist = artist_.empty() ? nullptr : artist_.c_str();
+    auto album = album_.empty() ? nullptr : album_.c_str();
 
     char resultPath[PATH_MAX];
-    plugin->make_cache_path2(resultPath, sizeof(resultPath), filePath, album, artist, -1);
+    plugin_->make_cache_path2(resultPath, sizeof(resultPath), filePath, album, artist, -1);
     resultPath_ = pathToUtf8(Path(resultPath));
     logDebug("artwork result path: %s", resultPath_.c_str());
 
     intrusive_ptr_add_ref(this);
-    MallocPtr<char> cachedResultPath(plugin->get_album_art(filePath, artist, album, -1, callback, this));
+    MallocPtr<char> cachedResultPath(plugin_->get_album_art(filePath, artist, album, -1, callback, this));
 
     if (cachedResultPath)
     {
@@ -104,12 +120,15 @@ private:
 boost::unique_future<ArtworkResult> ArtworkFetcherV1::fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item)
 {
     auto columns = evaluateColumns(playlist.get(), item.get(), columns_);
-    auto path = pathFromUtf8(columns[0]);
-    auto pathString = path.empty() ? nullptr : path.c_str();
-    auto artist = columns[1].empty() ? nullptr : columns[1].c_str();
-    auto album = columns[2].empty() ? nullptr : columns[2].c_str();
-    auto request = ArtworkRequestV1::create();
-    return request->execute(plugin_, pathString, artist, album);
+
+    auto request = boost::intrusive_ptr<ArtworkRequestV1>(
+        new ArtworkRequestV1(
+            plugin_,
+            pathFromUtf8(columns[0]).string(),
+            std::move(columns[1]),
+            std::move(columns[2])));
+
+    return request->execute();
 }
 
 std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV1()
