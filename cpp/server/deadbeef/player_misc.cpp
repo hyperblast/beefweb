@@ -21,22 +21,12 @@ std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 
 void PlayerImpl::initArtwork()
 {
-    auto artworkFetcher = ArtworkFetcher::createV2();
-    if (!artworkFetcher)
+    artworkFetcher_ = ArtworkFetcher::createV2();
+
+    if (!artworkFetcher_)
     {
-        artworkFetcher = ArtworkFetcher::createV1();
+        artworkFetcher_ = ArtworkFetcher::createV1();
     }
-
-    if (!artworkFetcher)
-    {
-        return;
-    }
-
-    artworkRequestColumns_ = compileColumns({ "%artist%", "%album%", "%path%" }, false);
-    if (artworkRequestColumns_.empty())
-        return;
-
-    artworkFetcher_ = std::move(artworkFetcher);
 }
 
 void PlayerImpl::initVersion()

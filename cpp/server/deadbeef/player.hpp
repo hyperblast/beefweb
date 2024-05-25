@@ -116,7 +116,6 @@ private:
 
     std::string version_;
     std::unique_ptr<ArtworkFetcher> artworkFetcher_;
-    std::vector<TitleFormatPtr> artworkRequestColumns_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };
