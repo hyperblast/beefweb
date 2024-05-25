@@ -1,6 +1,7 @@
 #include "artwork_fetcher.hpp"
 #include "../file_system.hpp"
 #include "../log.hpp"
+#include "utils.hpp"
 
 #include <deadbeef/artwork-legacy.h>
 
@@ -11,77 +12,45 @@ class ArtworkRequestV1
     : public boost::intrusive_ref_counter<ArtworkRequestV1, boost::thread_safe_counter>
 {
 public:
-    static boost::intrusive_ptr<ArtworkRequestV1> create(
-        DB_artwork_plugin_t* artworkPlugin,
-        std::string artist,
-        std::string album,
-        std::string filePath)
+    static boost::intrusive_ptr<ArtworkRequestV1> create(DB_artwork_plugin_t* plugin)
     {
-        return {
-            new ArtworkRequestV1(
-                artworkPlugin,
-                std::move(artist),
-                std::move(album),
-                std::move(filePath))};
+        return {new ArtworkRequestV1(plugin)};
     }
 
     ~ArtworkRequestV1() = default;
 
-    boost::unique_future<ArtworkResult> execute();
+    boost::unique_future<ArtworkResult> execute(const char* filePath, const char* artist, const char* album);
 
 private:
-    ArtworkRequestV1(
-        DB_artwork_plugin_t* plugin,
-        std::string artist,
-        std::string album,
-        std::string filePath)
-        : plugin_(plugin),
-          artist_(std::move(artist)),
-          album_(std::move(album)),
-          filePath_(std::move(filePath)) { }
+    explicit ArtworkRequestV1(DB_artwork_plugin_t* plugin) : plugin_(plugin) { }
 
     static void callback(const char* filePath, const char* artist, const char* album, void* data);
 
     void complete(const char* filePath, const char* artist, const char* album);
 
     DB_artwork_plugin_t* plugin_;
-    std::string artist_;
-    std::string album_;
-    std::string filePath_;
     std::string resultPath_;
     boost::promise<ArtworkResult> promise_;
 
     MSRV_NO_COPY_AND_ASSIGN(ArtworkRequestV1);
 };
 
-boost::unique_future<ArtworkResult> ArtworkRequestV1::execute()
+boost::unique_future<ArtworkResult> ArtworkRequestV1::execute(
+    const char* filePath, const char* artist, const char* album)
 {
-    logDebug("artwork query: artist = %s; album = %s; filePath = %s",
-             artist_.c_str(), album_.c_str(), filePath_.c_str());
-
-    Path filePath = pathFromUtf8(filePath_);
-    auto filePathAsString = !filePath.empty() ? filePath.c_str() : nullptr;
-    auto artist = !artist_.empty() ? artist_.c_str() : nullptr;
-    auto album = !album_.empty() ? album_.c_str() : nullptr;
+    logDebug("artwork query: filePath = %s; artist = %s; album = %s", filePath, artist, album);
 
     char resultPath[PATH_MAX];
-
-    plugin_->make_cache_path2(
-        resultPath, sizeof(resultPath), filePathAsString, album, artist, -1);
-
+    plugin_->make_cache_path2(resultPath, sizeof(resultPath), filePath, album, artist, -1);
     resultPath_ = pathToUtf8(Path(resultPath));
-
     logDebug("artwork result path: %s", resultPath_.c_str());
 
     intrusive_ptr_add_ref(this);
-
-    MallocPtr<char> cachedResultPath(
-        plugin_->get_album_art(filePathAsString, artist, album, -1, callback, this));
+    MallocPtr<char> cachedResultPath(plugin_->get_album_art(filePath, artist, album, -1, callback, this));
 
     if (cachedResultPath)
     {
         intrusive_ptr_release(this);
-
         logDebug("artwork found in cache: %s", cachedResultPath.get());
         promise_.set_value(ArtworkResult(std::string(cachedResultPath.get())));
     }
@@ -94,10 +63,10 @@ void ArtworkRequestV1::complete(const char* filePath, const char* artist, const 
     if (filePath || artist || album)
     {
         logDebug(
-            "artwork found: artist = %s; album = %s; filePath = %s",
+            "artwork found: filePath = %s; artist = %s; album = %s",
+            filePath ? filePath : "",
             artist ? artist : "",
-            album ? album : "",
-            filePath ? filePath : "");
+            album ? album : "");
 
         promise_.set_value(ArtworkResult(resultPath_));
     }
@@ -119,31 +88,42 @@ void ArtworkRequestV1::callback(
 class ArtworkFetcherV1 : public ArtworkFetcher
 {
 public:
-    explicit ArtworkFetcherV1(DB_artwork_plugin_t* plugin) : plugin_(plugin) {  }
+    explicit ArtworkFetcherV1(DB_artwork_plugin_t* plugin, std::vector<TitleFormatPtr> columns)
+        : plugin_(plugin), columns_(std::move(columns)) {  }
 
     ~ArtworkFetcherV1() override { plugin_->reset(0); }
 
-    boost::unique_future<ArtworkResult> fetchArtwork(
-        std::string artist, std::string album, std::string filePath) override;
+    boost::unique_future<ArtworkResult> fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item) override;
 
 private:
     DB_artwork_plugin_t* plugin_;
+    std::vector<TitleFormatPtr> columns_;
 };
 
 std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV1()
 {
     auto artwork = ddbApi->plug_get_for_id("artwork");
+    if (!artwork || !PLUG_TEST_COMPAT(artwork, 1, DDB_ARTWORK_VERSION))
+        return {};
 
-    if (artwork && PLUG_TEST_COMPAT(artwork, 1, DDB_ARTWORK_VERSION))
-        return std::make_unique<ArtworkFetcherV1>(reinterpret_cast<DB_artwork_plugin_t*>(artwork));
+    auto columns = compileColumns({ "%path%", "%artist%", "%album%" }, false);
+    if (columns.empty())
+        return {};
 
-    return {};
+    return std::make_unique<ArtworkFetcherV1>(
+        reinterpret_cast<DB_artwork_plugin_t*>(artwork),
+        std::move(columns));
 }
 
-boost::unique_future<ArtworkResult> ArtworkFetcherV1::fetchArtwork(
-    std::string artist, std::string album, std::string filePath)
+boost::unique_future<ArtworkResult> ArtworkFetcherV1::fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item)
 {
-    return ArtworkRequestV1::create(plugin_, artist, album, filePath)->execute();
+    auto columns = evaluateColumns(playlist.get(), item.get(), columns_);
+    auto path = pathFromUtf8(columns[0]);
+    auto pathString = path.empty() ? nullptr : path.c_str();
+    auto artist = columns[1].empty() ? nullptr : columns[1].c_str();
+    auto album = columns[2].empty() ? nullptr : columns[2].c_str();
+    auto request = ArtworkRequestV1::create(plugin_);
+    return request->execute(pathString, artist, album);
 }
 
 }}

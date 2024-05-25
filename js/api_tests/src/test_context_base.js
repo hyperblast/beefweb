@@ -50,6 +50,7 @@ class TestContextBase
         this.tracks = Object.freeze({
             t1: path.join(musicDir, 'track1.flac'),
             t2: path.join(musicDir, 'track2.flac'),
+            t2Alt: path.join(musicDir, 'subdir', 'track2.flac'),
             t3: path.join(musicDir, 'subdir', 'track3.flac'),
             emptyDir: path.join(musicDir, 'empty'),
         });

@@ -71,8 +71,7 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
     if (!item)
         throw InvalidRequestException("Playlist item index is out of range");
 
-    auto columns = evaluateColumns(playlist.get(), item.get(), artworkRequestColumns_);
-    return artworkFetcher_->fetchArtwork(std::move(columns[0]), std::move(columns[1]), std::move(columns[2]));
+    return artworkFetcher_->fetchArtwork(std::move(playlist), std::move(item));
 }
 
 void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
