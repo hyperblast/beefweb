@@ -1,7 +1,4 @@
 #include "plugin.hpp"
-#include "../log.hpp"
-#include "../project_info.hpp"
-#include "../charset.hpp"
 
 #define CONF_PORT           MSRV_PROJECT_ID ".port"
 #define CONF_ALLOW_REMOTE   MSRV_PROJECT_ID ".allow_remote"
@@ -13,7 +10,8 @@
 namespace msrv::player_deadbeef {
 
 DB_misc_t PluginWrapper::definition_;
-Plugin*  PluginWrapper::instance_;
+DeadbeefLogger* PluginWrapper::logger_;
+Plugin* PluginWrapper::instance_;
 
 char PluginWrapper::licenseText_[] = MSRV_LICENSE_TEXT;
 
@@ -142,15 +140,15 @@ void PluginWrapper::initDef()
     p.disconnect = disconnect;
     p.message = handleMessage;
     p.configdialog = configDialog_;
+    p.flags = DDB_PLUGIN_FLAG_LOGGING;
 }
 
 int PluginWrapper::start()
 {
-    static StderrLogger logger;
-    Logger::setCurrent(&logger);
-
     auto ok = tryCatchLog([]
     {
+        logger_ = new DeadbeefLogger(&definition_.plugin);
+        Logger::setCurrent(logger_);
         setLocaleCharset();
         instance_ = new Plugin();
     });
@@ -158,7 +156,7 @@ int PluginWrapper::start()
     if (ok)
         return 0;
 
-    Logger::setCurrent(nullptr);
+    stop();
     return -1;
 }
 
@@ -170,7 +168,13 @@ int PluginWrapper::stop()
         instance_ = nullptr;
     }
 
-    Logger::setCurrent(nullptr);
+    if (logger_)
+    {
+        Logger::setCurrent(nullptr);
+        tryCatchLog([] { delete logger_; });
+        logger_ = nullptr;
+    }
+
     return 0;
 }
 

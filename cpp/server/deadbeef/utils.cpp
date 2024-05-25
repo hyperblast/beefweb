@@ -2,7 +2,6 @@
 
 #include "../core_types.hpp"
 #include "../string_utils.hpp"
-#include "../log.hpp"
 
 #include <string.h>
 
@@ -66,6 +65,13 @@ std::vector<std::string> evaluateColumns(
     }
 
     return results;
+}
+
+void DeadbeefLogger::log(LogLevel, const char* fmt, va_list va)
+{
+    std::string format = prefix_ + fmt + "\n";
+
+    ddbApi->vlog_detailed(plugin_, DDB_LOG_LAYER_INFO, format.c_str(), va);
 }
 
 }}

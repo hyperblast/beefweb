@@ -1,6 +1,8 @@
 #pragma once
 
+#include "../log.hpp"
 #include "common.hpp"
+#include "../project_info.hpp"
 
 #include <memory>
 #include <mutex>
@@ -64,5 +66,18 @@ std::vector<std::string> evaluateColumns(
     ddb_playlist_t* playlist,
     ddb_playItem_t* item,
     const std::vector<TitleFormatPtr>& formatters);
+
+class DeadbeefLogger final : public Logger
+{
+public:
+    explicit DeadbeefLogger(DB_plugin_t* plugin)
+        : plugin_(plugin), prefix_(MSRV_PROJECT_ID ": ") { }
+
+    void log(LogLevel level, const char* string, va_list va) override;
+
+private:
+    DB_plugin_t* plugin_;
+    std::string prefix_;
+};
 
 }}

@@ -55,6 +55,7 @@ private:
     static int handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
     static DB_misc_t definition_;
+    static DeadbeefLogger* logger_;
     static Plugin* instance_;
     static const char configDialog_[];
     static char licenseText_[];
