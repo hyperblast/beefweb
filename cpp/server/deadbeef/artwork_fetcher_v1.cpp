@@ -1,10 +1,8 @@
-#include "artwork_fetcher.hpp"
 #include "../file_system.hpp"
 #include "../log.hpp"
+#include "artwork_fetcher.hpp"
 #include "utils.hpp"
-
 #include <deadbeef/artwork-legacy.h>
-
 #include <utility>
 
 namespace msrv {
@@ -12,8 +10,7 @@ namespace player_deadbeef {
 
 namespace {
 
-class ArtworkRequestV1
-    : public boost::intrusive_ref_counter<ArtworkRequestV1, boost::thread_safe_counter>
+class ArtworkRequestV1 : public boost::intrusive_ref_counter<ArtworkRequestV1, boost::thread_safe_counter>
 {
 public:
     ArtworkRequestV1(
@@ -31,9 +28,8 @@ public:
     boost::unique_future<ArtworkResult> execute();
 
 private:
-    static void callback(const char* filePath, const char* artist, const char* album, void* data);
-
-    void complete(const char* filePath, const char* artist, const char* album);
+    static void callbackWrapper(const char* filePath, const char* artist, const char* album, void* data);
+    void callback(const char* filePath, const char* artist, const char* album);
 
     DB_artwork_plugin_t* plugin_;
     std::string filePath_;
@@ -43,6 +39,23 @@ private:
     boost::promise<ArtworkResult> resultPromise_;
 
     MSRV_NO_COPY_AND_ASSIGN(ArtworkRequestV1);
+};
+
+class ArtworkFetcherV1 : public ArtworkFetcher
+{
+public:
+    explicit ArtworkFetcherV1(DB_artwork_plugin_t* plugin, std::vector<TitleFormatPtr> columns)
+        : plugin_(plugin), columns_(std::move(columns)) {  }
+
+    ~ArtworkFetcherV1() override { plugin_->reset(0); }
+
+    boost::unique_future<ArtworkResult> fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item) override;
+
+private:
+    DB_artwork_plugin_t* plugin_;
+    std::vector<TitleFormatPtr> columns_;
+
+    MSRV_NO_COPY_AND_ASSIGN(ArtworkFetcherV1);
 };
 
 boost::unique_future<ArtworkResult> ArtworkRequestV1::execute()
@@ -60,8 +73,9 @@ boost::unique_future<ArtworkResult> ArtworkRequestV1::execute()
     resultPath_ = pathToUtf8(Path(resultPath));
     logDebug("artwork result path: %s", resultPath_.c_str());
 
+    auto result = resultPromise_.get_future();
     intrusive_ptr_add_ref(this);
-    MallocPtr<char> cachedResultPath(plugin_->get_album_art(filePath, artist, album, -1, callback, this));
+    MallocPtr<char> cachedResultPath(plugin_->get_album_art(filePath, artist, album, -1, callbackWrapper, this));
 
     if (cachedResultPath)
     {
@@ -70,10 +84,10 @@ boost::unique_future<ArtworkResult> ArtworkRequestV1::execute()
         resultPromise_.set_value(ArtworkResult(std::string(cachedResultPath.get())));
     }
 
-    return resultPromise_.get_future();
+    return result;
 }
 
-void ArtworkRequestV1::complete(const char* filePath, const char* artist, const char* album)
+void ArtworkRequestV1::callback(const char* filePath, const char* artist, const char* album)
 {
     if (filePath || artist || album)
     {
@@ -92,28 +106,11 @@ void ArtworkRequestV1::complete(const char* filePath, const char* artist, const 
     }
 }
 
-void ArtworkRequestV1::callback(
-    const char* filePath, const char* artist, const char* album, void* data)
+void ArtworkRequestV1::callbackWrapper(const char* filePath, const char* artist, const char* album, void* data)
 {
     boost::intrusive_ptr<ArtworkRequestV1> request(reinterpret_cast<ArtworkRequestV1*>(data), false);
-
-    tryCatchLog([&] { request->complete(filePath, artist, album); });
+    tryCatchLog([&] { request->callback(filePath, artist, album); });
 }
-
-class ArtworkFetcherV1 : public ArtworkFetcher
-{
-public:
-    explicit ArtworkFetcherV1(DB_artwork_plugin_t* plugin, std::vector<TitleFormatPtr> columns)
-        : plugin_(plugin), columns_(std::move(columns)) {  }
-
-    ~ArtworkFetcherV1() override { plugin_->reset(0); }
-
-    boost::unique_future<ArtworkResult> fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item) override;
-
-private:
-    DB_artwork_plugin_t* plugin_;
-    std::vector<TitleFormatPtr> columns_;
-};
 
 boost::unique_future<ArtworkResult> ArtworkFetcherV1::fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item)
 {
@@ -133,8 +130,8 @@ boost::unique_future<ArtworkResult> ArtworkFetcherV1::fetchArtwork(PlaylistPtr p
 
 std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV1()
 {
-    auto artwork = ddbApi->plug_get_for_id("artwork");
-    if (!artwork || !PLUG_TEST_COMPAT(artwork, 1, DDB_ARTWORK_VERSION))
+    auto plugin = ddbApi->plug_get_for_id("artwork");
+    if (!plugin || !PLUG_TEST_COMPAT(plugin, 1, DDB_ARTWORK_VERSION))
         return {};
 
     auto columns = compileColumns({ "%path%", "%artist%", "%album%" }, false);
@@ -142,8 +139,7 @@ std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV1()
         return {};
 
     return std::make_unique<ArtworkFetcherV1>(
-        reinterpret_cast<DB_artwork_plugin_t*>(artwork),
-        std::move(columns));
+        reinterpret_cast<DB_artwork_plugin_t*>(plugin), std::move(columns));
 }
 
 }}
