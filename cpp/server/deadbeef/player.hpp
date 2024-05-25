@@ -5,7 +5,7 @@
 #include "../work_queue.hpp"
 #include "../player_api.hpp"
 
-#include "artwork_request.hpp"
+#include "artwork_fetcher.hpp"
 #include "utils.hpp"
 #include "playlist_mapping.hpp"
 #include "player_options.hpp"
@@ -102,7 +102,6 @@ private:
     void queryInfo(PlayerInfo* info);
     void initVersion();
     void initArtwork();
-    boost::intrusive_ptr<ArtworkRequest> buildArtworkRequest(const ArtworkQuery& query);
     bool playNextBy(const std::string& expression, PlaylistItemSelector selector);
 
     PlaylistMutex playlistMutex_;
@@ -115,8 +114,8 @@ private:
     StopAfterCurrentTrackOption stopAfterCurrentTrackOption_;
     StopAfterCurrentAlbumOption stopAfterCurrentAlbumOption_;
 
-    DB_artwork_plugin_t* artworkPlugin_;
     std::string version_;
+    std::unique_ptr<ArtworkFetcher> artworkFetcher_;
     std::vector<TitleFormatPtr> artworkRequestColumns_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
