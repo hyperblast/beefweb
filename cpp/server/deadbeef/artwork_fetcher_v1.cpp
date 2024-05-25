@@ -12,23 +12,23 @@ class ArtworkRequestV1
     : public boost::intrusive_ref_counter<ArtworkRequestV1, boost::thread_safe_counter>
 {
 public:
-    static boost::intrusive_ptr<ArtworkRequestV1> create(DB_artwork_plugin_t* plugin)
+    static boost::intrusive_ptr<ArtworkRequestV1> create()
     {
-        return {new ArtworkRequestV1(plugin)};
+        return {new ArtworkRequestV1()};
     }
 
     ~ArtworkRequestV1() = default;
 
-    boost::unique_future<ArtworkResult> execute(const char* filePath, const char* artist, const char* album);
+    boost::unique_future<ArtworkResult> execute(
+        DB_artwork_plugin_t* plugin, const char* filePath, const char* artist, const char* album);
 
 private:
-    explicit ArtworkRequestV1(DB_artwork_plugin_t* plugin) : plugin_(plugin) { }
+    ArtworkRequestV1() = default;
 
     static void callback(const char* filePath, const char* artist, const char* album, void* data);
 
     void complete(const char* filePath, const char* artist, const char* album);
 
-    DB_artwork_plugin_t* plugin_;
     std::string resultPath_;
     boost::promise<ArtworkResult> promise_;
 
@@ -36,17 +36,17 @@ private:
 };
 
 boost::unique_future<ArtworkResult> ArtworkRequestV1::execute(
-    const char* filePath, const char* artist, const char* album)
+    DB_artwork_plugin_t* plugin, const char* filePath, const char* artist, const char* album)
 {
     logDebug("artwork query: filePath = %s; artist = %s; album = %s", filePath, artist, album);
 
     char resultPath[PATH_MAX];
-    plugin_->make_cache_path2(resultPath, sizeof(resultPath), filePath, album, artist, -1);
+    plugin->make_cache_path2(resultPath, sizeof(resultPath), filePath, album, artist, -1);
     resultPath_ = pathToUtf8(Path(resultPath));
     logDebug("artwork result path: %s", resultPath_.c_str());
 
     intrusive_ptr_add_ref(this);
-    MallocPtr<char> cachedResultPath(plugin_->get_album_art(filePath, artist, album, -1, callback, this));
+    MallocPtr<char> cachedResultPath(plugin->get_album_art(filePath, artist, album, -1, callback, this));
 
     if (cachedResultPath)
     {
@@ -122,8 +122,8 @@ boost::unique_future<ArtworkResult> ArtworkFetcherV1::fetchArtwork(PlaylistPtr p
     auto pathString = path.empty() ? nullptr : path.c_str();
     auto artist = columns[1].empty() ? nullptr : columns[1].c_str();
     auto album = columns[2].empty() ? nullptr : columns[2].c_str();
-    auto request = ArtworkRequestV1::create(plugin_);
-    return request->execute(pathString, artist, album);
+    auto request = ArtworkRequestV1::create();
+    return request->execute(plugin_, pathString, artist, album);
 }
 
 }}
