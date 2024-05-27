@@ -1,5 +1,5 @@
+apps/*
 build/*
-tools/*
 
 js/.idea/*
 js/node_modules/*

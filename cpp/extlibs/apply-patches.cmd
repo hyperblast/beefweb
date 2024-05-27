@@ -3,7 +3,7 @@
 @if "%1" == "" @goto :usage
 
 @set src_dir=%~dp0%1
-@set patch_tool_dir=%~dp0..\..\tools\patch
+@set patch_tool_dir=%~dp0..\..\apps\patch
 
 @if exist "%patch_tool_dir%\patch.exe" set PATH=%patch_tool_dir%;%PATH%
 

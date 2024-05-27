@@ -1,6 +1,6 @@
 setlocal
 
-set target_dir=tools\patch
+set target_dir=apps\patch
 set pkg_file=patch.zip
 
 cd "%~dp0..\.."

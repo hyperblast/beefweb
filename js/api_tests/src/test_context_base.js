@@ -18,7 +18,7 @@ class TestContextBase
         const port = parseInt(BEEFWEB_TEST_PORT) || 8879;
         const serverUrl = `http://localhost:${port}`;
 
-        const toolsDir = path.join(rootDir, 'tools');
+        const appsDir = path.join(rootDir, 'apps');
         const webRootDir = path.join(testsRootDir, 'webroot');
         const musicDir = path.join(testsRootDir, 'tracks');
 
@@ -35,7 +35,7 @@ class TestContextBase
             serverUrl,
             rootDir,
             testsRootDir,
-            toolsDir,
+            appsDir,
             webRootDir,
             musicDir,
             pluginSettings,

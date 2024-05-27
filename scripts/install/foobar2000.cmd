@@ -32,7 +32,7 @@
 
 :install
 
-set target_dir=tools\foobar2000\%1
+set target_dir=apps\foobar2000\%1
 
 cd "%~dp0..\.."
 
