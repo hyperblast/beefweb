@@ -4,7 +4,7 @@ set -e
 
 function main
 {
-    export PATH=$(pwd)/tools/cmake/bin:$PATH
+    export PATH=$(pwd)/apps/cmake/bin:$PATH
 
     scripts/build.sh --server --$BUILD_TYPE --tests --verbose \
         -DENABLE_WERROR=ON -DENABLE_STATIC_STDLIB=ON -DENABLE_GIT_REV=ON

@@ -11,7 +11,7 @@ class TestContext extends TestContextBase
         const { BEEFWEB_TEST_DEADBEEF_VERSION } = process.env;
         const version = BEEFWEB_TEST_DEADBEEF_VERSION || 'v1.9';
 
-        config.playerDirBase = path.join(config.toolsDir, 'deadbeef', version);
+        config.playerDirBase = path.join(config.appsDir, 'deadbeef', version);
 
         config.pluginBuildDir = path.join(
             config.rootDir,

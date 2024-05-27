@@ -11,13 +11,14 @@ if [ -z "$name" ] || [ -z "$url" ] || [ -z "$hash" ]; then
     exit 1
 fi
 
-file="${url##*/}"
-
 cd "$(dirname $0)/../.."
 
-rm -rf "tools/$name"
-mkdir -p "tools/$name"
-cd "tools/$name"
+file="${url##*/}"
+install_dir="apps/$name"
+
+rm -rf "$install_dir"
+mkdir -p "$install_dir"
+cd "$install_dir"
 
 curl --silent --fail --show-error --location -o "$file" "$url"
 echo "$hash *$file" | sha256sum -c
