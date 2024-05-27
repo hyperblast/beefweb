@@ -10,7 +10,7 @@ class TestContext extends TestContextBase
 
         const { BEEFWEB_TEST_FOOBAR2000_VERSION } = process.env;
         config.playerVersion = BEEFWEB_TEST_FOOBAR2000_VERSION || 'v2.1-x64';
-        config.playerDir = path.join(config.toolsDir, 'foobar2000', config.playerVersion);
+        config.playerDir = path.join(config.appsDir, 'foobar2000', config.playerVersion);
 
         config.pluginBuildDir = path.join(
             config.rootDir,

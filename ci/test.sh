@@ -21,7 +21,7 @@ function run_api_tests
         banner "Running API tests on deadbeef $1"
         export BEEFWEB_TEST_DEADBEEF_VERSION=$1
         export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
-        tools/deadbeef/$1/deadbeef --version
+        apps/deadbeef/$1/deadbeef --version
         cd js/api_tests
         yarn test
     )
