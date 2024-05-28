@@ -23,8 +23,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Prepare docker image
-      run: ci/prepare.sh
+    - name: Build docker images
+      run: ci/build-docker.sh
 
     - name: Install tools
       run: ci/install.sh
