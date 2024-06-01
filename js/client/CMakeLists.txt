@@ -9,7 +9,7 @@ set(
 )
 
 add_custom_target(
-    JS_CLIENT
+    js_client
     SOURCES ${JS_CLIENT_SOURCES}
     DEPENDS js_packages ${YARN_INTEGRITY}
 )
