@@ -138,7 +138,7 @@ function makeBuildParams(env)
     const analyze = !!env.analyze;
 
     const sourceDir = path.join(__dirname, 'src');
-    const outputDir = path.join(__dirname, 'build', buildType);
+    const outputDir = env.outputDir || path.join(__dirname, 'build', buildType);
     const rootDir = path.dirname(__dirname);
 
     return {

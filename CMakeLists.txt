@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 project(beefweb)
 
@@ -42,5 +42,9 @@ if(ENABLE_GIT_REV)
 endif()
 
 add_subdirectory(cpp)
+
+if(ENABLE_JS)
+    add_subdirectory(js)
+endif()
 
 print_status()
