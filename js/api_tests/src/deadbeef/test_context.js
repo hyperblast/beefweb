@@ -15,9 +15,9 @@ class TestContext extends TestContextBase
 
         config.pluginBuildDir = path.join(
             config.rootDir,
-            'cpp',
             'build',
             config.buildType,
+            'cpp',
             'server',
             'deadbeef');
 
