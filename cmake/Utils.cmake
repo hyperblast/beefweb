@@ -59,7 +59,7 @@ function(print_status)
     get_cmake_property(NAMES VARIABLES)
 
     foreach(NAME ${NAMES})
-        if(NAME MATCHES "^(ENABLE|OS|CXX)_")
+        if(NAME MATCHES "^(ENABLE|OS|HOST_OS|CXX)_")
             message(STATUS "${NAME}: ${${NAME}}")
         endif()
     endforeach()
