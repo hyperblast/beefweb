@@ -14,7 +14,7 @@ class TestContextBase
 
         const testsRootDir = path.dirname(__dirname);
         const rootDir = path.dirname(path.dirname(testsRootDir));
-        const buildType = BEEFWEB_TEST_BUILD_TYPE || 'debug';
+        const buildType = BEEFWEB_TEST_BUILD_TYPE || 'Debug';
         const port = parseInt(BEEFWEB_TEST_PORT) || 8879;
         const serverUrl = `http://localhost:${port}`;
 

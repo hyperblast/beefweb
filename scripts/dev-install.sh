@@ -43,11 +43,11 @@ Options:
 
 case "$1" in
     --debug)
-        install debug
+        install Debug
         ;;
 
     --release)
-        install release
+        install Release
         ;;
 
     --help)
