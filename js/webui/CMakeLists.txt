@@ -111,6 +111,5 @@ add_custom_command(
 add_custom_target(
     webui ALL
     DEPENDS ${WEBUI_OUTPUT_FILES}
-    SOURCES ${JS_CLIENT_SOURCES}
+    SOURCES ${WEBUI_SOURCES}
 )
-
