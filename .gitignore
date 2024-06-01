@@ -1,21 +1,23 @@
-apps/*
-build/*
+.idea
+apps
+build
+cmake-build*
 
-js/.idea/*
-js/node_modules/*
+js/.idea
+js/node_modules
 
-js/api_tests/node_modules/*
-js/api_tests/tmp/*
+js/api_tests/node_modules
+js/api_tests/tmp
 
-js/client/dist/*
-js/client/node_modules/*
+js/client/dist
+js/client/node_modules
 
-js/webui/build/*
-js/webui/node_modules/*
+js/webui/build
+js/webui/node_modules
 
-cpp/.idea/*
-cpp/build/*
-cpp/extlibs/.cache/*
+cpp/.idea
+cpp/build
+cpp/extlibs/.cache
 
 *.user
 *.orig

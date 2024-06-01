@@ -36,6 +36,8 @@ endforeach()
 
 option_dependency_check(ENABLE_STATIC_STDLIB ENABLE_LOCAL_BOOST)
 
+add_custom_target(ext_all)
+
 if(ENABLE_LOCAL_BOOST)
     add_subdirectory(boost)
 endif()
