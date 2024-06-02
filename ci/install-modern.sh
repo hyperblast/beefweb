@@ -4,7 +4,8 @@ set -e
 
 function main
 {
-    scripts/build.sh --webui --pkg --$BUILD_TYPE --tests --verbose
+    scripts/install/deadbeef.sh v1.8
+    scripts/install/deadbeef.sh v1.9
 }
 
 source "$(dirname $0)/run-in-docker.sh"

@@ -17,23 +17,20 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-      BUILD_TYPE: release
+      BUILD_TYPE: Release
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Build docker images
-      run: ci/build-docker.sh
+    - name: Create docker images
+      run: ci/init-docker.sh
 
-    - name: Install tools
+    - name: Install apps
       run: ci/install.sh
 
-    - name: Build server
-      run: ci/build-server.sh
-
-    - name: Build rest
-      run: ci/build-rest.sh
+    - name: Build
+      run: ci/build.sh
 
     - name: Test
       run: ci/test.sh
@@ -78,7 +75,7 @@ jobs:
         vsversion: '2022'
         arch: ${{ matrix.arch }}
 
-    - name: Install tools
+    - name: Install apps
       run: cmd /c ci\install.cmd
 
     - name: Build

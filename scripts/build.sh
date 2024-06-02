@@ -51,19 +51,19 @@ for arg in "$@"; do
             enable_tests=ON
             ;;
 
-        --debug)
+        --debug|--Debug)
             build_type=Debug
             ;;
 
-        --release)
+        --release|--Release)
             build_type=Release
             ;;
 
-        --relwithdebinfo)
+        --relwithdebinfo|--RelWithDebInfo)
             build_type=RelWithDebInfo
             ;;
 
-        --minsizerel)
+        --minsizerel|--MinSizeRel)
             build_type=MinSizeRel
             ;;
 

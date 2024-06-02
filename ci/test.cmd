@@ -6,7 +6,7 @@ set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 @echo.
 @echo === Running server tests ===
 @echo.
-cpp\build\%BUILD_TYPE%\server\tests\%BUILD_TYPE%\core_tests.exe
+build\%BUILD_TYPE%\cpp\server\tests\%BUILD_TYPE%\core_tests.exe
 @if errorlevel 1 goto :end
 
 set API_TEST_ERROR=0
