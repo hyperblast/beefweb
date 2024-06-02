@@ -12,7 +12,7 @@
         <EnableDebugInfo Condition="'$(Configuration)' == 'RelWithDebInfo'">True</EnableDebugInfo>
 
         <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
-        <BuildDir>$(RootDir)\build\$(Configuration)</CppBuildDir>
+        <BuildDir>$(RootDir)\build\$(Configuration)</BuildDir>
 
         <PackageBuildDir>$(RootDir)\build\$(Configuration).pkg</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
@@ -34,7 +34,7 @@
         <Exec Command="rmdir /s /q &quot;$(BuildDir)&quot;" />
     </Target>
 
-    <Target Name="Init" DependsOnTargets="CleanServer">
+    <Target Name="Init" DependsOnTargets="Clean">
         <CreateItem Include="$(BuildFlags)">
             <Output TaskParameter="Include" ItemName="BuildFlags" />
         </CreateItem>
