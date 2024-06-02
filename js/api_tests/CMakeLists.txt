@@ -4,11 +4,9 @@ set(
     src/artwork_tests.js
     src/authentication_tests.js
     src/browser_api_tests.js
-    src/deadbeef
     src/deadbeef/player_controller.js
     src/deadbeef/test_context.js
     src/event_expectation.js
-    src/foobar2000
     src/foobar2000/player_controller.js
     src/foobar2000/test_context.js
     src/http_features_tests.js
