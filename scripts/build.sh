@@ -185,12 +185,12 @@ function build_pkg()
     tar cfa $pkg_licenses_file *-licenses.txt
 
     case "$build_type" in
-        release|minsizerel)
+        Release|MinSizeRel)
             echo "Stripping release binary: $plugin_file"
             strip -s $plugin_file
             ;;
 
-        relwithdebinfo)
+        RelWithDebInfo)
             echo "Extracting debug info from binary: $plugin_file"
             objcopy --only-keep-debug "$plugin_file" "$plugin_file.debug"
             strip -s "$plugin_file"
