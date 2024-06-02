@@ -17,14 +17,15 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
+      DOCKER_IMAGE: ubuntu-14.04
       BUILD_TYPE: Release
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Create docker images
-      run: ci/init-docker.sh
+    - name: Build docker image
+      run: ci/docker/build-image.sh
 
     - name: Install apps
       run: ci/install.sh
