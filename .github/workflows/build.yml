@@ -40,7 +40,7 @@ jobs:
       with:
         name: beefweb_linux
         if-no-files-found: error
-        path: build/${{ env.BUILD_TYPE }}/*.tar.gz
+        path: build/${{ env.BUILD_TYPE }}.pkg/*.tar.gz
 
   build_windows:
 
@@ -90,8 +90,8 @@ jobs:
         name: beefweb_windows
         if-no-files-found: error
         path: |
-          build\${{ env.BUILD_TYPE }}\*.fb2k-component
-          build\${{ env.BUILD_TYPE }}\*.zip
+          build\${{ env.BUILD_TYPE }}.pkg\*.fb2k-component
+          build\${{ env.BUILD_TYPE }}.pkg\*.zip
 
   merge_packages:
 
