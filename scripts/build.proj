@@ -6,79 +6,48 @@
         <Platform Condition="'$(Platform)' == ''">Win32</Platform>
         <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
 
-        <ConfigWebui>release</ConfigWebui>
-        <ConfigWebui Condition="'$(Configuration)' == 'Debug'">debug</ConfigWebui>
-
         <EnableTests Condition="'$(EnableTests)' == ''">False</EnableTests>
         <EnableDebugInfo>False</EnableDebugInfo>
         <EnableDebugInfo Condition="'$(Configuration)' == 'Debug'">True</EnableDebugInfo>
         <EnableDebugInfo Condition="'$(Configuration)' == 'RelWithDebInfo'">True</EnableDebugInfo>
 
         <RootDir>$([System.IO.Path]::GetDirectoryName($(MSBuildProjectDirectory)))</RootDir>
+        <BuildDir>$(RootDir)\build\$(Configuration)</BuildDir>
 
-        <CppSourceDir>$(RootDir)\cpp</CppSourceDir>
-        <CppBuildDir>$(CppSourceDir)\build\$(Configuration)</CppBuildDir>
-
-        <JsSourceDir>$(RootDir)\js</JsSourceDir>
-
-        <WebuiSourceDir>$(JsSourceDir)\webui</WebuiSourceDir>
-        <WebuiBuildDir>$(WebuiSourceDir)\build\$(ConfigWebui)</WebuiBuildDir>
-
-        <PackageBuildDir>$(RootDir)\build\$(Configuration)</PackageBuildDir>
+        <PackageBuildDir>$(RootDir)\build\$(Configuration).pkg</PackageBuildDir>
         <PackageTempDir>$(PackageBuildDir)\tmp</PackageTempDir>
         <PackageArch>$(Platform)</PackageArch>
         <PackageArch Condition="'$(Platform)' == 'Win32'">x86</PackageArch>
 
         <BuildPackageDependsOn>CleanPackage</BuildPackageDependsOn>
         <BuildPackageDependsOn Condition="'$(PackageVersionFinal)' == 'False'">$(BuildPackageDependsOn);DetectGitRevision</BuildPackageDependsOn>
-        <BuildPackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(BuildPackageDependsOn);BuildServer;BuildWebui</BuildPackageDependsOn>
+        <BuildPackageDependsOn Condition="'$(PackageOnly)' != 'True'">$(BuildPackageDependsOn);Build</BuildPackageDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
-        <ServerBuildFlags Include="-A $(Platform)" />
-        <ServerBuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
+        <BuildFlags Include="-A $(Platform)" />
+        <BuildFlags Include="-DENABLE_TESTS=ON" Condition="'$(EnableTests)' == 'True'" />
     </ItemGroup>
 
-    <ItemGroup>
-        <WebuiBuildFlags Include="--env release" Condition="'$(ConfigWebui)' == 'release'" />
-        <WebuiBuildFlags Include="--env tests" Condition="'$(EnableTests)' == 'True'" />
-    </ItemGroup>
-
-    <Target Name="CleanServer">
+    <Target Name="Clean">
         <!-- <RemoveDir> can't handle long path names used by Boost -->
-        <Exec Command="rmdir /s /q &quot;$(CppBuildDir)&quot;" />
+        <Exec Command="rmdir /s /q &quot;$(BuildDir)&quot;" />
     </Target>
 
-    <Target Name="InitServer" DependsOnTargets="CleanServer">
-        <CreateItem Include="$(ServerBuildFlags)">
-            <Output TaskParameter="Include" ItemName="ServerBuildFlags" />
+    <Target Name="Init" DependsOnTargets="Clean">
+        <CreateItem Include="$(BuildFlags)">
+            <Output TaskParameter="Include" ItemName="BuildFlags" />
         </CreateItem>
-        <MakeDir Directories="$(CppBuildDir)" />
+        <MakeDir Directories="$(BuildDir)" />
         <Exec
-            Command="cmake @(ServerBuildFlags -> '%(Identity)', ' ') $(CppSourceDir)"
-            WorkingDirectory="$(CppBuildDir)" />
+            Command="cmake @(BuildFlags -> '%(Identity)', ' ') $(RootDir)"
+            WorkingDirectory="$(BuildDir)" />
     </Target>
 
-    <Target Name="BuildServer" DependsOnTargets="InitServer">
+    <Target Name="Build" DependsOnTargets="Init">
         <MSBuild
-            Projects="$(CppBuildDir)\beefweb.sln"
+            Projects="$(BuildDir)\beefweb.sln"
             Properties="Configuration=$(Configuration);Platform=$(Platform)" />
-    </Target>
-
-    <Target Name="InitJs">
-        <Exec
-            Command="yarn install"
-            WorkingDirectory="$(JsSourceDir)" />
-    </Target>
-
-    <Target Name="CleanWebui">
-        <RemoveDir Directories="$(WebuiBuildDir)" />
-    </Target>
-
-    <Target Name="BuildWebui" DependsOnTargets="InitJs;CleanWebui">
-        <Exec
-            Command="yarn build @(WebuiBuildFlags -> '%(Identity)', ' ')"
-            WorkingDirectory="$(WebuiSourceDir)" />
     </Target>
 
     <Target Name="DetectGitRevision">
@@ -100,9 +69,10 @@
             <PackageFullName Condition="'$(PackageVersionFinal)' == 'False'">$(PackageFullName)_$(GitRevision)</PackageFullName>
             <PackageFullName>$(PackageFullName)-$(PackageArch)</PackageFullName>
 
-            <PluginBuildDir>$(CppBuildDir)\server\foobar2000\$(Configuration)</PluginBuildDir>
+            <PluginBuildDir>$(BuildDir)\cpp\server\foobar2000\$(Configuration)</PluginBuildDir>
             <PluginDebugInfoFile>$([System.IO.Path]::ChangeExtension($(PluginFile), '.pdb'))</PluginDebugInfoFile>
             <PackageLicensesFile>$(ProjectName).licenses.zip</PackageLicensesFile>
+            <WebuiBuildDir>$(BuildDir)\js\webui\$(Configuration)</WebuiBuildDir>
         </PropertyGroup>
         <ItemGroup>
             <ServerFiles
@@ -121,10 +91,10 @@
             DestinationFolder="$(PackageTempDir)\$(WebuiRoot)" />
         <Exec
             Command="type server-licenses.txt | find /v &quot;ThisLineDoesNotExistInInputFile&quot; > $(PackageTempDir)\server-licenses.txt"
-            WorkingDirectory="$(CppSourceDir)\extlibs" />
+            WorkingDirectory="$(RootDir)\cpp\extlibs" />
         <Exec
             Command="yarn licenses generate-disclaimer --ignore-engines --ignore-platform --prod | find /v &quot;info &quot; > $(PackageTempDir)\webui-licenses.txt"
-            WorkingDirectory="$(WebuiSourceDir)" />
+            WorkingDirectory="$(RootDir)\js\webui" />
         <Exec
             Command="7z a -r -mx9 $(PackageLicensesFile) *-licenses.txt"
             WorkingDirectory="$(PackageTempDir)" />

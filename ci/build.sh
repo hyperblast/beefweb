@@ -4,9 +4,9 @@ set -e
 
 function main
 {
-    export PATH=$(pwd)/apps/cmake/bin:$PATH
+    export PATH=$(pwd)/apps/cmake/bin:$(pwd)/apps/node/bin:$PATH
 
-    scripts/build.sh --server --$BUILD_TYPE --tests --verbose \
+    scripts/build.sh --all --$BUILD_TYPE --tests --verbose \
         -DENABLE_WERROR=ON -DENABLE_STATIC_STDLIB=ON -DENABLE_GIT_REV=ON
 }
 

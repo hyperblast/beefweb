@@ -23,8 +23,8 @@ function relink
 function install
 {
     plugin_dir="$HOME/.local/lib/deadbeef"
-    server_build_dir="$(pwd)/cpp/build/$1/server/deadbeef"
-    webui_build_dir="$(pwd)/js/webui/build/$1"
+    server_build_dir="$(pwd)/build/$1/cpp/server/deadbeef"
+    webui_build_dir="$(pwd)/build/$1/js/webui/output"
 
     if [ ! -e "$plugin_dir" ]; then
         mkdir -p "$plugin_dir"
@@ -43,11 +43,11 @@ Options:
 
 case "$1" in
     --debug)
-        install debug
+        install Debug
         ;;
 
     --release)
-        install release
+        install Release
         ;;
 
     --help)

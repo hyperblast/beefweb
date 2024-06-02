@@ -131,21 +131,27 @@ function configRelease(config)
     });
 }
 
+function getDefaultOutputDir(buildType)
+{
+    const rootDir = path.dirname(path.dirname(__dirname));
+    const outputDirName = process.platform === 'win32' ? buildType : 'output';
+
+    return path.join(rootDir, 'build', buildType, 'js', 'webui', outputDirName);
+}
+
 function makeBuildParams(env)
 {
-    const buildType = env.release ? 'release' : 'debug';
+    const buildType = env.release ? 'Release' : 'Debug';
     const enableTests = !!env.tests;
     const analyze = !!env.analyze;
 
     const sourceDir = path.join(__dirname, 'src');
-    const outputDir = path.join(__dirname, 'build', buildType);
-    const rootDir = path.dirname(__dirname);
+    const outputDir = env.outputDir || getDefaultOutputDir(buildType);
 
     return {
         buildType,
         enableTests,
         analyze,
-        rootDir,
         sourceDir,
         outputDir,
     };
@@ -169,7 +175,7 @@ function makeTarget(configTarget, params)
     configCommon(config, params);
     configTarget(config, params);
 
-    (params.buildType === 'release' ? configRelease : configDebug)(config, params);
+    (params.buildType === 'Release' ? configRelease : configDebug)(config, params);
 
     return config;
 }
