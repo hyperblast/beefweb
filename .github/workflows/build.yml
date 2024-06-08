@@ -12,7 +12,7 @@ on:
 
 jobs:
 
-  build_linux:
+  build_deadbeef:
 
     runs-on: ubuntu-22.04
 
@@ -22,7 +22,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Build docker image
       run: ci/docker/build-image.sh
@@ -37,13 +37,13 @@ jobs:
       run: ci/test.sh
 
     - name: Upload binaries
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: beefweb_linux
+        name: beefweb_deadbeef
         if-no-files-found: error
         path: build/${{ env.BUILD_TYPE }}.pkg/*.tar.gz
 
-  build_windows:
+  build_foobar2000:
 
     runs-on: windows-2022
 
@@ -68,7 +68,7 @@ jobs:
         git config --global core.eol lf
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
@@ -85,25 +85,26 @@ jobs:
       run: cmd /c ci\test.cmd
 
     - name: Upload binaries
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: beefweb_windows
+        name: 'beefweb_foobar2000_${{ matrix.arch }}'
         if-no-files-found: error
         path: |
           build\${{ env.BUILD_TYPE }}.pkg\*.fb2k-component
           build\${{ env.BUILD_TYPE }}.pkg\*.zip
 
-  merge_packages:
+  merge_foobar2000_packages:
 
     runs-on: ubuntu-22.04
 
-    needs: build_windows
+    needs: build_foobar2000
 
     steps:
     - name: Download original packages
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
-        name: beefweb_windows
+        pattern: beefweb_foobar2000_*
+        merge-multiple: true
         path: input
 
     - name: Merge packages
@@ -118,8 +119,8 @@ jobs:
         (cd work && zip -r -9 $pkg_unified *)
 
     - name: Upload merged package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: beefweb_windows_unified
+        name: beefweb_foobar2000
         if-no-files-found: error
         path: output/*.fb2k-component
