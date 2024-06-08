@@ -1,9 +1,7 @@
 import q from 'qunit';
-import lodash from 'lodash';
 import context from './test_context.js';
 
 const { client, config, tracks, usePlayer } = context;
-const { isArray } = lodash;
 
 q.module('player api', usePlayer());
 
@@ -40,7 +38,7 @@ q.test('get state', async assert =>
     assert.equal(typeof isMuted, 'boolean');
 
     assert.equal(typeof playbackMode, 'number');
-    assert.ok(isArray(playbackModes));
+    assert.ok(Array.isArray(playbackModes));
 });
 
 q.test('query current track', async assert =>
