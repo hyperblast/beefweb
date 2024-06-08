@@ -5,10 +5,10 @@ set(
     src/authentication_tests.js
     src/browser_api_tests.js
     src/deadbeef/player_controller.js
-    src/deadbeef/test_env.js
+    src/deadbeef/test_context.js
     src/event_expectation.js
     src/foobar2000/player_controller.js
-    src/foobar2000/test_env.js
+    src/foobar2000/test_context.js
     src/http_features_tests.js
     src/main.js
     src/player_api_tests.js
