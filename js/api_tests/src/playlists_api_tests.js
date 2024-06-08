@@ -1,8 +1,6 @@
 import q from 'qunit';
 import { pathCollectionsEqual, waitUntil } from './utils.js';
-import context from './test_context.js';
-
-const { client, config, tracks, usePlayer } = context;
+import { client, config, tracks, usePlayer } from './test_env.js';
 
 q.module('playlists api', usePlayer());
 

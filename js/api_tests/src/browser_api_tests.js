@@ -3,9 +3,8 @@ import { promisify } from 'util';
 import fs from 'fs';
 import q from 'qunit';
 import lodash from 'lodash';
-import context  from './test_context.js';
+import { client, config, usePlayer } from './test_env.js';
 
-const { client, config, usePlayer } = context;
 const { omit, sortBy } = lodash;
 
 const readdir = promisify(fs.readdir);

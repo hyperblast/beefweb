@@ -1,11 +1,13 @@
 import path from 'path';
-import TestContextBase from '../test_context_base.js';
+import { TestContextFactory } from '../test_context.js';
 import PlayerController from './player_controller.js';
 
-class TestContext extends TestContextBase
+export class Foobar2000TestContextFactory extends TestContextFactory
 {
-    initConfig(config)
+    createConfig()
     {
+        const config = super.createConfig();
+
         config.playerId = 'foobar2000';
 
         const { BEEFWEB_TEST_FOOBAR2000_VERSION } = process.env;
@@ -22,12 +24,12 @@ class TestContext extends TestContextBase
             config.buildType);
 
         config.pluginFile = 'foo_beefweb.dll';
+
+        return config;
     }
 
-    createController(config)
+    createPlayer(config)
     {
         return new PlayerController(config);
     }
 }
-
-export default TestContext;

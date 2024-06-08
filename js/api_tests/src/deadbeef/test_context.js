@@ -1,11 +1,13 @@
 import path from 'path';
-import TestContextBase from '../test_context_base.js';
+import { TestContextFactory } from '../test_context.js';
 import PlayerController from './player_controller.js';
 
-class TestContext extends TestContextBase
+export class DeadbeefTestContextFactory extends TestContextFactory
 {
-    initConfig(config)
+    createConfig()
     {
+        const config = super.createConfig();
+
         config.playerId = 'deadbeef';
 
         const { BEEFWEB_TEST_DEADBEEF_VERSION } = process.env;
@@ -31,12 +33,12 @@ class TestContext extends TestContextBase
             'gui_plugin': 'dummy',
             'output_plugin': 'Null output plugin v2',
         };
+
+        return config;
     }
 
-    createController(config)
+    createPlayer(config)
     {
         return new PlayerController(config);
     }
 }
-
-export default TestContext;

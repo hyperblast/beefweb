@@ -1,9 +1,8 @@
 import q from 'qunit';
 import lodash from 'lodash';
-import context from './test_context.js';
+import { client, usePlayer } from './test_env.js';
 
 const { startsWith } = lodash;
-const { client, usePlayer } = context;
 
 const authUser = 'user1';
 const authPassword = 'password1';

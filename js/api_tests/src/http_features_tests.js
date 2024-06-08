@@ -1,7 +1,5 @@
 import q from 'qunit';
-import context from './test_context.js';
-
-const { client, tracks, usePlayer } = context;
+import { client, tracks, usePlayer } from './test_env.js';
 
 const expectedValue = 'Very Custom, Much Configurable, Wow';
 

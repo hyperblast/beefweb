@@ -2,9 +2,8 @@ import path from 'path';
 import { promisify } from 'util';
 import fs from 'fs';
 import q from 'qunit';
-import context from './test_context.js';
+import { client, config, tracks, usePlayer } from './test_env.js';
 
-const { client, config, tracks, usePlayer } = context;
 const readFile = promisify(fs.readFile);
 
 function getFile(name)

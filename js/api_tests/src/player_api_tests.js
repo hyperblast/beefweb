@@ -1,7 +1,5 @@
 import q from 'qunit';
-import context from './test_context.js';
-
-const { client, config, tracks, usePlayer } = context;
+import { client, config, tracks, usePlayer } from './test_env.js';
 
 q.module('player api', usePlayer());
 
