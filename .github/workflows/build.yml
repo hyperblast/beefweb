@@ -73,7 +73,6 @@ jobs:
     - name: Setup MSVC
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        toolset: '14.34'
         arch: ${{ matrix.arch }}
 
     - name: Install apps
