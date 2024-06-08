@@ -52,6 +52,7 @@ jobs:
         shell: cmd
 
     strategy:
+      fail-fast: false
       matrix:
         arch:
         - Win32
