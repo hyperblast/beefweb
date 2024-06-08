@@ -83,7 +83,7 @@ export class TestContextFactory
         const rootDir = path.dirname(path.dirname(testsRootDir));
         const buildType = BEEFWEB_TEST_BUILD_TYPE || 'Debug';
         const port = parseInt(BEEFWEB_TEST_PORT) || 8879;
-        const serverUrl = `http://localhost:${port}`;
+        const serverUrl = `http://127.0.0.1:${port}`;
 
         const appsDir = path.join(rootDir, 'apps');
         const webRootDir = path.join(testsRootDir, 'webroot');
