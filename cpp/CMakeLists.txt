@@ -5,7 +5,7 @@ if(OS_POSIX)
 endif()
 
 if(CXX_MSVC)
-    # set(COMMON_C_FLAGS "${COMMON_C_FLAGS} /MP")
+    set(COMMON_C_FLAGS "${COMMON_C_FLAGS} /MP")
 endif()
 
 set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${COMMON_C_FLAGS}")
