@@ -74,7 +74,7 @@ void ResponseSender::handleResponse(AsyncResponse*)
 
 void ResponseSender::setJsonBody(const Json& value)
 {
-    auto str = value.dump();
+    auto str = jsonDumpSafe(value);
     setHeader(HttpHeader::CONTENT_TYPE, "application/json");
     setHeader(HttpHeader::CONTENT_LENGTH, toString(str.length()));
     responseCore_->body = std::move(str);
@@ -91,7 +91,7 @@ std::string ResponseSender::eventToString(const Json& value)
     }
 
     buffer = "data: ";
-    buffer.append(value.dump());
+    buffer.append(jsonDumpSafe(value));
     buffer.append("\n\n");
     return buffer;
 }

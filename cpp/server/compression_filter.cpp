@@ -100,7 +100,7 @@ void CompressionHandler::handleResponse(JsonResponse* response)
     if (!shouldUseCompression())
         return;
 
-    std::string data = response->value.dump();
+    auto data = jsonDumpSafe(response->value);
     makeCompressedResponse(data.data(), data.length(), "application/json");
 }
 
