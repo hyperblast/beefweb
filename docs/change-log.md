@@ -1,7 +1,9 @@
 # Changes in v0.9 (not released)
+- Do not fail when configured music directory does not exist
+- Replace invalid UTF-8 chars in JSON responses instead of failing
 ### DeaDBeeF
 - Minimal API version is raised to v1.10 (corresponds to DeaDBeeF v1.8.0)
-- Added support for artwork plugin v2 (used since DeaDBeeF v1.9)
+- Add support for artwork plugin v2 (used since DeaDBeeF v1.9)
 - Made logging use logging API instead of stderr
 
 # Changes in v0.8 (released 2023-09-03)
