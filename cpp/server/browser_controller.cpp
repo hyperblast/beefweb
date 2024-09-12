@@ -74,10 +74,10 @@ ResponsePtr BrowserController::getRoots()
     for (auto& dir : settings_->musicDirs)
     {
         auto path = pathFromUtf8(dir);
-        auto info = file_io::queryInfo(path);
+        auto info = file_io::tryQueryInfo(path);
 
-        if (info.type == FileType::DIRECTORY)
-            roots.emplace_back(makeFsEntry(path, path, info));
+        if (info && info->type == FileType::DIRECTORY)
+            roots.emplace_back(makeFsEntry(path, path, *info));
     }
 
     return Response::json({
