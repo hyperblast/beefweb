@@ -32,10 +32,13 @@ class AlbumArtViewer_ extends React.PureComponent
     {
         const { playbackState, activeItem } = this.context.playerModel;
         const { playlistId, index } = activeItem;
+        const filePath = activeItem.columns[2];
+
         return {
             isPlaying: playbackState !== PlaybackState.stopped,
             playlistId,
-            index
+            index,
+            filePath,
         };
     }
 
@@ -51,20 +54,22 @@ class AlbumArtViewer_ extends React.PureComponent
 
     render()
     {
-        const { isPlaying, playlistId, index, hasError } = this.state;
+        const { isPlaying, playlistId, index, hasError, filePath } = this.state;
         const hasAlbumArt = isPlaying && index >= 0 && !hasError;
-        const panelClass = hasAlbumArt ? 'album-art-panel' :'album-art-panel-default';
+
+        if (!hasAlbumArt) {
+            return (
+                <div className='panel panel-main album-art-panel-default'>
+                    <Icon name='musical-note' className='album-art-default'/>
+                </div>
+            );
+        }
+
+        const url = `/api/artwork/${playlistId}/${index}?f=${encodeURIComponent(filePath)}`;
 
         return (
-            <div className={`panel panel-main ${panelClass}`}>
-                {
-                    hasAlbumArt
-                        ? <img className='album-art'
-                               src={`/api/artwork/${playlistId}/${index}`}
-                               alt='Album art'
-                               onError={this.handleImageError} />
-                        : <Icon name='musical-note' className='album-art-default'/>
-                }
+            <div className='panel panel-main album-art-panel'>
+                <img className='album-art' src={url} alt='Loading album art...' onError={this.handleImageError} />
             </div>
         );
     }

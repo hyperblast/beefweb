@@ -164,7 +164,8 @@ export default class PlayerModel extends EventEmitter
         this.dataSource.watch('player', {
             trcolumns: [
                 this.settingsModel.windowTitleExpression,
-                this.settingsModel.playbackInfoExpression
+                this.settingsModel.playbackInfoExpression,
+                '%path%'
             ]
         });
     }
