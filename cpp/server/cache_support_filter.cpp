@@ -5,12 +5,9 @@
 
 namespace msrv {
 
-CacheSupportFilter::CacheSupportFilter() = default;
-CacheSupportFilter::~CacheSupportFilter() = default;
-
 void CacheSupportFilter::endRequest(Request* request)
 {
-    FileResponse* fileResponse = dynamic_cast<FileResponse*>(request->response.get());
+    auto fileResponse = dynamic_cast<FileResponse*>(request->response.get());
 
     if (!fileResponse)
         return;
@@ -30,10 +27,10 @@ void CacheSupportFilter::endRequest(Request* request)
     }
 }
 
-void CacheSupportFilter::setCacheHeaders(Response* reponse, const std::string& etag)
+void CacheSupportFilter::setCacheHeaders(Response* response, const std::string& etag)
 {
-    reponse->headers[HttpHeader::CACHE_CONTROL] = "max-age=3, must-revalidate";
-    reponse->headers[HttpHeader::ETAG] = etag;
+    response->headers[HttpHeader::CACHE_CONTROL] = "max-age=3, must-revalidate";
+    response->headers[HttpHeader::ETAG] = etag;
 }
 
 std::string CacheSupportFilter::calculateETag(FileResponse* response)

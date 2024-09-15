@@ -51,11 +51,13 @@ ResponsePtr ArtworkController::getResponse(ArtworkResult* result)
 
         auto fileInfo = file_io::queryInfo(fileHandle.get());
 
-        return Response::file(
+        auto response = Response::file(
             std::move(filePath),
             std::move(fileHandle),
-            std::move(fileInfo),
+            fileInfo,
             contentTypes_.byHeader(fileData));
+
+        return response;
     }
 
     if (!result->fileData.empty())

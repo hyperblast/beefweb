@@ -13,16 +13,17 @@ class FileResponse;
 class CacheSupportFilter : public RequestFilter
 {
 public:
-    CacheSupportFilter();
-    virtual ~CacheSupportFilter();
+    CacheSupportFilter() = default;
+    ~CacheSupportFilter() override = default;
+
+    static void apply(Request* response);
 
 protected:
-    virtual void endRequest(Request* request) override;
+    void endRequest(Request* request) override;
 
 private:
     static std::string calculateETag(FileResponse* response);
-
-    void setCacheHeaders(Response* reponse, const std::string& etag);
+    static void setCacheHeaders(Response* response, const std::string& etag);
 };
 
 }

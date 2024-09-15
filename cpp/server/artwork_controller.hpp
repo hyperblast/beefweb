@@ -3,6 +3,7 @@
 #include "defines.hpp"
 #include "controller.hpp"
 #include "player_api.hpp"
+#include "cache_support_filter.hpp"
 
 namespace msrv {
 
@@ -21,8 +22,9 @@ public:
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, const ContentTypeMap& contentTypes);
 
 private:
+    static ResponsePtr getNotFoundResponse();
+
     ResponsePtr getResponse(ArtworkResult* result);
-    ResponsePtr getNotFoundResponse();
 
     Player* player_;
     const ContentTypeMap& contentTypes_;
