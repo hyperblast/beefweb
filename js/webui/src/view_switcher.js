@@ -37,6 +37,11 @@ class ViewSwitcher_ extends React.PureComponent
                     active={view === View.playlist}
                     title='Playlists'/>
                 <Button
+                    name='image'
+                    href={urls.viewAlbumArt}
+                    active={view === View.albumArt}
+                    title='Album art' />
+                <Button
                     name='folder'
                     href={urls.browseCurrentPath}
                     active={view === View.fileBrowser}
@@ -96,6 +101,10 @@ class ViewSwitcherButton_ extends React.PureComponent
                         href={urls.viewCurrentPlaylist}
                         checked={view === View.playlist}
                         title='Playlists'/>
+                    <MenuItem
+                        href={urls.viewAlbumArt}
+                        checked={view === View.albumArt}
+                        title='Album art'/>
                     <MenuItem
                         href={urls.browseCurrentPath}
                         checked={view === View.fileBrowser}

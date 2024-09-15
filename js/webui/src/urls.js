@@ -15,6 +15,8 @@ const urls = Object.freeze({
 
     viewCurrentSettings: '#/settings',
 
+    viewAlbumArt: '#/album-art',
+
     viewSettings(view)
     {
         return `#/settings/${view}`;

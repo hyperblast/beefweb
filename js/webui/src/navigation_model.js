@@ -3,6 +3,7 @@ import EventEmitter from 'wolfy87-eventemitter'
 export const View = Object.freeze({
     playlist: 'playlist',
     fileBrowser: 'fileBrowser',
+    albumArt: 'albumArt',
     settings: 'settings',
     notFound: 'notFound'
 });

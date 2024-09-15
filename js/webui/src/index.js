@@ -68,6 +68,10 @@ router.on({
             fileBrowserModel.browse(path);
     },
 
+    '/album-art': () => {
+        navigationModel.setView(View.albumArt);
+    },
+
     '/settings': () => {
         router.navigate(urls.viewSettings(navigationModel.settingsView));
     },
