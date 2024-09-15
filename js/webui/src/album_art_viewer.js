@@ -19,6 +19,16 @@ class AlbumArtViewer_ extends React.PureComponent
         bindHandlers(this);
     }
 
+    componentDidMount()
+    {
+        this.context.playerModel.on('trackSwitch', this.handleTrackSwitch);
+    }
+
+    componentWillUnmount()
+    {
+        this.context.playerModel.off('trackSwitch', this.handleTrackSwitch);
+    }
+
     getStateFromModel()
     {
         const { playbackState, activeItem } = this.context.playerModel;
@@ -28,6 +38,11 @@ class AlbumArtViewer_ extends React.PureComponent
             playlistId,
             index
         };
+    }
+
+    handleTrackSwitch()
+    {
+        this.setState({ errorPlaylistId: '', errorIndex: -1 });
     }
 
     handleImageError()
