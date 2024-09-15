@@ -123,7 +123,7 @@ add_custom_command(
     OUTPUT ${LICENSES_FILE}
     DEPENDS ${EXTLIB_LICENSES_FILE} ${YARN_INTEGRITY} js_packages
     COMMAND cmake -E make_directory ${WEBUI_OUTPUT_DIR}
-    COMMAND cmake -E cat ${EXTLIB_LICENSES_FILE} > ${LICENSES_FILE}
+    COMMAND cmake -E copy ${EXTLIB_LICENSES_FILE} ${LICENSES_FILE}
     COMMAND yarn licenses generate-disclaimer --silent --prod --cwd ${CMAKE_CURRENT_SOURCE_DIR} >> ${LICENSES_FILE}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
