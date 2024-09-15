@@ -100,7 +100,6 @@ webui_build_dir="$build_dir/js/webui/output"
 
 pkg_build_dir="$(pwd)/build/$build_type.pkg"
 pkg_tmp_dir="$pkg_build_dir/tmp"
-pkg_licenses_file="$project_name.licenses.tar.gz"
 
 function banner
 {
@@ -173,16 +172,7 @@ function build_pkg()
     cd "$pkg_tmp_dir"
 
     cp -v -t . "$server_plugin_file"
-    cp -v -t . "$source_dir/cpp/extlibs/server-licenses.txt"
-
     cp -v -t $webui_root $webui_build_dir/*.*
-    (
-        cd "$source_dir/js/webui";
-        yarn licenses generate-disclaimer \
-            --ignore-engines --ignore-platform --prod | grep -v '^info '
-    ) > webui-licenses.txt
-
-    tar cfa $pkg_licenses_file *-licenses.txt
 
     case "$build_type" in
         Release|MinSizeRel)
@@ -200,8 +190,7 @@ function build_pkg()
 
     pkg_full_name=${pkg_name}-${pkg_version}${git_rev_suffix}-${server_arch}
 
-    tar cfa $pkg_build_dir/$pkg_full_name.tar.gz \
-        $plugin_file $webui_root $pkg_licenses_file
+    tar cfa $pkg_build_dir/$pkg_full_name.tar.gz $plugin_file $webui_root
 
     if [ "$build_type" = relwithdebinfo ]; then
         tar cfa $pkg_build_dir/$pkg_full_name.debug.tar.xz $plugin_file.debug

@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.12)
 
 project(beefweb)
 
-set(CMAKE_MODULE_PATH   "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
-set(EXTLIB_SOURCE_DIR   "${CMAKE_CURRENT_SOURCE_DIR}/cpp/extlibs")
-set(EXTLIB_INSTALL_DIR  "${CMAKE_CURRENT_BINARY_DIR}/cpp/extlibs-root")
+set(CMAKE_MODULE_PATH       "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+set(EXTLIB_SOURCE_DIR       "${CMAKE_CURRENT_SOURCE_DIR}/cpp/extlibs")
+set(EXTLIB_INSTALL_DIR      "${CMAKE_CURRENT_BINARY_DIR}/cpp/extlibs-root")
+set(EXTLIB_LICENSES_FILE    "${EXTLIB_SOURCE_DIR}/licenses.txt")
 
 include(EnvInfo)
 include(Utils)

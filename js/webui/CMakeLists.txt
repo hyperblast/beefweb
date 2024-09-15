@@ -102,7 +102,7 @@ set(
 
 add_custom_command(
     OUTPUT ${WEBUI_OUTPUT_FILES}
-    DEPENDS ${WEBUI_SOURCES} ${JS_CLIENT_SOURCES} js_packages ${YARN_INTEGRITY}
+    DEPENDS ${WEBUI_SOURCES} ${JS_CLIENT_SOURCES} ${YARN_INTEGRITY} js_packages
     COMMAND ${YARN} build ${WEBUI_BUILD_ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
@@ -112,4 +112,23 @@ add_custom_target(
     webui ALL
     DEPENDS ${WEBUI_OUTPUT_FILES}
     SOURCES ${WEBUI_SOURCES}
+)
+
+set(
+    LICENSES_FILE
+    ${WEBUI_OUTPUT_DIR}/third-party-licenses.txt
+)
+
+add_custom_command(
+    OUTPUT ${LICENSES_FILE}
+    DEPENDS ${EXTLIB_LICENSES_FILE} ${YARN_INTEGRITY} js_packages
+    COMMAND cmake -E cat ${EXTLIB_LICENSES_FILE} > ${LICENSES_FILE}
+    COMMAND yarn licenses generate-disclaimer --prod >> ${LICENSES_FILE}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    VERBATIM
+)
+
+add_custom_target(
+    licenses_file ALL
+    DEPENDS ${LICENSES_FILE}
 )
