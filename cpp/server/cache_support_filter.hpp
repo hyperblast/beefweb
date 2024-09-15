@@ -2,6 +2,7 @@
 
 #include "defines.hpp"
 #include "request_filter.hpp"
+#include "response.hpp"
 
 #include <string>
 
@@ -16,13 +17,14 @@ public:
     CacheSupportFilter() = default;
     ~CacheSupportFilter() override = default;
 
-    static void apply(Request* response);
-
 protected:
     void endRequest(Request* request) override;
 
 private:
-    static std::string calculateETag(FileResponse* response);
+    static std::string getEtag(Response* response);
+    static uint64_t getHash(DataResponse* response);
+    static uint64_t getHash(FileResponse* response);
+    static std::string formatHash(uint64_t hash);
     static void setCacheHeaders(Response* response, const std::string& etag);
 };
 
