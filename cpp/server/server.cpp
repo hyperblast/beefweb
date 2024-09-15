@@ -135,9 +135,27 @@ void Server::sendResponse(RequestContextPtr context)
 
 void Server::processResponse(RequestContextPtr context)
 {
-    Response* response = context->response();
+    if (auto asyncResponse = dynamic_cast<AsyncResponse*>(context->response()))
+    {
+        asyncResponse->responseFuture.then(
+            boost::launch::sync, [context] (ResponseFuture resp)
+            {
+                auto nextResponse = AsyncResponse::unpack(std::move(resp));
+                if (nextResponse)
+                    nextResponse->addHeaders(context->response()->headers);
 
-    if (auto eventStreamResponse = dynamic_cast<EventStreamResponse*>(response))
+                context->request.response = std::move(nextResponse);
+
+                if (auto server = context->server.lock())
+                    server->processResponse(context);
+            });
+
+        return;
+    }
+
+    config_->filters.endRequest(&context->request);
+
+    if (auto eventStreamResponse = dynamic_cast<EventStreamResponse*>(context->response()))
     {
         context->eventStreamResponse = eventStreamResponse;
         produceEvent(context.get());
@@ -151,34 +169,11 @@ void Server::processResponse(RequestContextPtr context)
         return;
     }
 
-     if (auto asyncResponse = dynamic_cast<AsyncResponse*>(response))
-     {
-         asyncResponse->responseFuture.then(
-            boost::launch::sync, [context] (ResponseFuture resp)
-         {
-             auto nextResponse = AsyncResponse::unpack(std::move(resp));
-             if (nextResponse)
-                 nextResponse->addHeaders(context->response()->headers);
-
-             context->request.response = std::move(nextResponse);
-
-             if (auto server = context->server.lock())
-                 server->processResponse(context);
-         });
-
-         return;
-     }
-
-    if (auto server = context->server.lock())
+    core_->workQueue()->enqueue([context]
     {
-        server->config_->filters.endRequest(&context->request);
-    }
-
-     core_->workQueue()->enqueue([context]
-     {
-         if (auto server = context->server.lock())
+        if (auto server = context->server.lock())
             server->sendResponse(context);
-     });
+    });
 }
 
 void Server::beginSendEventStream(RequestContextPtr context)
