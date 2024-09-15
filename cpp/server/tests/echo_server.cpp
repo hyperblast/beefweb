@@ -109,8 +109,8 @@ public:
 
         EchoController::defineRoutes(router, &workQueue_);
 
-        filters->addFilter(std::make_unique<EchoHeadersFilter>());
-        filters->addFilter(std::make_unique<ExecuteHandlerFilter>());
+        filters->add(std::make_unique<EchoHeadersFilter>());
+        filters->add(std::make_unique<ExecuteHandlerFilter>());
 
         return config;
     }

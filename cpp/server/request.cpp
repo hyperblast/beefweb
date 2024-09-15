@@ -21,15 +21,15 @@ public:
 class EmptyRequestHandlerFactory : public RequestHandlerFactory
 {
 public:
-    EmptyRequestHandlerFactory() { }
-    virtual ~EmptyRequestHandlerFactory() { }
+    EmptyRequestHandlerFactory() = default;
+    ~EmptyRequestHandlerFactory() override = default;
 
-    virtual WorkQueue* workQueue()
+    WorkQueue* workQueue() override
     {
         return nullptr;
     }
 
-    virtual RequestHandlerPtr createHandler(Request*)
+    RequestHandlerPtr createHandler(Request*) override
     {
         return std::make_unique<EmptyRequestHandler>();
     }

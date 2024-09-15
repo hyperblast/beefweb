@@ -36,6 +36,7 @@ public:
     Json postData;
     RequestHandlerPtr handler;
     std::unique_ptr<Response> response;
+    int lastFilter = -1;
 
     template<typename T>
     T param(const std::string& key);

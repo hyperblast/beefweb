@@ -80,7 +80,7 @@ void Server::onRequestDone(RequestCore* corereq)
 
 void Server::runHandlerAndProcessResponse(RequestContextPtr context)
 {
-    config_->filters.execute(&context->request);
+    config_->filters.beginRequest(&context->request);
 
     processResponse(context);
 }
@@ -168,6 +168,11 @@ void Server::processResponse(RequestContextPtr context)
 
          return;
      }
+
+    if (auto server = context->server.lock())
+    {
+        server->config_->filters.endRequest(&context->request);
+    }
 
      core_->workQueue()->enqueue([context]
      {

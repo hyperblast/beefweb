@@ -17,7 +17,7 @@ TEST_CASE("server")
     boost::unique_future<void> started = startedPromise.get_future();
 
     auto config = std::make_unique<ServerConfig>(MSRV_DEFAULT_TEST_PORT, false);
-    config->filters.addFilter(std::make_unique<ExecuteHandlerFilter>());
+    config->filters.add(std::make_unique<ExecuteHandlerFilter>());
 
     ServerThread server([&] { startedPromise.set_value(); });
     server.restart(std::move(config));

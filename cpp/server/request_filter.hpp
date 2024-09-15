@@ -16,32 +16,21 @@ using RequestFilterPtr = std::unique_ptr<RequestFilter>;
 class RequestFilter
 {
 public:
-    RequestFilter();
-    virtual ~RequestFilter();
-
-    RequestFilter* getNext() const { return next_; }
-    void setNext(RequestFilter* filter) { next_ = filter; }
-
-    virtual void execute(Request* request);
-
-protected:
-    virtual void beginRequest(Request* request);
-    virtual void endRequest(Request* request);
-    void callNext(Request* request);
+    RequestFilter() = default;
+    virtual ~RequestFilter() = default;
+    virtual void beginRequest(Request*) { }
+    virtual void endRequest(Request*) { }
 
 private:
-    RequestFilter* next_;
-
     MSRV_NO_COPY_AND_ASSIGN(RequestFilter);
 };
 
 class ExecuteHandlerFilter : public RequestFilter
 {
 public:
-    ExecuteHandlerFilter();
-    ~ExecuteHandlerFilter();
+    ~ExecuteHandlerFilter() override = default;
 
-    virtual void execute(Request* request) override;
+    void beginRequest(Request* request) override;
 };
 
 class RequestFilterChain
@@ -50,8 +39,9 @@ public:
     RequestFilterChain();
     ~RequestFilterChain();
 
-    void addFilter(RequestFilterPtr filter);
-    void execute(Request* request) const;
+    void add(RequestFilterPtr filter);
+    void beginRequest(Request* request) const;
+    void endRequest(Request* request) const;
 
 private:
     std::vector<RequestFilterPtr> filters_;

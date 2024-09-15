@@ -41,15 +41,15 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
     auto filters = &config->filters;
 
     if (settings->authRequired)
-        filters->addFilter(std::make_unique<BasicAuthFilter>(settings));
+        filters->add(std::make_unique<BasicAuthFilter>(settings));
 
-    filters->addFilter(std::make_unique<CompressionFilter>());
+    filters->add(std::make_unique<CompressionFilter>());
 
     if (!settings->responseHeaders.empty())
-        filters->addFilter(std::make_unique<ResponseHeadersFilter>(settings));
+        filters->add(std::make_unique<ResponseHeadersFilter>(settings));
 
-    filters->addFilter(std::make_unique<CacheSupportFilter>());
-    filters->addFilter(std::make_unique<ExecuteHandlerFilter>());
+    filters->add(std::make_unique<CacheSupportFilter>());
+    filters->add(std::make_unique<ExecuteHandlerFilter>());
 
     PlayerController::defineRoutes(router, playerWorkQueue_.get(), player_);
     PlaylistsController::defineRoutes(router, playerWorkQueue_.get(), player_, settings);

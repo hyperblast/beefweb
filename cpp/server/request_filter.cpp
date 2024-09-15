@@ -18,11 +18,12 @@ inline bool hasInternalErrorResponse(Request* request)
 }
 
 template<typename Func>
-void guardedCall(Request* request, Func&& func)
+bool guardedCall(Request* request, Func&& func)
 {
     try
     {
         func();
+        return true;
     }
     catch (InvalidRequestException& ex)
     {
@@ -30,6 +31,7 @@ void guardedCall(Request* request, Func&& func)
             request->response = Response::error(HttpStatus::S_400_BAD_REQUEST, ex.what());
 
         request->setProcessed();
+        return false;
     }
     catch (std::exception& ex)
     {
@@ -39,6 +41,7 @@ void guardedCall(Request* request, Func&& func)
             request->response = Response::error(HttpStatus::S_500_SERVER_ERROR, ex.what());
 
         request->setProcessed();
+        return false;
     }
     catch (...)
     {
@@ -48,40 +51,13 @@ void guardedCall(Request* request, Func&& func)
             request->response = Response::error(HttpStatus::S_500_SERVER_ERROR, "unknown error");
 
         request->setProcessed();
+        return false;
     }
 }
 
 }
 
-RequestFilter::RequestFilter()
-    : next_(nullptr) { }
-
-RequestFilter::~RequestFilter() = default;
-
-void RequestFilter::execute(Request* request)
-{
-    guardedCall(request, [this, request] { beginRequest(request); });
-
-    if (request->isProcessed())
-        return;
-
-    callNext(request);
-    guardedCall(request, [this, request] { endRequest(request); });
-}
-
-void RequestFilter::callNext(Request* request)
-{
-    assert(next_);
-    guardedCall(request, [this, request] { next_->execute(request); });
-}
-
-void RequestFilter::beginRequest(Request*) { }
-void RequestFilter::endRequest(Request*) { }
-
-ExecuteHandlerFilter::ExecuteHandlerFilter() = default;
-ExecuteHandlerFilter::~ExecuteHandlerFilter() = default;
-
-void ExecuteHandlerFilter::execute(Request* request)
+void ExecuteHandlerFilter::beginRequest(Request* request)
 {
     request->executeHandler();
 }
@@ -89,24 +65,44 @@ void ExecuteHandlerFilter::execute(Request* request)
 RequestFilterChain::RequestFilterChain() = default;
 RequestFilterChain::~RequestFilterChain() = default;
 
-void RequestFilterChain::addFilter(RequestFilterPtr filter)
+void RequestFilterChain::add(RequestFilterPtr filter)
 {
-    RequestFilter* last = nullptr;
-
-    if (!filters_.empty())
-        last = filters_.back().get();
-
     filters_.emplace_back(std::move(filter));
-
-    if (last)
-        last->setNext(filters_.back().get());
 }
 
-void RequestFilterChain::execute(Request* request) const
+void RequestFilterChain::beginRequest(Request* request) const
 {
-    assert(!filters_.empty());
-    guardedCall(request, [this, request] { filters_.front()->execute(request); });
+    int current = -1;
+
+    for (auto& filter : filters_)
+    {
+        current++;
+
+        if (guardedCall(request, [&] { filter->beginRequest(request); }))
+        {
+            request->lastFilter = current;
+
+            if (request->isProcessed())
+            {
+                return;
+            }
+        }
+        else
+        {
+            // guardedCall() marked response as processed
+            return;
+        }
+    }
+
     request->setProcessed();
+}
+
+void RequestFilterChain::endRequest(Request* request) const
+{
+    for (int i = request->lastFilter; i >= 0; i--)
+    {
+        guardedCall(request, [&] { filters_[i]->endRequest(request); });
+    }
 }
 
 }
