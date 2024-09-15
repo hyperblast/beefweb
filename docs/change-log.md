@@ -1,4 +1,6 @@
 # Changes in v0.9 (not released)
+- Add album art display
+- Fix 1px border in compact mode
 - Do not fail when configured music directory does not exist
 - Replace invalid UTF-8 chars in JSON responses instead of failing
 ### DeaDBeeF
