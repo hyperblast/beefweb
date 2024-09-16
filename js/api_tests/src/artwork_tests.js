@@ -11,6 +11,14 @@ function getFile(name)
     return readFile(path.join(config.musicDir, name));
 }
 
+function getCurrentArtwork()
+{
+    return client.handler.axios.get('api/artwork/current', {
+        responseType: 'arraybuffer',
+        validateStatus: () => true,
+    });
+}
+
 function getArtwork(playlist, item)
 {
     return client.handler.axios.get(`api/artwork/${playlist}/${item}`, {
@@ -28,6 +36,21 @@ q.test('get from folder', async assert =>
 
     const expected = await getFile('cover.png');
     const response = await getArtwork(0, 0);
+
+    assert.equal(response.status, 200);
+    assert.equal(response.headers['content-type'], 'image/png');
+    assert.ok(response.data.equals(expected));
+});
+
+q.test('get current', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+    await client.play(0, 0);
+    await client.waitForState('playing');
+    await client.waitPlaybackMetadata();
+
+    const expected = await getFile('cover.png');
+    const response = await getCurrentArtwork();
 
     assert.equal(response.status, 200);
     assert.equal(response.headers['content-type'], 'image/png');
