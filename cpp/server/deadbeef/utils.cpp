@@ -20,7 +20,7 @@ std::vector<TitleFormatPtr> compileColumns(
 {
     std::vector<TitleFormatPtr> formatters;
 
-    for (auto& column: columns)
+    for (auto& column : columns)
     {
         TitleFormatPtr formatter(ddbApi->tf_compile(column.c_str()));
 
@@ -54,7 +54,7 @@ std::vector<std::string> evaluateColumns(
     int index = 0;
     char buffer[TITLE_FORMAT_BUFFER_SIZE];
 
-    for (auto& formatter: formatters)
+    for (auto& formatter : formatters)
     {
         int size = ddbApi->tf_eval(&context, formatter.get(), buffer, sizeof(buffer));
         if (size < 0)

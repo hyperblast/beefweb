@@ -64,7 +64,13 @@ public:
     virtual void reset() override;
 
 private:
-    static INT_PTR CALLBACK dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
+    static INT_PTR CALLBACK
+    dialogProcWrapper(HWND
+    window,
+    UINT message, WPARAM
+    wparam,
+    LPARAM lparam
+    );
 
     INT_PTR dialogProc(UINT message, WPARAM wparam, LPARAM lparam);
     INT_PTR handleCommand(int control, int message);

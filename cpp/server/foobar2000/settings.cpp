@@ -58,7 +58,7 @@ void SettingVars::setMusicDirs(const std::vector <std::string>& dirs)
 {
     std::string str;
 
-    for (auto& dir: dirs)
+    for (auto& dir : dirs)
     {
         str.append(dir);
         str.push_back(listSeparator);

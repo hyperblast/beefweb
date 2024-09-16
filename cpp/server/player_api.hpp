@@ -371,7 +371,7 @@ public:
 
     PlayerOption* getOption(const std::string& id)
     {
-        for (auto option: options_)
+        for (auto option : options_)
         {
             if (option->id() == id)
             {

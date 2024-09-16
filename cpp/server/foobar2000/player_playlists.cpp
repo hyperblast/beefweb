@@ -153,7 +153,7 @@ std::vector <std::string> PlayerImpl::evaluatePlaylistColumns(
     std::vector <std::string> result;
     result.reserve(compiledColumns.size());
 
-    for (auto& compiledColumn: compiledColumns)
+    for (auto& compiledColumn : compiledColumns)
     {
         playlistManager_->playlist_item_format_title(
             playlist,
@@ -177,7 +177,7 @@ void PlayerImpl::makeItemsMask(
 {
     auto count = playlistManager_->playlist_get_item_count(playlist);
 
-    for (auto index: indexes)
+    for (auto index : indexes)
     {
         if (index >= 0 && static_cast<t_size>(index) < count)
             mask->add(index);
@@ -302,7 +302,7 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
 
     itemsList.prealloc(items.size());
 
-    for (auto& item: items)
+    for (auto& item : items)
         itemsList.add_item(item.c_str());
 
     service_ptr_t <AsyncAddCompleter> completer(

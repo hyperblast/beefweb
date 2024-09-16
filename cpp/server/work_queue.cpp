@@ -50,7 +50,7 @@ void ThreadWorkQueue::run()
             std::swap(executing_, enqueued_);
         }
 
-        for (auto& item: executing_)
+        for (auto& item : executing_)
             tryCatchLog([&] { item(); });
 
         executing_.clear();
@@ -97,7 +97,7 @@ void ExternalWorkQueue::execute(State* state)
         std::swap(state->executing, state->enqueued);
     }
 
-    for (auto& item: state->executing)
+    for (auto& item : state->executing)
         tryCatchLog([&] { item(); });
 
     state->executing.clear();

@@ -134,7 +134,7 @@ ResponsePtr PlaylistsController::addItems()
     if (optionalParam("play", false))
         options |= AddItemsOptions::PLAY;
 
-    for (auto& item: items)
+    for (auto& item : items)
         normalizedItems.emplace_back(validateAndNormalizeItem(item));
 
     auto addCompleted = player_->addPlaylistItems(plref, normalizedItems, targetIndex, options);

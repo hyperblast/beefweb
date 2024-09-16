@@ -87,7 +87,7 @@ void StaticController::defineRoutes(
     SettingsDataPtr settings,
     const ContentTypeMap& contentTypes)
 {
-    for (auto& kv: settings->urlMappings)
+    for (auto& kv : settings->urlMappings)
     {
         if (kv.first.empty() || kv.first == "/")
         {

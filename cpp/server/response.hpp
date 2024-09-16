@@ -58,7 +58,7 @@ public:
     template<typename Source>
     void addHeaders(Source const& source)
     {
-        for (const auto& kv: source)
+        for (const auto& kv : source)
         {
             headers.try_emplace(kv.first, kv.second);
         }

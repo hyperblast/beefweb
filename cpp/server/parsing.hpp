@@ -93,7 +93,7 @@ bool tryParseValueList(StringView str, char sep, std::vector<T>* outVal)
 
     std::vector<T> items;
 
-    for (const auto& token: tokenizer)
+    for (const auto& token : tokenizer)
     {
         T value;
 
@@ -128,7 +128,7 @@ bool tryParseValueListStrict(StringView str, char sep, char esc, std::vector<T>*
 
     std::vector<T> items;
 
-    for (const auto& token: tokenizer)
+    for (const auto& token : tokenizer)
     {
         T value;
 

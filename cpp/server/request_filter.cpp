@@ -74,7 +74,7 @@ void RequestFilterChain::beginRequest(Request* request) const
 {
     int current = -1;
 
-    for (auto& filter: filters_)
+    for (auto& filter : filters_)
     {
         current++;
 

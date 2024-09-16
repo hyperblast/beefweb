@@ -14,7 +14,7 @@ inline beast::http::status convertStatusCode(HttpStatus status)
 template<typename Response>
 void convertHeaders(ResponseCore* from, Response* to)
 {
-    for (auto& header: from->headers)
+    for (auto& header : from->headers)
         to->set(header.first, header.second);
 }
 
@@ -210,7 +210,7 @@ HttpKeyValueMap BeastRequest::headers()
 {
     HttpKeyValueMap headers;
 
-    for (auto& header: *request_)
+    for (auto& header : *request_)
     {
         headers.emplace(
             static_cast<std::string>(header.name_string()),

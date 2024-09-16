@@ -29,7 +29,7 @@ void EventDispatcher::dispatch(PlayerEvent event)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
-    for (auto listener: listeners_)
+    for (auto listener : listeners_)
         if (listener->eventMask_.test(event))
             listener->pendingEvents_.set(event);
 }

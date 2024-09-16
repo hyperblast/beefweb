@@ -22,7 +22,7 @@ protected:
         if (!response)
             return;
 
-        for (auto& pair: request->headers)
+        for (auto& pair : request->headers)
             response->headers.emplace("X-Echo-" + pair.first, pair.second);
     }
 };

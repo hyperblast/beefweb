@@ -42,7 +42,7 @@ public:
     EventDispatcher();
     ~EventDispatcher();
 
-    std::unique_ptr<EventListener> createListener(const EventSet& eventMask);
+    std::unique_ptr <EventListener> createListener(const EventSet& eventMask);
     void dispatch(PlayerEvent event);
 
 private:

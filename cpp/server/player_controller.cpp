@@ -64,7 +64,7 @@ void PlayerController::setState()
 
     if (auto options = optionalBodyParam<std::vector<SetOptionRequest>>("options"))
     {
-        for (const auto& request: *options)
+        for (const auto& request : *options)
         {
             setOption(request);
         }

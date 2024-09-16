@@ -144,7 +144,7 @@ Node* Router::allocateNode(Node* parent, Tokenizer* urlTokenizer)
     auto type = getNodeType(token);
     auto value = getNodeValue(type, token);
 
-    for (auto& kv: parent->children())
+    for (auto& kv : parent->children())
     {
         auto& node = kv.second;
 
@@ -165,7 +165,7 @@ const Node* Router::matchNode(const Node* parent, Tokenizer* urlTokenizer, HttpK
 
     auto item = urlTokenizer->token();
 
-    for (const auto& kv: parent->children())
+    for (const auto& kv : parent->children())
     {
         const auto& node = kv.second;
 

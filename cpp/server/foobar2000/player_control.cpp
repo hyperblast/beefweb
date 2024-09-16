@@ -31,7 +31,7 @@ std::vector <std::string> PlayerImpl::evaluatePlaybackColumns(const TitleFormatV
 
     pfc::string8 buffer;
 
-    for (auto& compiledColumn: compiledColumns)
+    for (auto& compiledColumn : compiledColumns)
     {
         auto ret = playbackControl_->playback_format_title(
             nullptr,

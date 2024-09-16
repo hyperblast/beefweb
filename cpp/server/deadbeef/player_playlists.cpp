@@ -274,7 +274,7 @@ void PlayerImpl::removePlaylistItems(
 
     int32_t lastIndex = -1;
 
-    for (int32_t index: sortedIndexes)
+    for (int32_t index : sortedIndexes)
     {
         if (index == lastIndex)
             continue;
@@ -370,7 +370,7 @@ void AddItemsTask::addItems()
     else
         addScope.setLastItem(copyPlaylistItemPtr(targetItem_.get()));
 
-    for (auto& item: items_)
+    for (auto& item : items_)
     {
         if (addScope.add(item))
             hasAddedItems_ = true;

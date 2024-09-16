@@ -31,10 +31,10 @@ Server::~Server()
 
     requests.reserve(contexts_.size());
 
-    for (auto& pair: contexts_)
+    for (auto& pair : contexts_)
         requests.push_back(pair.first);
 
-    for (auto corereq: requests)
+    for (auto corereq : requests)
         corereq->abort();
 
     dispatchEventsTimer_.reset();
@@ -199,7 +199,7 @@ void Server::doDispatchEvents()
     dispatchEventsRequested_.store(false);
     dispatchEventsTimer_->runOnce(pingEventPeriod());
 
-    for (auto& pair: eventStreamContexts_)
+    for (auto& pair : eventStreamContexts_)
         produceAndSendEvent(pair.second);
 }
 

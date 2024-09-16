@@ -77,7 +77,7 @@ TitleFormatVector PlayerImpl::compileColumns(const std::vector <std::string>& co
     TitleFormatVector compiledColumns;
     compiledColumns.reserve(columns.size());
 
-    for (auto& column: columns)
+    for (auto& column : columns)
     {
         service_ptr_t <titleformat_object> compiledColumn;
 
