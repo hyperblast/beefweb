@@ -13,49 +13,30 @@ class AlbumArtViewer_ extends React.PureComponent
     {
         super(props, context);
         this.state = this.getStateFromModel();
-        this.state.hasError = false;
+        this.state.errorFilePath = '';
 
         bindHandlers(this);
-    }
-
-    componentDidMount()
-    {
-        this.context.playerModel.on('trackSwitch', this.handleTrackSwitch);
-    }
-
-    componentWillUnmount()
-    {
-        this.context.playerModel.off('trackSwitch', this.handleTrackSwitch);
     }
 
     getStateFromModel()
     {
         const { playbackState, activeItem } = this.context.playerModel;
-        const { playlistId, index } = activeItem;
-        const filePath = activeItem.columns[2];
 
         return {
             isPlaying: playbackState !== PlaybackState.stopped,
-            playlistId,
-            index,
-            filePath,
+            filePath: activeItem.columns[2] || '',
         };
-    }
-
-    handleTrackSwitch()
-    {
-        this.setState({ hasError: false });
     }
 
     handleImageError()
     {
-        this.setState({ hasError: true });
+        this.setState({ errorFilePath: this.state.filePath });
     }
 
     render()
     {
-        const { isPlaying, playlistId, index, hasError, filePath } = this.state;
-        const hasAlbumArt = isPlaying && index >= 0 && !hasError;
+        const { isPlaying, filePath, errorFilePath } = this.state;
+        const hasAlbumArt = isPlaying && filePath !== errorFilePath;
 
         if (!hasAlbumArt) {
             return (
@@ -65,7 +46,7 @@ class AlbumArtViewer_ extends React.PureComponent
             );
         }
 
-        const url = `/api/artwork/${playlistId}/${index}?f=${encodeURIComponent(filePath)}`;
+        const url = `/api/artwork/current?f=${encodeURIComponent(filePath)}`;
 
         return (
             <div className='panel panel-main album-art-panel'>
