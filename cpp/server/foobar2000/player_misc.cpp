@@ -31,6 +31,16 @@ std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
     return std::make_unique<Fb2kWorkQueue>();
 }
 
+boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
+{
+    metadb_handle_ptr itemHandle;
+
+    if (playbackControl_->get_now_playing(itemHandle))
+        return fetchArtwork(itemHandle);
+
+    return boost::make_future(ArtworkResult());
+}
+
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)
 {
     auto playlist = playlists_->resolve(query.playlist);
@@ -40,16 +50,23 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
     if (!playlistManager_->playlist_get_item_handle(itemHandle, playlist, query.index))
         throw InvalidRequestException("Playlist item index is out of range");
 
+    return fetchArtwork(itemHandle);
+}
+
+boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const
+{
+    abort_callback_dummy dummyCallback;
+
     auto extractor = albumArtManager_->open(
-        pfc::list_single_ref_t<metadb_handle_ptr>(itemHandle),
-        pfc::list_single_ref_t<GUID>(album_art_ids::cover_front),
-        abort_callback_dummy());
+        pfc::list_single_ref_t(itemHandle),
+        pfc::list_single_ref_t(album_art_ids::cover_front),
+        dummyCallback);
 
     if (extractor.is_empty())
         return boost::make_future<ArtworkResult>(ArtworkResult());
 
     service_ptr_t<album_art_data> artData;
-    if (!extractor->query(album_art_ids::cover_front, artData, abort_callback_dummy()))
+    if (!extractor->query(album_art_ids::cover_front, artData, dummyCallback))
         return boost::make_future<ArtworkResult>(ArtworkResult());
 
     return boost::make_future<ArtworkResult>(ArtworkResult(artData->get_ptr(), artData->get_size()));
