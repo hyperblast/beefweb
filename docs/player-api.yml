@@ -665,6 +665,19 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/FileSystemEntry'
+  /artwork/current:
+    get:
+      tags:
+      - artwork
+      summary: Get artwork for currently playing item
+      operationId: getCurrentArtwork
+      responses:
+        200:
+          description: Success
+          content: {}
+        404:
+          description: No artwork is found for current item or no item is playing
+          content: {}
   /artwork/{playlistId}/{index}:
     get:
       tags:
@@ -687,6 +700,9 @@ paths:
       responses:
         200:
           description: Success
+          content: {}
+        404:
+          description: No artwork is found for specified item
           content: {}
 components:
   schemas:
