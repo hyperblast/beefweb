@@ -16,8 +16,8 @@ struct SettingVars
     static cfg_string authUser;
     static cfg_string authPassword;
 
-    static std::vector <std::string> getMusicDirs();
-    static void setMusicDirs(const std::vector <std::string>& dirs);
+    static std::vector<std::string> getMusicDirs();
+    static void setMusicDirs(const std::vector<std::string>& dirs);
 };
 
 }

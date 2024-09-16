@@ -24,9 +24,9 @@ inline double clampVolume(double value)
 
 }
 
-std::vector <std::string> PlayerImpl::evaluatePlaybackColumns(const TitleFormatVector& compiledColumns)
+std::vector<std::string> PlayerImpl::evaluatePlaybackColumns(const TitleFormatVector& compiledColumns)
 {
-    std::vector <std::string> result;
+    std::vector<std::string> result;
     result.reserve(compiledColumns.size());
 
     pfc::string8 buffer;
@@ -168,7 +168,7 @@ bool PlayerImpl::playPreviousBy(const std::string& expression)
 
 bool PlayerImpl::playNextBy(const std::string& expression, int increment)
 {
-    service_ptr_t <titleformat_object> format;
+    service_ptr_t<titleformat_object> format;
 
     if (!titleFormatCompiler_->compile(format, expression.c_str()))
         throw InvalidRequestException("Invalid title format: " + expression);
@@ -267,7 +267,7 @@ void PlayerImpl::setVolume(double val)
     playbackControl_->set_volume(static_cast<float>(clampVolume(val)));
 }
 
-TrackQueryPtr PlayerImpl::createTrackQuery(const std::vector <std::string>& columns)
+TrackQueryPtr PlayerImpl::createTrackQuery(const std::vector<std::string>& columns)
 {
     return std::make_unique<TrackQueryImpl>(compileColumns(columns));
 }

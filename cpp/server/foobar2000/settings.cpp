@@ -48,13 +48,13 @@ cfg_string SettingVars::authUser(authUserGuid, "");
 
 cfg_string SettingVars::authPassword(authPasswordGuid, "");
 
-std::vector <std::string> SettingVars::getMusicDirs()
+std::vector<std::string> SettingVars::getMusicDirs()
 {
     StringView dirs(musicDirs.get_ptr(), musicDirs.get_length());
     return parseValueList<std::string>(dirs, listSeparator);
 }
 
-void SettingVars::setMusicDirs(const std::vector <std::string>& dirs)
+void SettingVars::setMusicDirs(const std::vector<std::string>& dirs)
 {
     std::string str;
 

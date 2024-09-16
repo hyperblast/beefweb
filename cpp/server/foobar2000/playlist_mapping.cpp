@@ -11,9 +11,7 @@ namespace {
 // {E937900E-EF79-4574-81B1-2A840C1741CC}
 const GUID ID_PROPERTY = {0xe937900e, 0xef79, 0x4574, {0x81, 0xb1, 0x2a, 0x84, 0xc, 0x17, 0x41, 0xcc}};
 
-const char PLAYLIST_ID_FORMAT[] = "p%"
-
-PRId64;
+const char PLAYLIST_ID_FORMAT[] = "p%" PRId64;
 
 const char INVALID_PLAYLIST_REF[] = "invalid playlist reference";
 
@@ -87,8 +85,7 @@ t_size PlaylistMapping::resolve(const PlaylistRef& plref)
 {
     switch (plref.type())
     {
-    case PlaylistRefType::INDEX:
-    {
+    case PlaylistRefType::INDEX: {
         auto index = plref.index();
 
         if (index >= 0 && static_cast<t_size>(index) < playlistManager_->get_playlist_count())
@@ -97,8 +94,7 @@ t_size PlaylistMapping::resolve(const PlaylistRef& plref)
         throw InvalidRequestException(PLAYLIST_INDEX_OUT_OF_RANGE);
     }
 
-    case PlaylistRefType::ID:
-    {
+    case PlaylistRefType::ID: {
         const auto& id = plref.id();
 
         if (id == "current")

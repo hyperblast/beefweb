@@ -18,9 +18,9 @@ void PlaybackOrderOption::setValue(int32_t value)
     playlistManager_->playback_order_set_active(value);
 }
 
-std::vector <std::string> PlaybackOrderOption::getEnumNames(playlist_manager_v4* playlistManager)
+std::vector<std::string> PlaybackOrderOption::getEnumNames(playlist_manager_v4* playlistManager)
 {
-    std::vector <std::string> names;
+    std::vector<std::string> names;
 
     const auto count = playlistManager->playback_order_get_count();
 

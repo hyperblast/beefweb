@@ -59,54 +59,36 @@ t_uint32 SettingsPageInstance::get_state()
 
 INT_PTR CALLBACK
 
-SettingsPageInstance::dialogProcWrapper(HWND
-
-window,
-
-UINT message, WPARAM
-
-wparam,
-
-LPARAM lparam
-
-) {
-SettingsPageInstance* instance;
-
-if (message == WM_INITDIALOG) {
-instance = reinterpret_cast<SettingsPageInstance*>(lparam);
-
-instance->
-
-handle_ = window;
-
-SetWindowLongPtrW(window, DWLP_USER, lparam
-
-);
-}
-else {
-instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
-}
-
-if (instance)
+SettingsPageInstance::dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
-INT_PTR result;
+    SettingsPageInstance* instance;
 
-bool processed = tryCatchLog([&] {
-    result = instance->dialogProc(message, wparam, lparam);
-});
+    if (message == WM_INITDIALOG)
+    {
+        instance = reinterpret_cast<SettingsPageInstance*>(lparam);
+        instance->handle_ = window;
 
-if (processed)
-return
+        SetWindowLongPtrW(window, DWLP_USER, lparam);
+    }
+    else
+    {
+        instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
+    }
 
-result;
+    if (instance)
+    {
+        INT_PTR result;
 
-}
+        bool processed = tryCatchLog([&] {
+            result = instance->dialogProc(message, wparam, lparam);
+        });
 
-return
+        if (processed)
+            return result;
 
-DefWindowProcW(window, message, wparam, lparam
+    }
 
-);
+    return DefWindowProcW(window, message, wparam, lparam);
 }
 
 INT_PTR SettingsPageInstance::dialogProc(UINT message, WPARAM wparam, LPARAM lparam)
@@ -280,7 +262,9 @@ void SettingsPageInstance::updateAuthControls()
     EnableWindow(GetDlgItem(handle_, IDC_AUTH_PASSWORD), enabled);
 }
 
-namespace { preferences_page_factory_t <SettingsPage> factory; }
+namespace {
+preferences_page_factory_t<SettingsPage> factory;
+}
 
 }
 }

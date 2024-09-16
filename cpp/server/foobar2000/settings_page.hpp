@@ -56,21 +56,17 @@ public:
     ~SettingsPageInstance();
 
     virtual t_uint32 get_state() override;
+
     virtual HWND get_wnd()
     {
         return handle_;
     }
+
     virtual void apply() override;
     virtual void reset() override;
 
 private:
-    static INT_PTR CALLBACK
-    dialogProcWrapper(HWND
-    window,
-    UINT message, WPARAM
-    wparam,
-    LPARAM lparam
-    );
+    static INT_PTR CALLBACK dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
     INT_PTR dialogProc(UINT message, WPARAM wparam, LPARAM lparam);
     INT_PTR handleCommand(int control, int message);
@@ -81,6 +77,7 @@ private:
     void addMusicDir();
     void removeMusicDir();
     void updateAuthControls();
+
     void notifyChanged()
     {
         callback_->on_state_changed();
@@ -88,7 +85,7 @@ private:
 
     HWND parent_;
     HWND handle_;
-    std::vector <std::string> musicDirs_;
+    std::vector<std::string> musicDirs_;
     preferences_page_callback::ptr callback_;
     fb2k::CCoreDarkModeHooks darkModeHooks_;
 };

@@ -26,12 +26,12 @@ PlayerImpl::PlayerImpl()
 
 PlayerImpl::~PlayerImpl() = default;
 
-std::unique_ptr <WorkQueue> PlayerImpl::createWorkQueue()
+std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 {
     return std::make_unique<Fb2kWorkQueue>();
 }
 
-boost::unique_future <ArtworkResult> PlayerImpl::fetchCurrentArtwork()
+boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
 {
     metadb_handle_ptr itemHandle;
 
@@ -41,7 +41,7 @@ boost::unique_future <ArtworkResult> PlayerImpl::fetchCurrentArtwork()
     return boost::make_future(ArtworkResult());
 }
 
-boost::unique_future <ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)
+boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)
 {
     auto playlist = playlists_->resolve(query.playlist);
 
@@ -53,7 +53,7 @@ boost::unique_future <ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery
     return fetchArtwork(itemHandle);
 }
 
-boost::unique_future <ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const
+boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const
 {
     abort_callback_dummy dummyCallback;
 
@@ -65,21 +65,21 @@ boost::unique_future <ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handl
     if (extractor.is_empty())
         return boost::make_future<ArtworkResult>(ArtworkResult());
 
-    service_ptr_t <album_art_data> artData;
+    service_ptr_t<album_art_data> artData;
     if (!extractor->query(album_art_ids::cover_front, artData, dummyCallback))
         return boost::make_future<ArtworkResult>(ArtworkResult());
 
     return boost::make_future<ArtworkResult>(ArtworkResult(artData->get_ptr(), artData->get_size()));
 }
 
-TitleFormatVector PlayerImpl::compileColumns(const std::vector <std::string>& columns)
+TitleFormatVector PlayerImpl::compileColumns(const std::vector<std::string>& columns)
 {
     TitleFormatVector compiledColumns;
     compiledColumns.reserve(columns.size());
 
     for (auto& column : columns)
     {
-        service_ptr_t <titleformat_object> compiledColumn;
+        service_ptr_t<titleformat_object> compiledColumn;
 
         if (!titleFormatCompiler_->compile(compiledColumn, column.c_str()))
             throw InvalidRequestException("Invalid title format: " + column);

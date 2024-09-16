@@ -13,7 +13,7 @@ public:
     PlayerImpl();
     ~PlayerImpl() override;
 
-    std::unique_ptr <WorkQueue> createWorkQueue() override;
+    std::unique_ptr<WorkQueue> createWorkQueue() override;
 
     PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
 
@@ -34,9 +34,9 @@ public:
     void setVolume(double val) override;
 
     TrackQueryPtr createTrackQuery(
-        const std::vector <std::string>& columns) override;
+        const std::vector<std::string>& columns) override;
 
-    std::vector <PlaylistInfo> getPlaylists() override;
+    std::vector<PlaylistInfo> getPlaylists() override;
     PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) override;
 
     void addPlaylist(int32_t index, const std::string& title) override;
@@ -48,25 +48,25 @@ public:
 
     boost::unique_future<void> addPlaylistItems(
         const PlaylistRef& playlist,
-        const std::vector <std::string>& items,
+        const std::vector<std::string>& items,
         int32_t targetIndex,
         AddItemsOptions options) override;
 
     void copyPlaylistItems(
         const PlaylistRef& sourcePlaylist,
         const PlaylistRef& targetPlaylist,
-        const std::vector <int32_t>& sourceItemIndexes,
+        const std::vector<int32_t>& sourceItemIndexes,
         int32_t targetIndex) override;
 
     void movePlaylistItems(
         const PlaylistRef& sourcePlaylist,
         const PlaylistRef& targetPlaylist,
-        const std::vector <int32_t>& sourceItemIndexes,
+        const std::vector<int32_t>& sourceItemIndexes,
         int32_t targetIndex) override;
 
     void removePlaylistItems(
         const PlaylistRef& playlist,
-        const std::vector <int32_t>& itemIndexes) override;
+        const std::vector<int32_t>& itemIndexes) override;
 
     void sortPlaylist(
         const PlaylistRef& plref,
@@ -78,10 +78,10 @@ public:
     PlaylistQueryPtr createPlaylistQuery(
         const PlaylistRef& playlist,
         const Range& range,
-        const std::vector <std::string>& columns) override;
+        const std::vector<std::string>& columns) override;
 
-    boost::unique_future <ArtworkResult> fetchCurrentArtwork() override;
-    boost::unique_future <ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
+    boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
+    boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
 private:
     bool isValidItemIndex(t_size playlist, int32_t item)
@@ -95,33 +95,33 @@ private:
     void queryVolume(VolumeInfo* volume);
     void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
 
-    TitleFormatVector compileColumns(const std::vector <std::string>& columns);
+    TitleFormatVector compileColumns(const std::vector<std::string>& columns);
 
-    std::vector <std::string> evaluatePlaylistColumns(
+    std::vector<std::string> evaluatePlaylistColumns(
         t_size playlist,
         t_size item,
         const TitleFormatVector& compiledColumns,
         pfc::string8* buffer);
 
-    std::vector <std::string> evaluatePlaybackColumns(
+    std::vector<std::string> evaluatePlaybackColumns(
         const TitleFormatVector& compiledColumns);
 
     void makeItemsMask(
         t_size playlist,
-        const std::vector <int32_t>& indexes,
+        const std::vector<int32_t>& indexes,
         pfc::bit_array_flatIndexList* mask);
 
     bool playNextBy(const std::string& expression, int increment);
 
-    boost::unique_future <ArtworkResult> fetchArtwork(const metadb_handle_ptr& itemHandle) const;
+    boost::unique_future<ArtworkResult> fetchArtwork(const metadb_handle_ptr& itemHandle) const;
 
-    service_ptr_t <playback_control> playbackControl_;
-    service_ptr_t <playlist_manager_v4> playlistManager_;
-    service_ptr_t <playlist_incoming_item_filter_v3> incomingItemFilter_;
-    service_ptr_t <album_art_manager_v3> albumArtManager_;
-    service_ptr_t <titleformat_compiler> titleFormatCompiler_;
+    service_ptr_t<playback_control> playbackControl_;
+    service_ptr_t<playlist_manager_v4> playlistManager_;
+    service_ptr_t<playlist_incoming_item_filter_v3> incomingItemFilter_;
+    service_ptr_t<album_art_manager_v3> albumArtManager_;
+    service_ptr_t<titleformat_compiler> titleFormatCompiler_;
 
-    std::shared_ptr <PlaylistMapping> playlists_;
+    std::shared_ptr<PlaylistMapping> playlists_;
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
     PlaybackOrderOption playbackOrderOption_;

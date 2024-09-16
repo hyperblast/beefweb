@@ -29,9 +29,9 @@ class AsyncAddCompleter : public process_locations_notify
 {
 public:
     AsyncAddCompleter(
-        service_ptr_t <playlist_manager_v4> playlistManager,
-        service_ptr_t <playback_control> playbackControl,
-        std::shared_ptr <PlaylistMapping> playlists,
+        service_ptr_t<playlist_manager_v4> playlistManager,
+        service_ptr_t<playback_control> playbackControl,
+        std::shared_ptr<PlaylistMapping> playlists,
         const PlaylistRef& plref,
         int32_t index,
         AddItemsOptions options)
@@ -49,7 +49,7 @@ public:
         return result_.get_future();
     }
 
-    void on_completion(const pfc::list_base_const_t <metadb_handle_ptr>& items) override
+    void on_completion(const pfc::list_base_const_t<metadb_handle_ptr>& items) override
     {
         try
         {
@@ -70,7 +70,7 @@ public:
     }
 
 private:
-    void complete(const pfc::list_base_const_t <metadb_handle_ptr>& items)
+    void complete(const pfc::list_base_const_t<metadb_handle_ptr>& items)
     {
         auto playlist = playlists_->resolve(plref_);
         auto hasAddedItems = items.get_count() > 0;
@@ -104,18 +104,18 @@ private:
         }
     }
 
-    service_ptr_t <playlist_manager_v4> playlistManager_;
-    service_ptr_t <playback_control> playbackControl_;
-    std::shared_ptr <PlaylistMapping> playlists_;
+    service_ptr_t<playlist_manager_v4> playlistManager_;
+    service_ptr_t<playback_control> playbackControl_;
+    std::shared_ptr<PlaylistMapping> playlists_;
     PlaylistRef plref_;
     int32_t index_;
     AddItemsOptions options_;
     boost::promise<void> result_;
 };
 
-std::vector <t_size> makeIndexes(t_size count)
+std::vector<t_size> makeIndexes(t_size count)
 {
-    std::vector <t_size> indexes;
+    std::vector<t_size> indexes;
     indexes.reserve(count);
 
     for (t_size i = 0; i < count; i++)
@@ -124,9 +124,9 @@ std::vector <t_size> makeIndexes(t_size count)
     return indexes;
 }
 
-std::vector <t_size> makeIndexesReverse(t_size count)
+std::vector<t_size> makeIndexesReverse(t_size count)
 {
-    std::vector <t_size> indexes;
+    std::vector<t_size> indexes;
     indexes.reserve(count);
 
     for (t_size i = count; i > 0; i--)
@@ -138,19 +138,19 @@ std::vector <t_size> makeIndexesReverse(t_size count)
 inline t_size clampIndex(int32_t index, t_size count, t_size fallback)
 {
     return index >= 0 && static_cast<t_size>(index) < count
-           ? index
-           : fallback;
+        ? index
+        : fallback;
 }
 
 }
 
-std::vector <std::string> PlayerImpl::evaluatePlaylistColumns(
+std::vector<std::string> PlayerImpl::evaluatePlaylistColumns(
     t_size playlist,
     t_size item,
     const TitleFormatVector& compiledColumns,
     pfc::string8* buffer)
 {
-    std::vector <std::string> result;
+    std::vector<std::string> result;
     result.reserve(compiledColumns.size());
 
     for (auto& compiledColumn : compiledColumns)
@@ -172,7 +172,7 @@ std::vector <std::string> PlayerImpl::evaluatePlaylistColumns(
 
 void PlayerImpl::makeItemsMask(
     t_size playlist,
-    const std::vector <int32_t>& indexes,
+    const std::vector<int32_t>& indexes,
     pfc::bit_array_flatIndexList* mask)
 {
     auto count = playlistManager_->playlist_get_item_count(playlist);
@@ -186,14 +186,14 @@ void PlayerImpl::makeItemsMask(
     mask->presort();
 }
 
-std::vector <PlaylistInfo> PlayerImpl::getPlaylists()
+std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
 {
     playlists_->ensureInitialized();
 
     auto count = playlistManager_->get_playlist_count();
     auto current = playlistManager_->get_active_playlist();
 
-    std::vector <PlaylistInfo> playlists;
+    std::vector<PlaylistInfo> playlists;
     playlists.reserve(count);
 
     pfc::string8 nameBuffer;
@@ -227,7 +227,7 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* queryPtr)
     auto offset = std::min(static_cast<t_size>(query->range.offset), totalCount);
     auto endOffset = std::min(static_cast<t_size>(query->range.endOffset()), totalCount);
 
-    std::vector <PlaylistItemInfo> items;
+    std::vector<PlaylistItemInfo> items;
 
     if (offset < endOffset)
     {
@@ -294,7 +294,7 @@ void PlayerImpl::setPlaylistTitle(const PlaylistRef& playlist, const std::string
 
 boost::unique_future<void> PlayerImpl::addPlaylistItems(
     const PlaylistRef& plref,
-    const std::vector <std::string>& items,
+    const std::vector<std::string>& items,
     int32_t targetIndex,
     AddItemsOptions options)
 {
@@ -305,7 +305,7 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
     for (auto& item : items)
         itemsList.add_item(item.c_str());
 
-    service_ptr_t <AsyncAddCompleter> completer(
+    service_ptr_t<AsyncAddCompleter> completer(
         new service_impl_t<AsyncAddCompleter>(
             playlistManager_, playbackControl_, playlists_, plref, targetIndex, options));
 
@@ -323,7 +323,7 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
 void PlayerImpl::copyPlaylistItems(
     const PlaylistRef& sourcePlaylist,
     const PlaylistRef& targetPlaylist,
-    const std::vector <int32_t>& sourceItemIndexes,
+    const std::vector<int32_t>& sourceItemIndexes,
     int32_t targetIndex)
 {
     auto source = playlists_->resolve(sourcePlaylist);
@@ -332,7 +332,7 @@ void PlayerImpl::copyPlaylistItems(
     pfc::bit_array_flatIndexList items;
     makeItemsMask(source, sourceItemIndexes, &items);
 
-    pfc::list_t <metadb_handle_ptr> handles;
+    pfc::list_t<metadb_handle_ptr> handles;
     playlistManager_->playlist_get_items(source, handles, items);
 
     auto position = clampIndex(
@@ -346,7 +346,7 @@ void PlayerImpl::copyPlaylistItems(
 void PlayerImpl::movePlaylistItems(
     const PlaylistRef& sourcePlaylist,
     const PlaylistRef& targetPlaylist,
-    const std::vector <int32_t>& sourceItemIndexes,
+    const std::vector<int32_t>& sourceItemIndexes,
     int32_t targetIndex)
 {
     auto source = playlists_->resolve(sourcePlaylist);
@@ -363,7 +363,7 @@ void PlayerImpl::movePlaylistItems(
     if (source == target && position != pfc_infinite)
         position -= items.calc_count(true, 0, position);
 
-    pfc::list_t <metadb_handle_ptr> handles;
+    pfc::list_t<metadb_handle_ptr> handles;
     playlistManager_->playlist_get_items(source, handles, items);
     playlistManager_->playlist_remove_items(source, items);
     playlistManager_->playlist_insert_items(target, position, handles, bit_array_false());
@@ -371,7 +371,7 @@ void PlayerImpl::movePlaylistItems(
 
 void PlayerImpl::removePlaylistItems(
     const PlaylistRef& plref,
-    const std::vector <int32_t>& itemIndexes)
+    const std::vector<int32_t>& itemIndexes)
 {
     auto playlist = playlists_->resolve(plref);
     pfc::bit_array_flatIndexList items;
@@ -394,11 +394,11 @@ void PlayerImpl::sortPlaylist(
     if (count == 0)
         return;
 
-    pfc::list_t <metadb_handle_ptr> items;
+    pfc::list_t<metadb_handle_ptr> items;
     items.prealloc(count);
     playlistManager_->playlist_get_items(playlist, items, bit_array_true());
 
-    std::vector <t_size> order;
+    std::vector<t_size> order;
     order.resize(count);
     metadb_handle_list_helper::sort_by_format_get_order(
         items, order.data(), sortBy, nullptr, descending ? -1 : 1);
@@ -414,7 +414,7 @@ void PlayerImpl::sortPlaylistRandom(const PlaylistRef& plref)
 PlaylistQueryPtr PlayerImpl::createPlaylistQuery(
     const PlaylistRef& playlist,
     const Range& range,
-    const std::vector <std::string>& columns)
+    const std::vector<std::string>& columns)
 {
     return std::make_unique<PlaylistQueryImpl>(playlist, range, compileColumns(columns));
 }

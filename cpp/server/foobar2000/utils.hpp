@@ -8,7 +8,7 @@
 namespace msrv {
 namespace player_foobar2000 {
 
-using TitleFormatVector = std::vector <service_ptr_t<titleformat_object>>;
+using TitleFormatVector = std::vector<service_ptr_t<titleformat_object>>;
 
 class Fb2kLogger : public Logger
 {
@@ -118,7 +118,7 @@ private:
     virtual void on_items_added(
         t_size p_playlist,
         t_size p_start,
-        const pfc::list_base_const_t <metadb_handle_ptr>& p_data,
+        const pfc::list_base_const_t<metadb_handle_ptr>& p_data,
         const bit_array& p_selection) override
     {
         notifyPlayerAndItems();
@@ -181,7 +181,7 @@ private:
     virtual void on_items_replaced(
         t_size p_playlist,
         const bit_array& p_mask,
-        const pfc::list_base_const_t <t_on_items_replaced_entry>& p_data) override
+        const pfc::list_base_const_t<t_on_items_replaced_entry>& p_data) override
     {
         notifyPlayerAndItems();
     }
