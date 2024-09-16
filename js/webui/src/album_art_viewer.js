@@ -1,9 +1,9 @@
-import ModelBinding from "./model_binding.js";
-import ServiceContext from "./service_context.js";
-import React from "react";
-import { PlaybackState } from "beefweb-client";
-import { bindHandlers } from "./utils.js";
-import { Icon } from "./elements.js";
+import ModelBinding from './model_binding.js';
+import ServiceContext from './service_context.js';
+import React from 'react';
+import { PlaybackState } from 'beefweb-client';
+import { bindHandlers } from './utils.js';
+import { Icon } from './elements.js';
 
 class AlbumArtViewer_ extends React.PureComponent
 {
@@ -12,6 +12,7 @@ class AlbumArtViewer_ extends React.PureComponent
     constructor(props, context)
     {
         super(props, context);
+
         this.state = this.getStateFromModel();
         this.state.errorFilePath = '';
 
@@ -38,7 +39,8 @@ class AlbumArtViewer_ extends React.PureComponent
         const { isPlaying, filePath, errorFilePath } = this.state;
         const hasAlbumArt = isPlaying && filePath !== errorFilePath;
 
-        if (!hasAlbumArt) {
+        if (!hasAlbumArt)
+        {
             return (
                 <div className='panel panel-main album-art-panel-default'>
                     <Icon name='musical-note' className='album-art-default'/>
