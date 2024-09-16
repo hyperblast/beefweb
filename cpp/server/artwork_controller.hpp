@@ -17,6 +17,7 @@ public:
     ArtworkController(Request* request, Player* player, const ContentTypeMap& contentTypes);
     ~ArtworkController();
 
+    ResponsePtr getCurrentArtwork();
     ResponsePtr getArtwork();
 
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, const ContentTypeMap& contentTypes);

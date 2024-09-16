@@ -87,6 +87,7 @@ public:
         const Range& range,
         const std::vector<std::string>& columns) override;
 
+    boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
     void connect();

@@ -396,6 +396,7 @@ public:
 
     // Artwork API
 
+    virtual boost::unique_future<ArtworkResult> fetchCurrentArtwork() = 0;
     virtual boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) = 0;
 
     // Events API
