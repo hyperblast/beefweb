@@ -81,6 +81,7 @@ public:
         const Range& range,
         const std::vector<std::string>& columns) override;
 
+    boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
 private:
@@ -112,6 +113,8 @@ private:
         pfc::bit_array_flatIndexList* mask);
 
     bool playNextBy(const std::string& expression, int increment);
+
+    boost::unique_future<ArtworkResult> fetchArtwork(const metadb_handle_ptr& itemHandle) const;
 
     service_ptr_t<playback_control> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;
