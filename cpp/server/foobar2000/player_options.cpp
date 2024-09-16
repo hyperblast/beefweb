@@ -49,5 +49,4 @@ void StopAfterCurrentTrackOption::setValue(bool value)
     if (callback_)
         callback_(PlayerEvent::PLAYER_CHANGED);
 }
-
 }

@@ -22,24 +22,28 @@ public:
     {
         return MSRV_PROJECT_NAME;
     }
+
     virtual GUID get_guid() override
     {
         return guid_;
     }
+
     virtual GUID get_parent_guid() override
     {
         return preferences_page::guid_tools;
     }
+
     virtual bool get_help_url(pfc::string_base& p_out) override
     {
         return false;
     }
+
     virtual double get_sort_priority() override
     {
         return 0;
     }
-    virtual preferences_page_instance::ptr instantiate(
-        HWND parent, preferences_page_callback::ptr callback) override;
+
+    virtual preferences_page_instance::ptr instantiate(HWND parent, preferences_page_callback::ptr callback) override;
 
 private:
     static const GUID guid_;
@@ -60,14 +64,7 @@ public:
     virtual void reset() override;
 
 private:
-    static INT_PTR CALLBACK
-    dialogProcWrapper(
-        HWND
-    window,
-    UINT message, WPARAM
-    wparam,
-    LPARAM lparam
-    );
+    static INT_PTR CALLBACK dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
 
     INT_PTR dialogProc(UINT message, WPARAM wparam, LPARAM lparam);
     INT_PTR handleCommand(int control, int message);
@@ -89,6 +86,5 @@ private:
     preferences_page_callback::ptr callback_;
     fb2k::CCoreDarkModeHooks darkModeHooks_;
 };
-
 }
 }

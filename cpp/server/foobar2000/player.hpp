@@ -7,7 +7,6 @@
 #include "utils.hpp"
 
 namespace msrv::player_foobar2000 {
-
 class PlayerImpl : public Player
 {
 public:

@@ -4,7 +4,6 @@
 #include "../player_api.hpp"
 
 namespace msrv::player_foobar2000 {
-
 class PlaybackOrderOption : public EnumPlayerOption
 {
 public:
@@ -33,5 +32,4 @@ private:
     playback_control* playbackControl_;
     PlayerEventCallback callback_;
 };
-
 }

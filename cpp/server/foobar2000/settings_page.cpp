@@ -17,15 +17,12 @@ const GUID SettingsPage::guid_ =
 SettingsPage::SettingsPage() = default;
 SettingsPage::~SettingsPage() = default;
 
-preferences_page_instance::ptr SettingsPage::instantiate(
-    HWND parent, preferences_page_callback::ptr callback)
+preferences_page_instance::ptr SettingsPage::instantiate(HWND parent, preferences_page_callback::ptr callback)
 {
-    return preferences_page_instance::ptr(
-        new service_impl_t<SettingsPageInstance>(parent, callback));
+    return preferences_page_instance::ptr(new service_impl_t<SettingsPageInstance>(parent, callback));
 }
 
-SettingsPageInstance::SettingsPageInstance(
-    HWND parent, preferences_page_callback::ptr callback)
+SettingsPageInstance::SettingsPageInstance(HWND parent, preferences_page_callback::ptr callback)
     : parent_(parent),
       handle_(nullptr),
       callback_(callback)
@@ -62,55 +59,34 @@ t_uint32 SettingsPageInstance::get_state()
 
 INT_PTR CALLBACK
 
-SettingsPageInstance::dialogProcWrapper(
-    HWND
-
-window,
-
-UINT message, WPARAM
-
-wparam,
-
-LPARAM lparam
-
-) {
-SettingsPageInstance* instance;
-
-if (message == WM_INITDIALOG) {
-instance = reinterpret_cast<SettingsPageInstance*>(lparam);
-
-instance->
-
-handle_ = window;
-
-SetWindowLongPtrW(window, DWLP_USER, lparam
-
-);
-}
-else {
-instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
-}
-
-if (instance)
+SettingsPageInstance::dialogProcWrapper(HWND window,UINT message, WPARAM wparam, LPARAM lparam)
 {
-INT_PTR result;
+    SettingsPageInstance* instance;
 
-bool processed = tryCatchLog([&] {
-    result = instance->dialogProc(message, wparam, lparam);
-});
+    if (message == WM_INITDIALOG)
+    {
+        instance = reinterpret_cast<SettingsPageInstance*>(lparam);
+        instance->handle_ = window;
+        SetWindowLongPtrW(window, DWLP_USER, lparam);
+    }
+    else
+    {
+        instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
+    }
 
-if (processed)
-return
+    if (instance)
+    {
+        INT_PTR result;
 
-result;
+        bool processed = tryCatchLog([&] {
+            result = instance->dialogProc(message, wparam, lparam);
+        });
 
-}
+        if (processed)
+            return result;
+    }
 
-return
-
-DefWindowProcW(window, message, wparam, lparam
-
-);
+    return DefWindowProcW(window, message, wparam, lparam);
 }
 
 INT_PTR SettingsPageInstance::dialogProc(UINT message, WPARAM wparam, LPARAM lparam)
@@ -286,4 +262,5 @@ void SettingsPageInstance::updateAuthControls()
 
 namespace { preferences_page_factory_t <SettingsPage> factory; }
 
-}}
+}
+}
