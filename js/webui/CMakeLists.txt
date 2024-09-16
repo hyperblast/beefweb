@@ -3,6 +3,7 @@ set(
     .babelrc
     package.json
     webpack.config.js
+    src/album_art_viewer.js
     src/app.js
     src/app_model.js
     src/columns.js
@@ -89,8 +90,6 @@ endif()
 set(
     WEBUI_OUTPUT_FILES
     ${WEBUI_OUTPUT_DIR}/bundle.js
-    ${WEBUI_OUTPUT_DIR}/index.html
-    ${WEBUI_OUTPUT_DIR}/sprite.svg
 )
 
 set(
@@ -104,6 +103,7 @@ add_custom_command(
     OUTPUT ${WEBUI_OUTPUT_FILES}
     DEPENDS ${WEBUI_SOURCES} ${JS_CLIENT_SOURCES} ${YARN_INTEGRITY} js_packages
     COMMAND ${YARN} build ${WEBUI_BUILD_ARGS}
+    COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${WEBUI_OUTPUT_FILES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
 )

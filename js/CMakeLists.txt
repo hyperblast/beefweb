@@ -26,7 +26,7 @@ add_custom_command(
     COMMAND
         ${YARN} install --non-interactive
     COMMAND
-        ${CMAKE_COMMAND} -E touch ${YARN_INTEGRITY}
+        ${CMAKE_COMMAND} -E touch_nocreate ${YARN_INTEGRITY}
     WORKING_DIRECTORY
         ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
