@@ -63,4 +63,5 @@ ddb_playItem_t* AddItemsScope::addPlaylist(const char* path)
         visibility_, playlist_, lastItem_.get(), path, &aborted_, nullptr, nullptr);
 }
 
-}}
+}
+}

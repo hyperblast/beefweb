@@ -1,4 +1,4 @@
-#include "charset.hpp" 
+#include "charset.hpp"
 #include "system.hpp"
 #include "safe_windows.h"
 

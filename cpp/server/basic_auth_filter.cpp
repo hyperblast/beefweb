@@ -12,6 +12,7 @@ namespace msrv {
 namespace {
 
 const char BASIC_AUTH_PREFIX[] = "Basic ";
+
 const char WWW_AUTHENTICATE_VALUE[] = "Basic realm=\"" MSRV_PROJECT_NAME "\"";
 
 }

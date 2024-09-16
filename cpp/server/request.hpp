@@ -134,11 +134,11 @@ bool Request::tryGetParam(const Json& json, const std::string& key, T* outVal)
         *outVal = value->get<T>();
         return true;
     }
-    catch(std::exception& ex)
+    catch (std::exception& ex)
     {
         errorMessage = ex.what();
     }
-    catch(...)
+    catch (...)
     {
         errorMessage = "invalid value format";
     }

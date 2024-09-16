@@ -13,4 +13,5 @@ TEST_CASE("base64")
     REQUIRE(base64Decode("abcd123,") == "");
 }
 
-}}
+}
+}

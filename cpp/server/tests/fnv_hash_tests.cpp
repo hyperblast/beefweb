@@ -35,4 +35,5 @@ TEST_CASE("fnv_hash")
     }
 }
 
-}}
+}
+}

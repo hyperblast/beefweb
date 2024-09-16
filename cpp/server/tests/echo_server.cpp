@@ -22,7 +22,7 @@ protected:
         if (!response)
             return;
 
-        for (auto& pair : request->headers)
+        for (auto& pair: request->headers)
             response->headers.emplace("X-Echo-" + pair.first, pair.second);
     }
 };
@@ -59,8 +59,7 @@ public:
             if (delay <= 0)
                 throw InvalidRequestException("delay should greater than 0");
 
-            return Response::async(boost::async([this, delay]
-            {
+            return Response::async(boost::async([this, delay] {
                 std::this_thread::sleep_for(std::chrono::seconds(*delay));
                 return ResponsePtr(Response::json(buildResponse()));
             }));
@@ -145,8 +144,7 @@ int testMain(int argc, char** argv)
         }
     }
 
-    EchoServer server(allowRemote, []
-    {
+    EchoServer server(allowRemote, [] {
         logInfo("server is running");
         logInfo("press q<ENTER> to stop");
         logInfo("press e<ENTER> to dispatch events");
@@ -157,19 +155,19 @@ int testMain(int argc, char** argv)
     {
         switch (::getchar())
         {
-        case 'q':
-        case 'Q':
-            return 0;
+            case 'q':
+            case 'Q':
+                return 0;
 
-        case 'r':
-        case 'R':
-            server.restart();
-            break;
+            case 'r':
+            case 'R':
+                server.restart();
+                break;
 
-        case 'e':
-        case 'E':
-            server.dispatchEvents();
-            break;
+            case 'e':
+            case 'E':
+                server.dispatchEvents();
+                break;
         }
     }
 }

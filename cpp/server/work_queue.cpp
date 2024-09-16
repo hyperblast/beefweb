@@ -50,8 +50,8 @@ void ThreadWorkQueue::run()
             std::swap(executing_, enqueued_);
         }
 
-        for (auto& item : executing_)
-            tryCatchLog([&]{ item(); });
+        for (auto& item: executing_)
+            tryCatchLog([&] { item(); });
 
         executing_.clear();
     }
@@ -84,9 +84,8 @@ void ExternalWorkQueue::enqueue(WorkCallback callback)
 
     std::weak_ptr<State> stateWeak = state_;
 
-    schedule([stateWeak]
-    {
-        if (auto state =  stateWeak.lock())
+    schedule([stateWeak] {
+        if (auto state = stateWeak.lock())
             execute(state.get());
     });
 }
@@ -98,8 +97,8 @@ void ExternalWorkQueue::execute(State* state)
         std::swap(state->executing, state->enqueued);
     }
 
-    for (auto& item : state->executing)
-        tryCatchLog([&]{ item(); });
+    for (auto& item: state->executing)
+        tryCatchLog([&] { item(); });
 
     state->executing.clear();
 }

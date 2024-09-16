@@ -29,14 +29,15 @@ TEST_CASE("parsing")
 
         // strict parsing: everything is preserved with regards to escaping rules
         actual = parseValue<std::vector<std::string>>("\\\\hello\\, world,!");
-        expected = std::vector<std::string>({ "\\hello, world", "!" });
+        expected = std::vector<std::string>({"\\hello, world", "!"});
         REQUIRE(actual == expected);
 
         // non strict parsing: entries are trimmed and empty ones are discarded
         actual = parseValueList<std::string>("hello; world; ;;", ';');
-        expected = std::vector<std::string>({ "hello", "world" });
+        expected = std::vector<std::string>({"hello", "world"});
         REQUIRE(actual == expected);
     }
 }
 
-}}
+}
+}

@@ -67,7 +67,7 @@ TEST_CASE("timers")
     {
         int runCount = 0;
         SimpleTimer timer(&timerQueue);
-        timer.setCallback([&] (Timer*) { runCount++; });
+        timer.setCallback([&](Timer*) { runCount++; });
         timer.runOnce(DurationMs(100));
 
         SECTION("no run")
@@ -93,7 +93,7 @@ TEST_CASE("timers")
     {
         int runCount = 0;
         SimpleTimer timer(&timerQueue);
-        timer.setCallback([&] (Timer*) { runCount++; });
+        timer.setCallback([&](Timer*) { runCount++; });
 
         timer.runPeriodic(DurationMs(100));
 
@@ -136,10 +136,10 @@ TEST_CASE("timers")
         int runCount2 = 0;
 
         SimpleTimer timer1(&timerQueue);
-        timer1.setCallback([&] (Timer*) { runCount1++; });
+        timer1.setCallback([&](Timer*) { runCount1++; });
 
         SimpleTimer timer2(&timerQueue);
-        timer2.setCallback([&] (Timer*) { runCount2++; });
+        timer2.setCallback([&](Timer*) { runCount2++; });
 
         SECTION("same time")
         {
@@ -181,8 +181,7 @@ TEST_CASE("timers")
             int callCount = 0;
 
             SimpleTimer timer(&timerQueue);
-            timer.setCallback([&] (Timer* t)
-            {
+            timer.setCallback([&](Timer* t) {
                 t->stop();
                 callCount++;
             });
@@ -207,8 +206,7 @@ TEST_CASE("timers")
 
             SimpleTimer timer(&timerQueue);
 
-            timer.setCallback([&] (Timer* t)
-            {
+            timer.setCallback([&](Timer* t) {
                 t->runOnce(DurationMs(100));
                 callCount++;
             });
@@ -236,8 +234,7 @@ TEST_CASE("timers")
             bool willUpdatePeriod = true;
 
             SimpleTimer timer(&timerQueue);
-            timer.setCallback([&] (Timer* t)
-            {
+            timer.setCallback([&](Timer* t) {
                 if (willUpdatePeriod)
                 {
                     t->runPeriodic(DurationMs(200));
@@ -274,8 +271,7 @@ TEST_CASE("timers")
             bool willRunOnce = true;
 
             SimpleTimer timer(&timerQueue);
-            timer.setCallback([&] (Timer* t)
-            {
+            timer.setCallback([&](Timer* t) {
                 if (willRunOnce)
                 {
                     t->runOnce(DurationMs(100));
@@ -304,4 +300,5 @@ TEST_CASE("timers")
     }
 }
 
-}}
+}
+}

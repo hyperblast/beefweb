@@ -13,7 +13,8 @@ namespace {
 class CoverInfoDeleter
 {
 public:
-    explicit CoverInfoDeleter(ddb_artwork_plugin_t* plugin) : plugin_(plugin) { }
+    explicit CoverInfoDeleter(ddb_artwork_plugin_t* plugin)
+        : plugin_(plugin) { }
 
     void operator()(ddb_cover_info_t* info) { plugin_->cover_info_release(info); }
 
@@ -39,7 +40,7 @@ public:
     boost::unique_future<ArtworkResult> execute();
 
 private:
-    static void callbackWrapper(int error, ddb_cover_query_t *query, ddb_cover_info_t *cover);
+    static void callbackWrapper(int error, ddb_cover_query_t* query, ddb_cover_info_t* cover);
     void callback(int error, ddb_cover_info_t* cover);
 
     ddb_artwork_plugin_t* plugin_;
@@ -116,4 +117,5 @@ std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV2()
     return std::make_unique<ArtworkFetcherV2>(reinterpret_cast<ddb_artwork_plugin_t*>(plugin));
 }
 
-}}
+}
+}

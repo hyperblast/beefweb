@@ -13,7 +13,9 @@ namespace msrv {
 namespace {
 
 const char utf8Charset[] = "UTF-8";
+
 char localeCharset[64] = "UTF-8";
+
 bool localeCharsetIsUtf8 = true;
 
 class Iconv

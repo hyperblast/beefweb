@@ -10,7 +10,9 @@
 namespace msrv::player_deadbeef {
 
 DB_misc_t PluginWrapper::definition_;
+
 DeadbeefLogger* PluginWrapper::logger_;
+
 Plugin* PluginWrapper::instance_;
 
 char PluginWrapper::licenseText_[] = MSRV_LICENSE_TEXT;
@@ -96,13 +98,13 @@ void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
 {
     switch (id)
     {
-    case DB_EV_CONFIGCHANGED:
-        handleConfigChanged();
-        break;
+        case DB_EV_CONFIGCHANGED:
+            handleConfigChanged();
+            break;
 
-    case DB_EV_PLUGINSLOADED:
-        handlePluginsLoaded();
-        break;
+        case DB_EV_PLUGINSLOADED:
+            handlePluginsLoaded();
+            break;
     }
 
     player_.handleMessage(id, ctx, p1, p2);
@@ -145,8 +147,7 @@ void PluginWrapper::initDef()
 
 int PluginWrapper::start()
 {
-    auto ok = tryCatchLog([]
-    {
+    auto ok = tryCatchLog([] {
         logger_ = new DeadbeefLogger(&definition_.plugin);
         Logger::setCurrent(logger_);
         setLocaleCharset();

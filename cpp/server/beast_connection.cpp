@@ -47,13 +47,12 @@ void BeastConnection::readRequest()
 
     auto thisPtr = shared_from_this();
 
-    busy_= true;
+    busy_ = true;
     beast::http::async_read(
         socket_,
         buffer_,
         request_,
-        [thisPtr] (const boost::system::error_code& error, size_t)
-        {
+        [thisPtr](const boost::system::error_code& error, size_t) {
             thisPtr->busy_ = false;
             thisPtr->handleReadRequest(error);
         });
@@ -137,18 +136,12 @@ void BeastConnection::initCoreRequest()
 {
     coreRequest_ = std::make_unique<BeastRequest>(this, &request_);
 
-    tryCatchLog([this]
-    {
-        context_->eventListener->onRequestReady(coreRequest_.get());
-    });
+    tryCatchLog([this] { context_->eventListener->onRequestReady(coreRequest_.get()); });
 }
 
 void BeastConnection::releaseCoreRequest()
 {
-    tryCatchLog([this]
-    {
-        context_->eventListener->onRequestDone(coreRequest_.get());
-    });
+    tryCatchLog([this] { context_->eventListener->onRequestDone(coreRequest_.get()); });
 
     coreRequest_.reset();
 }

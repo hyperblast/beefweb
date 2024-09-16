@@ -15,14 +15,30 @@ class DummyFactoryBase : public RequestHandlerFactory
     virtual WorkQueue* workQueue() override { return nullptr; }
 };
 
-class GetRoot : public DummyFactoryBase {};
-class GetSimple : public DummyFactoryBase {};
-class GetWithParam : public DummyFactoryBase {};
-class GetWithLongParam : public DummyFactoryBase {};
-class GetHandler : public DummyFactoryBase {};
-class PostHandler : public DummyFactoryBase {};
-class GetPrefix1 : public DummyFactoryBase {};
-class GetPrefix2 : public DummyFactoryBase {};
+class GetRoot : public DummyFactoryBase
+{
+};
+class GetSimple : public DummyFactoryBase
+{
+};
+class GetWithParam : public DummyFactoryBase
+{
+};
+class GetWithLongParam : public DummyFactoryBase
+{
+};
+class GetHandler : public DummyFactoryBase
+{
+};
+class PostHandler : public DummyFactoryBase
+{
+};
+class GetPrefix1 : public DummyFactoryBase
+{
+};
+class GetPrefix2 : public DummyFactoryBase
+{
+};
 
 TEST_CASE("router")
 {
@@ -115,4 +131,5 @@ TEST_CASE("router")
     }
 }
 
-}}
+}
+}

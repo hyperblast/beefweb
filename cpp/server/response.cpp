@@ -188,7 +188,7 @@ void ErrorResponse::process(ResponseHandler* handler)
 
 void to_json(Json& json, const ErrorResponse& value)
 {
-    auto errorObj = Json {{ "message", value.message }};
+    auto errorObj = Json{{"message", value.message}};
 
     if (!value.parameter.empty())
         errorObj["parameter"] = value.parameter;

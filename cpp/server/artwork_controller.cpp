@@ -20,8 +20,7 @@ ArtworkController::~ArtworkController() = default;
 ResponsePtr ArtworkController::getCurrentArtwork()
 {
     auto responseFuture = player_->fetchCurrentArtwork().then(
-        boost::launch::sync, [this] (boost::unique_future<ArtworkResult> resultFuture)
-        {
+        boost::launch::sync, [this](boost::unique_future<ArtworkResult> resultFuture) {
             auto result = resultFuture.get();
             return getResponse(&result);
         });
@@ -37,8 +36,7 @@ ResponsePtr ArtworkController::getArtwork()
     query.index = param<int32_t>("index");
 
     auto responseFuture = player_->fetchArtwork(query).then(
-        boost::launch::sync, [this] (boost::unique_future<ArtworkResult> resultFuture)
-        {
+        boost::launch::sync, [this](boost::unique_future<ArtworkResult> resultFuture) {
             auto result = resultFuture.get();
             return getResponse(&result);
         });
@@ -89,8 +87,7 @@ void ArtworkController::defineRoutes(
 {
     auto routes = router->defineRoutes<ArtworkController>();
 
-    routes.createWith([=](Request* request)
-    {
+    routes.createWith([=](Request* request) {
         return new ArtworkController(request, player, contentTypes);
     });
 

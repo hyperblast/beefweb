@@ -4,7 +4,7 @@
 
 namespace msrv {
 
-namespace  {
+namespace {
 
 class EmptyRequestHandler : public RequestHandler
 {

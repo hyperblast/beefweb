@@ -42,24 +42,24 @@ void AsioTimer::stop()
 {
     switch (state_)
     {
-    case TimerState::STOPPED:
-        break;
+        case TimerState::STOPPED:
+            break;
 
-    case TimerState::WILL_RESTART:
-        state_ = TimerState::STOPPED;
-        break;
+        case TimerState::WILL_RESTART:
+            state_ = TimerState::STOPPED;
+            break;
 
-    case TimerState::RUNNING:
-        state_ = TimerState::STOPPED;
-        timer_.cancel();
-        break;
+        case TimerState::RUNNING:
+            state_ = TimerState::STOPPED;
+            timer_.cancel();
+            break;
     }
 }
 
 void AsioTimer::schedule(DurationMs delay)
 {
     timer_.expires_from_now(boost::posix_time::millisec(delay.count()));
-    timer_.async_wait([this] (const boost::system::error_code& error) { handleTimeout(error); });
+    timer_.async_wait([this](const boost::system::error_code& error) { handleTimeout(error); });
 }
 
 void AsioTimer::handleTimeout(const boost::system::error_code& error)

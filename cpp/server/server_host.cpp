@@ -17,7 +17,7 @@ ServerHost::ServerHost(Player* player)
     : player_(player)
 {
     playerWorkQueue_ = player_->createWorkQueue();
-    player_->onEvent([this] (PlayerEvent event) { handlePlayerEvent(event); });
+    player_->onEvent([this](PlayerEvent event) { handlePlayerEvent(event); });
     serverThread_ = std::make_unique<ServerThread>();
 }
 
@@ -31,7 +31,6 @@ void ServerHost::handlePlayerEvent(PlayerEvent event)
     dispatcher_.dispatch(event);
     serverThread_->dispatchEvents();
 }
-
 
 void ServerHost::reconfigure(SettingsDataPtr settings)
 {

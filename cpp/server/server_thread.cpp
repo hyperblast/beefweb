@@ -55,15 +55,15 @@ void ServerThread::run()
     {
         switch (readCommand(&config))
         {
-        case Command::NONE:
-            continue;
+            case Command::NONE:
+                continue;
 
-        case Command::RESTART:
-            runOnce(std::move(config));
-            break;
+            case Command::RESTART:
+                runOnce(std::move(config));
+                break;
 
-        case Command::EXIT:
-            return;
+            case Command::EXIT:
+                return;
         }
     }
 }
@@ -72,8 +72,7 @@ void ServerThread::runOnce(ServerConfigPtr config)
 {
     ServerPtr server;
 
-    tryCatchLog([&config, &server]
-    {
+    tryCatchLog([&config, &server] {
         server = std::make_shared<Server>(ServerCore::create(), std::move(config));
     });
 

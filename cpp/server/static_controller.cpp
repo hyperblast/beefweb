@@ -87,13 +87,16 @@ void StaticController::defineRoutes(
     SettingsDataPtr settings,
     const ContentTypeMap& contentTypes)
 {
-    for (auto& kv : settings->urlMappings) {
-        if (kv.first.empty() || kv.first == "/") {
+    for (auto& kv: settings->urlMappings)
+    {
+        if (kv.first.empty() || kv.first == "/")
+        {
             logError("root url mapping is not allowed, use 'webRoot' instead");
             continue;
         }
 
-        if (kv.second.empty()) {
+        if (kv.second.empty())
+        {
             logError("url mapping '%s' has empty target", kv.first.c_str());
             continue;
         }
@@ -113,7 +116,8 @@ void StaticController::defineRoutes(
     const std::string& targetDir,
     const ContentTypeMap& contentTypes)
 {
-    if (urlPrefix.find(':') != std::string::npos) {
+    if (urlPrefix.find(':') != std::string::npos)
+    {
         logError("url mapping '%s' contains reserved character ':'", urlPrefix.c_str());
         return;
     }
@@ -130,15 +134,15 @@ void StaticController::defineRoutes(
 
     auto target = pathFromUtf8(targetDir).lexically_normal().make_preferred();
 
-    if (!target.is_absolute()) {
+    if (!target.is_absolute())
+    {
         logError("url mapping '%s' target should be absolute, got '%s'", urlPrefix.c_str(), targetDir.c_str());
         return;
     }
 
     auto routes = router->defineRoutes<StaticController>();
 
-    routes.createWith([=](Request* request)
-    {
+    routes.createWith([=](Request* request) {
         return new StaticController(request, target, contentTypes);
     });
 

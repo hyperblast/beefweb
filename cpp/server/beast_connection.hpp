@@ -34,8 +34,7 @@ public:
         beast::http::async_write(
             socket_,
             *response,
-            [thisPtr, close] (const boost::system::error_code& error, size_t)
-            {
+            [thisPtr, close](const boost::system::error_code& error, size_t) {
                 thisPtr->busy_ = false;
                 thisPtr->handleWriteResponse(error, close);
             });
@@ -50,8 +49,7 @@ public:
         beast::http::async_write_header(
             socket_,
             *serializer,
-            [thisPtr] (const boost::system::error_code& error, size_t)
-            {
+            [thisPtr](const boost::system::error_code& error, size_t) {
                 thisPtr->busy_ = false;
                 thisPtr->handleWriteResponseHeader(error);
             });
@@ -66,8 +64,7 @@ public:
         beast::http::async_write(
             socket_,
             *serializer,
-            [thisPtr, close] (const boost::system::error_code& error, size_t)
-            {
+            [thisPtr, close](const boost::system::error_code& error, size_t) {
                 thisPtr->busy_ = false;
                 thisPtr->handleWriteResponseBody(error, close);
             });

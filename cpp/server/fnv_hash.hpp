@@ -13,7 +13,8 @@ namespace msrv {
 class FnvHash
 {
 public:
-    FnvHash() : value_(INIT) { }
+    FnvHash()
+        : value_(INIT) { }
 
     void addBytes(const void* buffer, size_t size)
     {

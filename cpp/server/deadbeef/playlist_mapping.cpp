@@ -10,9 +10,13 @@ namespace player_deadbeef {
 
 namespace {
 constexpr char PLAYLIST_ID_META[] = MSRV_PROJECT_ID ".unique_id";
+
 constexpr char PLAYLIST_ID_FORMAT[] = "p%" PRId64;
+
 constexpr char INVALID_PLAYLIST_REF[] = "invalid playlist reference";
+
 constexpr char PLAYLIST_INDEX_OUT_OF_RANGE[] = "playlist index is out of range";
+
 constexpr char UNKNOWN_PLAYLIST_ID[] = "unknown playlist id";
 }
 
@@ -131,4 +135,5 @@ int PlaylistMapping::resolveIndex(const PlaylistRef& plref)
     }
 }
 
-}}
+}
+}

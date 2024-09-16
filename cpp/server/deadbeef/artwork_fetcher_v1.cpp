@@ -45,7 +45,7 @@ class ArtworkFetcherV1 : public ArtworkFetcher
 {
 public:
     explicit ArtworkFetcherV1(DB_artwork_plugin_t* plugin, std::vector<TitleFormatPtr> columns)
-        : plugin_(plugin), columns_(std::move(columns)) {  }
+        : plugin_(plugin), columns_(std::move(columns)) { }
 
     ~ArtworkFetcherV1() override { plugin_->reset(0); }
 
@@ -62,7 +62,7 @@ boost::unique_future<ArtworkResult> ArtworkRequestV1::execute()
 {
     logDebug(
         "artwork query: filePath = %s; artist = %s; album = %s",
-         filePath_.c_str(), artist_.c_str(), album_.c_str());
+        filePath_.c_str(), artist_.c_str(), album_.c_str());
 
     auto filePath = filePath_.empty() ? nullptr : filePath_.c_str();
     auto artist = artist_.empty() ? nullptr : artist_.c_str();
@@ -136,7 +136,7 @@ std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV1()
     if (!plugin || !PLUG_TEST_COMPAT(plugin, 1, DDB_ARTWORK_VERSION))
         return {};
 
-    auto columns = compileColumns({ "%path%", "%artist%", "%album%" }, false);
+    auto columns = compileColumns({"%path%", "%artist%", "%album%"}, false);
     if (columns.empty())
         return {};
 
@@ -144,4 +144,5 @@ std::unique_ptr<ArtworkFetcher> ArtworkFetcher::createV1()
         reinterpret_cast<DB_artwork_plugin_t*>(plugin), std::move(columns));
 }
 
-}}
+}
+}

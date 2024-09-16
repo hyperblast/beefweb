@@ -43,7 +43,7 @@ PlaylistsController::~PlaylistsController() = default;
 
 ResponsePtr PlaylistsController::getPlaylists()
 {
-    return Response::json({{ "playlists", player_->getPlaylists() }});
+    return Response::json({{"playlists", player_->getPlaylists()}});
 }
 
 ResponsePtr PlaylistsController::getPlaylistItems()
@@ -55,7 +55,7 @@ ResponsePtr PlaylistsController::getPlaylistItems()
     auto query = player_->createPlaylistQuery(plref, range, columns);
     auto items = player_->getPlaylistItems(query.get());
 
-    return Response::json({{ "playlistItems", items }});
+    return Response::json({{"playlistItems", items}});
 }
 
 void PlaylistsController::addPlaylist()
@@ -134,15 +134,14 @@ ResponsePtr PlaylistsController::addItems()
     if (optionalParam("play", false))
         options |= AddItemsOptions::PLAY;
 
-    for (auto& item : items)
+    for (auto& item: items)
         normalizedItems.emplace_back(validateAndNormalizeItem(item));
 
     auto addCompleted = player_->addPlaylistItems(plref, normalizedItems, targetIndex, options);
 
     if (optionalParam("async", false))
     {
-        addCompleted.then(boost::launch::sync, [] (boost::unique_future<void> result)
-        {
+        addCompleted.then(boost::launch::sync, [](boost::unique_future<void> result) {
             tryCatchLog([&] { result.get(); });
         });
 
@@ -151,8 +150,7 @@ ResponsePtr PlaylistsController::addItems()
     else
     {
         auto responseFuture = addCompleted.then(
-            boost::launch::sync, [] (boost::unique_future<void> result)
-            {
+            boost::launch::sync, [](boost::unique_future<void> result) {
                 result.get();
                 return ResponsePtr(Response::ok());
             });
@@ -228,8 +226,7 @@ void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Pla
 {
     auto routes = router->defineRoutes<PlaylistsController>();
 
-    routes.createWith([=](Request* request)
-    {
+    routes.createWith([=](Request* request) {
         return new PlaylistsController(request, player, settings);
     });
 

@@ -11,8 +11,8 @@ namespace player_deadbeef {
 PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index)
 {
     return index >= 0
-        ? PlaylistItemPtr(ddbApi->plt_get_item_for_idx(playlist, index, PL_MAIN))
-        : PlaylistItemPtr();
+           ? PlaylistItemPtr(ddbApi->plt_get_item_for_idx(playlist, index, PL_MAIN))
+           : PlaylistItemPtr();
 }
 
 std::vector<TitleFormatPtr> compileColumns(
@@ -20,7 +20,7 @@ std::vector<TitleFormatPtr> compileColumns(
 {
     std::vector<TitleFormatPtr> formatters;
 
-    for (auto& column : columns)
+    for (auto& column: columns)
     {
         TitleFormatPtr formatter(ddbApi->tf_compile(column.c_str()));
 
@@ -54,7 +54,7 @@ std::vector<std::string> evaluateColumns(
     int index = 0;
     char buffer[TITLE_FORMAT_BUFFER_SIZE];
 
-    for (auto& formatter : formatters)
+    for (auto& formatter: formatters)
     {
         int size = ddbApi->tf_eval(&context, formatter.get(), buffer, sizeof(buffer));
         if (size < 0)
@@ -74,4 +74,5 @@ void DeadbeefLogger::log(LogLevel, const char* fmt, va_list va)
     ddbApi->vlog_detailed(plugin_, DDB_LOG_LAYER_INFO, format.c_str(), va);
 }
 
-}}
+}
+}

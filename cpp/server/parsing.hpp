@@ -8,7 +8,8 @@
 
 namespace msrv {
 
-template<typename T> struct ValueParser;
+template<typename T>
+struct ValueParser;
 
 template<typename T>
 bool tryParseValue(StringView str, T* outVal);
@@ -17,7 +18,7 @@ template<typename T>
 bool tryParseValueList(StringView str, char sep, std::vector<T>* outVal);
 
 template<typename T>
-bool tryParseValueListStrict(StringView str, char sep, char esc, std::vector<T> *outVal);
+bool tryParseValueListStrict(StringView str, char sep, char esc, std::vector<T>* outVal);
 
 template<typename T>
 T parseValue(StringView str);
@@ -81,7 +82,7 @@ bool tryParseValueList(StringView str, char sep, std::vector<T>* outVal)
     assert(outVal);
 
     auto input = str.to_string();
-    char sepString[] = { sep, '\0' };
+    char sepString[] = {sep, '\0'};
 
     boost::char_separator<char> separator(
         sepString,
@@ -92,7 +93,7 @@ bool tryParseValueList(StringView str, char sep, std::vector<T>* outVal)
 
     std::vector<T> items;
 
-    for (const auto& token : tokenizer)
+    for (const auto& token: tokenizer)
     {
         T value;
 
@@ -111,7 +112,7 @@ bool tryParseValueList(StringView str, char sep, std::vector<T>* outVal)
 }
 
 template<typename T>
-bool tryParseValueListStrict(StringView str, char sep, char esc, std::vector<T> *outVal)
+bool tryParseValueListStrict(StringView str, char sep, char esc, std::vector<T>* outVal)
 {
     assert(str.data());
     assert(outVal);
@@ -127,7 +128,7 @@ bool tryParseValueListStrict(StringView str, char sep, char esc, std::vector<T> 
 
     std::vector<T> items;
 
-    for (const auto& token : tokenizer)
+    for (const auto& token: tokenizer)
     {
         T value;
 

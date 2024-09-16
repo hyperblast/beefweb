@@ -14,13 +14,13 @@ inline int64_t makeInt64(DWORD high, DWORD low)
 inline FileType getFileType(DWORD attributes)
 {
     return attributes & FILE_ATTRIBUTE_DIRECTORY
-        ? FileType::DIRECTORY
-        : FileType::REGULAR;
+           ? FileType::DIRECTORY
+           : FileType::REGULAR;
 }
 
 inline int64_t getUnixTimestamp(FILETIME time)
 {
-    return  makeInt64(time.dwHighDateTime, time.dwLowDateTime) / INT64_C(10000000) - INT64_C(11644473600);
+    return makeInt64(time.dwHighDateTime, time.dwLowDateTime) / INT64_C(10000000) - INT64_C(11644473600);
 }
 
 inline void fileDataToInfo(const ::WIN32_FILE_ATTRIBUTE_DATA* data, FileInfo* info)
@@ -86,7 +86,7 @@ FileInfo queryInfo(FileHandle::Type handle)
     return info;
 }
 
-boost::optional<FileInfo> tryQueryInfo(const Path& path)
+boost::optional <FileInfo> tryQueryInfo(const Path& path)
 {
     ::WIN32_FILE_ATTRIBUTE_DATA data;
     auto ret = ::GetFileAttributesExW(path.native().c_str(), GetFileExInfoStandard, &data);

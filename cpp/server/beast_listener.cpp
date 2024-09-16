@@ -37,8 +37,7 @@ void BeastListener::accept()
 
     acceptor_.async_accept(
         peerSocket_,
-        [thisPtr] (const boost::system::error_code& error)
-        {
+        [thisPtr](const boost::system::error_code& error) {
             thisPtr->handleAccept(error);
         });
 }

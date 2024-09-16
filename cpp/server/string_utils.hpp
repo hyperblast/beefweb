@@ -58,7 +58,7 @@ struct AsciiLowerCaseHash
     {
         size_t h = 0;
 
-        for (char ch : str)
+        for (char ch: str)
         {
             boost::hash_combine(h, asciiToLower(ch));
         }

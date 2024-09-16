@@ -13,20 +13,20 @@ void to_json(Json& json, const Switch& value)
 {
     switch (value)
     {
-    case Switch::FALSE:
-        json = false;
-        break;
+        case Switch::FALSE:
+            json = false;
+            break;
 
-    case Switch::TRUE:
-        json = true;
-        break;
+        case Switch::TRUE:
+            json = true;
+            break;
 
-    case Switch::TOGGLE:
-        json = "toggle";
-        break;
+        case Switch::TOGGLE:
+            json = "toggle";
+            break;
 
-    default:
-        throw std::invalid_argument(INVALID_SWITCH_VALUE);
+        default:
+            throw std::invalid_argument(INVALID_SWITCH_VALUE);
     }
 }
 

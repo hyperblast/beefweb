@@ -39,12 +39,14 @@ Path getModulePath(void* symbol)
 Path getUserConfigDir()
 {
     auto xdgConfigHome = ::getenv("XDG_CONFIG_HOME");
-    if (xdgConfigHome && xdgConfigHome[0]) {
+    if (xdgConfigHome && xdgConfigHome[0])
+    {
         return Path(xdgConfigHome);
     }
 
     auto home = ::getenv("HOME");
-    if (home && home[0]) {
+    if (home && home[0])
+    {
         return Path(home) / Path(".config");
     }
 

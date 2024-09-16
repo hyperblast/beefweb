@@ -17,4 +17,5 @@ public:
     static std::unique_ptr<ArtworkFetcher> createV2();
 };
 
-}}
+}
+}

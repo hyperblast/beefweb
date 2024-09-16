@@ -49,5 +49,4 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(ServerThread);
 };
 
-
 }

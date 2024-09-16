@@ -10,7 +10,8 @@ namespace player_deadbeef {
 class PlaylistMapping
 {
 public:
-    PlaylistMapping() : maxId_(0) { }
+    PlaylistMapping()
+        : maxId_(0) { }
     ~PlaylistMapping() { }
 
     const char* getId(ddb_playlist_t* playlist);
@@ -31,4 +32,5 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(PlaylistMapping);
 };
 
-}}
+}
+}

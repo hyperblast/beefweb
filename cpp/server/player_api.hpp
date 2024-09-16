@@ -213,8 +213,10 @@ struct ArtworkResult
 {
     ArtworkResult() { }
 
-    ArtworkResult(std::string filePathVal) : filePath(std::move(filePathVal)) { }
-    ArtworkResult(std::vector<uint8_t> fileDataVal) : fileData(std::move(fileDataVal)) { }
+    ArtworkResult(std::string filePathVal)
+        : filePath(std::move(filePathVal)) { }
+    ArtworkResult(std::vector<uint8_t> fileDataVal)
+        : fileData(std::move(fileDataVal)) { }
 
     ArtworkResult(const void* data, size_t size)
     {
@@ -260,17 +262,17 @@ public:
     {
         switch (value)
         {
-        case Switch::FALSE:
-            setValue(false);
-            break;
+            case Switch::FALSE:
+                setValue(false);
+                break;
 
-        case Switch::TRUE:
-            setValue(true);
-            break;
+            case Switch::TRUE:
+                setValue(true);
+                break;
 
-        case Switch::TOGGLE:
-            setValue(!getValue());
-            break;
+            case Switch::TOGGLE:
+                setValue(!getValue());
+                break;
         }
     }
 };
@@ -333,7 +335,7 @@ public:
 
     PlayerOption* getOption(const std::string& id)
     {
-        for (auto option : options_)
+        for (auto option: options_)
         {
             if (option->id() == id)
             {

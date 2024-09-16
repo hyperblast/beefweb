@@ -10,7 +10,9 @@ namespace msrv {
 namespace {
 
 constexpr char PLAYER_KEY[] = "player";
+
 constexpr char PLAYLISTS_KEY[] = "playlists";
+
 constexpr char PLAYLIST_ITEMS_KEY[] = "playlistItems";
 
 }
@@ -36,8 +38,7 @@ ResponsePtr QueryController::getEvents()
     auto mask = readEventMask();
     listenForEvents(mask);
 
-    return Response::eventStream([this]
-    {
+    return Response::eventStream([this] {
         return eventsToJson(listener_->readEvents());
     });
 }
@@ -48,8 +49,7 @@ ResponsePtr QueryController::getUpdates()
     createQueries(mask);
     listenForEvents(mask);
 
-    return Response::eventStream([this]
-    {
+    return Response::eventStream([this] {
         return stateToJson(listener_->readEvents());
     });
 }
@@ -131,8 +131,7 @@ void QueryController::defineRoutes(Router* router, WorkQueue* workQueue, Player*
 {
     auto routes = router->defineRoutes<QueryController>();
 
-    routes.createWith([=](Request* request)
-    {
+    routes.createWith([=](Request* request) {
         return new QueryController(request, player, dispatcher);
     });
 

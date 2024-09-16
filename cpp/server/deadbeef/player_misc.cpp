@@ -89,34 +89,34 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
 {
     switch (id)
     {
-    case DB_EV_CONFIGCHANGED:
-    case DB_EV_SONGSTARTED:
-    case DB_EV_SONGCHANGED:
-    case DB_EV_SONGFINISHED:
-    case DB_EV_PAUSED:
-    case DB_EV_SEEKED:
-    case DB_EV_VOLUMECHANGED:
-        emitEvent(PlayerEvent::PLAYER_CHANGED);
-        break;
-
-    case DB_EV_PLAYLISTCHANGED:
-        switch (p1)
-        {
-        case DDB_PLAYLIST_CHANGE_CONTENT:
-            // Notify player change for the case when currently played item is reordered or removed
+        case DB_EV_CONFIGCHANGED:
+        case DB_EV_SONGSTARTED:
+        case DB_EV_SONGCHANGED:
+        case DB_EV_SONGFINISHED:
+        case DB_EV_PAUSED:
+        case DB_EV_SEEKED:
+        case DB_EV_VOLUMECHANGED:
             emitEvent(PlayerEvent::PLAYER_CHANGED);
-            emitEvent(PlayerEvent::PLAYLIST_ITEMS_CHANGED);
             break;
 
-        case DDB_PLAYLIST_CHANGE_CREATED:
-        case DDB_PLAYLIST_CHANGE_DELETED:
-        case DDB_PLAYLIST_CHANGE_TITLE:
-        case DDB_PLAYLIST_CHANGE_POSITION:
-            emitEvent(PlayerEvent::PLAYLIST_SET_CHANGED);
-            break;
-        }
+        case DB_EV_PLAYLISTCHANGED:
+            switch (p1)
+            {
+                case DDB_PLAYLIST_CHANGE_CONTENT:
+                    // Notify player change for the case when currently played item is reordered or removed
+                    emitEvent(PlayerEvent::PLAYER_CHANGED);
+                    emitEvent(PlayerEvent::PLAYLIST_ITEMS_CHANGED);
+                    break;
 
-        break;
+                case DDB_PLAYLIST_CHANGE_CREATED:
+                case DDB_PLAYLIST_CHANGE_DELETED:
+                case DDB_PLAYLIST_CHANGE_TITLE:
+                case DDB_PLAYLIST_CHANGE_POSITION:
+                    emitEvent(PlayerEvent::PLAYLIST_SET_CHANGED);
+                    break;
+            }
+
+            break;
     }
 }
 

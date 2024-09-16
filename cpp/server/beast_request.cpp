@@ -14,7 +14,7 @@ inline beast::http::status convertStatusCode(HttpStatus status)
 template<typename Response>
 void convertHeaders(ResponseCore* from, Response* to)
 {
-    for (auto& header : from->headers)
+    for (auto& header: from->headers)
         to->set(header.first, header.second);
 }
 
@@ -183,17 +183,17 @@ HttpMethod BeastRequest::method()
 {
     switch (request_->method())
     {
-    case beast::http::verb::get:
-        return HttpMethod::GET;
+        case beast::http::verb::get:
+            return HttpMethod::GET;
 
-    case beast::http::verb::post:
-        return HttpMethod::POST;
+        case beast::http::verb::post:
+            return HttpMethod::POST;
 
-    case beast::http::verb::options:
-        return HttpMethod::OPTIONS;
+        case beast::http::verb::options:
+            return HttpMethod::OPTIONS;
 
-    default:
-        return HttpMethod::UNDEFINED;
+        default:
+            return HttpMethod::UNDEFINED;
     }
 }
 
@@ -206,7 +206,7 @@ HttpKeyValueMap BeastRequest::headers()
 {
     HttpKeyValueMap headers;
 
-    for (auto& header : *request_)
+    for (auto& header: *request_)
     {
         headers.emplace(
             static_cast<std::string>(header.name_string()),
@@ -239,7 +239,7 @@ void BeastRequest::sendResponse(ResponseCorePtr response)
 
 void BeastRequest::sendResponseBegin(ResponseCorePtr response)
 {
-    responseStream_ = std::make_unique<BeastResponseStream>(connection_,request_, response.get());
+    responseStream_ = std::make_unique<BeastResponseStream>(connection_, request_, response.get());
     responseStream_->writeHeader();
 }
 

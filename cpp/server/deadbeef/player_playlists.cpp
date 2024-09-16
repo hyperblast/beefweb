@@ -74,7 +74,7 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     playlists_.ensureInitialized();
 
     int count = ddbApi->plt_get_count();
-    int current =  ddbApi->plt_get_curr_idx();
+    int current = ddbApi->plt_get_curr_idx();
 
     playlists.reserve(count);
 
@@ -212,7 +212,7 @@ boost::unique_future<void> PlayerImpl::addPlaylistItems(
     AddItemsOptions options)
 {
     auto task = std::make_shared<AddItemsTask>(&playlists_, plref, items, targetIndex, options);
-    return boost::async([task]{ task->execute(); });
+    return boost::async([task] { task->execute(); });
 }
 
 void PlayerImpl::copyPlaylistItems(
@@ -267,14 +267,14 @@ void PlayerImpl::removePlaylistItems(
     const std::vector<int32_t>& indexes)
 {
     std::vector<int32_t> sortedIndexes(indexes);
-    std::sort(sortedIndexes.begin(), sortedIndexes.end(),  std::greater<int32_t>());
+    std::sort(sortedIndexes.begin(), sortedIndexes.end(), std::greater<int32_t>());
 
     PlaylistLockGuard lock(playlistMutex_);
     PlaylistPtr playlist = playlists_.resolve(plref);
 
     int32_t lastIndex = -1;
 
-    for (int32_t index : sortedIndexes)
+    for (int32_t index: sortedIndexes)
     {
         if (index == lastIndex)
             continue;
@@ -370,7 +370,7 @@ void AddItemsTask::addItems()
     else
         addScope.setLastItem(copyPlaylistItemPtr(targetItem_.get()));
 
-    for (auto& item : items_)
+    for (auto& item: items_)
     {
         if (addScope.add(item))
             hasAddedItems_ = true;
@@ -383,17 +383,19 @@ void AddItemsTask::playAddedItems()
 {
     PlaylistLockGuard lock{playlistMutex_};
 
-    if (!hasAddedItems_) {
+    if (!hasAddedItems_)
+    {
         ddbApi->sendmessage(DB_EV_STOP, 0, 0, 0);
         return;
     }
 
     PlaylistItemPtr firstAddedItem(
         targetItem_
-            ? ddbApi->pl_get_next(targetItem_.get(), PL_MAIN)
-            : ddbApi->plt_get_first(playlist_.get(), PL_MAIN));
+        ? ddbApi->pl_get_next(targetItem_.get(), PL_MAIN)
+        : ddbApi->plt_get_first(playlist_.get(), PL_MAIN));
 
-    if (!firstAddedItem) {
+    if (!firstAddedItem)
+    {
         ddbApi->sendmessage(DB_EV_STOP, 0, 0, 0);
         return;
     }
@@ -407,4 +409,5 @@ void AddItemsTask::playAddedItems()
     ddbApi->sendmessage(DB_EV_PLAY_NUM, 0, index, 0);
 }
 
-}}
+}
+}

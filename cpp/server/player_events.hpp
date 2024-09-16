@@ -14,12 +14,12 @@ class EventSet
 {
 public:
     bool any() const { return events_.any(); }
-    bool test(PlayerEvent event) const { return events_.test((int)event); }
-    void set(PlayerEvent event) { events_.set((int)event); }
+    bool test(PlayerEvent event) const { return events_.test((int) event); }
+    void set(PlayerEvent event) { events_.set((int) event); }
     void reset() { events_.reset(); }
 
 private:
-    std::bitset<(int)PlayerEvent::COUNT> events_;
+    std::bitset<(int) PlayerEvent::COUNT> events_;
 };
 
 class EventListener;

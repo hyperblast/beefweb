@@ -27,7 +27,8 @@ Path getUserConfigFile(const char* appName)
 {
     auto userConfigDir = getUserConfigDir();
 
-    if (userConfigDir.empty()) {
+    if (userConfigDir.empty())
+    {
         return Path();
     }
 
@@ -60,18 +61,18 @@ void SettingsData::initialize()
     musicPaths.clear();
     musicPaths.reserve(musicDirs.size());
 
-    for (const auto& dir : musicDirs)
+    for (const auto& dir: musicDirs)
         musicPaths.emplace_back(pathFromUtf8(dir).lexically_normal().make_preferred());
 
     musicDirs.clear();
 
-    for (const auto& path : musicPaths)
+    for (const auto& path: musicPaths)
         musicDirs.emplace_back(pathToUtf8(path));
 }
 
 bool SettingsData::isAllowedPath(const Path& path) const
 {
-    for (const auto& root : musicPaths)
+    for (const auto& root: musicPaths)
     {
         if (isSubpath(root, path))
             return true;
@@ -99,7 +100,7 @@ bool SettingsData::loadFromFile(const Path& path)
 {
     auto result = false;
 
-    tryCatchLog([&]{
+    tryCatchLog([&] {
         auto file = file_io::open(path);
         if (!file)
             return;

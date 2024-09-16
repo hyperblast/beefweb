@@ -50,4 +50,5 @@ std::vector<uint8_t> readToEnd(FileHandle::Type handle, int64_t maxBytes)
 
 }
 
-}}
+}
+}

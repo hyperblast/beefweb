@@ -33,7 +33,7 @@ ResponsePtr PlayerController::getState()
 
     auto state = player_->queryPlayerState(query.get());
 
-    return Response::json({{ "player", *state }});
+    return Response::json({{"player", *state}});
 }
 
 void PlayerController::setState()
@@ -62,7 +62,7 @@ void PlayerController::setState()
 
     if (auto options = optionalBodyParam<std::vector<SetOptionRequest>>("options"))
     {
-        for (const auto& request : *options)
+        for (const auto& request: *options)
         {
             setOption(request);
         }
@@ -137,8 +137,7 @@ void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player
 {
     auto routes = router->defineRoutes<PlayerController>();
 
-    routes.createWith([=](Request* request)
-    {
+    routes.createWith([=](Request* request) {
         return new PlayerController(request, player);
     });
 

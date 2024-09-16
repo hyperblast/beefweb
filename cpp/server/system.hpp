@@ -120,7 +120,7 @@ std::string formatErrorFor(const char* func, ErrorCode errorCode);
 
 void throwSystemError(const char* func, ErrorCode errorCode);
 
-inline void throwIfFailed(const char *func, bool cond, ErrorCode errorCode = lastSystemError())
+inline void throwIfFailed(const char* func, bool cond, ErrorCode errorCode = lastSystemError())
 {
     if (!cond)
         throwSystemError(func, errorCode);
