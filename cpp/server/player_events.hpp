@@ -13,10 +13,22 @@ namespace msrv {
 class EventSet
 {
 public:
-    bool any() const { return events_.any(); }
-    bool test(PlayerEvent event) const { return events_.test((int) event); }
-    void set(PlayerEvent event) { events_.set((int) event); }
-    void reset() { events_.reset(); }
+    bool any() const
+    {
+        return events_.any();
+    }
+    bool test(PlayerEvent event) const
+    {
+        return events_.test((int) event);
+    }
+    void set(PlayerEvent event)
+    {
+        events_.set((int) event);
+    }
+    void reset()
+    {
+        events_.reset();
+    }
 
 private:
     std::bitset<(int) PlayerEvent::COUNT> events_;

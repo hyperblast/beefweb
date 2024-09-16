@@ -18,8 +18,12 @@ class RequestFilter
 public:
     RequestFilter() = default;
     virtual ~RequestFilter() = default;
-    virtual void beginRequest(Request*) { }
-    virtual void endRequest(Request*) { }
+    virtual void beginRequest(Request*)
+    {
+    }
+    virtual void endRequest(Request*)
+    {
+    }
 
 private:
     MSRV_NO_COPY_AND_ASSIGN(RequestFilter);

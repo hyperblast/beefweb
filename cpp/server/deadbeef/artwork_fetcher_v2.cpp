@@ -14,9 +14,14 @@ class CoverInfoDeleter
 {
 public:
     explicit CoverInfoDeleter(ddb_artwork_plugin_t* plugin)
-        : plugin_(plugin) { }
+        : plugin_(plugin)
+    {
+    }
 
-    void operator()(ddb_cover_info_t* info) { plugin_->cover_info_release(info); }
+    void operator()(ddb_cover_info_t* info)
+    {
+        plugin_->cover_info_release(info);
+    }
 
 private:
     ddb_artwork_plugin_t* plugin_;
@@ -55,9 +60,14 @@ class ArtworkFetcherV2 : public ArtworkFetcher
 {
 public:
     explicit ArtworkFetcherV2(ddb_artwork_plugin_t* plugin)
-        : plugin_(plugin), sourceId_(plugin->allocate_source_id()) { }
+        : plugin_(plugin), sourceId_(plugin->allocate_source_id())
+    {
+    }
 
-    ~ArtworkFetcherV2() override { plugin_->cancel_queries_with_source_id(sourceId_); }
+    ~ArtworkFetcherV2() override
+    {
+        plugin_->cancel_queries_with_source_id(sourceId_);
+    }
 
     boost::unique_future<ArtworkResult> fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item) override;
 

@@ -50,8 +50,14 @@ public:
     template<typename T>
     boost::optional<T> optionalBodyParam(const std::string& key);
 
-    bool isProcessed() const { return isProcessed_; }
-    void setProcessed() { isProcessed_ = true; }
+    bool isProcessed() const
+    {
+        return isProcessed_;
+    }
+    void setProcessed()
+    {
+        isProcessed_ = true;
+    }
 
     const std::string& getHeader(const std::string& key)
     {

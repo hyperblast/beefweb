@@ -42,7 +42,10 @@ public:
     static std::unique_ptr<EventStreamResponse> eventStream(EventStreamSource source);
     static std::unique_ptr<AsyncResponse> async(ResponseFuture response);
 
-    static std::unique_ptr<ErrorResponse> notFound() { return error(HttpStatus::S_404_NOT_FOUND); }
+    static std::unique_ptr<ErrorResponse> notFound()
+    {
+        return error(HttpStatus::S_404_NOT_FOUND);
+    }
 
     static std::unique_ptr<ErrorResponse> error(
         HttpStatus status,

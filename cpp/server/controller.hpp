@@ -18,9 +18,14 @@ class ControllerBase
 {
 public:
     ControllerBase(Request* request)
-        : request_(request) { }
+        : request_(request)
+    {
+    }
 
-    Request* request() { return request_; }
+    Request* request()
+    {
+        return request_;
+    }
 
     template<typename T>
     T param(const std::string& key)
@@ -63,7 +68,9 @@ class DelegateRequestHandler : public RequestHandler
 public:
     DelegateRequestHandler(
         std::unique_ptr<T> controller, ControllerAction<T> action)
-        : controller_(std::move(controller)), action_(std::move(action)) { }
+        : controller_(std::move(controller)), action_(std::move(action))
+    {
+    }
 
     ResponsePtr execute() override
     {
@@ -81,7 +88,9 @@ class DelegateRequestHandlerFactory : public RequestHandlerFactory
 public:
     DelegateRequestHandlerFactory(
         ControllerFactory<T> factory, ControllerAction<T> action, WorkQueue* queue)
-        : factory_(std::move(factory)), action_(std::move(action)), workQueue_(queue) { }
+        : factory_(std::move(factory)), action_(std::move(action)), workQueue_(queue)
+    {
+    }
 
     WorkQueue* workQueue() override
     {

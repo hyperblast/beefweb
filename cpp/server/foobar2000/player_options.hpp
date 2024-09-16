@@ -24,7 +24,10 @@ public:
     explicit StopAfterCurrentTrackOption(playback_control* playbackControl);
     bool getValue() const override;
     void setValue(bool value) override;
-    void setCallback(PlayerEventCallback callback) { callback_ = std::move(callback); }
+    void setCallback(PlayerEventCallback callback)
+    {
+        callback_ = std::move(callback);
+    }
 
 private:
     playback_control* playbackControl_;

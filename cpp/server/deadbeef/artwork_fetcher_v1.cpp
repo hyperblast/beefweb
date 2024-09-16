@@ -21,7 +21,9 @@ public:
         : plugin_(plugin),
           filePath_(std::move(filePath)),
           artist_(std::move(artist)),
-          album_(std::move(album)) { }
+          album_(std::move(album))
+    {
+    }
 
     ~ArtworkRequestV1() = default;
 
@@ -45,9 +47,14 @@ class ArtworkFetcherV1 : public ArtworkFetcher
 {
 public:
     explicit ArtworkFetcherV1(DB_artwork_plugin_t* plugin, std::vector<TitleFormatPtr> columns)
-        : plugin_(plugin), columns_(std::move(columns)) { }
+        : plugin_(plugin), columns_(std::move(columns))
+    {
+    }
 
-    ~ArtworkFetcherV1() override { plugin_->reset(0); }
+    ~ArtworkFetcherV1() override
+    {
+        plugin_->reset(0);
+    }
 
     boost::unique_future<ArtworkResult> fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item) override;
 

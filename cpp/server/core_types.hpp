@@ -22,22 +22,31 @@ struct Range
     Range() = default;
 
     Range(int32_t offsetVal, int32_t countVal = 1)
-        : offset(offsetVal), count(countVal) { }
+        : offset(offsetVal), count(countVal)
+    {
+    }
 
     int32_t offset;
     int32_t count;
 
-    int32_t endOffset() { return offset + count; }
+    int32_t endOffset()
+    {
+        return offset + count;
+    }
 };
 
 class InvalidRequestException : public std::runtime_error
 {
 public:
     InvalidRequestException()
-        : std::runtime_error("invalid request") { }
+        : std::runtime_error("invalid request")
+    {
+    }
 
     InvalidRequestException(const std::string& str)
-        : std::runtime_error(str) { }
+        : std::runtime_error(str)
+    {
+    }
 
     ~InvalidRequestException();
 };
@@ -45,7 +54,10 @@ public:
 template<typename T>
 struct MallocDeleter
 {
-    void operator()(T* ptr) { ::free(ptr); }
+    void operator()(T* ptr)
+    {
+        ::free(ptr);
+    }
 };
 
 template<typename T>

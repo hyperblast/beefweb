@@ -52,17 +52,34 @@ class Node
 {
 public:
     Node(NodeType type, std::string value)
-        : type_(type), value_(std::move(value)), factories_((size_t) HttpMethod::COUNT) { }
+        : type_(type), value_(std::move(value)), factories_((size_t) HttpMethod::COUNT)
+    {
+    }
 
     ~Node() = default;
 
-    NodeType type() const { return type_; }
-    const std::string& value() const { return value_; }
+    NodeType type() const
+    {
+        return type_;
+    }
+    const std::string& value() const
+    {
+        return value_;
+    }
 
-    std::multimap<NodeType, std::unique_ptr<Node>>& children() { return children_; }
-    const std::multimap<NodeType, std::unique_ptr<Node>>& children() const { return children_; }
+    std::multimap<NodeType, std::unique_ptr<Node>>& children()
+    {
+        return children_;
+    }
+    const std::multimap<NodeType, std::unique_ptr<Node>>& children() const
+    {
+        return children_;
+    }
 
-    bool hasRoutes() const { return hasRoutes_; }
+    bool hasRoutes() const
+    {
+        return hasRoutes_;
+    }
 
     bool matches(NodeType type, const std::string& value) const
     {

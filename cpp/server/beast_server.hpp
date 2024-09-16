@@ -14,8 +14,14 @@ public:
     BeastServer();
     virtual ~BeastServer();
 
-    virtual WorkQueue* workQueue() override { return &workQueue_; }
-    virtual TimerFactory* timerFactory() override { return &timerFactory_; }
+    virtual WorkQueue* workQueue() override
+    {
+        return &workQueue_;
+    }
+    virtual TimerFactory* timerFactory() override
+    {
+        return &timerFactory_;
+    }
     virtual void setEventListener(RequestEventListener* listener) override;
 
     virtual void bind(int port, bool allowRemote) override;

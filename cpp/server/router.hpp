@@ -38,7 +38,10 @@ public:
     void defineRoute(HttpMethod method, const std::string& path, RequestHandlerFactoryPtr factory);
 
     template<typename T>
-    RouteBuilder<T> defineRoutes() { return RouteBuilder<T>(this); }
+    RouteBuilder<T> defineRoutes()
+    {
+        return RouteBuilder<T>(this);
+    }
 
     std::unique_ptr<RouteResult> dispatch(const Request* request) const;
 
@@ -58,7 +61,9 @@ class RouteBuilder
 {
 public:
     RouteBuilder(Router* router)
-        : router_(router), workQueue_(nullptr) { }
+        : router_(router), workQueue_(nullptr)
+    {
+    }
 
     void createWith(ControllerFactory<T> factory)
     {

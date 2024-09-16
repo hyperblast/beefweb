@@ -14,7 +14,9 @@ class FnvHash
 {
 public:
     FnvHash()
-        : value_(INIT) { }
+        : value_(INIT)
+    {
+    }
 
     void addBytes(const void* buffer, size_t size)
     {
@@ -41,7 +43,10 @@ public:
         addBytes(&value, sizeof(T));
     }
 
-    uint64_t value() const { return value_; }
+    uint64_t value() const
+    {
+        return value_;
+    }
 
 private:
     const uint64_t INIT = UINT64_C(0xcbf29ce484222325);

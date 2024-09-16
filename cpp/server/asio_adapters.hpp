@@ -25,10 +25,19 @@ public:
     AsioTimer(asio::io_context* context);
     virtual ~AsioTimer();
 
-    virtual TimerState state() const override { return state_; }
-    virtual DurationMs period() const override { return period_; }
+    virtual TimerState state() const override
+    {
+        return state_;
+    }
+    virtual DurationMs period() const override
+    {
+        return period_;
+    }
 
-    virtual void setCallback(TimerCallback callback) override { callback_ = std::move(callback); }
+    virtual void setCallback(TimerCallback callback) override
+    {
+        callback_ = std::move(callback);
+    }
 
     virtual void runOnce(DurationMs delay) override;
     virtual void runPeriodic(DurationMs period) override;

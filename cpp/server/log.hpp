@@ -22,8 +22,14 @@ public:
     virtual ~Logger() = default;
     virtual void log(LogLevel, const char*, va_list va) = 0;
 
-    static Logger* getCurrent() { return current_; }
-    static void setCurrent(Logger* logger) { current_ = logger; }
+    static Logger* getCurrent()
+    {
+        return current_;
+    }
+    static void setCurrent(Logger* logger)
+    {
+        current_ = logger;
+    }
 
 private:
     static Logger* current_;

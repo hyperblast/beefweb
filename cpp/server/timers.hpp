@@ -44,8 +44,14 @@ public:
     virtual void runPeriodic(DurationMs period) = 0;
     virtual void stop() = 0;
 
-    bool isActive() const { return state() != TimerState::STOPPED; }
-    bool isPeriodic() const { return period() > DurationMs::zero(); }
+    bool isActive() const
+    {
+        return state() != TimerState::STOPPED;
+    }
+    bool isPeriodic() const
+    {
+        return period() > DurationMs::zero();
+    }
 
 private:
     MSRV_NO_COPY_AND_ASSIGN(Timer);
@@ -83,15 +89,27 @@ public:
 
     virtual ~SimpleTimer();
 
-    virtual TimerState state() const override { return state_; }
-    virtual DurationMs period() const override { return period_; }
+    virtual TimerState state() const override
+    {
+        return state_;
+    }
+    virtual DurationMs period() const override
+    {
+        return period_;
+    }
 
-    virtual void setCallback(TimerCallback callback) override { callback_ = std::move(callback); }
+    virtual void setCallback(TimerCallback callback) override
+    {
+        callback_ = std::move(callback);
+    }
     virtual void runOnce(DurationMs delay) override;
     virtual void runPeriodic(DurationMs period) override;
     virtual void stop() override;
 
-    TimePointMs runAt() const { return runAt_; }
+    TimePointMs runAt() const
+    {
+        return runAt_;
+    }
 
 private:
     friend class SimpleTimerQueue;

@@ -44,7 +44,10 @@ public:
     {
     }
 
-    boost::unique_future<void> getResult() { return result_.get_future(); }
+    boost::unique_future<void> getResult()
+    {
+        return result_.get_future();
+    }
 
     void on_completion(const pfc::list_base_const_t <metadb_handle_ptr>& items) override
     {

@@ -50,10 +50,14 @@ public:
     struct FileBody
     {
         FileBody()
-            : handle(), size(0) { }
+            : handle(), size(0)
+        {
+        }
 
         FileBody(FileHandle handleVal, int64_t sizeVal)
-            : handle(std::move(handleVal)), size(sizeVal) { }
+            : handle(std::move(handleVal)), size(sizeVal)
+        {
+        }
 
         FileBody(const FileBody&) = delete;
         FileBody(FileBody&&) = default;
@@ -68,7 +72,9 @@ public:
     using Body = boost::variant<bool, std::string, std::vector<uint8_t>, FileBody>;
 
     ResponseCore()
-        : status(HttpStatus::UNDEFINED), headers(), body(false) { }
+        : status(HttpStatus::UNDEFINED), headers(), body(false)
+    {
+    }
 
     ~ResponseCore() = default;
 

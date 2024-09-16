@@ -12,7 +12,10 @@ class DummyFactoryBase : public RequestHandlerFactory
         return RequestHandlerPtr();
     }
 
-    virtual WorkQueue* workQueue() override { return nullptr; }
+    virtual WorkQueue* workQueue() override
+    {
+        return nullptr;
+    }
 };
 
 class GetRoot : public DummyFactoryBase

@@ -12,7 +12,10 @@ public:
     AddItemsScope(ddb_playlist_t* playlist, int visibility);
     ~AddItemsScope();
 
-    void setLastItem(PlaylistItemPtr item) { lastItem_ = std::move(item); }
+    void setLastItem(PlaylistItemPtr item)
+    {
+        lastItem_ = std::move(item);
+    }
     bool add(const std::string& path);
 
 private:

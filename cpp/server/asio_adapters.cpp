@@ -4,7 +4,9 @@
 namespace msrv {
 
 AsioWorkQueue::AsioWorkQueue(asio::io_context* context)
-    : context_(context) { }
+    : context_(context)
+{
+}
 
 AsioWorkQueue::~AsioWorkQueue() = default;
 
@@ -77,7 +79,9 @@ void AsioTimer::handleTimeout(const boost::system::error_code& error)
 }
 
 AsioTimerFactory::AsioTimerFactory(asio::io_context* context)
-    : context_(context) { }
+    : context_(context)
+{
+}
 
 AsioTimerFactory::~AsioTimerFactory() = default;
 

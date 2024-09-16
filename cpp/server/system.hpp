@@ -22,10 +22,14 @@ public:
     static_assert(std::is_trivial<Type>::value, "Handle type should be trivial");
 
     Handle() noexcept
-        : value_(Traits::INVALID_VALUE) { }
+        : value_(Traits::INVALID_VALUE)
+    {
+    }
 
     explicit Handle(Type value) noexcept
-        : value_(value) { }
+        : value_(value)
+    {
+    }
 
     Handle(const Handle<Traits>&) = delete;
 
@@ -49,9 +53,15 @@ public:
         return *this;
     }
 
-    operator bool() const noexcept { return Traits::isValid(value_); }
+    operator bool() const noexcept
+    {
+        return Traits::isValid(value_);
+    }
 
-    Type get() const noexcept { return value_; }
+    Type get() const noexcept
+    {
+        return value_;
+    }
 
     void reset(Type value = Traits::INVALID_VALUE) noexcept
     {
@@ -82,7 +92,10 @@ struct PosixHandleTraits
 
     static constexpr Type INVALID_VALUE = -1;
 
-    static bool isValid(Type value) noexcept { return value >= 0; }
+    static bool isValid(Type value) noexcept
+    {
+        return value >= 0;
+    }
     static void destroy(Type value) noexcept;
 };
 
@@ -90,7 +103,10 @@ using SocketHandle = Handle<PosixHandleTraits>;
 using FileHandle = Handle<PosixHandleTraits>;
 using ErrorCode = int;
 
-inline ErrorCode lastSystemError() noexcept { return errno; }
+inline ErrorCode lastSystemError() noexcept
+{
+    return errno;
+}
 
 #endif
 

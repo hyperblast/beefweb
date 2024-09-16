@@ -11,8 +11,12 @@ class PlaylistMapping
 {
 public:
     PlaylistMapping()
-        : maxId_(0) { }
-    ~PlaylistMapping() { }
+        : maxId_(0)
+    {
+    }
+    ~PlaylistMapping()
+    {
+    }
 
     const char* getId(ddb_playlist_t* playlist);
     PlaylistPtr resolve(const PlaylistRef& plref);

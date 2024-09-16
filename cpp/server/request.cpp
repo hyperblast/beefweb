@@ -9,8 +9,12 @@ namespace {
 class EmptyRequestHandler : public RequestHandler
 {
 public:
-    EmptyRequestHandler() { }
-    virtual ~EmptyRequestHandler() { }
+    EmptyRequestHandler()
+    {
+    }
+    virtual ~EmptyRequestHandler()
+    {
+    }
 
     virtual std::unique_ptr<Response> execute() override
     {

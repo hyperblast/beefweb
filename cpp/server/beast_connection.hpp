@@ -19,7 +19,10 @@ public:
 
     ~BeastConnection();
 
-    bool busy() const { return busy_; }
+    bool busy() const
+    {
+        return busy_;
+    }
 
     void run();
     void abort();
@@ -96,7 +99,9 @@ struct BeastConnectionContext
 {
     BeastConnectionContext()
         : activeConnections(),
-          eventListener(nullptr) { }
+          eventListener(nullptr)
+    {
+    }
 
     std::unordered_set<std::shared_ptr<BeastConnection>> activeConnections;
     RequestEventListener* eventListener;

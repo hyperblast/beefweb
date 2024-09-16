@@ -59,8 +59,14 @@ struct RequestContext
     EventStreamResponse* eventStreamResponse;
     Json lastEvent;
 
-    bool isAlive() const { return corereq != nullptr; }
-    Response* response() { return request.response.get(); }
+    bool isAlive() const
+    {
+        return corereq != nullptr;
+    }
+    Response* response()
+    {
+        return request.response.get();
+    }
 };
 
 class Server
@@ -68,8 +74,14 @@ class Server
       private RequestEventListener
 {
 public:
-    static DurationMs pingEventPeriod() { return std::chrono::seconds(15); }
-    static DurationMs eventDispatchDelay() { return DurationMs(20); }
+    static DurationMs pingEventPeriod()
+    {
+        return std::chrono::seconds(15);
+    }
+    static DurationMs eventDispatchDelay()
+    {
+        return DurationMs(20);
+    }
 
     Server(ServerCorePtr core, ServerConfigPtr config);
     ~Server();
@@ -87,7 +99,10 @@ public:
 
     void dispatchEvents();
 
-    boost::unique_future<void> destroyed() { return destroyed_.get_future(); }
+    boost::unique_future<void> destroyed()
+    {
+        return destroyed_.get_future();
+    }
 
 private:
     static void produceEvent(RequestContext* context);

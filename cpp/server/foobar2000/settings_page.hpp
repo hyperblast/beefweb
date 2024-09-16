@@ -18,11 +18,26 @@ public:
     SettingsPage();
     ~SettingsPage();
 
-    virtual const char* get_name() override { return MSRV_PROJECT_NAME; }
-    virtual GUID get_guid() override { return guid_; }
-    virtual GUID get_parent_guid() override { return preferences_page::guid_tools; }
-    virtual bool get_help_url(pfc::string_base& p_out) override { return false; }
-    virtual double get_sort_priority() override { return 0; }
+    virtual const char* get_name() override
+    {
+        return MSRV_PROJECT_NAME;
+    }
+    virtual GUID get_guid() override
+    {
+        return guid_;
+    }
+    virtual GUID get_parent_guid() override
+    {
+        return preferences_page::guid_tools;
+    }
+    virtual bool get_help_url(pfc::string_base& p_out) override
+    {
+        return false;
+    }
+    virtual double get_sort_priority() override
+    {
+        return 0;
+    }
     virtual preferences_page_instance::ptr instantiate(
         HWND parent, preferences_page_callback::ptr callback) override;
 
@@ -37,7 +52,10 @@ public:
     ~SettingsPageInstance();
 
     virtual t_uint32 get_state() override;
-    virtual HWND get_wnd() { return handle_; }
+    virtual HWND get_wnd()
+    {
+        return handle_;
+    }
     virtual void apply() override;
     virtual void reset() override;
 
@@ -60,7 +78,10 @@ private:
     void addMusicDir();
     void removeMusicDir();
     void updateAuthControls();
-    void notifyChanged() { callback_->on_state_changed(); }
+    void notifyChanged()
+    {
+        callback_->on_state_changed();
+    }
 
     HWND parent_;
     HWND handle_;

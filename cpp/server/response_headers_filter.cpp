@@ -5,7 +5,9 @@
 namespace msrv {
 
 ResponseHeadersFilter::ResponseHeadersFilter(SettingsDataPtr settings)
-    : settings_(settings) { }
+    : settings_(settings)
+{
+}
 
 ResponseHeadersFilter::~ResponseHeadersFilter() = default;
 

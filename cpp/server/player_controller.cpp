@@ -22,7 +22,9 @@ void from_json(const Json& json, SetOptionRequest& request)
 }
 
 PlayerController::PlayerController(Request* request, Player* player)
-    : ControllerBase(request), player_(player) { }
+    : ControllerBase(request), player_(player)
+{
+}
 
 ResponsePtr PlayerController::getState()
 {

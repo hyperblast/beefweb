@@ -11,7 +11,9 @@ class ResponseSender : private ResponseHandler
 {
 public:
     explicit ResponseSender(RequestCore* corereq)
-        : requestCore_(corereq) { }
+        : requestCore_(corereq)
+    {
+    }
 
     ~ResponseSender() = default;
 
