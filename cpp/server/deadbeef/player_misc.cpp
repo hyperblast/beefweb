@@ -46,6 +46,27 @@ void PlayerImpl::disconnect()
     artworkFetcher_.reset();
 }
 
+boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
+{
+    if (!artworkFetcher_)
+    {
+        return boost::make_future(ArtworkResult());
+    }
+
+    PlaylistLockGuard lock(playlistMutex_);
+
+    PlaylistItemPtr item(ddbApi->streamer_get_playing_track());
+    if (!item)
+        return boost::make_future(ArtworkResult());
+
+    PlaylistPtr playlist;
+    int playlistIndex = ddbApi->streamer_get_current_playlist();
+    if (playlistIndex >= 0)
+        playlist.reset(ddbApi->plt_get_for_idx(playlistIndex));
+
+    return artworkFetcher_->fetchArtwork(std::move(playlist), std::move(item));
+}
+
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)
 {
     if (!artworkFetcher_)

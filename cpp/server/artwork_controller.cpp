@@ -15,8 +15,18 @@ ArtworkController::ArtworkController(Request* request, Player* player, const Con
 {
 }
 
-ArtworkController::~ArtworkController()
+ArtworkController::~ArtworkController() = default;
+
+ResponsePtr ArtworkController::getCurrentArtwork()
 {
+    auto responseFuture = player_->fetchCurrentArtwork().then(
+        boost::launch::sync, [this] (boost::unique_future<ArtworkResult> resultFuture)
+        {
+            auto result = resultFuture.get();
+            return getResponse(&result);
+        });
+
+    return Response::async(std::move(responseFuture));
 }
 
 ResponsePtr ArtworkController::getArtwork()
@@ -85,8 +95,9 @@ void ArtworkController::defineRoutes(
     });
 
     routes.useWorkQueue(workQueue);
-    routes.setPrefix("api/artwork/:plref/:index");
-    routes.get("", &ArtworkController::getArtwork);
+    routes.setPrefix("api/artwork");
+    routes.get("current", &ArtworkController::getCurrentArtwork);
+    routes.get(":plref/:index", &ArtworkController::getArtwork);
 }
 
 }
