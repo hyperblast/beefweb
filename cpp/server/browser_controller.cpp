@@ -31,14 +31,14 @@ const char* getTypeCode(FileType value)
 {
     switch (value)
     {
-        case FileType::REGULAR:
-            return "F";
+    case FileType::REGULAR:
+        return "F";
 
-        case FileType::DIRECTORY:
-            return "D";
+    case FileType::DIRECTORY:
+        return "D";
 
-        default:
-            return "O";
+    default:
+        return "O";
     }
 }
 

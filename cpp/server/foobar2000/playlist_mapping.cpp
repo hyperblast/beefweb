@@ -9,11 +9,16 @@ namespace player_foobar2000 {
 namespace {
 
 // {E937900E-EF79-4574-81B1-2A840C1741CC}
-const GUID ID_PROPERTY = { 0xe937900e, 0xef79, 0x4574, { 0x81, 0xb1, 0x2a, 0x84, 0xc, 0x17, 0x41, 0xcc } };
+const GUID ID_PROPERTY = {0xe937900e, 0xef79, 0x4574, {0x81, 0xb1, 0x2a, 0x84, 0xc, 0x17, 0x41, 0xcc}};
 
-const char PLAYLIST_ID_FORMAT[] = "p%" PRId64;
+const char PLAYLIST_ID_FORMAT[] = "p%"
+
+PRId64;
+
 const char INVALID_PLAYLIST_REF[] = "invalid playlist reference";
+
 const char PLAYLIST_INDEX_OUT_OF_RANGE[] = "playlist index is out of range";
+
 const char UNKNOWN_PLAYLIST_ID[] = "unknown playlist id";
 
 }
@@ -82,43 +87,44 @@ t_size PlaylistMapping::resolve(const PlaylistRef& plref)
 {
     switch (plref.type())
     {
-        case PlaylistRefType::INDEX:
+    case PlaylistRefType::INDEX:
+    {
+        auto index = plref.index();
+
+        if (index >= 0 && static_cast<t_size>(index) < playlistManager_->get_playlist_count())
+            return index;
+
+        throw InvalidRequestException(PLAYLIST_INDEX_OUT_OF_RANGE);
+    }
+
+    case PlaylistRefType::ID:
+    {
+        const auto& id = plref.id();
+
+        if (id == "current")
+            return playlistManager_->get_active_playlist();
+
+        pfc::array_t<char> buffer;
+        auto count = playlistManager_->get_playlist_count();
+
+        for (t_size i = 0; i < count; i++)
         {
-            auto index = plref.index();
+            if (!readId(i, &buffer))
+                continue;
 
-            if (index >= 0 && static_cast<t_size>(index) < playlistManager_->get_playlist_count())
-                return index;
+            StringView currentId(buffer.get_ptr(), buffer.get_size());
 
-            throw InvalidRequestException(PLAYLIST_INDEX_OUT_OF_RANGE);
+            if (id == currentId)
+                return i;
         }
 
-        case PlaylistRefType::ID:
-        {
-            const auto& id = plref.id();
+        throw InvalidRequestException(UNKNOWN_PLAYLIST_ID);
+    }
 
-            if (id == "current")
-                return playlistManager_->get_active_playlist();
-
-            pfc::array_t<char> buffer;
-            auto count = playlistManager_->get_playlist_count();
-
-            for (t_size i = 0; i < count; i++)
-            {
-                if (!readId(i, &buffer))
-                    continue;
-
-                StringView currentId(buffer.get_ptr(), buffer.get_size());
-
-                if (id == currentId)
-                    return i;
-            }
-
-            throw InvalidRequestException(UNKNOWN_PLAYLIST_ID);
-        }
-
-        default:
-            throw InvalidRequestException(INVALID_PLAYLIST_REF);
+    default:
+        throw InvalidRequestException(INVALID_PLAYLIST_REF);
     }
 }
 
-}}
+}
+}

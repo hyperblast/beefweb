@@ -38,35 +38,35 @@ bool ValueParser<Switch>::tryParse(StringView str, Switch* outVal)
 {
     switch (str.length())
     {
-        case 4:
-            if (::memcmp(str.data(), "true", 4) == 0)
-            {
-                *outVal = Switch::TRUE;
-                return true;
-            }
+    case 4:
+        if (::memcmp(str.data(), "true", 4) == 0)
+        {
+            *outVal = Switch::TRUE;
+            return true;
+        }
 
-            return false;
+        return false;
 
-        case 5:
-            if (::memcmp(str.data(), "false", 5) == 0)
-            {
-                *outVal = Switch::FALSE;
-                return true;
-            }
+    case 5:
+        if (::memcmp(str.data(), "false", 5) == 0)
+        {
+            *outVal = Switch::FALSE;
+            return true;
+        }
 
-            return false;
+        return false;
 
-        case 6:
-            if (::memcmp(str.data(), "toggle", 6) == 0)
-            {
-                *outVal = Switch::TOGGLE;
-                return true;
-            }
+    case 6:
+        if (::memcmp(str.data(), "toggle", 6) == 0)
+        {
+            *outVal = Switch::TOGGLE;
+            return true;
+        }
 
-            return false;
+        return false;
 
-        default:
-            return false;
+    default:
+        return false;
     }
 }
 

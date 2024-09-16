@@ -68,36 +68,36 @@ PlaylistPtr PlaylistMapping::resolve(const PlaylistRef& plref)
 {
     switch (plref.type())
     {
-        case PlaylistRefType::INDEX:
-        {
-            PlaylistPtr playlist(ddbApi->plt_get_for_idx(plref.index()));
+    case PlaylistRefType::INDEX:
+    {
+        PlaylistPtr playlist(ddbApi->plt_get_for_idx(plref.index()));
 
-            if (playlist)
+        if (playlist)
+            return playlist;
+
+        throw InvalidRequestException(PLAYLIST_INDEX_OUT_OF_RANGE);
+    }
+
+    case PlaylistRefType::ID:
+    {
+        if (plref.id() == "current")
+            return PlaylistPtr(ddbApi->plt_get_curr());
+
+        int count = ddbApi->plt_get_count();
+        for (int i = 0; i < count; i++)
+        {
+            PlaylistPtr playlist(ddbApi->plt_get_for_idx(i));
+            const char* id = ddbApi->plt_find_meta(playlist.get(), PLAYLIST_ID_META);
+
+            if (id && plref.id() == id)
                 return playlist;
-
-            throw InvalidRequestException(PLAYLIST_INDEX_OUT_OF_RANGE);
         }
 
-        case PlaylistRefType::ID:
-        {
-            if (plref.id() == "current")
-                return PlaylistPtr(ddbApi->plt_get_curr());
+        throw InvalidRequestException(UNKNOWN_PLAYLIST_ID);
+    }
 
-            int count = ddbApi->plt_get_count();
-            for (int i = 0; i < count; i++)
-            {
-                PlaylistPtr playlist(ddbApi->plt_get_for_idx(i));
-                const char* id = ddbApi->plt_find_meta(playlist.get(), PLAYLIST_ID_META);
-
-                if (id && plref.id() == id)
-                    return playlist;
-            }
-
-            throw InvalidRequestException(UNKNOWN_PLAYLIST_ID);
-        }
-
-        default:
-            throw InvalidRequestException(INVALID_PLAYLIST_REF);
+    default:
+        throw InvalidRequestException(INVALID_PLAYLIST_REF);
     }
 }
 
@@ -105,33 +105,33 @@ int PlaylistMapping::resolveIndex(const PlaylistRef& plref)
 {
     switch (plref.type())
     {
-        case PlaylistRefType::INDEX:
+    case PlaylistRefType::INDEX:
+    {
+        if (plref.index() < ddbApi->plt_get_count())
+            return plref.index();
+        throw InvalidRequestException(PLAYLIST_INDEX_OUT_OF_RANGE);
+    }
+
+    case PlaylistRefType::ID:
+    {
+        if (plref.id() == "current")
+            return ddbApi->plt_get_curr_idx();
+
+        int count = ddbApi->plt_get_count();
+        for (int i = 0; i < count; i++)
         {
-            if (plref.index() < ddbApi->plt_get_count())
-                return plref.index();
-            throw InvalidRequestException(PLAYLIST_INDEX_OUT_OF_RANGE);
+            PlaylistPtr playlist(ddbApi->plt_get_for_idx(i));
+            const char* id = ddbApi->plt_find_meta(playlist.get(), PLAYLIST_ID_META);
+
+            if (id && plref.id() == id)
+                return i;
         }
 
-        case PlaylistRefType::ID:
-        {
-            if (plref.id() == "current")
-                return ddbApi->plt_get_curr_idx();
+        throw InvalidRequestException(UNKNOWN_PLAYLIST_ID);
+    }
 
-            int count = ddbApi->plt_get_count();
-            for (int i = 0; i < count; i++)
-            {
-                PlaylistPtr playlist(ddbApi->plt_get_for_idx(i));
-                const char* id = ddbApi->plt_find_meta(playlist.get(), PLAYLIST_ID_META);
-
-                if (id && plref.id() == id)
-                    return i;
-            }
-
-            throw InvalidRequestException(UNKNOWN_PLAYLIST_ID);
-        }
-
-        default:
-            throw InvalidRequestException(INVALID_PLAYLIST_REF);
+    default:
+        throw InvalidRequestException(INVALID_PLAYLIST_REF);
     }
 }
 

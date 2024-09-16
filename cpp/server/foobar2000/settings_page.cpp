@@ -12,7 +12,7 @@ namespace player_foobar2000 {
 
 // {69188A07-E885-462D-81B0-819768D56C06}
 const GUID SettingsPage::guid_ =
-    { 0x69188a07, 0xe885, 0x462d, { 0x81, 0xb0, 0x81, 0x97, 0x68, 0xd5, 0x6c, 0x6 } };
+    {0x69188a07, 0xe885, 0x462d, {0x81, 0xb0, 0x81, 0x97, 0x68, 0xd5, 0x6c, 0x6}};
 
 SettingsPage::SettingsPage() = default;
 SettingsPage::~SettingsPage() = default;
@@ -60,36 +60,57 @@ t_uint32 SettingsPageInstance::get_state()
         | (hasChanges() ? preferences_state::changed : 0);
 }
 
-INT_PTR CALLBACK SettingsPageInstance::dialogProcWrapper(
-    HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK
+
+SettingsPageInstance::dialogProcWrapper(
+    HWND
+
+window,
+
+UINT message, WPARAM
+
+wparam,
+
+LPARAM lparam
+
+) {
+SettingsPageInstance* instance;
+
+if (message == WM_INITDIALOG) {
+instance = reinterpret_cast<SettingsPageInstance*>(lparam);
+
+instance->
+
+handle_ = window;
+
+SetWindowLongPtrW(window, DWLP_USER, lparam
+
+);
+}
+else {
+instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
+}
+
+if (instance)
 {
-    SettingsPageInstance* instance;
+INT_PTR result;
 
-    if (message == WM_INITDIALOG)
-    {
-        instance = reinterpret_cast<SettingsPageInstance*>(lparam);
-        instance->handle_ = window;
-        SetWindowLongPtrW(window, DWLP_USER, lparam);
-    }
-    else
-    {
-        instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
-    }
+bool processed = tryCatchLog([&] {
+    result = instance->dialogProc(message, wparam, lparam);
+});
 
-    if (instance)
-    {
-        INT_PTR result;
+if (processed)
+return
 
-        bool processed = tryCatchLog([&]
-        {
-            result = instance->dialogProc(message, wparam, lparam);
-        });
+result;
 
-        if (processed)
-            return result;
-    }
+}
 
-    return DefWindowProcW(window, message, wparam, lparam);
+return
+
+DefWindowProcW(window, message, wparam, lparam
+
+);
 }
 
 INT_PTR SettingsPageInstance::dialogProc(UINT message, WPARAM wparam, LPARAM lparam)
@@ -158,7 +179,7 @@ void SettingsPageInstance::load()
 
     musicDirs_ = SettingVars::getMusicDirs();
 
-    for (auto& dir : musicDirs_)
+    for (auto& dir: musicDirs_)
         uSendDlgItemMessageText(handle_, IDC_MUSIC_DIRS, LB_ADDSTRING, 0, dir.c_str());
 
     uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, SettingVars::authRequired);
@@ -263,6 +284,6 @@ void SettingsPageInstance::updateAuthControls()
     EnableWindow(GetDlgItem(handle_, IDC_AUTH_PASSWORD), enabled);
 }
 
-namespace { preferences_page_factory_t<SettingsPage> factory; }
+namespace { preferences_page_factory_t <SettingsPage> factory; }
 
 }}

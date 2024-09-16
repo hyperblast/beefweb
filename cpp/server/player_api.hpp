@@ -262,17 +262,17 @@ public:
     {
         switch (value)
         {
-            case Switch::FALSE:
-                setValue(false);
-                break;
+        case Switch::FALSE:
+            setValue(false);
+            break;
 
-            case Switch::TRUE:
-                setValue(true);
-                break;
+        case Switch::TRUE:
+            setValue(true);
+            break;
 
-            case Switch::TOGGLE:
-                setValue(!getValue());
-                break;
+        case Switch::TOGGLE:
+            setValue(!getValue());
+            break;
         }
     }
 };

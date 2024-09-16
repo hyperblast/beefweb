@@ -42,17 +42,17 @@ void AsioTimer::stop()
 {
     switch (state_)
     {
-        case TimerState::STOPPED:
-            break;
+    case TimerState::STOPPED:
+        break;
 
-        case TimerState::WILL_RESTART:
-            state_ = TimerState::STOPPED;
-            break;
+    case TimerState::WILL_RESTART:
+        state_ = TimerState::STOPPED;
+        break;
 
-        case TimerState::RUNNING:
-            state_ = TimerState::STOPPED;
-            timer_.cancel();
-            break;
+    case TimerState::RUNNING:
+        state_ = TimerState::STOPPED;
+        timer_.cancel();
+        break;
     }
 }
 

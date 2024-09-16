@@ -15,7 +15,7 @@ public:
 private:
     playlist_manager_v4* playlistManager_;
 
-    static std::vector<std::string> getEnumNames(playlist_manager_v4* playlistManager);
+    static std::vector <std::string> getEnumNames(playlist_manager_v4* playlistManager);
 };
 
 class StopAfterCurrentTrackOption : public BoolPlayerOption

@@ -27,10 +27,11 @@ private:
     void writeId(t_size index, const void* data, size_t size);
     void initialize();
 
-    service_ptr_t<playlist_manager_v4> playlistManager_;
+    service_ptr_t <playlist_manager_v4> playlistManager_;
     int64_t maxId_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistMapping);
 };
 
-}}
+}
+}

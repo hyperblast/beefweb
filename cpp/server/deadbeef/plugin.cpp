@@ -98,13 +98,13 @@ void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)
 {
     switch (id)
     {
-        case DB_EV_CONFIGCHANGED:
-            handleConfigChanged();
-            break;
+    case DB_EV_CONFIGCHANGED:
+        handleConfigChanged();
+        break;
 
-        case DB_EV_PLUGINSLOADED:
-            handlePluginsLoaded();
-            break;
+    case DB_EV_PLUGINSLOADED:
+        handlePluginsLoaded();
+        break;
     }
 
     player_.handleMessage(id, ctx, p1, p2);

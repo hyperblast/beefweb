@@ -60,4 +60,5 @@ PlaylistEventAdapter::~PlaylistEventAdapter()
     playlist_manager::get()->unregister_callback(this);
 }
 
-}}
+}
+}

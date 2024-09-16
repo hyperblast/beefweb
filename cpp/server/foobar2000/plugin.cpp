@@ -59,10 +59,10 @@ public:
 
 private:
     Fb2kLogger logger_;
-    std::unique_ptr<Plugin> plugin_;
+    std::unique_ptr <Plugin> plugin_;
 };
 
-initquit_factory_t<InitQuit> InitQuitFactory;
+initquit_factory_t <InitQuit> InitQuitFactory;
 
 #if MSRV_VERSION_FINAL
 #define VERSION_SUFFIX
@@ -71,16 +71,17 @@ initquit_factory_t<InitQuit> InitQuitFactory;
 #endif
 
 DECLARE_COMPONENT_VERSION(
-    MSRV_PROJECT_NAME,
-    MSRV_VERSION_STRING VERSION_SUFFIX,
-    MSRV_PROJECT_DESC "\n\n"
-    MSRV_PROJECT_URL "\n\n"
-    MSRV_VERSION_STRING_DETAILED "\n\n"
-    MSRV_LICENSE_TEXT
+MSRV_PROJECT_NAME,
+MSRV_VERSION_STRING VERSION_SUFFIX,
+MSRV_PROJECT_DESC "\n\n"
+MSRV_PROJECT_URL "\n\n"
+MSRV_VERSION_STRING_DETAILED "\n\n"
+MSRV_LICENSE_TEXT
 );
 
 VALIDATE_COMPONENT_FILENAME(MSRV_FOOBAR2000_FILE);
 
 }
 
-}}
+}
+}

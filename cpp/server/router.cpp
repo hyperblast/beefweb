@@ -34,17 +34,17 @@ std::string getNodeValue(NodeType type, const StringView& item)
 {
     switch (type)
     {
-        case NodeType::STRING:
-            return item.to_string();
+    case NodeType::STRING:
+        return item.to_string();
 
-        case NodeType::PARAMETER:
-            return item.substr(1).to_string();
+    case NodeType::PARAMETER:
+        return item.substr(1).to_string();
 
-        case NodeType::LONG_PARAMETER:
-            return item.substr(1, item.length() - 2).to_string();
+    case NodeType::LONG_PARAMETER:
+        return item.substr(1, item.length() - 2).to_string();
 
-        default:
-            throw std::invalid_argument("invalid node type");
+    default:
+        throw std::invalid_argument("invalid node type");
     }
 }
 
@@ -154,34 +154,34 @@ const Node* Router::matchNode(const Node* parent, Tokenizer* urlTokenizer, HttpK
 
         switch (node->type())
         {
-            case NodeType::STRING:
-            {
-                if (item == node->value())
-                    if (auto result = matchNode(node.get(), urlTokenizer, params))
-                        return result;
-
-                break;
-            }
-
-            case NodeType::PARAMETER:
-            {
-                params[node->value()] = item.to_string();
-
+        case NodeType::STRING:
+        {
+            if (item == node->value())
                 if (auto result = matchNode(node.get(), urlTokenizer, params))
                     return result;
 
-                auto it = params.find(node->value());
-                assert(it != params.end());
-                params.erase(it);
+            break;
+        }
 
-                break;
-            }
+        case NodeType::PARAMETER:
+        {
+            params[node->value()] = item.to_string();
 
-            case NodeType::LONG_PARAMETER:
-            {
-                params[node->value()] = remainingUrlPart.to_string();
-                return node.get();
-            }
+            if (auto result = matchNode(node.get(), urlTokenizer, params))
+                return result;
+
+            auto it = params.find(node->value());
+            assert(it != params.end());
+            params.erase(it);
+
+            break;
+        }
+
+        case NodeType::LONG_PARAMETER:
+        {
+            params[node->value()] = remainingUrlPart.to_string();
+            return node.get();
+        }
         }
     }
 

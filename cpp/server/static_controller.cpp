@@ -63,21 +63,21 @@ ResponsePtr StaticController::getFile()
 
     switch (info->type)
     {
-        case FileType::REGULAR:
-        {
-            auto handle = file_io::open(filePath);
-            if (!handle)
-                return Response::notFound();
-
-            const auto& contentType = contentTypes_.byFilePath(filePath);
-            return Response::file(std::move(filePath), std::move(handle), *info, contentType);
-        }
-
-        case FileType::DIRECTORY:
-            return redirectToDirectory();
-
-        default:
+    case FileType::REGULAR:
+    {
+        auto handle = file_io::open(filePath);
+        if (!handle)
             return Response::notFound();
+
+        const auto& contentType = contentTypes_.byFilePath(filePath);
+        return Response::file(std::move(filePath), std::move(handle), *info, contentType);
+    }
+
+    case FileType::DIRECTORY:
+        return redirectToDirectory();
+
+    default:
+        return Response::notFound();
     }
 }
 

@@ -44,17 +44,17 @@ void SimpleTimer::stop()
 {
     switch (state_)
     {
-        case TimerState::STOPPED:
-            break;
+    case TimerState::STOPPED:
+        break;
 
-        case TimerState::WILL_RESTART:
-            state_ = TimerState::STOPPED;
-            break;
+    case TimerState::WILL_RESTART:
+        state_ = TimerState::STOPPED;
+        break;
 
-        case TimerState::RUNNING:
-            state_ = TimerState::STOPPED;
-            queue_->remove(this);
-            break;
+    case TimerState::RUNNING:
+        state_ = TimerState::STOPPED;
+        queue_->remove(this);
+        break;
     }
 }
 

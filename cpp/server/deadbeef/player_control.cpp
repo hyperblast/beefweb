@@ -63,19 +63,19 @@ PlaybackState PlayerImpl::getPlaybackState(ddb_playItem_t* activeItem)
 {
     switch (ddbApi->get_output()->state())
     {
-        case OUTPUT_STATE_STOPPED:
-            // Short period after initiating play action DeaDBeeF reports playback state as stopped
-            // Make adjustments to avoid sending invalid state to client
-            return activeItem != nullptr ? PlaybackState::PLAYING : PlaybackState::STOPPED;
+    case OUTPUT_STATE_STOPPED:
+        // Short period after initiating play action DeaDBeeF reports playback state as stopped
+        // Make adjustments to avoid sending invalid state to client
+        return activeItem != nullptr ? PlaybackState::PLAYING : PlaybackState::STOPPED;
 
-        case OUTPUT_STATE_PLAYING:
-            return PlaybackState::PLAYING;
+    case OUTPUT_STATE_PLAYING:
+        return PlaybackState::PLAYING;
 
-        case OUTPUT_STATE_PAUSED:
-            return PlaybackState::PAUSED;
+    case OUTPUT_STATE_PAUSED:
+        return PlaybackState::PAUSED;
 
-        default:
-            throw std::runtime_error("Unknown playback state");
+    default:
+        throw std::runtime_error("Unknown playback state");
     }
 }
 
@@ -245,17 +245,17 @@ void PlayerImpl::setMuted(Switch value)
 {
     switch (value)
     {
-        case Switch::FALSE:
-            ddbApi->audio_set_mute(0);
-            break;
+    case Switch::FALSE:
+        ddbApi->audio_set_mute(0);
+        break;
 
-        case Switch::TRUE:
-            ddbApi->audio_set_mute(1);
-            break;
+    case Switch::TRUE:
+        ddbApi->audio_set_mute(1);
+        break;
 
-        case Switch::TOGGLE:
-            ddbApi->audio_set_mute(!ddbApi->audio_is_mute());
-            break;
+    case Switch::TOGGLE:
+        ddbApi->audio_set_mute(!ddbApi->audio_is_mute());
+        break;
     }
 
     emitEvent(PlayerEvent::PLAYER_CHANGED);

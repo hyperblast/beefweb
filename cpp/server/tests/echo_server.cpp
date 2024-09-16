@@ -155,19 +155,19 @@ int testMain(int argc, char** argv)
     {
         switch (::getchar())
         {
-            case 'q':
-            case 'Q':
-                return 0;
+        case 'q':
+        case 'Q':
+            return 0;
 
-            case 'r':
-            case 'R':
-                server.restart();
-                break;
+        case 'r':
+        case 'R':
+            server.restart();
+            break;
 
-            case 'e':
-            case 'E':
-                server.dispatchEvents();
-                break;
+        case 'e':
+        case 'E':
+            server.dispatchEvents();
+            break;
         }
     }
 }

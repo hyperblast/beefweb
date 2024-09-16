@@ -183,17 +183,17 @@ HttpMethod BeastRequest::method()
 {
     switch (request_->method())
     {
-        case beast::http::verb::get:
-            return HttpMethod::GET;
+    case beast::http::verb::get:
+        return HttpMethod::GET;
 
-        case beast::http::verb::post:
-            return HttpMethod::POST;
+    case beast::http::verb::post:
+        return HttpMethod::POST;
 
-        case beast::http::verb::options:
-            return HttpMethod::OPTIONS;
+    case beast::http::verb::options:
+        return HttpMethod::OPTIONS;
 
-        default:
-            return HttpMethod::UNDEFINED;
+    default:
+        return HttpMethod::UNDEFINED;
     }
 }
 
