@@ -13,22 +13,21 @@ set(
     ${CMAKE_CURRENT_SOURCE_DIR}/node_modules/.yarn-integrity
 )
 
+set(
+    PACKAGE_JSON_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/package.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/api_tests/package.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/client/package.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/webui/package.json
+)
+
 add_custom_command(
-    OUTPUT
-        ${YARN_INTEGRITY}
-    MAIN_DEPENDENCY
-        ${CMAKE_CURRENT_SOURCE_DIR}/package.json
-    DEPENDS
-        ${CMAKE_CURRENT_SOURCE_DIR}/yarn.lock
-        ${CMAKE_CURRENT_SOURCE_DIR}/api_tests/package.json
-        ${CMAKE_CURRENT_SOURCE_DIR}/client/package.json
-        ${CMAKE_CURRENT_SOURCE_DIR}/webui/package.json
-    COMMAND
-        ${YARN} install --non-interactive
-    COMMAND
-        ${CMAKE_COMMAND} -E touch_nocreate ${YARN_INTEGRITY}
-    WORKING_DIRECTORY
-        ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT ${YARN_INTEGRITY}
+    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/yarn.lock
+    DEPENDS ${PACKAGE_JSON_FILES}
+    COMMAND ${YARN} install --non-interactive
+    COMMAND ${CMAKE_COMMAND} -E touch_nocreate ${YARN_INTEGRITY}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     VERBATIM
 )
 
