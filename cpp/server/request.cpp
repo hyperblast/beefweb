@@ -9,15 +9,7 @@ namespace {
 class EmptyRequestHandler : public RequestHandler
 {
 public:
-    EmptyRequestHandler()
-    {
-    }
-
-    virtual ~EmptyRequestHandler()
-    {
-    }
-
-    virtual std::unique_ptr<Response> execute() override
+    std::unique_ptr<Response> execute() override
     {
         return Response::custom(HttpStatus::S_204_NO_CONTENT);
     }
@@ -26,9 +18,6 @@ public:
 class EmptyRequestHandlerFactory : public RequestHandlerFactory
 {
 public:
-    EmptyRequestHandlerFactory() = default;
-    ~EmptyRequestHandlerFactory() override = default;
-
     WorkQueue* workQueue() override
     {
         return nullptr;
@@ -57,9 +46,7 @@ Request::Request(HttpMethod methodVal, std::string pathVal)
 {
 }
 
-Request::~Request()
-{
-}
+Request::~Request() = default;
 
 void Request::setErrorResponse(std::string message, std::string param)
 {
@@ -73,9 +60,6 @@ void Request::executeHandler()
     isHandlerExecuted_ = true;
     response = handler->execute();
 }
-
-RequestHandler::RequestHandler() = default;
-RequestHandler::~RequestHandler() = default;
 
 RequestHandlerFactory* RequestHandlerFactory::empty()
 {
