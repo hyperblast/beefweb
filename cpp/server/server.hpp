@@ -20,7 +20,9 @@ namespace msrv {
 class WorkQueue;
 
 class Server;
+
 class ServerConfig;
+
 struct RequestContext;
 
 using ServerPtr = std::shared_ptr<Server>;
@@ -63,6 +65,7 @@ struct RequestContext
     {
         return corereq != nullptr;
     }
+
     Response* response()
     {
         return request.response.get();
@@ -78,6 +81,7 @@ public:
     {
         return std::chrono::seconds(15);
     }
+
     static DurationMs eventDispatchDelay()
     {
         return DurationMs(20);

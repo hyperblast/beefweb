@@ -16,6 +16,7 @@ public:
     {
         lastItem_ = std::move(item);
     }
+
     bool add(const std::string& path);
 
 private:

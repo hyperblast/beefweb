@@ -27,6 +27,7 @@ public:
     {
         return token_;
     }
+
     const StringView& input() const
     {
         return input_;

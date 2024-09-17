@@ -6,7 +6,9 @@
 namespace msrv {
 
 class Router;
+
 class ContentTypeMap;
+
 class WorkQueue;
 
 class StaticController : public ControllerBase

@@ -26,6 +26,7 @@ public:
     {
         return current_;
     }
+
     static void setCurrent(Logger* logger)
     {
         current_ = logger;

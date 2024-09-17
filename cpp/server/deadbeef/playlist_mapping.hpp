@@ -14,6 +14,7 @@ public:
         : maxId_(0)
     {
     }
+
     ~PlaylistMapping()
     {
     }

@@ -17,6 +17,7 @@ struct PlaylistMutex
     {
         ddbApi->pl_lock();
     }
+
     void unlock() noexcept
     {
         ddbApi->pl_unlock();
@@ -29,6 +30,7 @@ struct ConfigMutex
     {
         ddbApi->conf_lock();
     }
+
     void unlock() noexcept
     {
         ddbApi->conf_unlock();

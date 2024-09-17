@@ -21,10 +21,12 @@ public:
     {
         player_.connect();
     }
+
     void disconnect()
     {
         player_.disconnect();
     }
+
     void handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2);
 
 private:

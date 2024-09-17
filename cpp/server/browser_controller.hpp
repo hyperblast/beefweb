@@ -7,7 +7,9 @@
 namespace msrv {
 
 class Router;
+
 class SettingsStore;
+
 class WorkQueue;
 
 class BrowserController : public ControllerBase

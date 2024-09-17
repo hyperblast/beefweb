@@ -10,14 +10,21 @@
 namespace msrv {
 
 class Response;
+
 class ResponseHandler;
 
 class SimpleResponse;
+
 class DataResponse;
+
 class JsonResponse;
+
 class FileResponse;
+
 class EventStreamResponse;
+
 class AsyncResponse;
+
 class ErrorResponse;
 
 using ResponsePtr = std::unique_ptr<Response>;

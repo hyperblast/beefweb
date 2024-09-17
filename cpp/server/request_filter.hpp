@@ -9,6 +9,7 @@
 namespace msrv {
 
 class Request;
+
 class RequestFilter;
 
 using RequestFilterPtr = std::unique_ptr<RequestFilter>;
@@ -18,9 +19,11 @@ class RequestFilter
 public:
     RequestFilter() = default;
     virtual ~RequestFilter() = default;
+
     virtual void beginRequest(Request*)
     {
     }
+
     virtual void endRequest(Request*)
     {
     }

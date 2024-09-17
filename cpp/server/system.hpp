@@ -96,6 +96,7 @@ struct PosixHandleTraits
     {
         return value >= 0;
     }
+
     static void destroy(Type value) noexcept;
 };
 

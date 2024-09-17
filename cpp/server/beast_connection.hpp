@@ -8,6 +8,7 @@
 namespace msrv {
 
 class BeastConnection;
+
 struct BeastConnectionContext;
 
 class BeastConnection : public std::enable_shared_from_this<BeastConnection>

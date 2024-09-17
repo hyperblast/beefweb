@@ -15,9 +15,13 @@
 namespace msrv {
 
 class Timer;
+
 class TimerFactory;
+
 class TimeSource;
+
 class SimpleTimer;
+
 class SimpleTimerQueue;
 
 using TimerPtr = std::unique_ptr<Timer>;
@@ -48,6 +52,7 @@ public:
     {
         return state() != TimerState::STOPPED;
     }
+
     bool isPeriodic() const
     {
         return period() > DurationMs::zero();
@@ -93,6 +98,7 @@ public:
     {
         return state_;
     }
+
     virtual DurationMs period() const override
     {
         return period_;
@@ -102,6 +108,7 @@ public:
     {
         callback_ = std::move(callback);
     }
+
     virtual void runOnce(DurationMs delay) override;
     virtual void runPeriodic(DurationMs period) override;
     virtual void stop() override;

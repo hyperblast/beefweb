@@ -1,6 +1,7 @@
 #ifdef MSRV_OS_POSIX
 #include "../charset.hpp"
 #include <locale.h>
+
 #endif
 
 #ifdef MSRV_OS_WINDOWS

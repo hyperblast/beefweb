@@ -62,6 +62,7 @@ public:
     {
         return type_;
     }
+
     const std::string& value() const
     {
         return value_;
@@ -71,6 +72,7 @@ public:
     {
         return children_;
     }
+
     const std::multimap<NodeType, std::unique_ptr<Node>>& children() const
     {
         return children_;

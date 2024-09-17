@@ -18,10 +18,12 @@ public:
     {
         return &workQueue_;
     }
+
     virtual TimerFactory* timerFactory() override
     {
         return &timerFactory_;
     }
+
     virtual void setEventListener(RequestEventListener* listener) override;
 
     virtual void bind(int port, bool allowRemote) override;

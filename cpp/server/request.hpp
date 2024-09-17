@@ -14,8 +14,11 @@ namespace msrv {
 class WorkQueue;
 
 class Request;
+
 class RequestHandler;
+
 class RequestHandlerFactory;
+
 class Response;
 
 using RequestHandlerPtr = std::unique_ptr<RequestHandler>;
@@ -54,6 +57,7 @@ public:
     {
         return isProcessed_;
     }
+
     void setProcessed()
     {
         isProcessed_ = true;

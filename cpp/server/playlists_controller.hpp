@@ -7,7 +7,9 @@
 namespace msrv {
 
 class Player;
+
 class Router;
+
 class PlaylistsController : public ControllerBase
 {
 public:

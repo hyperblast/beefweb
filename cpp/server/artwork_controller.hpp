@@ -8,7 +8,9 @@
 namespace msrv {
 
 class Player;
+
 class Router;
+
 class ContentTypeMap;
 
 class ArtworkController : public ControllerBase

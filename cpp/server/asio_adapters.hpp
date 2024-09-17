@@ -29,6 +29,7 @@ public:
     {
         return state_;
     }
+
     virtual DurationMs period() const override
     {
         return period_;

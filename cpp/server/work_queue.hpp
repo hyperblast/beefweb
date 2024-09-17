@@ -60,6 +60,7 @@ private:
     struct State
     {
         State() = default;
+
         ~State()
         {
             destroyed.set_value();

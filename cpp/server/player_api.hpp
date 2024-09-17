@@ -14,9 +14,13 @@
 namespace msrv {
 
 class WorkQueue;
+
 class Player;
+
 class PlayerOption;
+
 class BoolPlayerOption;
+
 class EnumPlayerOption;
 
 enum class PlaybackState
@@ -231,6 +235,7 @@ struct ArtworkResult
         : filePath(std::move(filePathVal))
     {
     }
+
     ArtworkResult(std::vector<uint8_t> fileDataVal)
         : fileData(std::move(fileDataVal))
     {
@@ -263,6 +268,7 @@ public:
     {
         return id_;
     }
+
     const std::string& name() const
     {
         return name_;
