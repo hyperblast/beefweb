@@ -109,13 +109,13 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
             break;
 
         case DDB_PLAYLIST_CHANGE_CREATED:
-        case DDB_PLAYLIST_CHANGE_DELETED:
         case DDB_PLAYLIST_CHANGE_TITLE:
             emitEvent(PlayerEvent::PLAYLIST_SET_CHANGED);
             break;
 
+        case DDB_PLAYLIST_CHANGE_DELETED:
         case DDB_PLAYLIST_CHANGE_POSITION:
-            // Reordering playlists might change index of currently playing playlist
+            // Reordering or removing playlists might change index of currently playing playlist
             emitEvent(PlayerEvent::PLAYER_CHANGED);
             emitEvent(PlayerEvent::PLAYLIST_SET_CHANGED);
             break;
