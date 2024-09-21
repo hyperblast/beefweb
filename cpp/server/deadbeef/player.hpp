@@ -87,6 +87,12 @@ public:
         const Range& range,
         const std::vector<std::string>& columns) override;
 
+    std::vector<PlayQueueItemInfo> getPlayQueue() override;
+    void addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex) override;
+    void removeFromPlayQueue(int32_t queueIndex) override;
+    void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) override;
+    void clearPlayQueue() override;
+
     boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 

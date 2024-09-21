@@ -15,6 +15,8 @@ constexpr char PLAYLISTS_KEY[] = "playlists";
 
 constexpr char PLAYLIST_ITEMS_KEY[] = "playlistItems";
 
+constexpr char PLAY_QUEUE_KEY[] = "playQueue";
+
 }
 
 QueryController::QueryController(Request* request, Player* player, EventDispatcher* dispatcher)
@@ -65,6 +67,9 @@ PlayerEvents QueryController::readEventMask()
     if (optionalParam<bool>(PLAYLIST_ITEMS_KEY, false))
         mask |= PlayerEvents::PLAYLIST_ITEMS_CHANGED;
 
+    if (optionalParam<bool>(PLAY_QUEUE_KEY, false))
+        mask |= PlayerEvents::PLAY_QUEUE_CHANGED;
+
     if (mask == PlayerEvents::NONE)
         throw InvalidRequestException("at least one key is required");
 
@@ -106,6 +111,9 @@ Json QueryController::eventsToJson(PlayerEvents events)
     if (hasFlags(events, PlayerEvents::PLAYLIST_ITEMS_CHANGED))
         obj[PLAYLIST_ITEMS_KEY] = true;
 
+    if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
+        obj[PLAY_QUEUE_KEY] = true;
+
     return obj;
 }
 
@@ -121,6 +129,9 @@ Json QueryController::stateToJson(PlayerEvents events)
 
     if (hasFlags(events, PlayerEvents::PLAYLIST_ITEMS_CHANGED))
         obj[PLAYLIST_ITEMS_KEY] = player_->getPlaylistItems(playlistQuery_.get());
+
+    if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
+        obj[PLAY_QUEUE_KEY] = player_->getPlayQueue();
 
     return obj;
 }

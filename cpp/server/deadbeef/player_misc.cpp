@@ -46,6 +46,75 @@ void PlayerImpl::disconnect()
     artworkFetcher_.reset();
 }
 
+std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue()
+{
+    PlaylistLockGuard lock(playlistMutex_);
+
+    std::vector<PlayQueueItemInfo> items;
+    auto size = ddbApi->playqueue_get_count();
+
+    if (!size)
+    {
+        return items;
+    }
+
+    items.reserve(size);
+
+    for (auto i = 0; i < size; i++)
+    {
+        PlaylistItemPtr item(ddbApi->playqueue_get_item(i));
+        PlaylistPtr playlist(ddbApi->pl_get_playlist(item.get()));
+        auto playlistId = playlists_.getId(playlist.get());
+        auto playlistIndex = ddbApi->plt_get_idx(playlist.get());
+        auto itemIndex = ddbApi->plt_get_item_idx(playlist.get(), item.get(), PL_MAIN);
+        items.emplace_back(playlistId, playlistIndex, itemIndex);
+    }
+
+    return items;
+}
+
+void PlayerImpl::addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex)
+{
+    PlaylistLockGuard lock(playlistMutex_);
+
+    auto playlist = playlists_.resolve(plref);
+    auto item = resolvePlaylistItem(playlist.get(), itemIndex);
+
+    if (!item)
+        throw InvalidRequestException("itemIndex is out of range");
+
+    if (queueIndex < 0 || queueIndex >= ddbApi->playqueue_get_count())
+        ddbApi->playqueue_push(item.get());
+    else
+        ddbApi->playqueue_insert_at(queueIndex, item.get());
+}
+
+void PlayerImpl::removeFromPlayQueue(int32_t queueIndex)
+{
+    if (queueIndex < 0 || queueIndex >= ddbApi->playqueue_get_count())
+        throw InvalidRequestException("queueIndex is out of range");
+
+    ddbApi->playqueue_remove_nth(queueIndex);
+}
+
+void PlayerImpl::removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex)
+{
+    PlaylistLockGuard lock(playlistMutex_);
+
+    auto playlist = playlists_.resolve(plref);
+    auto item = resolvePlaylistItem(playlist.get(), itemIndex);
+
+    if (!item)
+        throw InvalidRequestException("itemIndex is out of range");
+
+    ddbApi->playqueue_remove(item.get());
+}
+
+void PlayerImpl::clearPlayQueue()
+{
+    ddbApi->playqueue_clear();
+}
+
 boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
 {
     if (!artworkFetcher_)
@@ -99,12 +168,24 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
         emitEvents(PlayerEvents::PLAYER_CHANGED);
         break;
 
+    case DB_EV_TRACKINFOCHANGED:
+        switch (p1)
+        {
+        case DDB_PLAYLIST_CHANGE_PLAYQUEUE:
+            emitEvents(PlayerEvents::PLAY_QUEUE_CHANGED);
+            break;
+        }
+        break;
+
     case DB_EV_PLAYLISTCHANGED:
         switch (p1)
         {
         case DDB_PLAYLIST_CHANGE_CONTENT:
-            // Notify player change for the case when currently played item is reordered or removed
-            emitEvents(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_ITEMS_CHANGED);
+            // Notify player/queue change for the case when currently played/queued item is reordered or removed
+            emitEvents(
+                PlayerEvents::PLAYER_CHANGED |
+                PlayerEvents::PLAYLIST_ITEMS_CHANGED |
+                PlayerEvents::PLAY_QUEUE_CHANGED);
             break;
 
         case DDB_PLAYLIST_CHANGE_CREATED:
@@ -114,8 +195,15 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
 
         case DDB_PLAYLIST_CHANGE_DELETED:
         case DDB_PLAYLIST_CHANGE_POSITION:
-            // Reordering or removing playlists might change index of currently playing playlist
-            emitEvents(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_SET_CHANGED);
+            // Reordering or removing playlists might change playlist index of currently playing/queued item
+            emitEvents(
+                PlayerEvents::PLAYER_CHANGED |
+                PlayerEvents::PLAYLIST_SET_CHANGED |
+                PlayerEvents::PLAY_QUEUE_CHANGED);
+            break;
+
+        case DDB_PLAYLIST_CHANGE_PLAYQUEUE:
+            emitEvents(PlayerEvents::PLAY_QUEUE_CHANGED);
             break;
         }
 

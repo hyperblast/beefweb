@@ -36,6 +36,7 @@ enum class PlayerEvents : int
     PLAYER_CHANGED = 1,
     PLAYLIST_SET_CHANGED = 2,
     PLAYLIST_ITEMS_CHANGED = 4,
+    PLAY_QUEUE_CHANGED = 8,
 };
 
 MSRV_ENUM_FLAGS(PlayerEvents, int);
@@ -111,7 +112,7 @@ struct PlaylistItemInfo
 {
     PlaylistItemInfo() = default;
 
-    PlaylistItemInfo(std::vector<std::string> columnsVal)
+    explicit PlaylistItemInfo(std::vector<std::string> columnsVal)
         : columns(std::move(columnsVal))
     {
     }
@@ -122,10 +123,23 @@ struct PlaylistItemInfo
     std::vector<std::string> columns;
 };
 
+struct PlayQueueItemInfo
+{
+    PlayQueueItemInfo(std::string playlistIdVal, int32_t playlistIndexVal, int32_t itemIndexVal)
+        : playlistId(std::move(playlistIdVal)), playlistIndex(playlistIndexVal), itemIndex(itemIndexVal)
+    {
+    }
+
+    PlayQueueItemInfo(PlayQueueItemInfo&&) = default;
+    PlayQueueItemInfo& operator=(PlayQueueItemInfo&&) = default;
+
+    std::string playlistId;
+    int32_t playlistIndex;
+    int32_t itemIndex;
+};
+
 struct PlaylistItemsResult
 {
-    PlaylistItemsResult() = default;
-
     PlaylistItemsResult(
         int32_t offsetVal,
         int32_t totalCountVal,
@@ -442,6 +456,14 @@ public:
         const PlaylistRef& playlist,
         const Range& range,
         const std::vector<std::string>& columns) = 0;
+
+    // Play queue API
+
+    virtual std::vector<PlayQueueItemInfo> getPlayQueue() = 0;
+    virtual void addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex) = 0;
+    virtual void removeFromPlayQueue(int32_t queueIndex) = 0;
+    virtual void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) = 0;
+    virtual void clearPlayQueue() = 0;
 
     // Artwork API
 
