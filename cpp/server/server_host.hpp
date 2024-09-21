@@ -17,13 +17,13 @@ namespace msrv {
 class ServerHost
 {
 public:
-    ServerHost(Player* player);
+    explicit ServerHost(Player* player);
     virtual ~ServerHost();
 
     void reconfigure(SettingsDataPtr settings);
 
 private:
-    void handlePlayerEvent(PlayerEvent);
+    void handlePlayerEvents(PlayerEvents events);
 
     Player* player_;
 
