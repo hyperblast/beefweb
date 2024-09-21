@@ -13,7 +13,7 @@ PlayerImpl::PlayerImpl()
       playbackOrderOption_(playlistManager_.get_ptr()),
       stopAfterCurrentTrackOption_(playbackControl_.get_ptr())
 {
-    auto callback = [this](PlayerEvent ev) { emitEvent(ev); };
+    auto callback = [this](PlayerEvents ev) { emitEvents(ev); };
 
     playerEventAdapter_.setCallback(callback);
     playlistEventAdapter_.setCallback(callback);

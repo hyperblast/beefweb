@@ -96,7 +96,7 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
     case DB_EV_PAUSED:
     case DB_EV_SEEKED:
     case DB_EV_VOLUMECHANGED:
-        emitEvent(PlayerEvent::PLAYER_CHANGED);
+        emitEvents(PlayerEvents::PLAYER_CHANGED);
         break;
 
     case DB_EV_PLAYLISTCHANGED:
@@ -104,20 +104,18 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
         {
         case DDB_PLAYLIST_CHANGE_CONTENT:
             // Notify player change for the case when currently played item is reordered or removed
-            emitEvent(PlayerEvent::PLAYER_CHANGED);
-            emitEvent(PlayerEvent::PLAYLIST_ITEMS_CHANGED);
+            emitEvents(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_ITEMS_CHANGED);
             break;
 
         case DDB_PLAYLIST_CHANGE_CREATED:
         case DDB_PLAYLIST_CHANGE_TITLE:
-            emitEvent(PlayerEvent::PLAYLIST_SET_CHANGED);
+            emitEvents(PlayerEvents::PLAYLIST_SET_CHANGED);
             break;
 
         case DDB_PLAYLIST_CHANGE_DELETED:
         case DDB_PLAYLIST_CHANGE_POSITION:
             // Reordering or removing playlists might change index of currently playing playlist
-            emitEvent(PlayerEvent::PLAYER_CHANGED);
-            emitEvent(PlayerEvent::PLAYLIST_SET_CHANGED);
+            emitEvents(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_SET_CHANGED);
             break;
         }
 

@@ -17,18 +17,18 @@ ServerHost::ServerHost(Player* player)
     : player_(player)
 {
     playerWorkQueue_ = player_->createWorkQueue();
-    player_->onEvent([this](PlayerEvent event) { handlePlayerEvent(event); });
+    player_->onEvents([this](PlayerEvents event) { handlePlayerEvents(event); });
     serverThread_ = std::make_unique<ServerThread>();
 }
 
 ServerHost::~ServerHost()
 {
-    player_->onEvent(PlayerEventCallback());
+    player_->onEvents(PlayerEventsCallback());
 }
 
-void ServerHost::handlePlayerEvent(PlayerEvent event)
+void ServerHost::handlePlayerEvents(PlayerEvents events)
 {
-    dispatcher_.dispatch(event);
+    dispatcher_.dispatch(events);
     serverThread_->dispatchEvents();
 }
 

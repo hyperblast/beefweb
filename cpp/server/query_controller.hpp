@@ -23,12 +23,12 @@ public:
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, EventDispatcher* dispatcher);
 
 private:
-    EventSet readEventMask();
-    void createQueries(const EventSet& events);
-    void listenForEvents(const EventSet& events);
+    PlayerEvents readEventMask();
+    void createQueries(PlayerEvents events);
+    void listenForEvents(PlayerEvents events);
 
-    Json eventsToJson(const EventSet& changeSet);
-    Json stateToJson(const EventSet& changeSet);
+    static Json eventsToJson(PlayerEvents events);
+    Json stateToJson(PlayerEvents events);
 
     Player* player_;
     EventDispatcher* dispatcher_;

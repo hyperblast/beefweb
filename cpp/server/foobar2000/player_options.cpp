@@ -47,6 +47,6 @@ void StopAfterCurrentTrackOption::setValue(bool value)
     playbackControl_->set_stop_after_current(value);
 
     if (callback_)
-        callback_(PlayerEvent::PLAYER_CHANGED);
+        callback_(PlayerEvents::PLAYER_CHANGED);
 }
 }

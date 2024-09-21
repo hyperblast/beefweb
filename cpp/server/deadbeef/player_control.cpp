@@ -258,7 +258,7 @@ void PlayerImpl::setMuted(Switch value)
         break;
     }
 
-    emitEvent(PlayerEvent::PLAYER_CHANGED);
+    emitEvents(PlayerEvents::PLAYER_CHANGED);
 }
 
 void PlayerImpl::seekAbsolute(double offsetSeconds)

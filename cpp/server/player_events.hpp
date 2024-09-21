@@ -10,43 +10,15 @@
 
 namespace msrv {
 
-class EventSet
-{
-public:
-    bool any() const
-    {
-        return events_.any();
-    }
-
-    bool test(PlayerEvent event) const
-    {
-        return events_.test((int) event);
-    }
-
-    void set(PlayerEvent event)
-    {
-        events_.set((int) event);
-    }
-
-    void reset()
-    {
-        events_.reset();
-    }
-
-private:
-    std::bitset<(int) PlayerEvent::COUNT> events_;
-};
-
 class EventListener;
 
 class EventDispatcher
 {
 public:
-    EventDispatcher();
-    ~EventDispatcher();
+    EventDispatcher() = default;
 
-    std::unique_ptr<EventListener> createListener(const EventSet& eventMask);
-    void dispatch(PlayerEvent event);
+    std::unique_ptr<EventListener> createListener(PlayerEvents eventMask);
+    void dispatch(PlayerEvents events);
 
 private:
     friend class EventListener;
@@ -61,16 +33,16 @@ class EventListener
 {
 public:
     ~EventListener();
-    EventSet readEvents();
+    PlayerEvents readEvents();
 
 private:
     friend class EventDispatcher;
 
-    EventListener(const EventSet& eventMask);
+    explicit EventListener(PlayerEvents eventMask);
 
     EventDispatcher* owner_;
-    const EventSet eventMask_;
-    EventSet pendingEvents_;
+    const PlayerEvents eventMask_;
+    std::atomic_int pendingEvents_;
 
     MSRV_NO_COPY_AND_ASSIGN(EventListener);
 };

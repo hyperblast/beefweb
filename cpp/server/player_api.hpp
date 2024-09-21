@@ -30,13 +30,15 @@ enum class PlaybackState
     PAUSED,
 };
 
-enum class PlayerEvent
+enum class PlayerEvents : int
 {
-    PLAYER_CHANGED,
-    PLAYLIST_SET_CHANGED,
-    PLAYLIST_ITEMS_CHANGED,
-    COUNT
+    NONE = 0,
+    PLAYER_CHANGED = 1,
+    PLAYLIST_SET_CHANGED = 2,
+    PLAYLIST_ITEMS_CHANGED = 4,
 };
+
+MSRV_ENUM_FLAGS(PlayerEvents, int);
 
 enum class VolumeType
 {
@@ -340,7 +342,7 @@ private:
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
 using TrackQueryPtr = std::unique_ptr<TrackQuery>;
 using PlaylistQueryPtr = std::unique_ptr<PlaylistQuery>;
-using PlayerEventCallback = std::function<void(PlayerEvent)>;
+using PlayerEventsCallback = std::function<void(PlayerEvents)>;
 
 class Player
 {
@@ -448,9 +450,9 @@ public:
 
     // Events API
 
-    void onEvent(PlayerEventCallback callback)
+    void onEvents(PlayerEventsCallback callback)
     {
-        eventCallback_ = std::move(callback);
+        eventsCallback_ = std::move(callback);
     }
 
 protected:
@@ -472,14 +474,14 @@ protected:
         state->playbackModeOption = playbackModeOption_;
     }
 
-    void emitEvent(PlayerEvent event)
+    void emitEvents(PlayerEvents events)
     {
-        if (eventCallback_)
-            eventCallback_(event);
+        if (events != PlayerEvents::NONE && eventsCallback_)
+            eventsCallback_(events);
     }
 
 private:
-    PlayerEventCallback eventCallback_;
+    PlayerEventsCallback eventsCallback_;
     std::vector<PlayerOption*> options_;
     EnumPlayerOption* playbackModeOption_ = nullptr;
 
