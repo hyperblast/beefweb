@@ -37,7 +37,7 @@ public:
     PlayerEventAdapter();
     ~PlayerEventAdapter();
 
-    void setCallback(PlayerEventCallback callback)
+    void setCallback(PlayerEventsCallback callback)
     {
         callback_ = std::move(callback);
     }
@@ -97,10 +97,10 @@ private:
     void notify()
     {
         if (callback_)
-            callback_(PlayerEvent::PLAYER_CHANGED);
+            callback_(PlayerEvents::PLAYER_CHANGED);
     }
 
-    PlayerEventCallback callback_;
+    PlayerEventsCallback callback_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerEventAdapter);
 };
@@ -111,7 +111,7 @@ public:
     PlaylistEventAdapter();
     ~PlaylistEventAdapter();
 
-    void setCallback(PlayerEventCallback callback)
+    void setCallback(PlayerEventsCallback callback)
     {
         callback_ = std::move(callback);
     }
@@ -241,15 +241,14 @@ private:
     void notifyPlayer() const
     {
         if (callback_)
-            callback_(PlayerEvent::PLAYER_CHANGED);
+            callback_(PlayerEvents::PLAYER_CHANGED);
     }
 
     void notifyPlayerAndItems() const
     {
         if (callback_)
         {
-            callback_(PlayerEvent::PLAYER_CHANGED);
-            callback_(PlayerEvent::PLAYLIST_ITEMS_CHANGED);
+            callback_(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_ITEMS_CHANGED);
         }
     }
 
@@ -257,18 +256,17 @@ private:
     {
         if (callback_)
         {
-            callback_(PlayerEvent::PLAYER_CHANGED);
-            callback_(PlayerEvent::PLAYLIST_SET_CHANGED);
+            callback_(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_SET_CHANGED);
         }
     }
 
     void notifyPlaylists() const
     {
         if (callback_)
-            callback_(PlayerEvent::PLAYLIST_SET_CHANGED);
+            callback_(PlayerEvents::PLAYLIST_SET_CHANGED);
     }
 
-    PlayerEventCallback callback_;
+    PlayerEventsCallback callback_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistEventAdapter);
 };

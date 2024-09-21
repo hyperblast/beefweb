@@ -21,16 +21,18 @@ class StopAfterCurrentTrackOption : public BoolPlayerOption
 {
 public:
     explicit StopAfterCurrentTrackOption(playback_control* playbackControl);
+
     bool getValue() const override;
     void setValue(bool value) override;
 
-    void setCallback(PlayerEventCallback callback)
+    void setCallback(PlayerEventsCallback callback)
     {
         callback_ = std::move(callback);
     }
 
 private:
     playback_control* playbackControl_;
-    PlayerEventCallback callback_;
+    PlayerEventsCallback callback_;
 };
+
 }
