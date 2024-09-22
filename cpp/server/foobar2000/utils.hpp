@@ -14,7 +14,7 @@ class Fb2kLogger : public Logger
 {
 public:
     Fb2kLogger();
-    ~Fb2kLogger() override;
+
     void log(LogLevel, const char*, va_list va) override;
 
 private:
@@ -23,15 +23,11 @@ private:
 
 class Fb2kWorkQueue : public ExternalWorkQueue
 {
-public:
-    Fb2kWorkQueue();
-    ~Fb2kWorkQueue() override;
-
 protected:
     void schedule(WorkCallback callback) override;
 };
 
-class PlayerEventAdapter final : private play_callback
+class PlayerEventAdapter final : play_callback
 {
 public:
     PlayerEventAdapter();
@@ -43,8 +39,7 @@ public:
     }
 
 private:
-    void on_playback_starting(play_control::t_track_command p_command, bool p_paused)
-    override
+    void on_playback_starting(play_control::t_track_command p_command, bool p_paused) override
     {
         notify();
     }
@@ -105,7 +100,7 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(PlayerEventAdapter);
 };
 
-class PlaylistEventAdapter final : private playlist_callback
+class PlaylistEventAdapter final : playlist_callback
 {
 public:
     PlaylistEventAdapter();
@@ -123,7 +118,7 @@ private:
         const pfc::list_base_const_t<metadb_handle_ptr>& p_data,
         const bit_array& p_selection) override
     {
-        notifyPlayerAndItems();
+        notifyPlaylistItems();
     }
 
     void on_items_reordered(
@@ -131,7 +126,7 @@ private:
         const t_size* p_order,
         t_size p_count) override
     {
-        notifyPlayerAndItems();
+        notifyPlaylistItems();
     }
 
     void on_items_removing(
@@ -149,27 +144,25 @@ private:
         t_size p_old_count,
         t_size p_new_count) override
     {
-        notifyPlayerAndItems();
+        notifyPlaylistItems();
     }
 
     void on_items_selection_change(
         t_size p_playlist,
         const bit_array& p_affected,
-        const bit_array& p_state)
-    override
+        const bit_array& p_state) override
     {
         /* ignore */
     }
 
-    void on_item_focus_change(
-        t_size p_playlist, t_size p_from, t_size p_to) override
+    void on_item_focus_change(t_size p_playlist, t_size p_from, t_size p_to) override
     {
         /* ignore */
     }
 
     void on_items_modified(t_size p_playlist, const bit_array& p_mask) override
     {
-        notifyPlayerAndItems();
+        notifyPlaylistItems();
     }
 
     void on_items_modified_fromplayback(
@@ -185,7 +178,7 @@ private:
         const bit_array& p_mask,
         const pfc::list_base_const_t<t_on_items_replaced_entry>& p_data) override
     {
-        notifyPlayerAndItems();
+        notifyPlaylistItems();
     }
 
     void on_item_ensure_visible(t_size p_playlist, t_size p_idx) override
@@ -205,7 +198,7 @@ private:
 
     void on_playlists_reorder(const t_size* p_order, t_size p_count) override
     {
-        notifyPlayerAndPlaylists();
+        notifyPlaylistsWithIndexes();
     }
 
     void on_playlists_removing(const bit_array& p_mask, t_size p_old_count, t_size p_new_count) override
@@ -215,7 +208,7 @@ private:
 
     void on_playlists_removed(const bit_array& p_mask, t_size p_old_count, t_size p_new_count) override
     {
-        notifyPlayerAndPlaylists();
+        notifyPlaylistsWithIndexes();
     }
 
     void on_playlist_renamed(t_size p_index, const char* p_new_name, t_size p_new_name_len) override
@@ -244,19 +237,19 @@ private:
             callback_(PlayerEvents::PLAYER_CHANGED);
     }
 
-    void notifyPlayerAndItems() const
+    void notifyPlaylistItems() const
     {
         if (callback_)
         {
-            callback_(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_ITEMS_CHANGED);
+            callback_(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_ITEMS_CHANGED | PlayerEvents::PLAY_QUEUE_CHANGED);
         }
     }
 
-    void notifyPlayerAndPlaylists() const
+    void notifyPlaylistsWithIndexes() const
     {
         if (callback_)
         {
-            callback_(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_SET_CHANGED);
+            callback_(PlayerEvents::PLAYER_CHANGED | PlayerEvents::PLAYLIST_SET_CHANGED | PlayerEvents::PLAY_QUEUE_CHANGED);
         }
     }
 
@@ -270,6 +263,26 @@ private:
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistEventAdapter);
 };
+
+class PlayQueueEventAdapter : public playback_queue_callback
+{
+public:
+    void setCallback(PlayerEventsCallback callback)
+    {
+        callback_ = std::move(callback);
+    }
+
+    void on_changed(t_change_origin p_origin) override
+    {
+        if (callback_)
+            callback_(PlayerEvents::PLAY_QUEUE_CHANGED);
+    }
+
+private:
+    PlayerEventsCallback callback_;
+};
+
+extern service_factory_single_t<PlayQueueEventAdapter> playQueueEventAdapterFactory;
 
 }
 }

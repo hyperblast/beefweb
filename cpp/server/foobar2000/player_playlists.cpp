@@ -135,7 +135,7 @@ std::vector<t_size> makeIndexesReverse(t_size count)
     return indexes;
 }
 
-inline t_size clampIndex(int32_t index, t_size count, t_size fallback)
+t_size clampIndex(int32_t index, t_size count, t_size fallback)
 {
     return index >= 0 && static_cast<t_size>(index) < count
         ? index
@@ -249,7 +249,7 @@ void PlayerImpl::addPlaylist(int32_t index, const std::string& title)
     playlistManager_->create_playlist(
         title.data(),
         title.length(),
-        clampIndex(index, playlistManager_->get_playlist_count(), pfc_infinite));
+        clampIndex(index, playlistManager_->get_playlist_count(), pfc::infinite_size));
 }
 
 void PlayerImpl::removePlaylist(const PlaylistRef& playlist)
@@ -338,7 +338,7 @@ void PlayerImpl::copyPlaylistItems(
     auto position = clampIndex(
         targetIndex,
         playlistManager_->playlist_get_item_count(target),
-        pfc_infinite);
+        pfc::infinite_size);
 
     playlistManager_->playlist_insert_items(target, position, handles, bit_array_false());
 }
@@ -355,12 +355,12 @@ void PlayerImpl::movePlaylistItems(
     auto position = clampIndex(
         targetIndex,
         playlistManager_->playlist_get_item_count(target),
-        pfc_infinite);
+        pfc::infinite_size);
 
     pfc::bit_array_flatIndexList items;
     makeItemsMask(source, sourceItemIndexes, &items);
 
-    if (source == target && position != pfc_infinite)
+    if (source == target && position != pfc::infinite_size)
         position -= items.calc_count(true, 0, position);
 
     pfc::list_t<metadb_handle_ptr> handles;
