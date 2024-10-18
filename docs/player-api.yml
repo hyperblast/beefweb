@@ -15,6 +15,8 @@ tags:
   description: File browser APIs
 - name: artwork
   description: Artwork metadata APIs
+- name: playqueue
+  description: Playback queue APIs
 paths:
   /player:
     get:
@@ -605,6 +607,11 @@ paths:
           type: array
           items:
             type: string
+      - name: playQueue
+        in: query
+        description: Request playback queue
+        schema:
+          type: boolean
       responses:
         200:
           description: Success
@@ -619,6 +626,8 @@ paths:
                     $ref: '#/components/schemas/PlaylistsResult'
                   playlistItems:
                     $ref: '#/components/schemas/PlaylistItemsResult'
+                  playQueue:
+                    $ref: '#/components/schema/PlayQueueItemsResult'
   /browser/roots:
     get:
       tags:
@@ -868,6 +877,22 @@ components:
           type: array
           items:
             type: number
+    PlayQueueItemInfo:
+      type: object
+      properties:
+        playlistId:
+          type: string
+          description: Playlist id
+        playlistIndex:
+          type: number
+          description: Playlist index
+        itemIndex:
+          type: integer
+          descripiton: Playlist item index
+    PlayQueueItemsResult:
+      type: array
+      items:
+        $ref: '#/components/schemas/PlayQueueItemInfo'
     FileSystemEntry:
       type: object
       properties:
