@@ -181,7 +181,7 @@ paths:
                 type: object
                 properties:
                   playQueue:
-                    $ref: '#/components/schema/PlayQueueItemsResult'
+                    $ref: '#/components/schemas/PlayQueueItemsResult'
   /playqueue/add:
     post:
       tags:
@@ -677,7 +677,7 @@ paths:
                   playlistItems:
                     $ref: '#/components/schemas/PlaylistItemsResult'
                   playQueue:
-                    $ref: '#/components/schema/PlayQueueItemsResult'
+                    $ref: '#/components/schemas/PlayQueueItemsResult'
   /browser/roots:
     get:
       tags:
@@ -952,7 +952,7 @@ components:
           description: Item index in the specified playlist
         queueIndex:
           type: number
-          description: Play queue item index to remove.
+          description: Play queue item index to remove
     PlayQueueItemInfo:
       type: object
       properties:
