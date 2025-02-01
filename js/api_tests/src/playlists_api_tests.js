@@ -166,13 +166,6 @@ q.test('add playlist items single', async assert =>
 
 q.test('add playlist items url', async assert =>
 {
-    // Fails with foobar2000 v1.3
-
-    if (config.playerId == 'foobar2000' && config.playerVersion == 'v1.3') {
-        assert.ok(true);
-        return;
-    }
-
     const streamUrl = 'https://upload.wikimedia.org/wikipedia/en/d/d0/Rick_Astley_-_Never_Gonna_Give_You_Up.ogg';
 
     await client.addPlaylistItems(0, [streamUrl]);

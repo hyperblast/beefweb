@@ -52,6 +52,8 @@ class TestPlayerClient extends PlayerClient
 
         for (let p of playlists)
             await this.removePlaylist(p.id);
+
+        await this.clearPlayQueue();
     }
 
     async waitUntilReady()

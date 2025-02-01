@@ -46,9 +46,24 @@ q.test('query playlist items', async assert =>
     assert.deepEqual(result.playlistItems, playlistItems);
 });
 
+q.test('query play queue items', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
+    await client.addToPlayQueue(0, 0);
+
+    const queue = await client.getPlayQueue();
+
+    const result = await client.query({
+        playQueue: true
+    });
+
+    assert.deepEqual(result.playQueue, queue);
+});
+
 q.test('query all', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
+    await client.addToPlayQueue(0, 1);
 
     await client.play(0, 0);
     await client.waitForState('playing');
@@ -64,6 +79,7 @@ q.test('query all', async assert =>
         player: await client.getPlayerState(columns),
         playlists: await client.getPlaylists(),
         playlistItems: await client.getPlaylistItems(0, columns),
+        playQueue: await client.getPlayQueue(),
     };
 
     const result = await client.query({
@@ -73,6 +89,7 @@ q.test('query all', async assert =>
         playlistItems: true,
         plref: 0,
         plcolumns: columns,
+        playQueue: true,
     });
 
     assert.deepEqual(result, expected);
@@ -111,6 +128,20 @@ q.test('expect playlist items events', async assert =>
 
     await expectation.ready;
     await client.addPlaylistItems(0, [tracks.t1]);
+    await expectation.done;
+
+    assert.ok(true);
+});
+
+q.test('expect play queue events', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    const expectation = client.expectEvent(
+        { playQueue: true }, e => e.playQueue === true);
+
+    await expectation.ready;
+    await client.addToPlayQueue(0, 0);
     await expectation.done;
 
     assert.ok(true);
@@ -277,4 +308,21 @@ q.test('expect active item updates when removing playlist items', async assert =
     await expectation.done;
 
     assert.ok(true);
+});
+
+q.test('expect play queue updates', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    const expectation = client.expectUpdate(
+        { playQueue: true }, e => typeof e.playQueue === 'object' && e.playQueue.length > 0);
+
+    await expectation.ready;
+    await client.addToPlayQueue(0, 0);
+    await expectation.done;
+
+    const expected = await client.getPlayQueue();
+    const actual = expectation.lastEvent.playQueue;
+
+    assert.deepEqual(actual, expected);
 });

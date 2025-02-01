@@ -158,6 +158,8 @@ q.test('stop', async assert =>
 q.test('play random', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
+    await client.addPlaylistItems(0, [tracks.t2]);
+    await client.addPlaylistItems(0, [tracks.t3]);
 
     await client.playRandom();
     await client.waitForState('playing');
