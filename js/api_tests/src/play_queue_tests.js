@@ -1,5 +1,5 @@
 import q from 'qunit';
-import { client, tracks, usePlayer } from './test_env.js';
+import { client, config, tracks, usePlayer } from './test_env.js';
 
 q.module('play queue api', usePlayer());
 
@@ -36,6 +36,12 @@ q.test('add to queue', async assert =>
 
 q.test('add to queue at index', async assert =>
 {
+    if (config.playerId !== 'deadbeef')
+    {
+        assert.ok('adding to queue at index is not supported by current player');
+        return;
+    }
+
     const [p1, p2] = await setupTracks();
 
     await client.addToPlayQueue(p1, 0);
