@@ -37,7 +37,7 @@
     "v" MSRV_VERSION_STRING " " MSRV_VERSION_TYPE " (" MSRV_STRINGIFY(MSRV_GIT_REV) ")"
 
 #define MSRV_LICENSE_TEXT \
-    "Copyright 2015-2024 Hyperblast\n" \
+    "Copyright 2015-2025 Hyperblast\n" \
     "\n" \
     "Permission is hereby granted, free of charge, to any person obtaining a copy " \
     "of this software and associated documentation files (the \"Software\"), to deal " \
