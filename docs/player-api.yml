@@ -216,6 +216,16 @@ paths:
         204:
           description: Success
           content: {}
+  /playqueue/clear:
+    post:
+      tags:
+      - playqueue
+      summary: Clear play queue
+      operationId: clearPlayQueue
+      responses:
+        204:
+          description: Success
+          content: {}
   /playlists:
     get:
       tags:
