@@ -28,9 +28,21 @@ void PlayQueueController::addToQueue()
 void PlayQueueController::removeFromQueue()
 {
     if (auto queueIndex = optionalParam<int32_t>("queueIndex"))
+    {
         player_->removeFromPlayQueue(queueIndex.get());
-    else
-        player_->removeFromPlayQueue(param<PlaylistRef>("plref"), param<int32_t>("itemIndex"));
+        return;
+    }
+
+    auto plref = optionalParam<PlaylistRef>("plref");
+    auto itemIndex = optionalParam<int32_t>("itemIndex");
+
+    if (plref && itemIndex)
+    {
+        player_->removeFromPlayQueue(plref.get(), itemIndex.get());
+        return;
+    }
+
+    throw InvalidRequestException("Either queueIndex or plref plus itemIndex parameters are required");
 }
 
 void PlayQueueController::clearQueue()
