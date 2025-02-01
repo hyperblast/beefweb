@@ -7,6 +7,8 @@ servers:
 tags:
 - name: player
   description: Player APIs
+- name: playqueue
+  description: Playback queue APIs
 - name: playlists
   description: Playlist APIs
 - name: query
@@ -15,8 +17,6 @@ tags:
   description: File browser APIs
 - name: artwork
   description: Artwork metadata APIs
-- name: playqueue
-  description: Playback queue APIs
 paths:
   /player:
     get:
@@ -162,6 +162,56 @@ paths:
       - player
       summary: Toggle pause state
       operationId: togglePause
+      responses:
+        204:
+          description: Success
+          content: {}
+  /playqueue:
+    get:
+      tags:
+      - playqueue
+      summary: Get play queue
+      operationId: getPlayQueue
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  playQueue:
+                    $ref: '#/components/schema/PlayQueueItemsResult'
+  /playqueue/add:
+    post:
+      tags:
+      - playqueue
+      summary: Add item to play queue
+      operationId: addToPlayQueue
+      requestBody:
+        description: Request to add to play queue
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToPlayQueueRequest'
+        required: true
+      responses:
+        204:
+          description: Success
+          content: {}
+  /playqueue/remove:
+    post:
+      tags:
+      - playqueue
+      summary: Remove item from play queue
+      operationId: removeFromPlayQueue
+      requestBody:
+        description: Request to remove from play queue
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RemoveFromPlayQueueRequest'
+        required: true
       responses:
         204:
           description: Success
@@ -877,6 +927,32 @@ components:
           type: array
           items:
             type: number
+    AddToPlayQueueRequest:
+      type: object
+      properties:
+        plref:
+          type: string
+          description: Id or index of playlist which contains item to be added to queue
+          required: true
+        itemIndex:
+          type: number
+          description: Item index in the specified playlist
+          required: true
+        queueIndex:
+          type: number
+          description: Queue index to insert at (currenly only supported by DeaDBeeF)
+    RemoveFromPlayQueueRequest:
+      type: object
+      properties:
+        plref:
+          type: string
+          description: Id or index of playlist which contains item to be removed from queue
+        itemIndex:
+          type: number
+          description: Item index in the specified playlist
+        queueIndex:
+          type: number
+          description: Play queue item index to remove.
     PlayQueueItemInfo:
       type: object
       properties:
