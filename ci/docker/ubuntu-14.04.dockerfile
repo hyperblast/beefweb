@@ -7,6 +7,8 @@ COPY ./install.sh \
      ./install-node.sh \
      /scripts/
 
+COPY ./site-config.jam /etc/
+
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
