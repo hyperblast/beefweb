@@ -85,7 +85,7 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const
 {
     auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
     if (!queryImpl)
-        throw std::logic_error("Expected ColumnsQueryImpl");
+        throw std::logic_error("ColumnsQueryImpl is required");
 
     PlaylistLockGuard lock(playlistMutex_);
 

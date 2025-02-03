@@ -5,25 +5,7 @@ namespace player_foobar2000 {
 
 namespace {
 
-inline t_size clampIndex(int32_t index, t_size count, t_size fallback);
-
-class PlaylistQueryImpl : public PlaylistQuery
-{
-public:
-    PlaylistQueryImpl(
-        const PlaylistRef& plrefVal,
-        const Range& rangeVal,
-        TitleFormatVector columnsVal)
-        : plref(plrefVal),
-          range(rangeVal),
-          columns(std::move(columnsVal))
-    {
-    }
-
-    PlaylistRef plref;
-    Range range;
-    TitleFormatVector columns;
-};
+t_size clampIndex(int32_t index, t_size count, t_size fallback);
 
 class AsyncAddCompleter : public process_locations_notify
 {
@@ -218,14 +200,17 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     return playlists;
 }
 
-PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* queryPtr)
+PlaylistItemsResult  PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query)
 {
-    auto query = static_cast<PlaylistQueryImpl*>(queryPtr);
-    auto playlist = playlists_->resolve(query->plref);
+    auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
+    if (!queryImpl)
+        throw std::logic_error("ColumnsQueryImpl is required");
+
+    auto playlist = playlists_->resolve(plref);
 
     auto totalCount = playlistManager_->playlist_get_item_count(playlist);
-    auto offset = std::min(static_cast<t_size>(query->range.offset), totalCount);
-    auto endOffset = std::min(static_cast<t_size>(query->range.endOffset()), totalCount);
+    auto offset = std::min(static_cast<t_size>(range.offset), totalCount);
+    auto endOffset = std::min(static_cast<t_size>(range.endOffset()), totalCount);
 
     std::vector<PlaylistItemInfo> items;
 
@@ -236,7 +221,7 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* queryPtr)
         pfc::string8 buffer;
 
         for (t_size item = offset; item < endOffset; item++)
-            items.emplace_back(evaluatePlaylistColumns(playlist, item, query->columns, &buffer));
+            items.emplace_back(evaluatePlaylistColumns(playlist, item, queryImpl->columns, &buffer));
     }
 
     return PlaylistItemsResult(offset, totalCount, std::move(items));
@@ -409,14 +394,6 @@ void PlayerImpl::sortPlaylist(
 void PlayerImpl::sortPlaylistRandom(const PlaylistRef& plref)
 {
     playlistManager_->playlist_sort_by_format(playlists_->resolve(plref), nullptr, false);
-}
-
-PlaylistQueryPtr PlayerImpl::createPlaylistQuery(
-    const PlaylistRef& playlist,
-    const Range& range,
-    const std::vector<std::string>& columns)
-{
-    return std::make_unique<PlaylistQueryImpl>(playlist, range, compileColumns(columns));
 }
 
 }

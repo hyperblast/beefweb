@@ -35,6 +35,11 @@ std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
     return std::make_unique<Fb2kWorkQueue>();
 }
 
+ColumnsQueryPtr PlayerImpl::createColumnsQuery(const std::vector<std::string>& columns)
+{
+    return std::make_unique<ColumnsQueryImpl>(compileColumns(columns));
+}
+
 boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
 {
     metadb_handle_ptr itemHandle;
@@ -57,7 +62,7 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
     return fetchArtwork(itemHandle);
 }
 
-std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue()
+std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery*)
 {
     std::vector<PlayQueueItemInfo> result;
     pfc::list_t<t_playback_queue_item> items;

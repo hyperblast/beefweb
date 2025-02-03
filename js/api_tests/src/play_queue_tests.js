@@ -19,7 +19,7 @@ async function setupTracks()
     return [p1, p2];
 }
 
-q.only('get play queue with columns', async assert => {
+q.test('get play queue with columns', async assert => {
     const [p1] = await setupTracks();
 
     await client.addToPlayQueue(p1, 0);

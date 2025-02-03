@@ -7,6 +7,20 @@
 #include "utils.hpp"
 
 namespace msrv::player_foobar2000 {
+
+class ColumnsQueryImpl final : public ColumnsQuery
+{
+public:
+    ColumnsQueryImpl(TitleFormatVector columnsVal)
+        : columns(std::move(columnsVal))
+    {
+    }
+
+    ~ColumnsQueryImpl() = default;
+
+    TitleFormatVector columns;
+};
+
 class PlayerImpl final : public Player
 {
 public:
@@ -15,7 +29,7 @@ public:
 
     std::unique_ptr<WorkQueue> createWorkQueue() override;
 
-    PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
+    PlayerStatePtr queryPlayerState(ColumnsQuery* activeItemQuery = nullptr) override;
 
     void playCurrent() override;
     void playItem(const PlaylistRef& playlist, int32_t itemIndex) override;
@@ -33,11 +47,10 @@ public:
     void seekRelative(double offsetSeconds) override;
     void setVolume(double val) override;
 
-    TrackQueryPtr createTrackQuery(
-        const std::vector<std::string>& columns) override;
+    ColumnsQueryPtr createColumnsQuery(const std::vector<std::string>& columns) override;
 
     std::vector<PlaylistInfo> getPlaylists() override;
-    PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) override;
+    PlaylistItemsResult getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query) override;
 
     void addPlaylist(int32_t index, const std::string& title) override;
     void removePlaylist(const PlaylistRef& playlist) override;
@@ -75,12 +88,7 @@ public:
 
     void sortPlaylistRandom(const PlaylistRef& plref) override;
 
-    PlaylistQueryPtr createPlaylistQuery(
-        const PlaylistRef& playlist,
-        const Range& range,
-        const std::vector<std::string>& columns) override;
-
-    std::vector<PlayQueueItemInfo> getPlayQueue() override;
+    std::vector<PlayQueueItemInfo> getPlayQueue(ColumnsQuery* columns = nullptr) override;
     void addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex) override;
     void removeFromPlayQueue(int32_t queueIndex) override;
     void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) override;
@@ -99,7 +107,7 @@ private:
     PlaybackState getPlaybackState();
     void queryInfo(PlayerInfo* info);
     void queryVolume(VolumeInfo* volume);
-    void queryActiveItem(ActiveItemInfo* info, TrackQuery* query);
+    void queryActiveItem(ActiveItemInfo* info, ColumnsQuery* query);
 
     TitleFormatVector compileColumns(const std::vector<std::string>& columns);
 
