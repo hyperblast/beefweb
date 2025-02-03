@@ -107,8 +107,7 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const
         while (item && count > 0)
         {
             PlaylistItemInfo itemInfo;
-            itemInfo.columns = evaluateColumns(
-                playlist.get(), item.get(), queryImpl->formatters);
+            itemInfo.columns = queryImpl->evaluate(playlist.get(), item.get());
             items.emplace_back(std::move(itemInfo));
             item.reset(ddbApi->pl_get_next(item.get(), PL_MAIN));
             count--;

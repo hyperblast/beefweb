@@ -89,7 +89,7 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeIte
 
         if (auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query))
         {
-            columns = evaluateColumns(playlist.get(), activeItem, queryImpl->formatters);
+            columns = queryImpl->evaluate(playlist.get(), activeItem);
         }
     }
 

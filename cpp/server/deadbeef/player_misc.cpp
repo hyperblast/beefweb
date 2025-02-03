@@ -75,7 +75,7 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 
         if (queryImpl)
         {
-            auto columns = evaluateColumns(playlist.get(), item.get(), queryImpl->formatters);
+            auto columns = queryImpl->evaluate(playlist.get(), item.get());
             items.emplace_back(playlistId, playlistIndex, itemIndex, std::move(columns));
         }
         else

@@ -16,13 +16,19 @@ class ColumnsQueryImpl final : public ColumnsQuery
 {
 public:
     explicit ColumnsQueryImpl(const std::vector<std::string>& columns)
-        : formatters(compileColumns(columns))
+        : columns_(compileColumns(columns))
     {
     }
 
     ~ColumnsQueryImpl() = default;
 
-    std::vector<TitleFormatPtr> formatters;
+    std::vector<std::string> evaluate(ddb_playlist_t* playlist, ddb_playItem_t* item)
+    {
+        return evaluateColumns(playlist, item, columns_);
+    }
+
+private:
+    std::vector<TitleFormatPtr> columns_;
 };
 
 class PlayerImpl final : public Player
