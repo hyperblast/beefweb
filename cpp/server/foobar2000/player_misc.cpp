@@ -62,8 +62,10 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
     return fetchArtwork(itemHandle);
 }
 
-std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery*)
+std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 {
+    auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
+
     std::vector<PlayQueueItemInfo> result;
     pfc::list_t<t_playback_queue_item> items;
 
@@ -75,11 +77,22 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery*)
 
     result.reserve(size);
 
+    pfc::string8 buffer;
+
     for (t_size i = 0; i < size; i++)
     {
         const auto& item = items[i];
         auto playlistId = playlists_->getId(item.m_playlist);
-        result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item);
+
+        if (queryImpl)
+        {
+            auto columns = evaluatePlaylistColumns(item.m_playlist, item.m_item, queryImpl->columns, &buffer);
+            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item, std::move(columns));
+        }
+        else
+        {
+            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item);
+        }
     }
 
     return result;

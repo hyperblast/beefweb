@@ -88,7 +88,7 @@ public:
 
     void sortPlaylistRandom(const PlaylistRef& plref) override;
 
-    std::vector<PlayQueueItemInfo> getPlayQueue(ColumnsQuery* columns = nullptr) override;
+    std::vector<PlayQueueItemInfo> getPlayQueue(ColumnsQuery* query = nullptr) override;
     void addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex) override;
     void removeFromPlayQueue(int32_t queueIndex) override;
     void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) override;
