@@ -176,7 +176,6 @@ paths:
       - name: columns
         in: query
         description: Item columns to return
-        required: true
         style: form
         explode: false
         schema:
@@ -656,12 +655,12 @@ paths:
           type: boolean
       - name: playQueue
         in: query
-        description: Request play queue
+        description: Request playback queue
         schema:
           type: boolean
       - name: qcolumns
         in: query
-        description: Play queue columns to return
+        description: Playback queue columns to return
         style: form
         explode: false
         schema:
