@@ -67,9 +67,9 @@ if(OS_POSIX)
         PREFIX
             ${EXTLIB_INSTALL_DIR}
         URL
-            https://archives.boost.io/release/1.81.0/source/boost_1_81_0.tar.bz2
+            https://archives.boost.io/release/1.87.0/source/boost_1_87_0.tar.bz2
         URL_HASH
-            SHA256=71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa
+            SHA256=af57be25cb4c4f4b413ed692fe378affb4352ea50fbe294a11ef548f4d527d89
         DOWNLOAD_DIR
             ${EXTLIB_CACHE_DIR}/boost
         BUILD_IN_SOURCE 1
@@ -91,9 +91,9 @@ if(OS_WINDOWS)
         PREFIX
             ${EXTLIB_INSTALL_DIR}
         URL
-            https://archives.boost.io/release/1.81.0/source/boost_1_81_0.zip
+            https://archives.boost.io/release/1.87.0/source/boost_1_87_0.7z
         URL_HASH
-            SHA256=6e689b266b27d4db57f648b1e5c905c8acd6716b46716a12f6fc73fc80af842e
+            SHA256=db6b7d77a2286ebe79d4aa7252c08b051d271fd8b013b6b18bc7a966552c1139
         DOWNLOAD_DIR
             ${EXTLIB_CACHE_DIR}/boost
         BUILD_IN_SOURCE 1
