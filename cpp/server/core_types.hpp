@@ -29,7 +29,7 @@ struct Range
     int32_t offset;
     int32_t count;
 
-    int32_t endOffset()
+    int32_t endOffset() const
     {
         return offset + count;
     }

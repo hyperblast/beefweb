@@ -12,7 +12,10 @@ PlayerImpl::PlayerImpl()
     addOption(&stopAfterCurrentAlbumOption_);
 }
 
-PlayerImpl::~PlayerImpl() = default;
+ColumnsQueryPtr PlayerImpl::createColumnsQuery(const std::vector<std::string>& columns)
+{
+    return std::make_unique<ColumnsQueryImpl>(columns);
+}
 
 std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 {
@@ -46,7 +49,7 @@ void PlayerImpl::disconnect()
     artworkFetcher_.reset();
 }
 
-std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue()
+std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery*)
 {
     PlaylistLockGuard lock(playlistMutex_);
 

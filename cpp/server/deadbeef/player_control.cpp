@@ -7,19 +7,6 @@ namespace player_deadbeef {
 
 namespace {
 
-class TrackQueryImpl : public TrackQuery
-{
-public:
-    TrackQueryImpl(const std::vector<std::string>& columns)
-        : formatters(compileColumns(columns))
-    {
-    }
-
-    ~TrackQueryImpl() = default;
-
-    std::vector<TitleFormatPtr> formatters;
-};
-
 inline float clampVolume(float val)
 {
     return std::max(std::min(val, 0.0f), ddbApi->volume_get_min_db());
@@ -27,13 +14,7 @@ inline float clampVolume(float val)
 
 }
 
-std::unique_ptr<TrackQuery> PlayerImpl::createTrackQuery(
-    const std::vector<std::string>& columns)
-{
-    return std::make_unique<TrackQueryImpl>(columns);
-}
-
-std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(TrackQuery* activeItemQuery)
+std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(ColumnsQuery* activeItemQuery)
 {
     auto state = std::make_unique<PlayerState>();
 
@@ -79,7 +60,7 @@ PlaybackState PlayerImpl::getPlaybackState(ddb_playItem_t* activeItem)
     }
 }
 
-void PlayerImpl::queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, TrackQuery* query)
+void PlayerImpl::queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, ColumnsQuery* query)
 {
     int playlistIndex = ddbApi->streamer_get_current_playlist();
 
@@ -102,11 +83,12 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeIte
         itemDuration = ddbApi->pl_get_item_duration(activeItem);
 
         if (playlist)
-            itemIndex = ddbApi->plt_get_item_idx(playlist.get(), activeItem, PL_MAIN);
-
-        if (query)
         {
-            auto queryImpl = static_cast<TrackQueryImpl*>(query);
+            itemIndex = ddbApi->plt_get_item_idx(playlist.get(), activeItem, PL_MAIN);
+        }
+
+        if (auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query))
+        {
             columns = evaluateColumns(playlist.get(), activeItem, queryImpl->formatters);
         }
     }

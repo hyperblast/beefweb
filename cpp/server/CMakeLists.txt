@@ -91,7 +91,7 @@ set(
     parsing.cpp parsing.hpp
     play_queue_controller.cpp
     play_queue_controller.hpp
-    player_api.cpp player_api.hpp
+    player_api.hpp
     player_api_json.cpp player_api_json.hpp
     player_api_parsers.cpp player_api_parsers.hpp
     player_controller.cpp player_controller.hpp

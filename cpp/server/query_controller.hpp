@@ -34,8 +34,11 @@ private:
     EventDispatcher* dispatcher_;
 
     std::unique_ptr<EventListener> listener_;
-    std::unique_ptr<TrackQuery> trackQuery_;
-    std::unique_ptr<PlaylistQuery> playlistQuery_;
+    ColumnsQueryPtr activeItemQuery_;
+    PlaylistRef playlistRef_;
+    Range playlistRange_;
+    ColumnsQueryPtr playlistQuery_;
+    ColumnsQueryPtr queueQuery_;
 };
 
 }

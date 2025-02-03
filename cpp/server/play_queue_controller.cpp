@@ -13,7 +13,18 @@ PlayQueueController::PlayQueueController(Request* request, Player* player)
 
 ResponsePtr PlayQueueController::getQueue()
 {
-    auto queue = player_->getPlayQueue();
+    std::vector<PlayQueueItemInfo> queue;
+
+    if (auto columns = optionalParam<std::vector<std::string>>("columns"))
+    {
+        auto query = player_->createColumnsQuery(*columns);
+        queue = player_->getPlayQueue(query.get());
+    }
+    else
+    {
+        queue = player_->getPlayQueue();
+    }
+
     return Response::json({{"playQueue", queue}});
 }
 
