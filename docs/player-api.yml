@@ -172,6 +172,17 @@ paths:
       - playqueue
       summary: Get play queue
       operationId: getPlayQueue
+      parameters:
+      - name: columns
+        in: query
+        description: Item columns to return
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
       responses:
         200:
           description: Success
@@ -643,6 +654,20 @@ paths:
         description: Request playlists
         schema:
           type: boolean
+      - name: playQueue
+        in: query
+        description: Request play queue
+        schema:
+          type: boolean
+      - name: qcolumns
+        in: query
+        description: Play queue columns to return
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
       - name: playlistItems
         in: query
         description: Request playlist items
@@ -667,11 +692,6 @@ paths:
           type: array
           items:
             type: string
-      - name: playQueue
-        in: query
-        description: Request playback queue
-        schema:
-          type: boolean
       responses:
         200:
           description: Success
