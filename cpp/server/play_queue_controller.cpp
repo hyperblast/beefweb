@@ -17,7 +17,7 @@ ResponsePtr PlayQueueController::getQueue()
 
     if (auto columns = optionalParam<std::vector<std::string>>("columns"))
     {
-        auto query = player_->createColumnsQuery(*columns);
+        auto query = player_->createColumnsQuery(columns.get());
         queue = player_->getPlayQueue(query.get());
     }
     else

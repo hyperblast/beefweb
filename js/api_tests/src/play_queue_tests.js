@@ -19,6 +19,20 @@ async function setupTracks()
     return [p1, p2];
 }
 
+q.only('get play queue with columns', async assert => {
+    const [p1] = await setupTracks();
+
+    await client.addToPlayQueue(p1, 0);
+    await client.addToPlayQueue(p1, 1);
+
+    const queue = await client.getPlayQueue(['%artist%', '%title%']);
+
+    assert.deepEqual(queue, [
+        { playlistIndex: 0, playlistId: p1, itemIndex: 0, columns: ['Hyperblast', 'Silence Rocks - Part 1'] },
+        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: ['Hyperblast', 'Silence Rocks - Part 2'] },
+    ]);
+})
+
 q.test('add to queue', async assert =>
 {
     const [p1, p2] = await setupTracks();
@@ -29,8 +43,8 @@ q.test('add to queue', async assert =>
     const queue = await client.getPlayQueue();
 
     assert.deepEqual(queue, [
-        { playlistIndex: 0, playlistId: p1, itemIndex: 1 },
-        { playlistIndex: 1, playlistId: p2, itemIndex: 0 },
+        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
+        { playlistIndex: 1, playlistId: p2, itemIndex: 0, columns: [] },
     ]);
 });
 
@@ -51,9 +65,9 @@ q.test('add to queue at index', async assert =>
     let queue = await client.getPlayQueue();
 
     assert.deepEqual(queue, [
-        { playlistIndex: 1, playlistId: p2, itemIndex: 0 },
-        { playlistIndex: 0, playlistId: p1, itemIndex: 0 },
-        { playlistIndex: 0, playlistId: p1, itemIndex: 1 },
+        { playlistIndex: 1, playlistId: p2, itemIndex: 0, columns: [] },
+        { playlistIndex: 0, playlistId: p1, itemIndex: 0, columns: [] },
+        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
     ]);
 });
 
@@ -71,7 +85,7 @@ q.test('remove from queue', async assert =>
     let queue = await client.getPlayQueue();
 
     assert.deepEqual(queue, [
-        { playlistIndex: 0, playlistId: p1, itemIndex: 1 },
+        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
     ]);
 });
 

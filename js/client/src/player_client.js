@@ -211,12 +211,12 @@ export default class PlayerClient
         }
     }
 
-    getPlayQueue()
+    getPlayQueue(columns)
     {
-        return this.get('api/playqueue').then(r => r.playQueue);
+        return this.get('api/playqueue', { columns }).then(r => r.playQueue);
     }
 
-    addToPlayQueue(plref, itemIndex, queueIndex = -1)
+    addToPlayQueue(plref, itemIndex, queueIndex = undefined)
     {
         return this.post('api/playqueue/add', { plref, itemIndex, queueIndex });
     }

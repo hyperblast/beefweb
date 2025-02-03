@@ -93,7 +93,10 @@ void QueryController::createQueries(PlayerEvents events)
 
     if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
     {
-        queueQuery_ = player_->createColumnsQuery(param<std::vector<std::string>>("qcolumns"));
+        if (auto columns = optionalParam<std::vector<std::string>>("qcolumns"))
+        {
+            queueQuery_ = player_->createColumnsQuery(columns.get());
+        }
     }
 }
 

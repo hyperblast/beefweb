@@ -314,14 +314,16 @@ q.test('expect play queue updates', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
 
+    const columns = ['%artist%', '%title%'];
     const expectation = client.expectUpdate(
-        { playQueue: true }, e => typeof e.playQueue === 'object' && e.playQueue.length > 0);
+        { playQueue: true, qcolumns: columns },
+        e => typeof e.playQueue === 'object' && e.playQueue.length > 0);
 
     await expectation.ready;
     await client.addToPlayQueue(0, 0);
     await expectation.done;
 
-    const expected = await client.getPlayQueue();
+    const expected = await client.getPlayQueue(columns);
     const actual = expectation.lastEvent.playQueue;
 
     assert.deepEqual(actual, expected);
