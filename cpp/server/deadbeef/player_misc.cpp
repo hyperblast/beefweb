@@ -49,8 +49,10 @@ void PlayerImpl::disconnect()
     artworkFetcher_.reset();
 }
 
-std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery*)
+std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 {
+    auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
+
     PlaylistLockGuard lock(playlistMutex_);
 
     std::vector<PlayQueueItemInfo> items;
@@ -70,7 +72,16 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery*)
         auto playlistId = playlists_.getId(playlist.get());
         auto playlistIndex = ddbApi->plt_get_idx(playlist.get());
         auto itemIndex = ddbApi->plt_get_item_idx(playlist.get(), item.get(), PL_MAIN);
-        items.emplace_back(playlistId, playlistIndex, itemIndex);
+
+        if (queryImpl)
+        {
+            auto columns = evaluateColumns(playlist.get(), item.get(), queryImpl->formatters);
+            items.emplace_back(playlistId, playlistIndex, itemIndex, std::move(columns));
+        }
+        else
+        {
+            items.emplace_back(playlistId, playlistIndex, itemIndex);
+        }
     }
 
     return items;

@@ -125,8 +125,15 @@ struct PlaylistItemInfo
 
 struct PlayQueueItemInfo
 {
-    PlayQueueItemInfo(std::string playlistIdVal, int32_t playlistIndexVal, int32_t itemIndexVal)
-        : playlistId(std::move(playlistIdVal)), playlistIndex(playlistIndexVal), itemIndex(itemIndexVal)
+    PlayQueueItemInfo(
+        std::string playlistIdVal,
+        int32_t playlistIndexVal,
+        int32_t itemIndexVal,
+        std::vector<std::string> columnsVal = std::vector<std::string>())
+        : playlistId(std::move(playlistIdVal)),
+          playlistIndex(playlistIndexVal),
+          itemIndex(itemIndexVal),
+          columns(std::move(columnsVal))
     {
     }
 
@@ -136,6 +143,7 @@ struct PlayQueueItemInfo
     std::string playlistId;
     int32_t playlistIndex;
     int32_t itemIndex;
+    std::vector<std::string> columns;
 };
 
 struct PlaylistItemsResult
