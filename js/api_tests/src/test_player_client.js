@@ -38,22 +38,22 @@ class TestPlayerClient extends PlayerClient
         this.config = config;
     }
 
-    async resetState()
+    async resetState(options)
     {
-        await this.stop();
-        const state = await this.waitForState('stopped');
-
-        await this.setPlayerState({
-            isMuted: false,
-            volume: state.volume.max,
-            playbackMode: 0,
-            options: state.options.map(o => getDefaultState(o)),
-        });
-
-        if (this.config.playerId === 'foobar2000')
+        if (options.playerState)
         {
-            this.clearPlayQueue();
+            await this.stop();
+            const state = await this.waitForState('stopped');
+
+            await this.setPlayerState({
+                isMuted: false,
+                volume: state.volume.max,
+                playbackMode: 0,
+                options: state.options.map(o => getDefaultState(o)),
+            });
         }
+
+        await this.clearPlayQueue();
 
         const playlists = await this.getPlaylists();
 

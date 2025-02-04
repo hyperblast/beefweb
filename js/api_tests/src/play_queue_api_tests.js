@@ -1,7 +1,9 @@
 import q from 'qunit';
 import { client, config, tracks, usePlayer } from './test_env.js';
 
-q.module('play queue api', usePlayer());
+q.module('play queue api', usePlayer({
+    resetOptions: { playerState: false }
+}));
 
 async function setupTracks()
 {

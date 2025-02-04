@@ -19,14 +19,14 @@ export class TestContext
 
     async beginSuite(options = {})
     {
-        const pluginSettings = Object.assign(
-            {}, this.config.pluginSettings, options.pluginSettings);
-
+        const pluginSettings = Object.assign({}, this.config.pluginSettings, options.pluginSettings);
+        const resetOptions = Object.assign({ playerState: true }, options.resetOptions);
         const axiosConfig = options.axiosConfig || null;
         const environment = options.environment || null;
 
         this.options = options = {
             pluginSettings,
+            resetOptions,
             axiosConfig,
             environment
         };
@@ -55,7 +55,7 @@ export class TestContext
     async beginTest()
     {
         this.client.handler.init(this.options.axiosConfig);
-        await this.client.resetState();
+        await this.client.resetState(this.options.resetOptions);
     }
 
     endTest()
