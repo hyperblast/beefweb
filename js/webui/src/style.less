@@ -100,6 +100,7 @@ body {
     --color-shadow: rgba(189, 189, 189, 0.7);
     --color-play-button: #006600;
     --color-stop-button: #b30000;
+    --color-link: #0000F0;
 }
 
 .st-uitheme-dark {
@@ -111,6 +112,7 @@ body {
     --color-shadow: rgba(0, 0, 0, 0.7);
     --color-play-button: #00aa00;
     --color-stop-button: #e30000;
+    --color-link: #ebf0ea;
 }
 
 /* Elements */
@@ -732,6 +734,33 @@ body {
 .setting-editor-enum,
 .setting-editor-text {
     .input-element();
+}
+
+.about-box {
+    max-width: 40rem;
+}
+
+.about-box-link {
+    margin-right: 1rem;
+    text-decoration: underline;
+    text-wrap: nowrap;
+    display: inline-block;
+    padding: 0.5rem 0;
+
+    color: var(--color-link);
+
+    &:hover {
+        color: var(--color-link);
+    }
+
+    &:visited {
+        color: var(--color-link);
+    }
+}
+
+.license-text {
+    font-family: monospace;
+    font-size: 110%;
 }
 
 .st-mediasize-medium-up {

@@ -4,6 +4,7 @@ import ModelBinding from './model_binding.js';
 import GeneralSettings from './general_settings.js';
 import ColumnsSettings from './columns_settings.js';
 import ServiceContext from './service_context.js';
+import AboutBox from './about_box.js';
 
 class SettingsContent extends React.PureComponent
 {
@@ -17,6 +18,7 @@ class SettingsContent extends React.PureComponent
         this.renderView = {
             [SettingsView.general]: this.renderGeneral,
             [SettingsView.columns]: this.renderColumns,
+            [SettingsView.about]: this.renderAbout,
         };
     }
 
@@ -34,6 +36,11 @@ class SettingsContent extends React.PureComponent
     renderColumns()
     {
         return <ColumnsSettings columnsSettingsModel={this.context.columnsSettingsModel} />;
+    }
+
+    renderAbout()
+    {
+        return <AboutBox />;
     }
 
     render()
