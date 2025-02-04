@@ -124,7 +124,7 @@ export class TestContextFactory
 
     createClient(config)
     {
-        return new TestPlayerClient(new RequestHandler(config.serverUrl));
+        return new TestPlayerClient(new RequestHandler(config.serverUrl), config);
     }
 
     createPlayer(config)

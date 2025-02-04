@@ -31,9 +31,11 @@ function getDefaultState(option)
 
 class TestPlayerClient extends PlayerClient
 {
-    constructor(handler)
+    constructor(handler, config)
     {
         super(handler);
+
+        this.config = config;
     }
 
     async resetState()
@@ -48,12 +50,15 @@ class TestPlayerClient extends PlayerClient
             options: state.options.map(o => getDefaultState(o)),
         });
 
+        if (this.config.playerId === 'foobar2000')
+        {
+            this.clearPlayQueue();
+        }
+
         const playlists = await this.getPlaylists();
 
         for (let p of playlists)
             await this.removePlaylist(p.id);
-
-        await this.clearPlayQueue();
     }
 
     async waitUntilReady()
