@@ -15,6 +15,8 @@ constexpr char PLAYLISTS_KEY[] = "playlists";
 
 constexpr char PLAYLIST_ITEMS_KEY[] = "playlistItems";
 
+constexpr char PLAY_QUEUE_KEY[] = "playQueue";
+
 }
 
 QueryController::QueryController(Request* request, Player* player, EventDispatcher* dispatcher)
@@ -65,6 +67,9 @@ PlayerEvents QueryController::readEventMask()
     if (optionalParam<bool>(PLAYLIST_ITEMS_KEY, false))
         mask |= PlayerEvents::PLAYLIST_ITEMS_CHANGED;
 
+    if (optionalParam<bool>(PLAY_QUEUE_KEY, false))
+        mask |= PlayerEvents::PLAY_QUEUE_CHANGED;
+
     if (mask == PlayerEvents::NONE)
         throw InvalidRequestException("at least one key is required");
 
@@ -76,15 +81,22 @@ void QueryController::createQueries(PlayerEvents events)
     if (hasFlags(events, PlayerEvents::PLAYER_CHANGED))
     {
         if (auto columns = optionalParam<std::vector<std::string>>("trcolumns"))
-            trackQuery_ = player_->createTrackQuery(*columns);
+            activeItemQuery_ = player_->createColumnsQuery(*columns);
     }
 
     if (hasFlags(events, PlayerEvents::PLAYLIST_ITEMS_CHANGED))
     {
-        playlistQuery_ = player_->createPlaylistQuery(
-            param<PlaylistRef>("plref"),
-            param<Range>("plrange"),
-            param<std::vector<std::string>>("plcolumns"));
+        playlistRef_ = param<PlaylistRef>("plref");
+        playlistRange_ = param<Range>("plrange");
+        playlistQuery_ = player_->createColumnsQuery(param<std::vector<std::string>>("plcolumns"));
+    }
+
+    if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
+    {
+        if (auto columns = optionalParam<std::vector<std::string>>("qcolumns"))
+        {
+            queueQuery_ = player_->createColumnsQuery(columns.get());
+        }
     }
 }
 
@@ -106,6 +118,9 @@ Json QueryController::eventsToJson(PlayerEvents events)
     if (hasFlags(events, PlayerEvents::PLAYLIST_ITEMS_CHANGED))
         obj[PLAYLIST_ITEMS_KEY] = true;
 
+    if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
+        obj[PLAY_QUEUE_KEY] = true;
+
     return obj;
 }
 
@@ -114,13 +129,16 @@ Json QueryController::stateToJson(PlayerEvents events)
     Json obj = Json::object();
 
     if (hasFlags(events, PlayerEvents::PLAYER_CHANGED))
-        obj[PLAYER_KEY] = *player_->queryPlayerState(trackQuery_.get());
+        obj[PLAYER_KEY] = *player_->queryPlayerState(activeItemQuery_.get());
 
     if (hasFlags(events, PlayerEvents::PLAYLIST_SET_CHANGED))
         obj[PLAYLISTS_KEY] = player_->getPlaylists();
 
     if (hasFlags(events, PlayerEvents::PLAYLIST_ITEMS_CHANGED))
-        obj[PLAYLIST_ITEMS_KEY] = player_->getPlaylistItems(playlistQuery_.get());
+        obj[PLAYLIST_ITEMS_KEY] = player_->getPlaylistItems(playlistRef_, playlistRange_, playlistQuery_.get());
+
+    if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
+        obj[PLAY_QUEUE_KEY] = player_->getPlayQueue(queueQuery_.get());
 
     return obj;
 }

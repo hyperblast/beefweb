@@ -12,17 +12,36 @@
 
 namespace msrv::player_deadbeef {
 
-class PlayerImpl : public Player
+class ColumnsQueryImpl final : public ColumnsQuery
+{
+public:
+    explicit ColumnsQueryImpl(const std::vector<std::string>& columns)
+        : columns_(compileColumns(columns))
+    {
+    }
+
+    ~ColumnsQueryImpl() = default;
+
+    std::vector<std::string> evaluate(ddb_playlist_t* playlist, ddb_playItem_t* item)
+    {
+        return evaluateColumns(playlist, item, columns_);
+    }
+
+private:
+    std::vector<TitleFormatPtr> columns_;
+};
+
+class PlayerImpl final : public Player
 {
 public:
     static void endModifyPlaylist(ddb_playlist_t* playlist);
 
     PlayerImpl();
-    ~PlayerImpl() override;
+    ~PlayerImpl() = default;
 
     std::unique_ptr<WorkQueue> createWorkQueue() override;
 
-    PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery = nullptr) override;
+    PlayerStatePtr queryPlayerState(ColumnsQuery* activeItemQuery = nullptr) override;
 
     void playCurrent() override;
     void playItem(const PlaylistRef& playlist, int32_t itemIndex) override;
@@ -40,11 +59,10 @@ public:
     void seekRelative(double offsetSeconds) override;
     void setVolume(double val) override;
 
-    TrackQueryPtr createTrackQuery(
-        const std::vector<std::string>& columns) override;
+    ColumnsQueryPtr createColumnsQuery(const std::vector<std::string>& columns) override;
 
     std::vector<PlaylistInfo> getPlaylists() override;
-    PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) override;
+    PlaylistItemsResult getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query) override;
 
     void addPlaylist(int32_t index, const std::string& title) override;
     void removePlaylist(const PlaylistRef& playlist) override;
@@ -82,10 +100,11 @@ public:
 
     void sortPlaylistRandom(const PlaylistRef& plref) override;
 
-    PlaylistQueryPtr createPlaylistQuery(
-        const PlaylistRef& playlist,
-        const Range& range,
-        const std::vector<std::string>& columns) override;
+    std::vector<PlayQueueItemInfo> getPlayQueue(ColumnsQuery* query = nullptr) override;
+    void addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex) override;
+    void removeFromPlayQueue(int32_t queueIndex) override;
+    void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) override;
+    void clearPlayQueue() override;
 
     boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
@@ -98,7 +117,7 @@ private:
     using PlaylistItemSelector = DB_playItem_t* (*)(DB_playItem_t*, int);
 
     PlaybackState getPlaybackState(ddb_playItem_t* activeItem);
-    void queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, TrackQuery* query);
+    void queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, ColumnsQuery* query);
     void queryVolume(VolumeInfo* info);
     void queryInfo(PlayerInfo* info);
     void initVersion();

@@ -52,8 +52,8 @@ ResponsePtr PlaylistsController::getPlaylistItems()
     auto range = param<Range>("range");
     auto columns = param<std::vector<std::string>>("columns");
 
-    auto query = player_->createPlaylistQuery(plref, range, columns);
-    auto items = player_->getPlaylistItems(query.get());
+    auto query = player_->createColumnsQuery(columns);
+    auto items = player_->getPlaylistItems(plref, range, query.get());
 
     return Response::json({{"playlistItems", items}});
 }

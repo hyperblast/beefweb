@@ -70,7 +70,12 @@ using TitleFormatPtr = std::unique_ptr<char, TitleFormatDeleter>;
 
 constexpr int TITLE_FORMAT_BUFFER_SIZE = 1024;
 
-PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index);
+inline PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index)
+{
+    return index >= 0
+           ? PlaylistItemPtr(ddbApi->plt_get_item_for_idx(playlist, index, PL_MAIN))
+           : PlaylistItemPtr();
+}
 
 inline PlaylistItemPtr copyPlaylistItemPtr(ddb_playItem_t* item)
 {

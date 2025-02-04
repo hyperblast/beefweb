@@ -4,21 +4,6 @@
 namespace msrv {
 namespace player_deadbeef {
 
-class PlaylistQueryImpl : public PlaylistQuery
-{
-public:
-    PlaylistQueryImpl(
-        const PlaylistRef& plrefVal,
-        const Range& rangeVal,
-        const std::vector<std::string>& columns);
-
-    ~PlaylistQueryImpl() override;
-
-    PlaylistRef plref;
-    Range range;
-    std::vector<TitleFormatPtr> formatters;
-};
-
 class AddItemsTask
 {
 public:
@@ -55,14 +40,6 @@ void PlayerImpl::endModifyPlaylist(ddb_playlist_t* playlist)
 {
     ddbApi->plt_save_config(playlist);
     ddbApi->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
-}
-
-std::unique_ptr<PlaylistQuery> PlayerImpl::createPlaylistQuery(
-    const PlaylistRef& plref,
-    const Range& range,
-    const std::vector<std::string>& columns)
-{
-    return std::make_unique<PlaylistQueryImpl>(plref, range, columns);
 }
 
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
@@ -104,19 +81,19 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     return playlists;
 }
 
-PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* query)
+PlaylistItemsResult PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query)
 {
-    auto queryImpl = dynamic_cast<PlaylistQueryImpl*>(query);
+    auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
     if (!queryImpl)
-        throw std::logic_error("Expected PlaylistQueryImpl");
+        throw std::logic_error("ColumnsQueryImpl is required");
 
     PlaylistLockGuard lock(playlistMutex_);
 
-    PlaylistPtr playlist = playlists_.resolve(queryImpl->plref);
+    PlaylistPtr playlist = playlists_.resolve(plref);
 
     int32_t totalCount = ddbApi->plt_get_item_count(playlist.get(), PL_MAIN);
-    int32_t offset = std::min(queryImpl->range.offset, totalCount);
-    int32_t endOffset = std::min(queryImpl->range.endOffset(), totalCount);
+    int32_t offset = std::min(range.offset, totalCount);
+    int32_t endOffset = std::min(range.endOffset(), totalCount);
     int32_t count = endOffset - offset;
 
     std::vector<PlaylistItemInfo> items;
@@ -130,8 +107,7 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(PlaylistQuery* query)
         while (item && count > 0)
         {
             PlaylistItemInfo itemInfo;
-            itemInfo.columns = evaluateColumns(
-                playlist.get(), item.get(), queryImpl->formatters);
+            itemInfo.columns = queryImpl->evaluate(playlist.get(), item.get());
             items.emplace_back(std::move(itemInfo));
             item.reset(ddbApi->pl_get_next(item.get(), PL_MAIN));
             count--;
@@ -306,18 +282,6 @@ void PlayerImpl::sortPlaylistRandom(const PlaylistRef& plref)
     ddbApi->plt_sort_v2(playlist.get(), PL_MAIN, -1, nullptr, DDB_SORT_RANDOM);
     endModifyPlaylist(playlist.get());
 }
-
-PlaylistQueryImpl::PlaylistQueryImpl(
-    const PlaylistRef& plrefVal,
-    const Range& rangeVal,
-    const std::vector<std::string>& columns)
-    : plref(plrefVal),
-      range(rangeVal),
-      formatters(compileColumns(columns))
-{
-}
-
-PlaylistQueryImpl::~PlaylistQueryImpl() = default;
 
 AddItemsTask::AddItemsTask(
     PlaylistMapping* playlists,

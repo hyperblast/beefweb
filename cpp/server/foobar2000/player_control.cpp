@@ -6,18 +6,7 @@ namespace player_foobar2000 {
 
 namespace {
 
-class TrackQueryImpl : public TrackQuery
-{
-public:
-    TrackQueryImpl(TitleFormatVector columnsVal)
-        : columns(std::move(columnsVal))
-    {
-    }
-
-    TitleFormatVector columns;
-};
-
-inline double clampVolume(double value)
+double clampVolume(double value)
 {
     return std::max(std::min(value, 0.0), static_cast<double>(playback_control::volume_mute));
 }
@@ -82,7 +71,7 @@ void PlayerImpl::queryVolume(VolumeInfo* volume)
     volume->isMuted = playbackControl_->is_muted();
 }
 
-void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* queryPtr)
+void PlayerImpl::queryActiveItem(ActiveItemInfo* info, ColumnsQuery* query)
 {
     t_size activePlaylist;
     t_size activeItem;
@@ -90,10 +79,9 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* queryPtr)
     info->position = playbackControl_->playback_get_position();
     info->duration = playbackControl_->playback_get_length_ex();
 
-    if (queryPtr)
+    if (auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query))
     {
-        info->columns = evaluatePlaybackColumns(
-            static_cast<TrackQueryImpl*>(queryPtr)->columns);
+        info->columns = evaluatePlaybackColumns(queryImpl->columns);
     }
 
     if (playlistManager_->get_playing_item_location(&activePlaylist, &activeItem))
@@ -109,7 +97,7 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, TrackQuery* queryPtr)
     }
 }
 
-PlayerStatePtr PlayerImpl::queryPlayerState(TrackQuery* activeItemQuery)
+PlayerStatePtr PlayerImpl::queryPlayerState(ColumnsQuery* activeItemQuery)
 {
     playlists_->ensureInitialized();
 
@@ -265,11 +253,6 @@ void PlayerImpl::seekRelative(double offsetSeconds)
 void PlayerImpl::setVolume(double val)
 {
     playbackControl_->set_volume(static_cast<float>(clampVolume(val)));
-}
-
-TrackQueryPtr PlayerImpl::createTrackQuery(const std::vector<std::string>& columns)
-{
-    return std::make_unique<TrackQueryImpl>(compileColumns(columns));
 }
 
 }

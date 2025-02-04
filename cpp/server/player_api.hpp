@@ -36,6 +36,7 @@ enum class PlayerEvents : int
     PLAYER_CHANGED = 1,
     PLAYLIST_SET_CHANGED = 2,
     PLAYLIST_ITEMS_CHANGED = 4,
+    PLAY_QUEUE_CHANGED = 8,
 };
 
 MSRV_ENUM_FLAGS(PlayerEvents, int);
@@ -111,7 +112,7 @@ struct PlaylistItemInfo
 {
     PlaylistItemInfo() = default;
 
-    PlaylistItemInfo(std::vector<std::string> columnsVal)
+    explicit PlaylistItemInfo(std::vector<std::string> columnsVal)
         : columns(std::move(columnsVal))
     {
     }
@@ -122,10 +123,31 @@ struct PlaylistItemInfo
     std::vector<std::string> columns;
 };
 
+struct PlayQueueItemInfo
+{
+    PlayQueueItemInfo(
+        std::string playlistIdVal,
+        int32_t playlistIndexVal,
+        int32_t itemIndexVal,
+        std::vector<std::string> columnsVal = std::vector<std::string>())
+        : playlistId(std::move(playlistIdVal)),
+          playlistIndex(playlistIndexVal),
+          itemIndex(itemIndexVal),
+          columns(std::move(columnsVal))
+    {
+    }
+
+    PlayQueueItemInfo(PlayQueueItemInfo&&) = default;
+    PlayQueueItemInfo& operator=(PlayQueueItemInfo&&) = default;
+
+    std::string playlistId;
+    int32_t playlistIndex;
+    int32_t itemIndex;
+    std::vector<std::string> columns;
+};
+
 struct PlaylistItemsResult
 {
-    PlaylistItemsResult() = default;
-
     PlaylistItemsResult(
         int32_t offsetVal,
         int32_t totalCountVal,
@@ -203,22 +225,13 @@ private:
     std::string id_;
 };
 
-class TrackQuery
+class ColumnsQuery
 {
 public:
-    TrackQuery() = default;
-    virtual ~TrackQuery();
+    ColumnsQuery() = default;
+    virtual ~ColumnsQuery() = default;
 
-    MSRV_NO_COPY_AND_ASSIGN(TrackQuery);
-};
-
-class PlaylistQuery
-{
-public:
-    PlaylistQuery() = default;
-    virtual ~PlaylistQuery();
-
-    MSRV_NO_COPY_AND_ASSIGN(PlaylistQuery);
+    MSRV_NO_COPY_AND_ASSIGN(ColumnsQuery);
 };
 
 struct ArtworkQuery
@@ -340,21 +353,20 @@ private:
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
-using TrackQueryPtr = std::unique_ptr<TrackQuery>;
-using PlaylistQueryPtr = std::unique_ptr<PlaylistQuery>;
+using ColumnsQueryPtr = std::unique_ptr<ColumnsQuery>;
 using PlayerEventsCallback = std::function<void(PlayerEvents)>;
 
 class Player
 {
 public:
     Player() = default;
-    virtual ~Player();
+    virtual ~Player() = default;
 
     virtual std::unique_ptr<WorkQueue> createWorkQueue() = 0;
 
     // Player control and query API
 
-    virtual PlayerStatePtr queryPlayerState(TrackQuery* activeItemQuery) = 0;
+    virtual PlayerStatePtr queryPlayerState(ColumnsQuery* activeItemQuery) = 0;
 
     virtual void playCurrent() = 0;
     virtual void playItem(const PlaylistRef& playlist, int32_t itemIndex) = 0;
@@ -395,12 +407,12 @@ public:
         return playbackModeOption_;
     }
 
-    virtual TrackQueryPtr createTrackQuery(const std::vector<std::string>& columns) = 0;
+    virtual ColumnsQueryPtr createColumnsQuery(const std::vector<std::string>& columns) = 0;
 
     // Playlists API
 
     virtual std::vector<PlaylistInfo> getPlaylists() = 0;
-    virtual PlaylistItemsResult getPlaylistItems(PlaylistQuery* query) = 0;
+    virtual PlaylistItemsResult getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query) = 0;
 
     virtual void addPlaylist(int32_t index, const std::string& title) = 0;
     virtual void removePlaylist(const PlaylistRef& playlist) = 0;
@@ -438,10 +450,13 @@ public:
 
     virtual void sortPlaylistRandom(const PlaylistRef& plref) = 0;
 
-    virtual PlaylistQueryPtr createPlaylistQuery(
-        const PlaylistRef& playlist,
-        const Range& range,
-        const std::vector<std::string>& columns) = 0;
+    // Play queue API
+
+    virtual std::vector<PlayQueueItemInfo> getPlayQueue(ColumnsQuery* query = nullptr) = 0;
+    virtual void addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex) = 0;
+    virtual void removeFromPlayQueue(int32_t queueIndex) = 0;
+    virtual void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) = 0;
+    virtual void clearPlayQueue() = 0;
 
     // Artwork API
 

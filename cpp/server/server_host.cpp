@@ -2,6 +2,7 @@
 #include "artwork_controller.hpp"
 #include "browser_controller.hpp"
 #include "static_controller.hpp"
+#include "play_queue_controller.hpp"
 #include "player_controller.hpp"
 #include "playlists_controller.hpp"
 #include "query_controller.hpp"
@@ -52,6 +53,7 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
 
     PlayerController::defineRoutes(router, playerWorkQueue_.get(), player_);
     PlaylistsController::defineRoutes(router, playerWorkQueue_.get(), player_, settings);
+    PlayQueueController::defineRoutes(router, playerWorkQueue_.get(), player_);
     QueryController::defineRoutes(router, playerWorkQueue_.get(), player_, &dispatcher_);
     ArtworkController::defineRoutes(router, playerWorkQueue_.get(), player_, contentTypes_);
     BrowserController::defineRoutes(router, &utilityQueue_, settings);

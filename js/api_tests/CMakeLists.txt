@@ -1,7 +1,7 @@
 set(
     API_TESTS_SOURCES
     package.json
-    src/artwork_tests.js
+    src/artwork_api_tests.js
     src/authentication_tests.js
     src/browser_api_tests.js
     src/deadbeef/player_controller.js
@@ -11,6 +11,7 @@ set(
     src/foobar2000/test_context.js
     src/http_features_tests.js
     src/main.js
+    src/play_queue_api_tests.js
     src/player_api_tests.js
     src/playlists_api_tests.js
     src/query_api_tests.js

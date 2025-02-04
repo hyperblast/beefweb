@@ -18,17 +18,26 @@ PlayerImpl::PlayerImpl()
     playerEventAdapter_.setCallback(callback);
     playlistEventAdapter_.setCallback(callback);
     stopAfterCurrentTrackOption_.setCallback(callback);
+    playQueueEventAdapterFactory.get_static_instance().setCallback(callback);
 
     setPlaybackModeOption(&playbackOrderOption_);
     addOption(&playbackOrderOption_);
     addOption(&stopAfterCurrentTrackOption_);
 }
 
-PlayerImpl::~PlayerImpl() = default;
+PlayerImpl::~PlayerImpl()
+{
+    playQueueEventAdapterFactory.get_static_instance().setCallback({});
+}
 
 std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 {
     return std::make_unique<Fb2kWorkQueue>();
+}
+
+ColumnsQueryPtr PlayerImpl::createColumnsQuery(const std::vector<std::string>& columns)
+{
+    return std::make_unique<ColumnsQueryImpl>(compileColumns(columns));
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
@@ -51,6 +60,80 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
         throw InvalidRequestException("Playlist item index is out of range");
 
     return fetchArtwork(itemHandle);
+}
+
+std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
+{
+    auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
+
+    std::vector<PlayQueueItemInfo> result;
+    pfc::list_t<t_playback_queue_item> items;
+
+    playlistManager_->queue_get_contents(items);
+
+    auto size = items.get_count();
+    if (!size)
+        return result;
+
+    result.reserve(size);
+
+    pfc::string8 buffer;
+
+    for (t_size i = 0; i < size; i++)
+    {
+        const auto& item = items[i];
+        auto playlistId = playlists_->getId(item.m_playlist);
+
+        if (queryImpl)
+        {
+            auto columns = evaluatePlaylistColumns(item.m_playlist, item.m_item, queryImpl->columns, &buffer);
+            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item, std::move(columns));
+        }
+        else
+        {
+            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item);
+        }
+    }
+
+    return result;
+}
+
+void PlayerImpl::addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex)
+{
+    auto playlist = playlists_->resolve(plref);
+    playlistManager_->queue_add_item_playlist(playlist, itemIndex);
+}
+
+void PlayerImpl::removeFromPlayQueue(int32_t queueIndex)
+{
+    bit_array_one mask(queueIndex);
+    playlistManager_->queue_remove_mask(mask);
+}
+
+void PlayerImpl::removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex)
+{
+    auto playlist = playlists_->resolve(plref);
+    metadb_handle_ptr handle;
+
+    if (itemIndex < 0 || !playlistManager_->playlist_get_item_handle(handle, playlist, static_cast<t_size>(itemIndex)))
+        throw InvalidRequestException("itemIndex is out of range");
+
+    t_playback_queue_item item;
+    item.m_handle = handle;
+    item.m_playlist = playlist;
+    item.m_item = itemIndex;
+
+    auto queueIndex = playlistManager_->queue_find_index(item);
+    if (queueIndex == pfc::infinite_size)
+        return;
+
+    bit_array_one mask(queueIndex);
+    playlistManager_->queue_remove_mask(mask);
+}
+
+void PlayerImpl::clearPlayQueue()
+{
+    playlistManager_->queue_flush();
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const

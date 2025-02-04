@@ -8,13 +8,6 @@
 namespace msrv {
 namespace player_deadbeef {
 
-PlaylistItemPtr resolvePlaylistItem(ddb_playlist_t* playlist, int32_t index)
-{
-    return index >= 0
-           ? PlaylistItemPtr(ddbApi->plt_get_item_for_idx(playlist, index, PL_MAIN))
-           : PlaylistItemPtr();
-}
-
 std::vector<TitleFormatPtr> compileColumns(
     const std::vector<std::string>& columns, bool throwOnError)
 {

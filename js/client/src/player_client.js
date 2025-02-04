@@ -211,6 +211,31 @@ export default class PlayerClient
         }
     }
 
+    getPlayQueue(columns)
+    {
+        return this.get('api/playqueue', { columns }).then(r => r.playQueue);
+    }
+
+    addToPlayQueue(plref, itemIndex, queueIndex = undefined)
+    {
+        return this.post('api/playqueue/add', { plref, itemIndex, queueIndex });
+    }
+
+    removeFromPlayQueueByQueueIndex(queueIndex)
+    {
+        return this.post('api/playqueue/remove', { queueIndex })
+    }
+
+    removeFromPlayQueueByItemIndex(plref, itemIndex)
+    {
+        return this.post('api/playqueue/remove', { plref, itemIndex })
+    }
+
+    clearPlayQueue()
+    {
+        return this.post('api/playqueue/clear');
+    }
+
     getFileSystemRoots()
     {
         return this.get('api/browser/roots');

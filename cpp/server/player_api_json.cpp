@@ -175,4 +175,12 @@ void to_json(Json& json, PlayerOption* const& value)
     }
 }
 
+void to_json(Json& json, const PlayQueueItemInfo& value)
+{
+    json["playlistId"] = value.playlistId;
+    json["playlistIndex"] = value.playlistIndex;
+    json["itemIndex"] = value.itemIndex;
+    json["columns"] = value.columns;
+}
+
 }

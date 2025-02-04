@@ -28,10 +28,10 @@ PlayerController::PlayerController(Request* request, Player* player)
 
 ResponsePtr PlayerController::getState()
 {
-    TrackQueryPtr query;
+    ColumnsQueryPtr query;
 
     if (auto columns = optionalParam<std::vector<std::string>>("columns"))
-        query = player_->createTrackQuery(*columns);
+        query = player_->createColumnsQuery(*columns);
 
     auto state = player_->queryPlayerState(query.get());
 
