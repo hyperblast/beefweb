@@ -31,11 +31,9 @@ function getDefaultState(option)
 
 class TestPlayerClient extends PlayerClient
 {
-    constructor(handler, config)
+    constructor(handler)
     {
         super(handler);
-
-        this.config = config;
     }
 
     async resetState(options)
