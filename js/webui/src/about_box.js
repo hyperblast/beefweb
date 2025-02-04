@@ -34,7 +34,7 @@ class AboutBox_ extends React.PureComponent
                     <a href='https://hyperblast.org/beefweb/api/' className='about-box-link' target='_blank'>API documentation</a>
                 </div>
                 <div className='about-box-item license-text'>
-                    Copyright 2015-2024 Hyperblast<br/><br/>
+                    Copyright 2015-2025 Hyperblast<br/><br/>
 
                     Permission is hereby granted, free of charge, to any person obtaining a copy
                     of this software and associated documentation files (the "Software"), to deal
