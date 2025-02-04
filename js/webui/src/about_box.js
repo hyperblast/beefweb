@@ -25,15 +25,15 @@ class AboutBox_ extends React.PureComponent
 
         return (
             <div className='about-box'>
-                <p>
+                <div className='about-box-item'>
                     Beefweb v{pluginVersion} @ {title} v{version}
-                </p>
-                <p>
+                </div>
+                <div className='about-box-item'>
                     <a href='https://hyperblast.org/donate/' className='about-box-link' target='_blank'>Donate to author</a>
                     <a href='third-party-licenses.txt' className='about-box-link' target='_blank'>Third-party licenses</a>
                     <a href='https://hyperblast.org/beefweb/api/' className='about-box-link' target='_blank'>API documentation</a>
-                </p>
-                <p className='license-text'>
+                </div>
+                <div className='about-box-item license-text'>
                     Copyright 2015-2024 Hyperblast<br/><br/>
 
                     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -53,7 +53,7 @@ class AboutBox_ extends React.PureComponent
                     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
                     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
                     THE SOFTWARE.
-                </p>
+                </div>
             </div>
         );
     }
