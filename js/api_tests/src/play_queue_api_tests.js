@@ -1,9 +1,13 @@
 import q from 'qunit';
 import { client, config, tracks, usePlayer } from './test_env.js';
 
-q.module('play queue api', usePlayer({
-    resetOptions: { playerState: false }
-}));
+// DeaDBeeF clears play queue asynchronously on stop
+// Avoid resetting player state for stable runs
+const resetOptions = {
+    playerState: false
+};
+
+q.module('play queue api', usePlayer({ resetOptions }));
 
 async function setupTracks()
 {
