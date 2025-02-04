@@ -105,6 +105,8 @@ void PlayerImpl::addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int
 
 void PlayerImpl::removeFromPlayQueue(int32_t queueIndex)
 {
+    PlaylistLockGuard lock(playlistMutex_);
+
     if (queueIndex < 0 || queueIndex >= ddbApi->playqueue_get_count())
         throw InvalidRequestException("queueIndex is out of range");
 
