@@ -143,6 +143,8 @@ ResponsePtr PlaylistsController::addItems()
     if (optionalParam("play", false))
         options |= AddItemsOptions::PLAY;
 
+    normalizedItems.reserve(items.size());
+
     for (auto& item : items)
         normalizedItems.emplace_back(validateAndNormalizeItem(item));
 
