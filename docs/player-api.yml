@@ -369,6 +369,25 @@ paths:
                   playlistItems:
                     $ref: '#/components/schemas/PlaylistItemsResult'
   /playlists/{playlistId}:
+    get:
+      tags:
+      - playlists
+      summary: Get single playlist
+      operationId: getPlaylist
+      parameters:
+        - name: playlistId
+          in: path
+          description: Playlist id or index
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistItemInfo'
     post:
       tags:
       - playlists
