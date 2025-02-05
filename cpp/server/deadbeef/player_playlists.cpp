@@ -147,18 +147,12 @@ PlaylistInfo PlayerImpl::addPlaylist(int32_t index, const std::string& title, bo
     int realIndex = ddbApi->plt_add(index, title.c_str());
     PlaylistPtr playlist(ddbApi->plt_get_for_idx(realIndex));
 
-    bool isCurrent;
     if (setCurrent)
     {
         ddbApi->plt_set_curr(playlist.get());
-        isCurrent = true;
-    }
-    else
-    {
-        isCurrent = false;
     }
 
-    return getPlaylistInfo(playlist.get(), realIndex, isCurrent);
+    return getPlaylistInfo(playlist.get(), realIndex, setCurrent);
 }
 
 void PlayerImpl::removePlaylist(const PlaylistRef& plref)
