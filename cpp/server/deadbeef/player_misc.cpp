@@ -55,6 +55,8 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 
     PlaylistLockGuard lock(playlistMutex_);
 
+    playlists_.ensureInitialized();
+
     std::vector<PlayQueueItemInfo> items;
     auto size = ddbApi->playqueue_get_count();
 

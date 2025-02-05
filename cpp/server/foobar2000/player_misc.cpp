@@ -66,6 +66,8 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 {
     auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
 
+    playlists_->ensureInitialized();
+
     std::vector<PlayQueueItemInfo> result;
     pfc::list_t<t_playback_queue_item> items;
 
