@@ -247,12 +247,12 @@ void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Pla
     routes.post("", &PlaylistsController::updatePlaylists);
 
     routes.get(":plref", &PlaylistsController::getPlaylist);
+    routes.post(":plref", &PlaylistsController::updatePlaylist);
+    routes.post(":plref/clear", &PlaylistsController::clearPlaylist);
+
     routes.post("add", ControllerAction<PlaylistsController>(&PlaylistsController::addPlaylist));
     routes.post("remove/:plref", &PlaylistsController::removePlaylist);
     routes.post("move/:plref/:index", &PlaylistsController::movePlaylist);
-
-    routes.post(":plref", &PlaylistsController::updatePlaylist);
-    routes.post(":plref/clear", &PlaylistsController::clearPlaylist);
 
     routes.post(
         ":plref/items/add",
