@@ -4,15 +4,8 @@ import { client, config, tracks, usePlayer } from './test_env.js';
 
 q.module('playlists api', usePlayer());
 
-q.test('get playlists', async assert =>
+function assertPlaylist(assert, playlist)
 {
-    const playlists = await client.getPlaylists();
-
-    assert.ok(playlists);
-    assert.equal(playlists.length, 1);
-
-    const playlist = playlists[0];
-
     assert.equal(typeof playlist.id, 'string');
     assert.equal(typeof playlist.title, 'string');
 
@@ -25,6 +18,27 @@ q.test('get playlists', async assert =>
         itemCount: 0,
         totalTime: 0,
     });
+}
+
+q.test('get playlists', async assert =>
+{
+    const playlists = await client.getPlaylists();
+
+    assert.ok(playlists);
+    assert.equal(playlists.length, 1);
+
+    const playlist = playlists[0];
+
+    assertPlaylist(assert, playlist);
+});
+
+q.test('get single playlist', async assert =>
+{
+    const p1 = await client.getPlaylist('current');
+    const p2 = await client.getPlaylist(0);
+
+    assert.deepEqual(p1, p2);
+    assertPlaylist(assert, p1);
 });
 
 q.test('get playlist items', async assert =>
@@ -84,7 +98,7 @@ q.test('add playlist simple', async assert =>
 
 q.test('add playlist full', async assert =>
 {
-    await client.addPlaylist({ title: 'My playlist', index: 0 });
+    await client.addPlaylist({ title: 'My playlist', index: 0, setCurrent: true });
 
     const playlists = await client.getPlaylists();
     assert.equal(playlists.length, 2);
@@ -96,7 +110,7 @@ q.test('add playlist full', async assert =>
     assert.deepEqual(playlist, {
         index: 0,
         title: 'My playlist',
-        isCurrent: false,
+        isCurrent: true,
         itemCount: 0,
         totalTime: 0,
     });

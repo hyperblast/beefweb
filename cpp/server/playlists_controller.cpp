@@ -41,6 +41,12 @@ PlaylistsController::PlaylistsController(Request* request, Player* player, Setti
 
 PlaylistsController::~PlaylistsController() = default;
 
+ResponsePtr PlaylistsController::getPlaylist()
+{
+    auto info = player_->getPlaylist(param<PlaylistRef>("plref"));
+    return Response::json(Json(info));
+}
+
 ResponsePtr PlaylistsController::getPlaylists()
 {
     return Response::json({{"playlists", player_->getPlaylists()}});
@@ -58,12 +64,15 @@ ResponsePtr PlaylistsController::getPlaylistItems()
     return Response::json({{"playlistItems", items}});
 }
 
-void PlaylistsController::addPlaylist()
+ResponsePtr PlaylistsController::addPlaylist()
 {
     auto index = optionalParam<int32_t>("index", -1);
     auto title = optionalParam<std::string>("title", "New playlist");
+    auto setCurrent = optionalParam<bool>("setCurrent", false);
 
-    player_->addPlaylist(index, title);
+    auto info = player_->addPlaylist(index, title, setCurrent);
+
+    return Response::json(Json(info));
 }
 
 void PlaylistsController::removePlaylist()
@@ -133,6 +142,8 @@ ResponsePtr PlaylistsController::addItems()
 
     if (optionalParam("play", false))
         options |= AddItemsOptions::PLAY;
+
+    normalizedItems.reserve(items.size());
 
     for (auto& item : items)
         normalizedItems.emplace_back(validateAndNormalizeItem(item));
@@ -237,12 +248,13 @@ void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Pla
     routes.get("", &PlaylistsController::getPlaylists);
     routes.post("", &PlaylistsController::updatePlaylists);
 
-    routes.post("add", &PlaylistsController::addPlaylist);
-    routes.post("remove/:plref", &PlaylistsController::removePlaylist);
-    routes.post("move/:plref/:index", &PlaylistsController::movePlaylist);
-
+    routes.get(":plref", &PlaylistsController::getPlaylist);
     routes.post(":plref", &PlaylistsController::updatePlaylist);
     routes.post(":plref/clear", &PlaylistsController::clearPlaylist);
+
+    routes.post("add", ControllerAction<PlaylistsController>(&PlaylistsController::addPlaylist));
+    routes.post("remove/:plref", &PlaylistsController::removePlaylist);
+    routes.post("move/:plref/:index", &PlaylistsController::movePlaylist);
 
     routes.post(
         ":plref/items/add",

@@ -16,10 +16,11 @@ public:
     PlaylistsController(Request* request, Player* player, SettingsDataPtr settings);
     ~PlaylistsController();
 
+    ResponsePtr getPlaylist();
     ResponsePtr getPlaylists();
     ResponsePtr getPlaylistItems();
 
-    void addPlaylist();
+    ResponsePtr addPlaylist();
     void removePlaylist();
     void movePlaylist();
 

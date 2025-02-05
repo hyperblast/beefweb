@@ -4,6 +4,7 @@
 - Do not fail when configured music directory does not exist
 - Replace invalid UTF-8 chars in JSON responses instead of failing
 - Add about box in web UI
+- Extend playlists API
 ### DeaDBeeF
 - Raise minimal API version to v1.10 (corresponds to DeaDBeeF v1.8.0)
 - Add support for artwork plugin v2 (used since DeaDBeeF v1.9)

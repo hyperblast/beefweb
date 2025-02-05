@@ -411,10 +411,11 @@ public:
 
     // Playlists API
 
+    virtual PlaylistInfo getPlaylist(const PlaylistRef& plref) = 0;
     virtual std::vector<PlaylistInfo> getPlaylists() = 0;
     virtual PlaylistItemsResult getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query) = 0;
 
-    virtual void addPlaylist(int32_t index, const std::string& title) = 0;
+    virtual PlaylistInfo addPlaylist(int32_t index, const std::string& title, bool setCurrent) = 0;
     virtual void removePlaylist(const PlaylistRef& playlist) = 0;
     virtual void movePlaylist(const PlaylistRef& playlist, int32_t index) = 0;
     virtual void clearPlaylist(const PlaylistRef& playlist) = 0;

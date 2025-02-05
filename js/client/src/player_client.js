@@ -111,6 +111,11 @@ export default class PlayerClient
         return this.post('api/player/next', params);
     }
 
+    getPlaylist(plref)
+    {
+        return this.get(`api/playlists/${plref}`);
+    }
+
     getPlaylists()
     {
         return this.get('api/playlists').then(r => r.playlists);

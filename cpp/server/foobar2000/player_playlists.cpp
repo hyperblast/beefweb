@@ -168,6 +168,34 @@ void PlayerImpl::makeItemsMask(
     mask->presort();
 }
 
+PlaylistInfo PlayerImpl::getPlaylistInfo(t_size index, bool isCurrent) const
+{
+    PlaylistInfo info;
+
+    pfc::string8 nameBuffer;
+
+    info.id = playlists_->getId(index);
+    info.index = static_cast<int32_t>(index);
+    info.isCurrent = isCurrent;
+    info.itemCount = static_cast<int32_t>(playlistManager_->playlist_get_item_count(index));
+
+    if (playlistManager_->playlist_get_name(index, nameBuffer))
+        info.title.assign(nameBuffer.get_ptr(), nameBuffer.get_length());
+
+    info.totalTime = 0.0;
+
+    return info;
+}
+
+PlaylistInfo PlayerImpl::getPlaylist(const PlaylistRef& plref)
+{
+    playlists_->ensureInitialized();
+
+    auto index = playlists_->resolve(plref);
+    auto current = playlistManager_->get_active_playlist();
+    return getPlaylistInfo(index, index == current);
+}
+
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
 {
     playlists_->ensureInitialized();
@@ -178,23 +206,9 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     std::vector<PlaylistInfo> playlists;
     playlists.reserve(count);
 
-    pfc::string8 nameBuffer;
-
     for (t_size i = 0; i < count; i++)
     {
-        PlaylistInfo info;
-
-        info.id = playlists_->getId(i);
-        info.index = i;
-        info.isCurrent = i == current;
-        info.itemCount = playlistManager_->playlist_get_item_count(i);
-
-        if (playlistManager_->playlist_get_name(i, nameBuffer))
-            info.title.assign(nameBuffer.get_ptr(), nameBuffer.get_length());
-
-        info.totalTime = 0.0;
-
-        playlists.emplace_back(std::move(info));
+        playlists.emplace_back(getPlaylistInfo(i, i == current));
     }
 
     return playlists;
@@ -227,14 +241,21 @@ PlaylistItemsResult  PlayerImpl::getPlaylistItems(const PlaylistRef& plref, cons
     return PlaylistItemsResult(offset, totalCount, std::move(items));
 }
 
-void PlayerImpl::addPlaylist(int32_t index, const std::string& title)
+PlaylistInfo PlayerImpl::addPlaylist(int32_t index, const std::string& title, bool setCurrent)
 {
     playlists_->ensureInitialized();
 
-    playlistManager_->create_playlist(
+    auto realIndex = playlistManager_->create_playlist(
         title.data(),
         title.length(),
         clampIndex(index, playlistManager_->get_playlist_count(), pfc::infinite_size));
+
+    if (setCurrent)
+    {
+        playlistManager_->set_active_playlist(realIndex);
+    }
+
+    return getPlaylistInfo(realIndex, setCurrent);
 }
 
 void PlayerImpl::removePlaylist(const PlaylistRef& playlist)

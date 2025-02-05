@@ -61,10 +61,11 @@ public:
 
     ColumnsQueryPtr createColumnsQuery(const std::vector<std::string>& columns) override;
 
+    PlaylistInfo getPlaylist(const PlaylistRef& plref) override;
     std::vector<PlaylistInfo> getPlaylists() override;
     PlaylistItemsResult getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query) override;
 
-    void addPlaylist(int32_t index, const std::string& title) override;
+    PlaylistInfo addPlaylist(int32_t index, const std::string& title, bool setCurrent) override;
     void removePlaylist(const PlaylistRef& playlist) override;
     void movePlaylist(const PlaylistRef& playlist, int32_t index) override;
     void clearPlaylist(const PlaylistRef& playlist) override;
@@ -123,6 +124,7 @@ private:
     void initVersion();
     void initArtwork();
     bool playNextBy(const std::string& expression, PlaylistItemSelector selector);
+    PlaylistInfo getPlaylistInfo(ddb_playlist_t* playlist, int index, bool isCurrent);
 
     PlaylistMutex playlistMutex_;
     ConfigMutex configMutex_;
