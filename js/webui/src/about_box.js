@@ -30,6 +30,7 @@ class AboutBox_ extends React.PureComponent
                 </div>
                 <div className='about-box-item'>
                     <a href='https://hyperblast.org/donate/' className='about-box-link' target='_blank'>Donate to author</a>
+                    <a href='https://github.com/hyperblast/beefweb/' className='about-box-link' target='_blank'>GitHub</a>
                     <a href='third-party-licenses.txt' className='about-box-link' target='_blank'>Third-party licenses</a>
                     <a href='https://hyperblast.org/beefweb/api/' className='about-box-link' target='_blank'>API documentation</a>
                 </div>

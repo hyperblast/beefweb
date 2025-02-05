@@ -3,6 +3,7 @@ set(
     .babelrc
     package.json
     webpack.config.js
+    src/about_box.js
     src/album_art_viewer.js
     src/app.js
     src/app_model.js
