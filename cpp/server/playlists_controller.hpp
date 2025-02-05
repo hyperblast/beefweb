@@ -20,7 +20,7 @@ public:
     ResponsePtr getPlaylists();
     ResponsePtr getPlaylistItems();
 
-    void addPlaylist();
+    ResponsePtr addPlaylist();
     void removePlaylist();
     void movePlaylist();
 

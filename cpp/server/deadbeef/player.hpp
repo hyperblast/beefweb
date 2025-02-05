@@ -65,7 +65,7 @@ public:
     std::vector<PlaylistInfo> getPlaylists() override;
     PlaylistItemsResult getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query) override;
 
-    void addPlaylist(int32_t index, const std::string& title) override;
+    PlaylistInfo addPlaylist(int32_t index, const std::string& title, bool setCurrent) override;
     void removePlaylist(const PlaylistRef& playlist) override;
     void movePlaylist(const PlaylistRef& playlist, int32_t index) override;
     void clearPlaylist(const PlaylistRef& playlist) override;

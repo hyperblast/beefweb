@@ -64,12 +64,15 @@ ResponsePtr PlaylistsController::getPlaylistItems()
     return Response::json({{"playlistItems", items}});
 }
 
-void PlaylistsController::addPlaylist()
+ResponsePtr PlaylistsController::addPlaylist()
 {
     auto index = optionalParam<int32_t>("index", -1);
     auto title = optionalParam<std::string>("title", "New playlist");
+    auto setCurrent = optionalParam<bool>("setCurrent", false);
 
-    player_->addPlaylist(index, title);
+    auto info = player_->addPlaylist(index, title, setCurrent);
+
+    return Response::json(Json(info));
 }
 
 void PlaylistsController::removePlaylist()
@@ -244,7 +247,7 @@ void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Pla
     routes.post("", &PlaylistsController::updatePlaylists);
 
     routes.get(":plref", &PlaylistsController::getPlaylist);
-    routes.post("add", &PlaylistsController::addPlaylist);
+    routes.post("add", ControllerAction<PlaylistsController>(&PlaylistsController::addPlaylist));
     routes.post("remove/:plref", &PlaylistsController::removePlaylist);
     routes.post("move/:plref/:index", &PlaylistsController::movePlaylist);
 
