@@ -42,6 +42,19 @@ void PlayerImpl::endModifyPlaylist(ddb_playlist_t* playlist)
     ddbApi->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_CONTENT, 0);
 }
 
+PlaylistInfo PlayerImpl::getPlaylist(const PlaylistRef& plref)
+{
+    PlaylistLockGuard lock(playlistMutex_);
+
+    playlists_.ensureInitialized();
+
+    auto playlist = playlists_.resolve(plref);
+    auto index = ddbApi->plt_get_idx(playlist.get());
+    auto isCurrent = index == ddbApi->plt_get_curr_idx();
+
+    return getPlaylistInfo(playlist.get(), index, isCurrent);
+}
+
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
 {
     std::vector<PlaylistInfo> playlists;
@@ -62,23 +75,27 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
         if (!playlist)
             continue;
 
-        PlaylistInfo info;
-
-        info.id = playlists_.getId(playlist.get());
-        info.index = i;
-
-        char titleBuf[256];
-        ddbApi->plt_get_title(playlist.get(), titleBuf, sizeof(titleBuf));
-        info.title = titleBuf;
-
-        info.itemCount = ddbApi->plt_get_item_count(playlist.get(), PL_MAIN);
-        info.totalTime = ddbApi->plt_get_totaltime(playlist.get());
-        info.isCurrent = i == current;
-
-        playlists.emplace_back(std::move(info));
+        playlists.emplace_back(getPlaylistInfo(playlist.get(), i, i == current));
     }
 
     return playlists;
+}
+
+PlaylistInfo PlayerImpl::getPlaylistInfo(ddb_playlist_t* playlist, int index, bool isCurrent)
+{
+    PlaylistInfo info;
+    info.id = playlists_.getId(playlist);
+    info.index = index;
+
+    char titleBuf[256];
+    ddbApi->plt_get_title(playlist, titleBuf, sizeof(titleBuf));
+    info.title = titleBuf;
+
+    info.itemCount = ddbApi->plt_get_item_count(playlist, PL_MAIN);
+    info.totalTime = ddbApi->plt_get_totaltime(playlist);
+    info.isCurrent = isCurrent;
+    return info;
+
 }
 
 PlaylistItemsResult PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query)

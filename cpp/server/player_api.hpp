@@ -411,6 +411,7 @@ public:
 
     // Playlists API
 
+    virtual PlaylistInfo getPlaylist(const PlaylistRef& plref) = 0;
     virtual std::vector<PlaylistInfo> getPlaylists() = 0;
     virtual PlaylistItemsResult getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query) = 0;
 

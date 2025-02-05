@@ -41,6 +41,12 @@ PlaylistsController::PlaylistsController(Request* request, Player* player, Setti
 
 PlaylistsController::~PlaylistsController() = default;
 
+ResponsePtr PlaylistsController::getPlaylist()
+{
+    auto info = player_->getPlaylist(param<PlaylistRef>("plref"));
+    return Response::json(Json(info));
+}
+
 ResponsePtr PlaylistsController::getPlaylists()
 {
     return Response::json({{"playlists", player_->getPlaylists()}});
@@ -237,6 +243,7 @@ void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Pla
     routes.get("", &PlaylistsController::getPlaylists);
     routes.post("", &PlaylistsController::updatePlaylists);
 
+    routes.get(":plref", &PlaylistsController::getPlaylist);
     routes.post("add", &PlaylistsController::addPlaylist);
     routes.post("remove/:plref", &PlaylistsController::removePlaylist);
     routes.post("move/:plref/:index", &PlaylistsController::movePlaylist);
