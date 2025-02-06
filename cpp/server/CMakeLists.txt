@@ -115,6 +115,7 @@ set(
     system.cpp system.hpp
     timers.cpp timers.hpp
     work_queue.cpp work_queue.hpp
+    user_config_controller.cpp user_config_controller.hpp
 )
 
 if(OS_POSIX)

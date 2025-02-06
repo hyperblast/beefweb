@@ -39,6 +39,7 @@ public:
     PlayerImpl();
     ~PlayerImpl() = default;
 
+    const char* name() override;
     std::unique_ptr<WorkQueue> createWorkQueue() override;
 
     PlayerStatePtr queryPlayerState(ColumnsQuery* activeItemQuery = nullptr) override;

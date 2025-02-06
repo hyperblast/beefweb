@@ -362,6 +362,7 @@ public:
     Player() = default;
     virtual ~Player() = default;
 
+    virtual const char* name() = 0;
     virtual std::unique_ptr<WorkQueue> createWorkQueue() = 0;
 
     // Player control and query API

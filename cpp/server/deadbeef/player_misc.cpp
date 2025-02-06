@@ -12,6 +12,11 @@ PlayerImpl::PlayerImpl()
     addOption(&stopAfterCurrentAlbumOption_);
 }
 
+const char* PlayerImpl::name()
+{
+    return MSRV_PLAYER_DEADBEEF;
+}
+
 ColumnsQueryPtr PlayerImpl::createColumnsQuery(const std::vector<std::string>& columns)
 {
     return std::make_unique<ColumnsQueryImpl>(columns);

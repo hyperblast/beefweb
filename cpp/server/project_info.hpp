@@ -13,6 +13,8 @@
 #define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
 #define MSRV_DONATE_URL         "https://hyperblast.org/donate/"
 #define MSRV_API_DOCS_URL       "https://hyperblast.org/beefweb/api/"
+#define MSRV_PLAYER_DEADBEEF    "deadbeef"
+#define MSRV_PLAYER_FOOBAR2000  "foobar200"
 #define MSRV_VERSION_MAJOR      0
 #define MSRV_VERSION_MINOR      9
 #define MSRV_VERSION_FINAL      0
