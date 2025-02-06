@@ -10,17 +10,6 @@ UserConfigController::UserConfigController(Request* request, const char* appName
 {
 }
 
-void UserConfigController::defineRoutes(Router* router, WorkQueue* workQueue, const char* appName)
-{
-    auto routes = router->defineRoutes<UserConfigController>();
-    routes.createWith([=](Request* r) { return new UserConfigController(r, appName); });
-    routes.useWorkQueue(workQueue);
-    routes.setPrefix("api/userconfig");
-    routes.get(":scope", &UserConfigController::getConfig);
-    routes.post(":scope", &UserConfigController::setConfig);
-    routes.post(":scope/clear", &UserConfigController::clearConfig);
-}
-
 ResponsePtr UserConfigController::getConfig()
 {
     auto path = getFilePath();
@@ -67,6 +56,17 @@ Path UserConfigController::getFilePath()
     }
 
     return configDir / MSRV_PATH_LITERAL("userconfig") / pathFromUtf8(scope + ".json");
+}
+
+void UserConfigController::defineRoutes(Router* router, WorkQueue* workQueue, const char* appName)
+{
+    auto routes = router->defineRoutes<UserConfigController>();
+    routes.createWith([=](Request* r) { return new UserConfigController(r, appName); });
+    routes.useWorkQueue(workQueue);
+    routes.setPrefix("api/userconfig");
+    routes.get(":scope", &UserConfigController::getConfig);
+    routes.post(":scope", &UserConfigController::setConfig);
+    routes.post(":scope/clear", &UserConfigController::clearConfig);
 }
 
 }
