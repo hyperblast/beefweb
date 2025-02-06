@@ -47,6 +47,8 @@ void SettingsPageInstance::initialize()
 {
     darkModeHooks_.AddDialogWithControls(handle_);
 
+    passwordChar_ = static_cast<int>(SendDlgItemMessageW(handle_, IDC_AUTH_PASSWORD, EM_GETPASSWORDCHAR, 0, 0));
+
     load();
 }
 
@@ -143,6 +145,11 @@ INT_PTR SettingsPageInstance::handleCommand(int control, int message)
     case IDC_MUSIC_DIR_REMOVE:
         if (message == BN_CLICKED)
             removeMusicDir();
+        return 1;
+
+    case IDC_AUTH_SHOW_PASSWORD:
+        if (message == BN_CLICKED)
+            updateAuthShowPassword();
         return 1;
 
     default:
@@ -260,6 +267,17 @@ void SettingsPageInstance::updateAuthControls()
     int enabled = uButton_GetCheck(handle_, IDC_AUTH_REQUIRED) ? 1 : 0;
     EnableWindow(GetDlgItem(handle_, IDC_AUTH_USER), enabled);
     EnableWindow(GetDlgItem(handle_, IDC_AUTH_PASSWORD), enabled);
+    EnableWindow(GetDlgItem(handle_, IDC_AUTH_SHOW_PASSWORD), enabled);
+}
+
+void SettingsPageInstance::updateAuthShowPassword()
+{
+    auto passwordEdit = GetDlgItem(handle_, IDC_AUTH_PASSWORD);
+    auto showPasswordCheckBox = GetDlgItem(handle_, IDC_AUTH_SHOW_PASSWORD);
+    auto passwordChar = SendMessageW(showPasswordCheckBox, BM_GETCHECK, 0, 0) == BST_CHECKED ? 0 : passwordChar_;
+    SendMessageW(passwordEdit, EM_SETPASSWORDCHAR, passwordChar, 0);
+    SetFocus(passwordEdit);
+    SetFocus(showPasswordCheckBox);
 }
 
 namespace {

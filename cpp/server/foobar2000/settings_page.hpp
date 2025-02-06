@@ -77,6 +77,7 @@ private:
     void addMusicDir();
     void removeMusicDir();
     void updateAuthControls();
+    void updateAuthShowPassword();
 
     void notifyChanged()
     {
@@ -87,6 +88,7 @@ private:
     HWND handle_;
     std::vector<std::string> musicDirs_;
     preferences_page_callback::ptr callback_;
+    int passwordChar_ = 0;
     fb2k::CCoreDarkModeHooks darkModeHooks_;
 };
 }
