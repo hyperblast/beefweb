@@ -70,6 +70,12 @@ private:
 
     INT_PTR dialogProc(UINT message, WPARAM wparam, LPARAM lparam);
     INT_PTR handleCommand(int control, int message);
+    INT_PTR handleNotify(NMHDR* data);
+
+    static void shellExecute(const char* fileOrUrl)
+    {
+        uShellExecute(core_api::get_main_window(), nullptr, fileOrUrl, nullptr, nullptr, SW_SHOWNORMAL);
+    }
 
     void initialize();
     void load();

@@ -38,12 +38,6 @@ Path getUserConfigFile(const char* appName)
         / pathFromUtf8(MSRV_CONFIG_FILE);
 }
 
-const std::string& getDefaultWebRoot()
-{
-    static std::string path = pathToUtf8(getBundleDir() / pathFromUtf8(MSRV_WEB_ROOT));
-    return path;
-}
-
 }
 
 SettingsData::SettingsData()
@@ -55,6 +49,12 @@ SettingsData::SettingsData()
 }
 
 SettingsData::~SettingsData() = default;
+
+const std::string& SettingsData::getDefaultWebRoot()
+{
+    static std::string path = pathToUtf8(getBundleDir() / pathFromUtf8(MSRV_WEB_ROOT));
+    return path;
+}
 
 void SettingsData::initialize()
 {
