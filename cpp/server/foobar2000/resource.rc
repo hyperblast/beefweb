@@ -50,7 +50,7 @@ END
 // Dialog
 //
 
-IDD_SETTINGS DIALOGEX 0, 0, 332, 249
+IDD_SETTINGS DIALOGEX 0, 0, 332, 280
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -69,6 +69,12 @@ BEGIN
     LTEXT           "Password:",IDC_STATIC,14,223,40,8
     EDITTEXT        IDC_AUTH_PASSWORD,61,222,181,12,ES_PASSWORD | ES_AUTOHSCROLL
     CONTROL         "Show password",IDC_AUTH_SHOW_PASSWORD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,246,224,69,10
+    CONTROL         "<a>Open</a>",IDC_LINK_OPEN,"SysLink",WS_TABSTOP,95,20,60,11
+    CONTROL         "<a>Donate to author</a>",IDC_LINK_DONATE,"SysLink",WS_TABSTOP,47,251,60,12
+    CONTROL         "<a>GitHub</a>",IDC_LINK_SOURCES,"SysLink",WS_TABSTOP,114,251,24,12
+    CONTROL         "<a>Third-party licenses</a>",IDC_LINK_3RD_PARTY_LICENSES,
+                    "SysLink",WS_TABSTOP,147,251,74,12
+    CONTROL         "<a>API documentation</a>",IDC_LINK_API_DOCS,"SysLink",WS_TABSTOP,223,251,74,12
 END
 
 
@@ -88,7 +94,7 @@ BEGIN
         VERTGUIDE, 61
         VERTGUIDE, 322
         TOPMARGIN, 7
-        BOTTOMMARGIN, 242
+        BOTTOMMARGIN, 273
     END
 END
 #endif    // APSTUDIO_INVOKED
