@@ -1,3 +1,4 @@
+#include "../project_info.hpp"
 #include "player.hpp"
 
 namespace msrv {
@@ -28,6 +29,11 @@ PlayerImpl::PlayerImpl()
 PlayerImpl::~PlayerImpl()
 {
     playQueueEventAdapterFactory.get_static_instance().setCallback({});
+}
+
+const char* PlayerImpl::name()
+{
+    return MSRV_PLAYER_FOOBAR2000;
 }
 
 std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()

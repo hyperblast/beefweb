@@ -33,7 +33,7 @@ void Plugin::reconfigure()
     settings->authUser = SettingVars::authUser;
     settings->authPassword = SettingVars::authPassword;
 
-    settings->loadAll("foobar2000");
+    settings->loadAll(MSRV_PLAYER_FOOBAR2000);
 
     host_.reconfigure(std::move(settings));
 }
