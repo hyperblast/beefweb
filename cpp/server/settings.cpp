@@ -19,7 +19,7 @@ const Path& getBundleDir()
 
 const Path& getBundledConfigFile()
 {
-    static Path path = getBundleDir() / pathFromUtf8(MSRV_CONFIG_FILE);
+    static Path path = getBundleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
     return path;
 }
 
@@ -33,9 +33,9 @@ Path getUserConfigFile(const char* appName)
     }
 
     return userConfigDir
-        / pathFromUtf8(MSRV_PROJECT_ID)
+        / MSRV_PATH_LITERAL(MSRV_PROJECT_ID)
         / pathFromUtf8(appName)
-        / pathFromUtf8(MSRV_CONFIG_FILE);
+        / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
 }
 
 }
@@ -43,16 +43,16 @@ Path getUserConfigFile(const char* appName)
 SettingsData::SettingsData()
     : port(MSRV_DEFAULT_PORT),
       allowRemote(true),
-      webRoot(getDefaultWebRoot()),
+      webRoot(pathToUtf8(getDefaultWebRoot())),
       authRequired(false)
 {
 }
 
 SettingsData::~SettingsData() = default;
 
-const std::string& SettingsData::getDefaultWebRoot()
+const Path& SettingsData::getDefaultWebRoot()
 {
-    static std::string path = pathToUtf8(getBundleDir() / pathFromUtf8(MSRV_WEB_ROOT));
+    static Path path = getBundleDir() / MSRV_PATH_LITERAL(MSRV_WEB_ROOT);
     return path;
 }
 
