@@ -21,7 +21,8 @@ using Path = fs::path;
 #endif
 
 #ifdef MSRV_OS_WINDOWS
-#define MSRV_PATH_LITERAL(str) Path(L ## str)
+#define MSRV_PATH_LITERAL_(str) Path(L##str)
+#define MSRV_PATH_LITERAL(str) MSRV_PATH_LITERAL_(str)
 #endif
 
 enum class FileType

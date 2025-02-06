@@ -77,6 +77,11 @@ private:
         uShellExecute(core_api::get_main_window(), nullptr, fileOrUrl, nullptr, nullptr, SW_SHOWNORMAL);
     }
 
+    static void shellExecute(const wchar_t* fileOrUrl)
+    {
+        ShellExecuteW(core_api::get_main_window(), nullptr, fileOrUrl, nullptr, nullptr, SW_SHOWNORMAL);
+    }
+
     void initialize();
     void load();
     bool hasChanges();

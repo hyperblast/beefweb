@@ -180,7 +180,7 @@ INT_PTR SettingsPageInstance::handleNotify(NMHDR* data)
         break;
 
     case IDC_LINK_3RD_PARTY_LICENSES:
-        shellExecute(pathToUtf8(SettingsData::getDefaultWebRoot() / MSRV_PATH_LITERAL(MSRV_3RD_PARTY_LICENSES)).c_str());
+        shellExecute((SettingsData::getDefaultWebRoot() / MSRV_PATH_LITERAL(MSRV_3RD_PARTY_LICENSES)).c_str());
         break;
 
     case IDC_LINK_API_DOCS:
