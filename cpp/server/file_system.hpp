@@ -79,7 +79,7 @@ void setPosition(FileHandle::Type handle, int64_t position);
 size_t read(FileHandle::Type handle, void* buffer, size_t bytes);
 std::vector<uint8_t> readToEnd(FileHandle::Type handle, int64_t maxBytes = -1);
 
-void write(const Path& path, const std::string& content);
+void write(const Path& path, const void* buffer, size_t bytes);
 
 }
 

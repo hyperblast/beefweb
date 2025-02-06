@@ -117,13 +117,13 @@ void setPosition(FileHandle::Type handle, int64_t position)
     throwIfFailed("lseek64", ret >= 0);
 }
 
-void write(const Path& path, const std::string& content)
+void write(const Path& path, const void* buffer, size_t bytes)
 {
     constexpr auto mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
     FileHandle handle(::open(path.c_str(), O_CREAT | O_TRUNC | O_WRONLY | O_CLOEXEC, mode));
     throwIfFailed("open", handle);
-    auto bytes = ::write(handle.get(), content.data(), content.length());
-    throwIfFailed("write", bytes == static_cast<ssize_t>(content.length()));
+    auto bytes = ::write(handle.get(), buffer, bytes);
+    throwIfFailed("write", bytes == static_cast<ssize_t>(bytes));
 }
 
 }

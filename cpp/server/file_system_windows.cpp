@@ -137,7 +137,7 @@ void setPosition(FileHandle::Type handle, int64_t position)
     throwIfFailed("SetFilePointerEx", ret != 0);
 }
 
-void write(const Path& path, const std::string& content)
+void write(const Path& path, const void* buffer, size_t bytes)
 {
     FileHandle handle(::CreateFileW(
         path.c_str(),
@@ -151,8 +151,8 @@ void write(const Path& path, const std::string& content)
     throwIfFailed("CreateFileW", handle);
 
     DWORD written;
-    auto ret = ::WriteFile(handle.get(), content.data(), content.size(), &written, nullptr);
-    throwIfFailed("WriteFile", ret && written == content.length());
+    auto ret = ::WriteFile(handle.get(), buffer, bytes, &written, nullptr);
+    throwIfFailed("WriteFile", ret && written == bytes);
 }
 
 }

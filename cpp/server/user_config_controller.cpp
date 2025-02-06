@@ -39,7 +39,7 @@ void UserConfigController::setConfig()
     fs::create_directories(path.parent_path());
     auto data = request()->postData.dump(2);
     data.push_back('\n');
-    file_io::write(path, data);
+    file_io::write(path, data.data(), data.length());
 }
 
 void UserConfigController::clearConfig()
