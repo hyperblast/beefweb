@@ -6,10 +6,13 @@
 #define MSRV_PROJECT_ID         "beefweb"
 #define MSRV_PROJECT_NAME       "Beefweb Remote Control"
 #define MSRV_WEB_ROOT           "beefweb.root"
+#define MSRV_3RD_PARTY_LICENSES "third-party-licenses.txt"
 #define MSRV_CONFIG_FILE        "beefweb.config.json"
 #define MSRV_CONFIG_FILE_ENV    "BEEFWEB_CONFIG_FILE"
 #define MSRV_PROJECT_DESC       "Provides web UI and HTTP API for controlling player remotely"
 #define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
+#define MSRV_DONATE_URL         "https://hyperblast.org/donate/"
+#define MSRV_API_DOCS_URL       "https://hyperblast.org/beefweb/api/"
 #define MSRV_VERSION_MAJOR      0
 #define MSRV_VERSION_MINOR      9
 #define MSRV_VERSION_FINAL      0
@@ -21,9 +24,9 @@
 #define MSRV_FOOBAR2000_FILE    "foo_beefweb.dll"
 
 #if MSRV_VERSION_FINAL
-#define MSRV_VERSION_TYPE "final"
+#define MSRV_VERSION_TYPE ""
 #else
-#define MSRV_VERSION_TYPE "dev"
+#define MSRV_VERSION_TYPE " alpha"
 #endif
 
 #ifndef MSRV_GIT_REV
@@ -34,7 +37,7 @@
     MSRV_STRINGIFY(MSRV_VERSION_MAJOR) "." MSRV_STRINGIFY(MSRV_VERSION_MINOR)
 
 #define MSRV_VERSION_STRING_DETAILED \
-    "v" MSRV_VERSION_STRING " " MSRV_VERSION_TYPE " (" MSRV_STRINGIFY(MSRV_GIT_REV) ")"
+    "v" MSRV_VERSION_STRING MSRV_VERSION_TYPE " [git:" MSRV_STRINGIFY(MSRV_GIT_REV) "]"
 
 #define MSRV_LICENSE_TEXT \
     "Copyright 2015-2025 Hyperblast\n" \
@@ -57,5 +60,5 @@
     "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN " \
     "THE SOFTWARE.\n" \
     "\n" \
-    "See provided file third-party-licenses.txt " \
+    "See provided file " MSRV_3RD_PARTY_LICENSES " " \
     "for details about third-party libraries used and their licensing conditions.\n"

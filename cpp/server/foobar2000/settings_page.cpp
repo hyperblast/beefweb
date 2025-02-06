@@ -47,6 +47,8 @@ void SettingsPageInstance::initialize()
 {
     darkModeHooks_.AddDialogWithControls(handle_);
 
+    passwordChar_ = static_cast<int>(SendDlgItemMessageW(handle_, IDC_AUTH_PASSWORD, EM_GETPASSWORDCHAR, 0, 0));
+
     load();
 }
 
@@ -57,9 +59,7 @@ t_uint32 SettingsPageInstance::get_state()
         | (hasChanges() ? preferences_state::changed : 0);
 }
 
-INT_PTR CALLBACK
-
-SettingsPageInstance::dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
+INT_PTR CALLBACK SettingsPageInstance::dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
 {
     SettingsPageInstance* instance;
 
@@ -101,6 +101,9 @@ INT_PTR SettingsPageInstance::dialogProc(UINT message, WPARAM wparam, LPARAM lpa
 
     case WM_COMMAND:
         return handleCommand(LOWORD(wparam), HIWORD(wparam));
+
+    case WM_NOTIFY:
+        return handleNotify(reinterpret_cast<NMHDR*>(lparam));
 
     case WM_DESTROY:
         handle_ = nullptr;
@@ -145,9 +148,47 @@ INT_PTR SettingsPageInstance::handleCommand(int control, int message)
             removeMusicDir();
         return 1;
 
+    case IDC_AUTH_SHOW_PASSWORD:
+        if (message == BN_CLICKED)
+            updateAuthShowPassword();
+        return 1;
+
     default:
         return 0;
     }
+}
+
+INT_PTR SettingsPageInstance::handleNotify(NMHDR* data)
+{
+    if (data->code != NM_CLICK && data->code != NM_RETURN)
+    {
+        return 0;
+    }
+
+    switch (data->idFrom)
+    {
+    case IDC_LINK_OPEN:
+        shellExecute((("http://localhost:" + toString(SettingVars::port)).c_str()));
+        break;
+
+    case IDC_LINK_DONATE:
+        shellExecute(MSRV_DONATE_URL);
+        break;
+
+    case IDC_LINK_SOURCES:
+        shellExecute(MSRV_PROJECT_URL);
+        break;
+
+    case IDC_LINK_3RD_PARTY_LICENSES:
+        shellExecute((SettingsData::getDefaultWebRoot() / MSRV_PATH_LITERAL(MSRV_3RD_PARTY_LICENSES)).c_str());
+        break;
+
+    case IDC_LINK_API_DOCS:
+        shellExecute(MSRV_API_DOCS_URL);
+        break;
+    }
+
+    return 0;
 }
 
 void SettingsPageInstance::load()
@@ -260,11 +301,20 @@ void SettingsPageInstance::updateAuthControls()
     int enabled = uButton_GetCheck(handle_, IDC_AUTH_REQUIRED) ? 1 : 0;
     EnableWindow(GetDlgItem(handle_, IDC_AUTH_USER), enabled);
     EnableWindow(GetDlgItem(handle_, IDC_AUTH_PASSWORD), enabled);
+    EnableWindow(GetDlgItem(handle_, IDC_AUTH_SHOW_PASSWORD), enabled);
 }
 
-namespace {
-preferences_page_factory_t<SettingsPage> factory;
+void SettingsPageInstance::updateAuthShowPassword()
+{
+    auto passwordEdit = GetDlgItem(handle_, IDC_AUTH_PASSWORD);
+    auto showPasswordCheckBox = GetDlgItem(handle_, IDC_AUTH_SHOW_PASSWORD);
+    auto passwordChar = SendMessageW(showPasswordCheckBox, BM_GETCHECK, 0, 0) == BST_CHECKED ? 0 : passwordChar_;
+    SendMessageW(passwordEdit, EM_SETPASSWORDCHAR, passwordChar, 0);
+    SetFocus(passwordEdit);
+    SetFocus(showPasswordCheckBox);
 }
+
+namespace { preferences_page_factory_t<SettingsPage> factory; }
 
 }
 }

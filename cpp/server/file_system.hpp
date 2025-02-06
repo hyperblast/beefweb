@@ -16,6 +16,15 @@ namespace fs = boost::filesystem;
 
 using Path = fs::path;
 
+#ifdef MSRV_OS_POSIX
+#define MSRV_PATH_LITERAL(str) Path(str)
+#endif
+
+#ifdef MSRV_OS_WINDOWS
+#define MSRV_PATH_LITERAL_(str) Path(L##str)
+#define MSRV_PATH_LITERAL(str) MSRV_PATH_LITERAL_(str)
+#endif
+
 enum class FileType
 {
     UNKNOWN,

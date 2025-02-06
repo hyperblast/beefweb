@@ -29,6 +29,8 @@ public:
     std::unordered_map<std::string, std::string> responseHeaders;
     std::unordered_map<std::string, std::string> urlMappings;
 
+    static const Path& getDefaultWebRoot();
+
     void initialize();
     bool isAllowedPath(const Path& path) const;
 

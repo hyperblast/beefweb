@@ -70,6 +70,17 @@ private:
 
     INT_PTR dialogProc(UINT message, WPARAM wparam, LPARAM lparam);
     INT_PTR handleCommand(int control, int message);
+    INT_PTR handleNotify(NMHDR* data);
+
+    static void shellExecute(const char* fileOrUrl)
+    {
+        uShellExecute(core_api::get_main_window(), nullptr, fileOrUrl, nullptr, nullptr, SW_SHOWNORMAL);
+    }
+
+    static void shellExecute(const wchar_t* fileOrUrl)
+    {
+        ShellExecuteW(core_api::get_main_window(), nullptr, fileOrUrl, nullptr, nullptr, SW_SHOWNORMAL);
+    }
 
     void initialize();
     void load();
@@ -77,6 +88,7 @@ private:
     void addMusicDir();
     void removeMusicDir();
     void updateAuthControls();
+    void updateAuthShowPassword();
 
     void notifyChanged()
     {
@@ -87,6 +99,7 @@ private:
     HWND handle_;
     std::vector<std::string> musicDirs_;
     preferences_page_callback::ptr callback_;
+    int passwordChar_ = 0;
     fb2k::CCoreDarkModeHooks darkModeHooks_;
 };
 }
