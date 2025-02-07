@@ -6,7 +6,7 @@ import { isEqual } from 'lodash'
 import { defaultPlaylistColumns } from './columns.js';
 
 const storageKey = 'player_settings';
-const userConfigKey = 'webui';
+const userConfigKey = 'webui_default_settings';
 
 export const SettingType = Object.freeze({
     bool: 'bool',
