@@ -10,7 +10,7 @@
 #define MSRV_CONFIG_FILE        "beefweb.config.json"
 #define MSRV_CONFIG_FILE_ENV    "BEEFWEB_CONFIG_FILE"
 #define MSRV_PROJECT_DESC       "Provides web UI and HTTP API for controlling player remotely"
-#define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb"
+#define MSRV_PROJECT_URL        "https://github.com/hyperblast/beefweb/"
 #define MSRV_DONATE_URL         "https://hyperblast.org/donate/"
 #define MSRV_API_DOCS_URL       "https://hyperblast.org/beefweb/api/"
 #define MSRV_PLAYER_DEADBEEF    "deadbeef"
