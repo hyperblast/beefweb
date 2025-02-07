@@ -14,7 +14,7 @@ export default class AppModel
     {
         this.client = client;
         this.dataSource = new DataSource(client);
-        this.settingsModel = new SettingsModel(settingsStore);
+        this.settingsModel = new SettingsModel(settingsStore, client);
         this.columnsSettingsModel = new ColumnsSettingsModel(this.settingsModel);
         this.playerModel = new PlayerModel(client, this.dataSource, this.settingsModel);
         this.playlistModel = new PlaylistModel(client, this.dataSource, this.settingsModel);
@@ -28,9 +28,10 @@ export default class AppModel
 
     load()
     {
-        this.settingsModel.load();
-        this.notificationModel.load();
-        this.columnsSettingsModel.load();
+        return this.settingsModel.initialize().then(() => {
+            this.notificationModel.load();
+            this.columnsSettingsModel.load();
+        });
     }
 
     start()

@@ -6,6 +6,7 @@ import { isEqual } from 'lodash'
 import { defaultPlaylistColumns } from './columns.js';
 
 const storageKey = 'player_settings';
+const clientConfigKey = 'webui_default_settings';
 
 export const SettingType = Object.freeze({
     bool: 'bool',
@@ -77,11 +78,12 @@ const defaultSettingProps = Object.freeze({
  */
 export default class SettingsModel extends EventEmitter
 {
-    constructor(store)
+    constructor(store, client)
     {
         super();
 
         this.store = store;
+        this.client = client;
 
         this.metadata = {};
         this.values = {};
@@ -300,17 +302,51 @@ export default class SettingsModel extends EventEmitter
         return this.values[key];
     }
 
-    load()
+    getDefaultValue(key)
     {
-        const data = this.store.getItem(storageKey);
+        return this.client.getClientConfig(clientConfigKey)
+            .then(r => r && r[key] !== undefined ? r[key] : this.metadata[key].defaultValue);
+    }
 
-        if (!data)
-            return;
+    getDefaultValuesFromCode()
+    {
+        let result = {};
 
-        const newValues = JSON.parse(data);
+        for (let key in this.metadata)
+        {
+            const metadata = this.metadata[key];
+
+            if (metadata.persistent)
+            {
+                result[key] = metadata.defaultValue;
+            }
+        }
+
+        return result;
+    }
+
+    saveToObject()
+    {
+        let result = {};
+
+        for (let key in this.metadata)
+        {
+            const metadata = this.metadata[key];
+
+            if (metadata.persistent)
+            {
+                result[metadata.persistenceKey] = this.values[key];
+            }
+        }
+
+        return result;
+    }
+
+    loadFromObject(newValues)
+    {
         const pendingEvents = [];
 
-        for (let key of Object.keys(this.metadata))
+        for (let key in this.metadata)
         {
             const metadata = this.metadata[key];
             const value = newValues[metadata.persistenceKey];
@@ -329,13 +365,53 @@ export default class SettingsModel extends EventEmitter
             this.emit('change');
     }
 
+    initialize()
+    {
+        if (this.load())
+        {
+            return Promise.resolve();
+        }
+        else
+        {
+            return this.resetToDefault();
+        }
+    }
+
+    load()
+    {
+        const data = this.store.getItem(storageKey);
+
+        if (!data)
+            return false;
+
+        const newValues = JSON.parse(data);
+        this.loadFromObject(newValues);
+        return true;
+    }
+
     save()
     {
-        const values = mapKeys(
-            pickBy(this.values, (value, key) => this.metadata[key].persistent),
-            (value, key) => this.metadata[key].persistenceKey);
-
+        const values = this.saveToObject();
         this.store.setItem(storageKey, JSON.stringify(values));
+    }
+
+    saveAsDefault()
+    {
+        return this.client.setClientConfig(clientConfigKey, this.saveToObject());
+    }
+
+    resetToDefault()
+    {
+        return this.client.getClientConfig(clientConfigKey)
+            .then(r => {
+                this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), r));
+                this.save();
+            });
+    }
+
+    clearSavedDefault()
+    {
+        return this.client.clearClientConfig(clientConfigKey);
     }
 
     mediaSizeUp(size)

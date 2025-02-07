@@ -256,6 +256,21 @@ export default class PlayerClient
         return this.get(`api/artwork/${playlist}/${item}`);
     }
 
+    getClientConfig(id)
+    {
+        return this.get(`api/clientconfig/${id}`);
+    }
+
+    setClientConfig(id, value)
+    {
+        return this.post(`api/clientconfig/${id}`, value);
+    }
+
+    clearClientConfig(id)
+    {
+        return this.post(`api/clientconfig/${id}/clear`);
+    }
+
     query(options)
     {
         return this.get('api/query', formatQueryOptions(options));

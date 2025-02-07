@@ -34,7 +34,7 @@ std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(ColumnsQuery* activeIt
 
 void PlayerImpl::queryInfo(PlayerInfo* info)
 {
-    info->name = "deadbeef";
+    info->name = MSRV_PLAYER_DEADBEEF;
     info->title = "DeaDBeeF";
     info->version = version_;
     info->pluginVersion = MSRV_VERSION_STRING;

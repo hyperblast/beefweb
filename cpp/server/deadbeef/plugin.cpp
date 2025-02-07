@@ -57,7 +57,7 @@ void Plugin::reconfigure()
     settings->authUser = authUser_;
     settings->authPassword = authPassword_;
 
-    settings->loadAll("deadbeef");
+    settings->loadAll(MSRV_PLAYER_DEADBEEF);
 
     host_.reconfigure(std::move(settings));
 }

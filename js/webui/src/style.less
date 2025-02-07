@@ -61,6 +61,13 @@
     }
 }
 
+.separator()  {
+    display: block;
+    height: 0.0625rem;
+    background: var(--color-border);
+    margin: 0.5rem 0;
+}
+
 /* Base setup */
 
 html {
@@ -318,10 +325,7 @@ body {
 }
 
 .menu-separator {
-    display: block;
-    height: 0.0625rem;
-    background: var(--color-border);
-    margin: 0.5rem 0;
+    .separator();
 }
 
 .progress-bar {
@@ -485,6 +489,20 @@ body {
 
 .dialog-button:not(:last-child) {
     margin-right: 0.25rem;
+}
+
+.dialog-link {
+    margin-right: 1rem;
+    text-decoration: underline;
+    text-wrap: nowrap;
+    display: inline-block;
+    padding: 0.5rem 0;
+
+    color: var(--color-link);
+
+    &:hover, &:visited {
+        color: var(--color-link);
+    }
 }
 
 .dtable {
@@ -736,26 +754,24 @@ body {
     .input-element();
 }
 
+.setting-description {
+    margin: 0.5rem 0;
+}
+
+.settings-section {
+    margin: 1rem 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.settings-section-separator {
+    .separator();
+}
+
 .about-box {
     max-width: 40rem;
-}
-
-.about-box-item {
-    margin-bottom: 0.5rem;
-}
-
-.about-box-link {
-    margin-right: 1rem;
-    text-decoration: underline;
-    text-wrap: nowrap;
-    display: inline-block;
-    padding: 0.5rem 0;
-
-    color: var(--color-link);
-
-    &:hover, &:visited {
-        color: var(--color-link);
-    }
 }
 
 .license-text {

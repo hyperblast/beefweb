@@ -56,7 +56,7 @@ void PlayerImpl::queryInfo(PlayerInfo* info)
 {
     auto versionInfo = core_version_info_v2::get();
 
-    info->name = "foobar2000";
+    info->name = MSRV_PLAYER_FOOBAR2000;
     info->title = versionInfo->get_name();
     info->version = versionInfo->get_version_as_text();
     info->pluginVersion = MSRV_VERSION_STRING;

@@ -10,6 +10,7 @@
 #include "compression_filter.hpp"
 #include "basic_auth_filter.hpp"
 #include "response_headers_filter.hpp"
+#include "client_config_controller.hpp"
 #include "log.hpp"
 
 namespace msrv {
@@ -58,6 +59,7 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
     ArtworkController::defineRoutes(router, playerWorkQueue_.get(), player_, contentTypes_);
     BrowserController::defineRoutes(router, &utilityQueue_, settings);
     StaticController::defineRoutes(router, &utilityQueue_, settings, contentTypes_);
+    ClientConfigController::defineRoutes(router, &utilityQueue_, player_->name());
 
     serverThread_->restart(std::move(config));
 }

@@ -137,6 +137,24 @@ void setPosition(FileHandle::Type handle, int64_t position)
     throwIfFailed("SetFilePointerEx", ret != 0);
 }
 
+void write(const Path& path, const void* buffer, size_t bytes)
+{
+    FileHandle handle(::CreateFileW(
+        path.c_str(),
+        GENERIC_WRITE,
+        FILE_SHARE_READ,
+        nullptr,
+        CREATE_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        nullptr));
+
+    throwIfFailed("CreateFileW", handle);
+
+    DWORD written;
+    auto ret = ::WriteFile(handle.get(), buffer, bytes, &written, nullptr);
+    throwIfFailed("WriteFile", ret && written == bytes);
+}
+
 }
 
 }

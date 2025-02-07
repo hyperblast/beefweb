@@ -299,6 +299,8 @@ const ColumnEditorList = SortableContainer(ModelBinding(ColumnEditorList_, { col
 
 export default class ColumnsSettings extends React.PureComponent
 {
+    static contextType = ServiceContext;
+
     constructor(props)
     {
         super(props);
@@ -310,19 +312,18 @@ export default class ColumnsSettings extends React.PureComponent
 
     handleSortEnd(e)
     {
-        this.props.columnsSettingsModel.moveColumn(e.oldIndex, e.newIndex);
+        this.context.columnsSettingsModel.moveColumn(e.oldIndex, e.newIndex);
     }
 
     componentWillUnmount()
     {
-        this.props.columnsSettingsModel.apply();
+        this.context.columnsSettingsModel.apply();
     }
 
     render()
     {
         return (
             <ColumnEditorList
-                columnsSettingsModel={this.props.columnsSettingsModel}
                 axis='y'
                 lockAxis='y'
                 useDragHandle={true}
@@ -330,7 +331,3 @@ export default class ColumnsSettings extends React.PureComponent
         );
     }
 }
-
-ColumnsSettings.propTypes = {
-    columnsSettingsModel: PropTypes.instanceOf(ColumnsSettingsModel).isRequired,
-};

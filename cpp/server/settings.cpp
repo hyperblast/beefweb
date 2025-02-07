@@ -23,21 +23,6 @@ const Path& getBundledConfigFile()
     return path;
 }
 
-Path getUserConfigFile(const char* appName)
-{
-    auto userConfigDir = getUserConfigDir();
-
-    if (userConfigDir.empty())
-    {
-        return Path();
-    }
-
-    return userConfigDir
-        / MSRV_PATH_LITERAL(MSRV_PROJECT_ID)
-        / pathFromUtf8(appName)
-        / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
-}
-
 }
 
 SettingsData::SettingsData()
@@ -54,6 +39,18 @@ const Path& SettingsData::getDefaultWebRoot()
 {
     static Path path = getBundleDir() / MSRV_PATH_LITERAL(MSRV_WEB_ROOT);
     return path;
+}
+
+Path SettingsData::getConfigDir(const char* appName)
+{
+    auto baseDir = getUserConfigDir();
+    return baseDir.empty() ? Path() : baseDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID) / pathFromUtf8(appName);
+}
+
+Path SettingsData::getConfigFile(const char* appName)
+{
+    auto baseDir = getConfigDir(appName);
+    return baseDir.empty() ? Path() : baseDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
 }
 
 void SettingsData::initialize()
@@ -85,7 +82,7 @@ void SettingsData::loadAll(const char* appName)
 {
     loadFromFile(getBundledConfigFile());
 
-    auto configPath = getUserConfigFile(appName);
+    auto configPath = getConfigFile(appName);
     if (!configPath.empty())
         loadFromFile(configPath);
 

@@ -75,6 +75,7 @@ set(
     cache_support_filter.cpp cache_support_filter.hpp
     charset.hpp
     chrono.hpp
+    client_config_controller.cpp client_config_controller.hpp
     compression_filter.cpp compression_filter.hpp
     content_type_map.cpp content_type_map.hpp
     core_types.cpp core_types.hpp

@@ -30,6 +30,8 @@ public:
     std::unordered_map<std::string, std::string> urlMappings;
 
     static const Path& getDefaultWebRoot();
+    static Path getConfigDir(const char* appName);
+    static Path getConfigFile(const char* appName);
 
     void initialize();
     bool isAllowedPath(const Path& path) const;
