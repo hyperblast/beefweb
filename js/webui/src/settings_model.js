@@ -6,6 +6,7 @@ import { isEqual } from 'lodash'
 import { defaultPlaylistColumns } from './columns.js';
 
 const storageKey = 'player_settings';
+const userConfigKey = 'webui';
 
 export const SettingType = Object.freeze({
     bool: 'bool',
@@ -77,11 +78,12 @@ const defaultSettingProps = Object.freeze({
  */
 export default class SettingsModel extends EventEmitter
 {
-    constructor(store)
+    constructor(store, client)
     {
         super();
 
         this.store = store;
+        this.client = client;
 
         this.metadata = {};
         this.values = {};
@@ -300,17 +302,45 @@ export default class SettingsModel extends EventEmitter
         return this.values[key];
     }
 
-    load()
+    getDefaultFromCode()
     {
-        const data = this.store.getItem(storageKey);
+        let result = {};
 
-        if (!data)
-            return;
+        for (let key in this.metadata)
+        {
+            const metadata = this.metadata[key];
 
-        const newValues = JSON.parse(data);
+            if (metadata.persistent)
+            {
+                result[key] = metadata.defaultValue;
+            }
+        }
+
+        return result;
+    }
+
+    saveToObject()
+    {
+        let result = {};
+
+        for (let key in this.metadata)
+        {
+            const metadata = this.metadata[key];
+
+            if (metadata.persistent)
+            {
+                result[metadata.persistenceKey] = this.values[key];
+            }
+        }
+
+        return result;
+    }
+
+    loadFromObject(newValues)
+    {
         const pendingEvents = [];
 
-        for (let key of Object.keys(this.metadata))
+        for (let key in this.metadata)
         {
             const metadata = this.metadata[key];
             const value = newValues[metadata.persistenceKey];
@@ -329,13 +359,40 @@ export default class SettingsModel extends EventEmitter
             this.emit('change');
     }
 
+    load()
+    {
+        const data = this.store.getItem(storageKey);
+
+        if (!data)
+            return;
+
+        const newValues = JSON.parse(data);
+        this.loadFromObject(newValues);
+    }
+
     save()
     {
-        const values = mapKeys(
-            pickBy(this.values, (value, key) => this.metadata[key].persistent),
-            (value, key) => this.metadata[key].persistenceKey);
-
+        const values = this.saveToObject();
         this.store.setItem(storageKey, JSON.stringify(values));
+    }
+
+    saveAsDefault()
+    {
+        return this.client.setUserConfig(userConfigKey, this.saveToObject());
+    }
+
+    resetToDefault()
+    {
+        return this.client.getUserConfig(userConfigKey)
+            .then(r => {
+                this.loadFromObject(Object.assign({}, this.getDefaultFromCode(), r));
+                console.log(r);
+            });
+    }
+
+    clearSavedDefault()
+    {
+        return this.client.clearUserConfig(userConfigKey);
     }
 
     mediaSizeUp(size)
