@@ -365,15 +365,28 @@ export default class SettingsModel extends EventEmitter
             this.emit('change');
     }
 
+    initialize()
+    {
+        if (this.load())
+        {
+            return Promise.resolve();
+        }
+        else
+        {
+            return this.resetToDefault();
+        }
+    }
+
     load()
     {
         const data = this.store.getItem(storageKey);
 
         if (!data)
-            return;
+            return false;
 
         const newValues = JSON.parse(data);
         this.loadFromObject(newValues);
+        return true;
     }
 
     save()
@@ -390,7 +403,10 @@ export default class SettingsModel extends EventEmitter
     resetToDefault()
     {
         return this.client.getUserConfig(userConfigKey)
-            .then(r => this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), r)));
+            .then(r => {
+                this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), r));
+                this.save();
+            });
     }
 
     clearSavedDefault()

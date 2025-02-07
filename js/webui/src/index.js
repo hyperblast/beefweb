@@ -136,16 +136,6 @@ playlistModel.on('playlistsChange', () => {
         router.navigate(urls.viewCurrentPlaylist);
 });
 
-appModel.load();
-
-mediaSizeController.start();
-mediaThemeController.start();
-touchModeController.start();
-cssSettingsController.start();
-appModel.start();
-windowController.start();
-router.resolve();
-
 const appContainer = document.getElementById('app-container');
 
 function updateViewHeight()
@@ -164,14 +154,31 @@ function updateViewHeight()
     }
 }
 
-updateViewHeight();
-settingsModel.on('touchModeChange', updateViewHeight);
-window.addEventListener('resize', debounce(updateViewHeight, 50));
+function main()
+{
+    updateViewHeight();
 
-const appComponent = (
-    <ServiceContext.Provider value={appModel}>
-        <App />
-    </ServiceContext.Provider>
-);
+    appModel.load().then(() => {
+        mediaSizeController.start();
+        mediaThemeController.start();
+        touchModeController.start();
+        cssSettingsController.start();
+        appModel.start();
+        windowController.start();
+        router.resolve();
 
-ReactDom.render(appComponent, appContainer);
+        settingsModel.on('touchModeChange', updateViewHeight);
+        window.addEventListener('resize', debounce(updateViewHeight, 50));
+
+        const appComponent = (
+            <ServiceContext.Provider value={appModel}>
+                <App />
+            </ServiceContext.Provider>
+        );
+
+        ReactDom.render(appComponent, appContainer);
+    });
+}
+
+main();
+

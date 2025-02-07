@@ -28,9 +28,10 @@ export default class AppModel
 
     load()
     {
-        this.settingsModel.load();
-        this.notificationModel.load();
-        this.columnsSettingsModel.load();
+        return this.settingsModel.initialize().then(() => {
+            this.notificationModel.load();
+            this.columnsSettingsModel.load();
+        });
     }
 
     start()
