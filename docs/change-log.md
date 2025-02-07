@@ -1,12 +1,13 @@
 # Changes in v0.9 (not released)
 - Add album art display
-- Fix 1px border in compact mode
-- Do not fail when configured music directory does not exist
-- Replace invalid UTF-8 chars in JSON responses instead of failing
 - Add about box in web UI
 - Extend playlists API
 - Add ability to store current settings as default for new browsers
 - Use multiple threads to handle static content
+- Update boost to v1.87
+- Fix 1px border in compact mode
+- Do not fail when configured music directory does not exist
+- Replace invalid UTF-8 chars in JSON responses instead of failing
 ### foobar2000
 - Add option to show authentication password
 - Add useful links to settings page
