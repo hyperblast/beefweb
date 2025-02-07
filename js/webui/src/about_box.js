@@ -25,16 +25,16 @@ class AboutBox_ extends React.PureComponent
 
         return (
             <div className='about-box'>
-                <div className='about-box-item'>
+                <div className='settings-section'>
                     Beefweb v{pluginVersion} @ {title} v{version}
                 </div>
-                <div className='about-box-item'>
-                    <a href='https://hyperblast.org/donate/' className='about-box-link' target='_blank'>Donate to author</a>
-                    <a href='https://github.com/hyperblast/beefweb/' className='about-box-link' target='_blank'>GitHub</a>
-                    <a href='third-party-licenses.txt' className='about-box-link' target='_blank'>Third-party licenses</a>
-                    <a href='https://hyperblast.org/beefweb/api/' className='about-box-link' target='_blank'>API documentation</a>
+                <div className='settings-section'>
+                    <a href='https://hyperblast.org/donate/' className='dialog-link' target='_blank'>Donate to author</a>
+                    <a href='https://github.com/hyperblast/beefweb/' className='dialog-link' target='_blank'>GitHub</a>
+                    <a href='third-party-licenses.txt' className='dialog-link' target='_blank'>Third-party licenses</a>
+                    <a href='https://hyperblast.org/beefweb/api/' className='dialog-link' target='_blank'>API documentation</a>
                 </div>
-                <div className='about-box-item license-text'>
+                <div className='settings-section license-text'>
                     Copyright 2015-2025 Hyperblast<br/><br/>
 
                     Permission is hereby granted, free of charge, to any person obtaining a copy
