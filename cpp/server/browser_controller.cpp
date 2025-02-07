@@ -63,9 +63,7 @@ BrowserController::BrowserController(Request* request, SettingsDataPtr settings)
 {
 }
 
-BrowserController::~BrowserController()
-{
-}
+BrowserController::~BrowserController() = default;
 
 ResponsePtr BrowserController::getRoots()
 {
@@ -80,10 +78,7 @@ ResponsePtr BrowserController::getRoots()
             roots.emplace_back(makeFsEntry(path, path, *info));
     }
 
-    return Response::json({
-                              {"roots", roots},
-                              {"pathSeparator", pathSeparator()}
-                          });
+    return Response::json({ {"roots", roots}, {"pathSeparator", pathSeparator()} });
 }
 
 ResponsePtr BrowserController::getEntries()
@@ -107,10 +102,7 @@ ResponsePtr BrowserController::getEntries()
             entries.emplace_back(makeFsEntry(path.filename(), path, *info));
     }
 
-    return Response::json({
-                              {"entries", entries},
-                              {"pathSeparator", pathSeparator()}
-                          });
+    return Response::json({ {"entries", entries}, {"pathSeparator", pathSeparator()} });
 }
 
 void BrowserController::defineRoutes(Router* router, WorkQueue* workQueue, SettingsDataPtr settings)

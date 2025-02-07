@@ -16,7 +16,7 @@
 namespace msrv {
 
 ServerHost::ServerHost(Player* player)
-    : player_(player)
+    : player_(player), utilityQueue_(16)
 {
     playerWorkQueue_ = player_->createWorkQueue();
     player_->onEvents([this](PlayerEvents event) { handlePlayerEvents(event); });
