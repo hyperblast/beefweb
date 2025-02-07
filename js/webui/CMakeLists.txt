@@ -15,6 +15,7 @@ set(
     src/css_settings_controller.js
     src/data_source.js
     src/data_table.js
+    src/defaults_settings.js
     src/dialogs.js
     src/dom_utils.js
     src/dropdown.js

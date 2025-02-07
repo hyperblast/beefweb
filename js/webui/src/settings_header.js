@@ -1,10 +1,33 @@
 import React from 'react';
 import { PanelHeaderTab } from './elements.js';
-import { SettingsView, SettingsViewMetadata } from './navigation_model.js';
+import { SettingsView } from './navigation_model.js';
 import ModelBinding from './model_binding.js';
 import urls from './urls.js';
 import ColumnsSettingsMenu from './columns_settings_menu.js';
 import ServiceContext from './service_context.js';
+
+const settingsTabs = [
+    {
+        key: SettingsView.general,
+        title: 'General',
+    },
+    {
+        key: SettingsView.columns,
+        title: 'Columns',
+    },
+    {
+        key: SettingsView.defaults,
+        title: 'Defaults',
+    },
+    {
+        key: SettingsView.about,
+        title: 'About'
+    }
+];
+
+const settingsMenus = {
+    [SettingsView.columns]: ColumnsSettingsMenu,
+};
 
 class SettingsHeader extends React.PureComponent
 {
@@ -15,10 +38,6 @@ class SettingsHeader extends React.PureComponent
         super(props, context);
 
         this.state = this.getStateFromModel();
-
-        this.renderMenu = {
-            [SettingsView.columns]: this.renderColumnsMenu,
-        };
     }
 
     getStateFromModel()
@@ -26,17 +45,11 @@ class SettingsHeader extends React.PureComponent
         const { settingsView } = this.context.navigationModel;
         return { settingsView };
     }
-
-    renderColumnsMenu()
-    {
-        return <ColumnsSettingsMenu columnsSettingsModel={this.context.columnsSettingsModel} />
-    }
-
     render()
     {
         const { settingsView } = this.state;
 
-        const tabs = SettingsViewMetadata.map(value => (
+        const tabs = settingsTabs.map(value => (
             <PanelHeaderTab
                 key={value.key}
                 active={settingsView === value.key}
@@ -44,8 +57,8 @@ class SettingsHeader extends React.PureComponent
                 title={value.title} />
         ));
 
-        const renderMenu = this.renderMenu[settingsView];
-        const menu = renderMenu ? renderMenu.call(this) : null;
+        const Menu = settingsMenus[settingsView];
+        const menu = Menu ? <Menu/> : null;
 
         return (
             <div className='panel panel-header'>

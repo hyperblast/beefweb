@@ -11,23 +11,9 @@ export const View = Object.freeze({
 export const SettingsView = Object.freeze({
     general: 'general',
     columns: 'columns',
+    defaults: 'defaults',
     about: 'about',
 });
-
-export const SettingsViewMetadata = [
-    {
-        key: SettingsView.general,
-        title: 'General',
-    },
-    {
-        key: SettingsView.columns,
-        title: 'Columns',
-    },
-    {
-        key: SettingsView.about,
-        title: 'About'
-    }
-];
 
 export default class NavigationModel extends EventEmitter
 {

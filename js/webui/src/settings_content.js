@@ -1,10 +1,18 @@
 import React from 'react';
 import { SettingsView } from './navigation_model.js';
 import ModelBinding from './model_binding.js';
+import DefaultsSettings from './defaults_settings.js'
 import GeneralSettings from './general_settings.js';
 import ColumnsSettings from './columns_settings.js';
 import ServiceContext from './service_context.js';
 import AboutBox from './about_box.js';
+
+const settingsViews = {
+    [SettingsView.general]: GeneralSettings,
+    [SettingsView.columns]: ColumnsSettings,
+    [SettingsView.defaults]: DefaultsSettings,
+    [SettingsView.about]: AboutBox,
+};
 
 class SettingsContent extends React.PureComponent
 {
@@ -15,11 +23,6 @@ class SettingsContent extends React.PureComponent
         super(props, context);
 
         this.state = this.getStateFromModel();
-        this.renderView = {
-            [SettingsView.general]: this.renderGeneral,
-            [SettingsView.columns]: this.renderColumns,
-            [SettingsView.about]: this.renderAbout,
-        };
     }
 
     getStateFromModel()
@@ -28,29 +31,16 @@ class SettingsContent extends React.PureComponent
         return { settingsView };
     }
 
-    renderGeneral()
-    {
-        return <GeneralSettings />;
-    }
-
-    renderColumns()
-    {
-        return <ColumnsSettings columnsSettingsModel={this.context.columnsSettingsModel} />;
-    }
-
-    renderAbout()
-    {
-        return <AboutBox />;
-    }
-
     render()
     {
         const { settingsView } = this.state;
 
+        const View = settingsViews[settingsView];
+
         return (
             <div className='panel panel-main settings-content-wrapper'>
                 <div className='settings-content'>
-                    { this.renderView[settingsView].call(this) }
+                    { View ? <View/> : null }
                 </div>
             </div>
         )
