@@ -8,7 +8,6 @@ namespace msrv {
 WorkQueue::~WorkQueue() = default;
 
 ThreadWorkQueue::ThreadWorkQueue()
-    : shutdown_(false)
 {
     thread_ = std::thread([this] { run(); });
 }
@@ -54,6 +53,62 @@ void ThreadWorkQueue::run()
             tryCatchLog([&] { item(); });
 
         executing_.clear();
+    }
+}
+
+ThreadPoolWorkQueue::ThreadPoolWorkQueue(size_t workers)
+{
+    assert(workers > 0);
+
+    threads_.reserve(workers);
+
+    for (size_t i = 0; i < workers; i++)
+    {
+        threads_.emplace_back([this] { run(); });
+    }
+}
+
+ThreadPoolWorkQueue::~ThreadPoolWorkQueue()
+{
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        shutdown_ = true;
+        ready_.notify_all();
+    }
+
+    for (auto& thread : threads_)
+    {
+        thread.join();
+    }
+}
+
+void ThreadPoolWorkQueue::enqueue(WorkCallback callback)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    enqueued_.emplace_back(std::move(callback));
+    ready_.notify_one();
+}
+
+void ThreadPoolWorkQueue::run()
+{
+    while (true)
+    {
+        WorkCallback callback;
+
+        {
+            std::unique_lock<std::mutex> lock(mutex_);
+
+            while (enqueued_.empty() && !shutdown_)
+                ready_.wait(lock);
+
+            if (shutdown_)
+                return;
+
+            callback = std::move(enqueued_.front());
+            enqueued_.pop_front();
+        }
+
+        tryCatchLog([&] { callback(); });
     }
 }
 

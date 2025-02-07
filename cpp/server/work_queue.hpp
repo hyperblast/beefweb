@@ -7,6 +7,7 @@
 #include <condition_variable>
 #include <functional>
 #include <vector>
+#include <deque>
 #include <boost/thread/future.hpp>
 
 namespace msrv {
@@ -31,7 +32,7 @@ public:
     ThreadWorkQueue();
     ~ThreadWorkQueue();
 
-    virtual void enqueue(WorkCallback callback) override;
+    void enqueue(WorkCallback callback) override;
 
 private:
     void run();
@@ -41,7 +42,25 @@ private:
     std::condition_variable ready_;
     std::vector<WorkCallback> enqueued_;
     std::vector<WorkCallback> executing_;
-    bool shutdown_;
+    bool shutdown_ = false;
+};
+
+class ThreadPoolWorkQueue : public WorkQueue
+{
+public:
+    explicit ThreadPoolWorkQueue(size_t workers);
+    ~ThreadPoolWorkQueue();
+
+    void enqueue(WorkCallback callback) override;
+
+private:
+    void run();
+
+    std::vector<std::thread> threads_;
+    std::mutex mutex_;
+    std::condition_variable ready_;
+    std::deque<WorkCallback> enqueued_;
+    bool shutdown_ = false;
 };
 
 class ExternalWorkQueue : public WorkQueue
@@ -49,7 +68,7 @@ class ExternalWorkQueue : public WorkQueue
 public:
     ~ExternalWorkQueue();
 
-    virtual void enqueue(WorkCallback callback) override;
+    void enqueue(WorkCallback callback) override;
 
 protected:
     ExternalWorkQueue();

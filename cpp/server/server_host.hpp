@@ -31,7 +31,7 @@ private:
     ContentTypeMap contentTypes_;
 
     std::unique_ptr<WorkQueue> playerWorkQueue_;
-    ThreadWorkQueue utilityQueue_;
+    ThreadPoolWorkQueue utilityQueue_;
     std::unique_ptr<ServerThread> serverThread_;
 
     MSRV_NO_COPY_AND_ASSIGN(ServerHost);
