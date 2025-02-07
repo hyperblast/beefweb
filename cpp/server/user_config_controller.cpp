@@ -40,13 +40,13 @@ void UserConfigController::clearConfig()
 
 Path UserConfigController::getFilePath()
 {
-    static const std::regex scopePattern("^[a-z0-9_]+$", std::regex::ECMAScript);
+    static const std::regex idPattern("^[a-z0-9_]+$", std::regex::ECMAScript);
 
-    auto scope = param<std::string>("scope");
+    auto id = param<std::string>("id");
 
-    if (!std::regex_match(scope, scopePattern))
+    if (!std::regex_match(id, idPattern))
     {
-        throw InvalidRequestException("Invalid scope name");
+        throw InvalidRequestException("Invalid id name");
     }
 
     auto configDir = SettingsData::getConfigDir(appName_);
@@ -55,7 +55,7 @@ Path UserConfigController::getFilePath()
         throw std::runtime_error("No config dir is available");
     }
 
-    return configDir / MSRV_PATH_LITERAL("userconfig") / pathFromUtf8(scope + ".json");
+    return configDir / MSRV_PATH_LITERAL("userconfig") / pathFromUtf8(id + ".json");
 }
 
 void UserConfigController::defineRoutes(Router* router, WorkQueue* workQueue, const char* appName)
@@ -64,9 +64,9 @@ void UserConfigController::defineRoutes(Router* router, WorkQueue* workQueue, co
     routes.createWith([=](Request* r) { return new UserConfigController(r, appName); });
     routes.useWorkQueue(workQueue);
     routes.setPrefix("api/userconfig");
-    routes.get(":scope", &UserConfigController::getConfig);
-    routes.post(":scope", &UserConfigController::setConfig);
-    routes.post(":scope/clear", &UserConfigController::clearConfig);
+    routes.get(":id", &UserConfigController::getConfig);
+    routes.post(":id", &UserConfigController::setConfig);
+    routes.post(":id/clear", &UserConfigController::clearConfig);
 }
 
 }

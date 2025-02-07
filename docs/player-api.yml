@@ -17,6 +17,8 @@ tags:
   description: File browser APIs
 - name: artwork
   description: Artwork metadata APIs
+- name: userconfig
+  description: User config APIs
 paths:
   /player:
     get:
@@ -811,6 +813,66 @@ paths:
         404:
           description: No artwork is found for specified item
           content: {}
+  /userconfig/{id}:
+    get:
+      tags:
+      - userconfig
+      summary: Get user config
+      operationId: getUserConfig
+      parameters:
+      - name: id
+        in: path
+        description: Configuration id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      tags:
+      - userconfig
+      summary: Set user config
+      operationId: setUserConfig
+      parameters:
+      - name: id
+        in: path
+        description: Configuration id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: User config data
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        204:
+          description: Success
+          content: {}
+  /userconfig/{id}/clear:
+    post:
+      tags:
+      - userconfig
+      summary: Clear user config
+      operationId: clearUserConfig
+      parameters:
+      - name: id
+        in: path
+        description: Configuration id
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Success
+          content: {}
 components:
   schemas:
     PlaybackState:
@@ -988,7 +1050,7 @@ components:
           required: true
         queueIndex:
           type: number
-          description: Queue index to insert at (currenly only supported by DeaDBeeF)
+          description: Queue index to insert at (currently only supported by DeaDBeeF)
     RemoveFromPlayQueueRequest:
       type: object
       properties:
@@ -1012,7 +1074,7 @@ components:
           description: Playlist index
         itemIndex:
           type: integer
-          descripiton: Playlist item index
+          description: Playlist item index
     PlayQueueItemsResult:
       type: array
       items:

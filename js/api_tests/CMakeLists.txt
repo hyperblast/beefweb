@@ -20,6 +20,7 @@ set(
     src/test_context.js
     src/test_env.js
     src/test_player_client.js
+    src/user_config_api_tests.js
     src/utils.js
 )
 
