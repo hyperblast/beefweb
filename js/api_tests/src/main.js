@@ -1,6 +1,7 @@
 import './artwork_api_tests.js';
 import './authentication_tests.js';
 import './browser_api_tests.js';
+import './client_config_api_tests.js'
 import './http_features_tests.js';
 import './player_api_tests.js';
 import './playlists_api_tests.js';

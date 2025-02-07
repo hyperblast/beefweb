@@ -256,19 +256,19 @@ export default class PlayerClient
         return this.get(`api/artwork/${playlist}/${item}`);
     }
 
-    getUserConfig(id)
+    getClientConfig(id)
     {
-        return this.get(`api/userconfig/${id}`);
+        return this.get(`api/clientconfig/${id}`);
     }
 
-    setUserConfig(id, value)
+    setClientConfig(id, value)
     {
-        return this.post(`api/userconfig/${id}`, value);
+        return this.post(`api/clientconfig/${id}`, value);
     }
 
-    clearUserConfig(id)
+    clearClientConfig(id)
     {
-        return this.post(`api/userconfig/${id}/clear`);
+        return this.post(`api/clientconfig/${id}/clear`);
     }
 
     query(options)

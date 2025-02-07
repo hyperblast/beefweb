@@ -17,8 +17,8 @@ tags:
   description: File browser APIs
 - name: artwork
   description: Artwork metadata APIs
-- name: userconfig
-  description: User config APIs
+- name: clientconfig
+  description: Client configuration APIs
 paths:
   /player:
     get:
@@ -813,12 +813,12 @@ paths:
         404:
           description: No artwork is found for specified item
           content: {}
-  /userconfig/{id}:
+  /clientconfig/{id}:
     get:
       tags:
-      - userconfig
+      - clientconfig
       summary: Get user config
-      operationId: getUserConfig
+      operationId: getClientConfig
       parameters:
       - name: id
         in: path
@@ -835,9 +835,9 @@ paths:
                 type: object
     post:
       tags:
-      - userconfig
+      - clientconfig
       summary: Set user config
-      operationId: setUserConfig
+      operationId: setClientConfig
       parameters:
       - name: id
         in: path
@@ -856,12 +856,12 @@ paths:
         204:
           description: Success
           content: {}
-  /userconfig/{id}/clear:
+  /clientconfig/{id}/clear:
     post:
       tags:
-      - userconfig
+      - clientconfig
       summary: Clear user config
-      operationId: clearUserConfig
+      operationId: clearClientConfig
       parameters:
       - name: id
         in: path

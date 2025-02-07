@@ -4,6 +4,7 @@ set(
     src/artwork_api_tests.js
     src/authentication_tests.js
     src/browser_api_tests.js
+    src/client_config_api_tests.js
     src/deadbeef/player_controller.js
     src/deadbeef/test_context.js
     src/event_expectation.js
@@ -20,7 +21,6 @@ set(
     src/test_context.js
     src/test_env.js
     src/test_player_client.js
-    src/user_config_api_tests.js
     src/utils.js
 )
 

@@ -8,11 +8,11 @@ namespace msrv {
 class Player;
 class Router;
 
-class UserConfigController : public ControllerBase
+class ClientConfigController : public ControllerBase
 {
 public:
-    UserConfigController(Request* request, const char* appName);
-    ~UserConfigController() = default;
+    ClientConfigController(Request* request, const char* appName);
+    ~ClientConfigController() = default;
 
     ResponsePtr getConfig();
     void setConfig();

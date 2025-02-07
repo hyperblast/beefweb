@@ -6,7 +6,7 @@ import { isEqual } from 'lodash'
 import { defaultPlaylistColumns } from './columns.js';
 
 const storageKey = 'player_settings';
-const userConfigKey = 'webui_default_settings';
+const clientConfigKey = 'webui_default_settings';
 
 export const SettingType = Object.freeze({
     bool: 'bool',
@@ -304,7 +304,7 @@ export default class SettingsModel extends EventEmitter
 
     getDefaultValue(key)
     {
-        return this.client.getUserConfig(userConfigKey)
+        return this.client.getClientConfig(clientConfigKey)
             .then(r => r && r[key] !== undefined ? r[key] : this.metadata[key].defaultValue);
     }
 
@@ -397,12 +397,12 @@ export default class SettingsModel extends EventEmitter
 
     saveAsDefault()
     {
-        return this.client.setUserConfig(userConfigKey, this.saveToObject());
+        return this.client.setClientConfig(clientConfigKey, this.saveToObject());
     }
 
     resetToDefault()
     {
-        return this.client.getUserConfig(userConfigKey)
+        return this.client.getClientConfig(clientConfigKey)
             .then(r => {
                 this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), r));
                 this.save();
@@ -411,7 +411,7 @@ export default class SettingsModel extends EventEmitter
 
     clearSavedDefault()
     {
-        return this.client.clearUserConfig(userConfigKey);
+        return this.client.clearClientConfig(clientConfigKey);
     }
 
     mediaSizeUp(size)

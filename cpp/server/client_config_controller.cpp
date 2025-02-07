@@ -1,16 +1,16 @@
 #include <regex>
 
-#include "user_config_controller.hpp"
+#include "client_config_controller.hpp"
 #include "router.hpp"
 
 namespace msrv {
 
-UserConfigController::UserConfigController(Request* request, const char* appName)
+ClientConfigController::ClientConfigController(Request* request, const char* appName)
     : ControllerBase(request), appName_(appName)
 {
 }
 
-ResponsePtr UserConfigController::getConfig()
+ResponsePtr ClientConfigController::getConfig()
 {
     auto path = getFilePath();
     auto handle = file_io::open(path);
@@ -22,7 +22,7 @@ ResponsePtr UserConfigController::getConfig()
     return Response::file(std::move(path), std::move(handle), info, "application/json");
 }
 
-void UserConfigController::setConfig()
+void ClientConfigController::setConfig()
 {
     auto path = getFilePath();
     fs::create_directories(path.parent_path());
@@ -31,14 +31,14 @@ void UserConfigController::setConfig()
     file_io::write(path, data.data(), data.length());
 }
 
-void UserConfigController::clearConfig()
+void ClientConfigController::clearConfig()
 {
     auto path = getFilePath();
     boost::system::error_code ec;
     fs::remove(path, ec);
 }
 
-Path UserConfigController::getFilePath()
+Path ClientConfigController::getFilePath()
 {
     static const std::regex idPattern("^[a-z0-9_]+$", std::regex::ECMAScript);
 
@@ -55,18 +55,18 @@ Path UserConfigController::getFilePath()
         throw std::runtime_error("No config dir is available");
     }
 
-    return configDir / MSRV_PATH_LITERAL("userconfig") / pathFromUtf8(id + ".json");
+    return configDir / MSRV_PATH_LITERAL("clientconfig") / pathFromUtf8(id + ".json");
 }
 
-void UserConfigController::defineRoutes(Router* router, WorkQueue* workQueue, const char* appName)
+void ClientConfigController::defineRoutes(Router* router, WorkQueue* workQueue, const char* appName)
 {
-    auto routes = router->defineRoutes<UserConfigController>();
-    routes.createWith([=](Request* r) { return new UserConfigController(r, appName); });
+    auto routes = router->defineRoutes<ClientConfigController>();
+    routes.createWith([=](Request* r) { return new ClientConfigController(r, appName); });
     routes.useWorkQueue(workQueue);
-    routes.setPrefix("api/userconfig");
-    routes.get(":id", &UserConfigController::getConfig);
-    routes.post(":id", &UserConfigController::setConfig);
-    routes.post(":id/clear", &UserConfigController::clearConfig);
+    routes.setPrefix("api/clientconfig");
+    routes.get(":id", &ClientConfigController::getConfig);
+    routes.post(":id", &ClientConfigController::setConfig);
+    routes.post(":id/clear", &ClientConfigController::clearConfig);
 }
 
 }
