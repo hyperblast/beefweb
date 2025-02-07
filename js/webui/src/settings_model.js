@@ -302,7 +302,13 @@ export default class SettingsModel extends EventEmitter
         return this.values[key];
     }
 
-    getDefaultFromCode()
+    getDefaultValue(key)
+    {
+        return this.client.getUserConfig(userConfigKey)
+            .then(r => r && r[key] !== undefined ? r[key] : this.metadata[key].defaultValue);
+    }
+
+    getDefaultValuesFromCode()
     {
         let result = {};
 
@@ -384,10 +390,7 @@ export default class SettingsModel extends EventEmitter
     resetToDefault()
     {
         return this.client.getUserConfig(userConfigKey)
-            .then(r => {
-                this.loadFromObject(Object.assign({}, this.getDefaultFromCode(), r));
-                console.log(r);
-            });
+            .then(r => this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), r)));
     }
 
     clearSavedDefault()

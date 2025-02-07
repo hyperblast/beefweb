@@ -9,9 +9,22 @@ export default class ColumnsSettingsModel extends EventEmitter
     {
         super();
 
+        this.defineEvent('change');
+
         this.settingsModel = settingsModel;
         this.columns = [];
-        this.defineEvent('change');
+        this.updating = false;
+
+        settingsModel.on('columnsChange', this.handleColumnsChange.bind(this));
+    }
+
+    handleColumnsChange()
+    {
+        if (this.updating)
+            return;
+
+        this.load();
+        this.emit('change');
     }
 
     load()
@@ -21,7 +34,16 @@ export default class ColumnsSettingsModel extends EventEmitter
 
     apply()
     {
-        this.settingsModel.columns = this.columns;
+        this.updating = true;
+
+        try
+        {
+            this.settingsModel.columns = cloneDeep(this.columns);
+        }
+        finally
+        {
+            this.updating = false;
+        }
     }
 
     revertChanges()
@@ -32,8 +54,11 @@ export default class ColumnsSettingsModel extends EventEmitter
 
     resetToDefault()
     {
-        this.columns = cloneDeep(this.settingsModel.metadata.columns.defaultValue);
-        this.emit('change');
+        this.settingsModel.getDefaultValue('columns')
+            .then(v => {
+                this.columns = cloneDeep(v);
+                this.emit('change');
+            });
     }
 
     addColumn(column)
