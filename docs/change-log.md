@@ -6,7 +6,7 @@
 - Add about box in web UI
 - Extend playlists API
 - Add ability to store current settings as default for new browsers
-- Use multiple thread to handle static content
+- Use multiple threads to handle static content
 ### foobar2000
 - Add option to show authentication password
 - Add useful links to settings page
