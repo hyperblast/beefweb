@@ -19,7 +19,7 @@ ResponsePtr UserConfigController::getConfig()
         return Response::json(Json());
 
     auto info = file_io::queryInfo(handle.get());
-    return Response::file(path, std::move(handle), info, "application/json");
+    return Response::file(std::move(path), std::move(handle), info, "application/json");
 }
 
 void UserConfigController::setConfig()
