@@ -43,6 +43,11 @@ See [advanced configuration guide](docs/advanced-config.md) to unlock hidden dev
 
 If you like this project [feel free to donate](https://www.donationalerts.com/r/hyperblast). Any amount is appreciated.
 
+### Peer projects
+
+[beefweb_dotnet](https://github.com/hyperblast/beefweb_dotnet) provides command line client
+as well as client library for .NET.
+
 ### Screenshots
 ![Main web interface on Linux](https://user-images.githubusercontent.com/19171756/44335589-a3286180-a47d-11e8-8db4-fd7708e262c6.png)
 
