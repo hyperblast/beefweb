@@ -5,6 +5,7 @@
 - Add ability to store current settings as default for new browsers
 - Use multiple threads to handle static content
 - Update boost to v1.87
+- Update nlohmann/json to v3.11.3
 - Fix 1px border in compact mode
 - Do not fail when configured music directory does not exist
 - Replace invalid UTF-8 chars in JSON responses instead of failing
