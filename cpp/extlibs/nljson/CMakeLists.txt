@@ -5,9 +5,9 @@ ExternalProject_Add(
     PREFIX
         ${EXTLIB_INSTALL_DIR}
     URL
-        https://github.com/nlohmann/json/releases/download/v3.11.2/json.hpp
+        https://github.com/nlohmann/json/releases/download/v3.11.3/json.hpp
     URL_HASH
-        SHA256=665fa14b8af3837966949e8eb0052d583e2ac105d3438baba9951785512cf921
+        SHA256=9bea4c8066ef4a1c206b2be5a36302f8926f7fdc6087af5d20b417d0cf103ea6
     DOWNLOAD_DIR
         ${EXTLIB_CACHE_DIR}/nljson
     DOWNLOAD_NO_EXTRACT 1
