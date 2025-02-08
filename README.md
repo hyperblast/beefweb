@@ -45,7 +45,7 @@ If you like this project [feel free to donate](https://www.donationalerts.com/r/
 
 ### Peer projects
 
-[beefweb_dotnet](https://github.com/hyperblast/beefweb_dotnet) provides command line client
+[beefweb_dotnet](https://github.com/hyperblast/beefweb_dotnet) project provides command line client
 as well as client library for .NET.
 
 ### Screenshots
