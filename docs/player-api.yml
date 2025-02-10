@@ -817,7 +817,7 @@ paths:
     get:
       tags:
       - clientconfig
-      summary: Get user config
+      summary: Get client config
       operationId: getClientConfig
       parameters:
       - name: id
@@ -836,7 +836,7 @@ paths:
     post:
       tags:
       - clientconfig
-      summary: Set user config
+      summary: Set client config
       operationId: setClientConfig
       parameters:
       - name: id
@@ -846,7 +846,7 @@ paths:
         schema:
           type: string
       requestBody:
-        description: User config data
+        description: Client config data
         content:
           application/json:
             schema:
@@ -856,12 +856,12 @@ paths:
         204:
           description: Success
           content: {}
-  /clientconfig/{id}/clear:
+  /clientconfig/remove/{id}:
     post:
       tags:
       - clientconfig
-      summary: Clear user config
-      operationId: clearClientConfig
+      summary: Remove client config
+      operationId: removeClientConfig
       parameters:
       - name: id
         in: path

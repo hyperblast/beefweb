@@ -16,7 +16,7 @@ q.test('client config', async assert =>
     const config2 = await client.getClientConfig(id);
     assert.deepEqual(config2, value);
 
-    await client.clearClientConfig(id);
+    await client.removeClientConfig(id);
     const config3 = await client.getClientConfig(id);
     assert.deepEqual(config3, null);
 });

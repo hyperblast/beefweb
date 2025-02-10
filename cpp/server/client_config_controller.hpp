@@ -16,7 +16,7 @@ public:
 
     ResponsePtr getConfig();
     void setConfig();
-    void clearConfig();
+    void removeConfig();
 
     static void defineRoutes(Router* router, WorkQueue* workQueue, const char* appName);
 

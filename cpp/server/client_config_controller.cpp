@@ -31,7 +31,7 @@ void ClientConfigController::setConfig()
     file_io::write(path, data.data(), data.length());
 }
 
-void ClientConfigController::clearConfig()
+void ClientConfigController::removeConfig()
 {
     auto path = getFilePath();
     boost::system::error_code ec;
@@ -66,7 +66,7 @@ void ClientConfigController::defineRoutes(Router* router, WorkQueue* workQueue, 
     routes.setPrefix("api/clientconfig");
     routes.get(":id", &ClientConfigController::getConfig);
     routes.post(":id", &ClientConfigController::setConfig);
-    routes.post(":id/clear", &ClientConfigController::clearConfig);
+    routes.post("remove/:id", &ClientConfigController::removeConfig);
 }
 
 }

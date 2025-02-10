@@ -266,9 +266,9 @@ export default class PlayerClient
         return this.post(`api/clientconfig/${id}`, value);
     }
 
-    clearClientConfig(id)
+    removeClientConfig(id)
     {
-        return this.post(`api/clientconfig/${id}/clear`);
+        return this.post(`api/clientconfig/remove/${id}`);
     }
 
     query(options)

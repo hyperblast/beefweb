@@ -411,7 +411,7 @@ export default class SettingsModel extends EventEmitter
 
     clearSavedDefault()
     {
-        return this.client.clearClientConfig(clientConfigKey);
+        return this.client.removeClientConfig(clientConfigKey);
     }
 
     mediaSizeUp(size)
