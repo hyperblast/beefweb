@@ -41,7 +41,7 @@ See [advanced configuration guide](docs/advanced-config.md) to unlock hidden dev
 
 ### Donations
 
-If you like this project [feel free to donate](https://www.donationalerts.com/r/hyperblast). Any amount is appreciated.
+If you like this project [feel free to donate](https://hyperblast.org/donate/). Any amount is appreciated.
 
 ### Peer projects
 
