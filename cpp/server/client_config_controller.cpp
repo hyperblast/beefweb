@@ -46,7 +46,7 @@ Path ClientConfigController::getFilePath()
 
     if (!std::regex_match(id, idPattern))
     {
-        throw InvalidRequestException("Invalid id name");
+        throw InvalidRequestException("invalid configuration id: " + id);
     }
 
     auto configDir = SettingsData::getConfigDir(appName_);

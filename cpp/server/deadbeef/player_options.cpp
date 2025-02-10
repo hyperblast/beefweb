@@ -115,7 +115,7 @@ void LegacyPlaybackModeOption::setValue(int32_t value)
         break;
 
     default:
-        throw InvalidRequestException("Invalid playback mode");
+        throw InvalidRequestException("invalid playback mode");
     }
 }
 

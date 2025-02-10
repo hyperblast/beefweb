@@ -127,7 +127,6 @@ bool Request::tryGetParam(const HttpKeyValueMap& params, const std::string& key,
         return true;
 
     setErrorResponse("invalid value format", key);
-
     throw InvalidRequestException();
 }
 

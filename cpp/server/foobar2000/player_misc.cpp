@@ -63,7 +63,7 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
     metadb_handle_ptr itemHandle;
 
     if (!playlistManager_->playlist_get_item_handle(itemHandle, playlist, query.index))
-        throw InvalidRequestException("Playlist item index is out of range");
+        throw InvalidRequestException("playlist item index is out of range");
 
     return fetchArtwork(itemHandle);
 }
@@ -173,7 +173,7 @@ TitleFormatVector PlayerImpl::compileColumns(const std::vector<std::string>& col
         service_ptr_t<titleformat_object> compiledColumn;
 
         if (!titleFormatCompiler_->compile(compiledColumn, column.c_str()))
-            throw InvalidRequestException("Invalid title format: " + column);
+            throw InvalidRequestException("invalid format expression: " + column);
 
         compiledColumns.emplace_back(std::move(compiledColumn));
     }

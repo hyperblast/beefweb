@@ -394,7 +394,7 @@ void PlayerImpl::sortPlaylist(
 
     titleformat_object::ptr sortBy;
     if (!titleFormatCompiler_->compile(sortBy, expression.c_str()))
-        throw InvalidRequestException("Invalid title format");
+        throw InvalidRequestException("invalid format expression: " + expression);
 
     auto count = playlistManager_->playlist_get_item_count(playlist);
     if (count == 0)

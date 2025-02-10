@@ -53,7 +53,7 @@ void PlayQueueController::removeFromQueue()
         return;
     }
 
-    throw InvalidRequestException("Either queueIndex or plref plus itemIndex parameters are required");
+    throw InvalidRequestException("either queueIndex or plref plus itemIndex parameters are required");
 }
 
 void PlayQueueController::clearQueue()

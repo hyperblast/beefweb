@@ -157,7 +157,7 @@ bool PlayerImpl::playNextBy(const std::string& expression, PlayerImpl::PlaylistI
 {
     TitleFormatPtr format(ddbApi->tf_compile(expression.c_str()));
     if (!format)
-        throw InvalidRequestException("Invalid format expression: " + expression);
+        throw InvalidRequestException("invalid format expression: " + expression);
 
     PlaylistLockGuard lock(playlistMutex_);
 

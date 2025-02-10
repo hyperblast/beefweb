@@ -159,7 +159,7 @@ bool PlayerImpl::playNextBy(const std::string& expression, int increment)
     service_ptr_t<titleformat_object> format;
 
     if (!titleFormatCompiler_->compile(format, expression.c_str()))
-        throw InvalidRequestException("Invalid title format: " + expression);
+        throw InvalidRequestException("invalid format expression: " + expression);
 
     t_size playlist;
     t_size activeItem;

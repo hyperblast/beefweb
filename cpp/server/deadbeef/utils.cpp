@@ -20,7 +20,7 @@ std::vector<TitleFormatPtr> compileColumns(
         if (!formatter)
         {
             if (throwOnError)
-                throw InvalidRequestException("Failed to compile expression: " + column);
+                throw InvalidRequestException("invalid format expression: " + column);
 
             return std::vector<TitleFormatPtr>();
         }
