@@ -49,6 +49,7 @@ set(
     src/settings_content.js
     src/settings_header.js
     src/settings_model.js
+    src/settings_model_base.js
     src/settings_store.js
     src/status_bar.js
     src/style.less
