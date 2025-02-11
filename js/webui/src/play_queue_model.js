@@ -2,26 +2,16 @@ import EventEmitter from 'wolfy87-eventemitter';
 
 class PlayQueueMap
 {
-    getQueueIndices(playlistId, itemIndex)
-    {
-        const playlistMap = this.playlists.get(playlistId);
-        if (playlistMap === undefined)
-        {
-            return null;
-        }
-
-        const indices = playlistMap.get(itemIndex);
-        return indices === undefined ? null : indices;
-    }
-
     constructor(items)
     {
         this.playlists = new Map();
 
-        let queueIndex = 1;
+        let queueIndex = 0;
 
         for (let queueItem of items)
         {
+            queueIndex++;
+
             let playlistMap = this.playlists.get(queueItem.playlistId);
             if (playlistMap === undefined)
             {
@@ -37,8 +27,19 @@ class PlayQueueMap
             }
 
             queueIndices.push(queueIndex);
-            queueIndex++;
         }
+    }
+
+    getQueueIndices(playlistId, itemIndex)
+    {
+        const playlistMap = this.playlists.get(playlistId);
+        if (playlistMap === undefined)
+        {
+            return null;
+        }
+
+        const indices = playlistMap.get(itemIndex);
+        return indices === undefined ? null : indices;
     }
 }
 
