@@ -70,7 +70,12 @@ export default class PlayQueueModel extends EventEmitter
         this.emit('change');
     }
 
-    addToQueue(playlist, index)
+    prependToQueue(playlist, index)
+    {
+        this.client.addToPlayQueue(playlist, index, 0);
+    }
+
+    appendToQueue(playlist, index)
     {
         this.client.addToPlayQueue(playlist, index);
     }
