@@ -88,15 +88,15 @@ class PlaylistContent extends React.PureComponent
 
             const iconText = icon
                 ? null
-                : this.getQueueIndex(queueMap, currentPlaylistId, itemIndex);
+                : this.getQueueIndexText(queueMap, currentPlaylistId, itemIndex);
 
             return { icon, iconText, columns: item.columns };
         });
     }
 
-    getQueueIndex(queueMap, playlistId, itemIndex)
+    getQueueIndexText(queueMap, playlistId, itemIndex)
     {
-        const indices = queueMap.getQueueIndices(playlistId, itemIndex);
+        const indices = queueMap.getIndices(playlistId, itemIndex);
 
         if (!indices)
         {
@@ -130,7 +130,7 @@ class PlaylistContent extends React.PureComponent
     handleRenderRowMenu(index)
     {
         const playlistId = this.state.currentPlaylistId;
-        const inQueue = this.state.queueMap.isInQueue(playlistId, index);
+        const inQueue = this.state.queueMap.hasItem(playlistId, index);
 
         const play = () => this.context.playlistModel.activateItem(index);
         const appendToQueue = () => this.context.playQueueModel.appendToQueue(playlistId, index);

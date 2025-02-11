@@ -30,12 +30,12 @@ class PlayQueueMap
         }
     }
 
-    isInQueue(playlistId, itemIndex)
+    hasItem(playlistId, itemIndex)
     {
-        return this.getQueueIndices(playlistId, itemIndex) !== null;
+        return this.getIndices(playlistId, itemIndex) !== null;
     }
 
-    getQueueIndices(playlistId, itemIndex)
+    getIndices(playlistId, itemIndex)
     {
         const playlistMap = this.playlists.get(playlistId);
         if (playlistMap === undefined)
