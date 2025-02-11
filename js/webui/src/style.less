@@ -532,7 +532,7 @@ body {
 
 .dtable-has-row-icons {
     .dtable-head, .dtable-row {
-        padding-left: 2rem;
+        padding-left: 3rem;
     }
 }
 
@@ -544,14 +544,18 @@ body {
 
 .dtable-row-icon {
     position: absolute;
-    left: 0;
+    left: 0.5rem;
 }
 
 .dtable-row-icon-text {
     position: absolute;
     left: 0;
     padding: 0.25rem;
+    width: 3rem;
+    text-align: center;
     font-size: 80%;
+
+    .no-text-overflow();
 }
 
 .dtable-row-menu {

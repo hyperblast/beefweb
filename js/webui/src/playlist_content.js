@@ -35,6 +35,7 @@ class PlaylistContent extends React.PureComponent
     getStateFromModel()
     {
         const { playbackState } = this.context.playerModel;
+        const { queueMap } = this.context.playQueueModel;
         const { columns, playlistItems, currentPlaylistId } = this.context.playlistModel;
         const { offset, totalCount, items } = playlistItems;
 
@@ -45,6 +46,7 @@ class PlaylistContent extends React.PureComponent
             totalCount,
             items,
             currentPlaylistId,
+            queueMap,
             activeItemIndex: this.getActiveItemIndex(),
         };
     }
@@ -75,18 +77,38 @@ class PlaylistContent extends React.PureComponent
 
     getTableData()
     {
-        const { playbackState, offset, items, activeItemIndex } = this.state;
+        const { playbackState, offset, items, queueMap, currentPlaylistId, activeItemIndex } = this.state;
 
         return items.map((item, index) =>
         {
-            const icon = (index + offset) === activeItemIndex
+            const itemIndex = index + offset;
+            const icon = itemIndex === activeItemIndex
                 ? playbackStateIcons[playbackState]
                 : null;
 
-            const columns = item.columns;
+            const iconText = icon
+                ? null
+                : this.getQueueIndex(queueMap, currentPlaylistId, itemIndex);
 
-            return { icon, columns };
+            return { icon, iconText, columns: item.columns };
         });
+    }
+
+    getQueueIndex(queueMap, playlistId, itemIndex)
+    {
+        const indices = queueMap.getQueueIndices(playlistId, itemIndex);
+
+        if (!indices)
+        {
+            return null;
+        }
+
+        if (indices.length === 1)
+        {
+            return `(${indices[0]})`;
+        }
+
+        return '(' + indices.join(', ') + ')';
     }
 
     handleRenderColumnMenu(index)
@@ -146,5 +168,6 @@ class PlaylistContent extends React.PureComponent
 
 export default ModelBinding(PlaylistContent, {
     playerModel: 'change',
-    playlistModel: ['playlistsChange', 'itemsChange']
+    playlistModel: ['playlistsChange', 'itemsChange'],
+    playQueueModel: 'change',
 });
