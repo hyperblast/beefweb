@@ -58,14 +58,24 @@ export default class PlayQueueModel extends EventEmitter
 
     start()
     {
-        this.dataSource.on('playQueue', this.setPlayQueue.bind(this));
+        this.dataSource.on('playQueue', this.update.bind(this));
         this.dataSource.watch('playQueue');
     }
 
-    setPlayQueue(queue)
+    update(queue)
     {
         this.queue = queue;
         this.queueMap = new PlayQueueMap(queue);
         this.emit('change');
+    }
+
+    addToQueue(playlist, index)
+    {
+        this.client.addToPlayQueue(playlist, index);
+    }
+
+    removeFromQueue(playlist, index)
+    {
+        this.client.removeFromPlayQueueByItemIndex(playlist, index);
     }
 }

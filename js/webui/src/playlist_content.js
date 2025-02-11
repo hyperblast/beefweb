@@ -3,7 +3,7 @@ import { PlaybackState } from 'beefweb-client'
 import DataTable from './data_table.js'
 import { bindHandlers } from './utils.js'
 import ModelBinding from './model_binding.js';
-import { Menu, MenuItem, MenuLabel } from './elements.js';
+import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js';
 import ServiceContext from "./service_context.js";
 
 const pageSize = 100;
@@ -129,13 +129,28 @@ class PlaylistContent extends React.PureComponent
 
     handleRenderRowMenu(index)
     {
-        const play = () => this.context.playlistModel.activateItem(index);;
+        const playlistId = this.state.currentPlaylistId;
+        const inQueue = this.state.queueMap.getQueueIndices(playlistId, index) !== null;
+
+        const play = () => this.context.playlistModel.activateItem(index);
+        const addToQueue = () => this.context.playQueueModel.addToQueue(playlistId, index);
         const remove = () => this.context.playlistModel.removeItem(index);
+
+        let removeFromQueueItem = null;
+
+        if (inQueue)
+        {
+            const removeFromQueue = () => this.context.playQueueModel.removeFromQueue(playlistId, index);
+            removeFromQueueItem = <MenuItem title="Remove from queue" onClick={removeFromQueue}/>;
+        }
 
         return (
             <Menu>
-                <MenuItem title='Play' onClick={play} />
-                <MenuItem title='Remove' onClick={remove} />
+                <MenuItem title='Play' onClick={play}/>
+                <MenuItem title="Add to queue" onClick={addToQueue}/>
+                {removeFromQueueItem}
+                <MenuSeparator/>
+                <MenuItem title='Remove' onClick={remove}/>
             </Menu>
         );
     }
