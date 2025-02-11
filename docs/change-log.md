@@ -1,6 +1,7 @@
 # Changes in v0.9 (not released)
 - Add album art display
 - Add about box in web UI
+- Add play queue support
 - Extend playlists API
 - Add ability to store current settings as default for new browsers
 - Use multiple threads to handle static content

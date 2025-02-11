@@ -1,5 +1,6 @@
 export const defaultPlayerFeatures = Object.freeze({
-    showTotalTime: true,
+    showTotalTime: false,
+    prependToQueue: false,
 });
 
 function defineFeatures(obj)
@@ -8,9 +9,11 @@ function defineFeatures(obj)
 }
 
 const featuresByPlayer = {
-    deadbeef: defineFeatures({}),
+    deadbeef: defineFeatures({
+        showTotalTime: true,
+        prependToQueue: true,
+    }),
     foobar2000: defineFeatures({
-        showTotalTime: false,
     })
 };
 

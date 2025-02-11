@@ -3,7 +3,7 @@ import { PlaybackState } from 'beefweb-client'
 import DataTable from './data_table.js'
 import { bindHandlers } from './utils.js'
 import ModelBinding from './model_binding.js';
-import { Menu, MenuItem, MenuLabel } from './elements.js';
+import { Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js';
 import ServiceContext from "./service_context.js";
 
 const pageSize = 100;
@@ -35,6 +35,7 @@ class PlaylistContent extends React.PureComponent
     getStateFromModel()
     {
         const { playbackState } = this.context.playerModel;
+        const { queueMap } = this.context.playQueueModel;
         const { columns, playlistItems, currentPlaylistId } = this.context.playlistModel;
         const { offset, totalCount, items } = playlistItems;
 
@@ -45,6 +46,7 @@ class PlaylistContent extends React.PureComponent
             totalCount,
             items,
             currentPlaylistId,
+            queueMap,
             activeItemIndex: this.getActiveItemIndex(),
         };
     }
@@ -75,18 +77,38 @@ class PlaylistContent extends React.PureComponent
 
     getTableData()
     {
-        const { playbackState, offset, items, activeItemIndex } = this.state;
+        const { playbackState, offset, items, queueMap, currentPlaylistId, activeItemIndex } = this.state;
 
         return items.map((item, index) =>
         {
-            const icon = (index + offset) === activeItemIndex
+            const itemIndex = index + offset;
+            const icon = itemIndex === activeItemIndex
                 ? playbackStateIcons[playbackState]
                 : null;
 
-            const columns = item.columns;
+            const iconText = icon
+                ? null
+                : this.getQueueIndexText(queueMap, currentPlaylistId, itemIndex);
 
-            return { icon, columns };
+            return { icon, iconText, columns: item.columns };
         });
+    }
+
+    getQueueIndexText(queueMap, playlistId, itemIndex)
+    {
+        const indices = queueMap.getIndices(playlistId, itemIndex);
+
+        if (!indices)
+        {
+            return null;
+        }
+
+        if (indices.length === 1)
+        {
+            return `(${indices[0]})`;
+        }
+
+        return '(' + indices.join(', ') + ')';
     }
 
     handleRenderColumnMenu(index)
@@ -107,12 +129,42 @@ class PlaylistContent extends React.PureComponent
 
     handleRenderRowMenu(index)
     {
-        const play = () => this.context.playlistModel.activateItem(index);;
+        const playlistId = this.state.currentPlaylistId;
+        const inQueue = this.state.queueMap.hasItem(playlistId, index);
+
+        const play = () => this.context.playlistModel.activateItem(index);
+        const appendToQueue = () => this.context.playQueueModel.appendToQueue(playlistId, index);
         const remove = () => this.context.playlistModel.removeItem(index);
+
+        let removeFromQueueItem = null;
+        if (inQueue)
+        {
+            const removeFromQueue = () => this.context.playQueueModel.removeFromQueue(playlistId, index);
+            removeFromQueueItem = <MenuItem title="Remove from queue" onClick={removeFromQueue}/>;
+        }
+
+        let prependToQueueItem;
+        let appendToQueueItem;
+
+        if (this.context.playerModel.features.prependToQueue)
+        {
+            const prependToQueue = () => this.context.playQueueModel.prependToQueue(playlistId, index);
+            prependToQueueItem = <MenuItem title="Add to queue (start)" onClick={prependToQueue}/>;
+            appendToQueueItem = <MenuItem title="Add to queue (end)" onClick={appendToQueue} />;
+        }
+        else
+        {
+            prependToQueueItem = null;
+            appendToQueueItem = <MenuItem title="Add to queue" onClick={appendToQueue} />;
+        }
 
         return (
             <Menu>
                 <MenuItem title='Play' onClick={play} />
+                { prependToQueueItem }
+                { appendToQueueItem }
+                { removeFromQueueItem }
+                <MenuSeparator />
                 <MenuItem title='Remove' onClick={remove} />
             </Menu>
         );
@@ -146,5 +198,6 @@ class PlaylistContent extends React.PureComponent
 
 export default ModelBinding(PlaylistContent, {
     playerModel: 'change',
-    playlistModel: ['playlistsChange', 'itemsChange']
+    playlistModel: ['playlistsChange', 'itemsChange'],
+    playQueueModel: 'change',
 });

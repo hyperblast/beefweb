@@ -7,6 +7,7 @@ import NotificationModel from './notification_model.js'
 import ScrollManager from './scroll_manager.js'
 import NavigationModel from './navigation_model.js';
 import ColumnsSettingsModel from './columns_settings_model.js';
+import PlayQueueModel from './play_queue_model.js';
 
 export default class AppModel
 {
@@ -18,6 +19,7 @@ export default class AppModel
         this.columnsSettingsModel = new ColumnsSettingsModel(this.settingsModel);
         this.playerModel = new PlayerModel(client, this.dataSource, this.settingsModel);
         this.playlistModel = new PlaylistModel(client, this.dataSource, this.settingsModel);
+        this.playQueueModel = new PlayQueueModel(client, this.dataSource);
         this.fileBrowserModel = new FileBrowserModel(client);
         this.notificationModel = new NotificationModel();
         this.navigationModel = new NavigationModel();
@@ -38,6 +40,7 @@ export default class AppModel
     {
         this.playerModel.start();
         this.playlistModel.start();
+        this.playQueueModel.start();
         this.dataSource.start();
         this.fileBrowserModel.reload();
         this.notificationModel.start();
