@@ -2,13 +2,13 @@ import EventEmitter from 'wolfy87-eventemitter';
 
 class PlayQueueMap
 {
-    constructor(items)
+    constructor(queue)
     {
         this.playlists = new Map();
 
         let queueIndex = 0;
 
-        for (let queueItem of items)
+        for (let queueItem of queue)
         {
             queueIndex++;
 
@@ -28,6 +28,11 @@ class PlayQueueMap
 
             queueIndices.push(queueIndex);
         }
+    }
+
+    isInQueue(playlistId, itemIndex)
+    {
+        return this.getQueueIndices(playlistId, itemIndex) !== null;
     }
 
     getQueueIndices(playlistId, itemIndex)

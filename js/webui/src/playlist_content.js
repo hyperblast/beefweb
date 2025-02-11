@@ -130,7 +130,7 @@ class PlaylistContent extends React.PureComponent
     handleRenderRowMenu(index)
     {
         const playlistId = this.state.currentPlaylistId;
-        const inQueue = this.state.queueMap.getQueueIndices(playlistId, index) !== null;
+        const inQueue = this.state.queueMap.isInQueue(playlistId, index);
 
         const play = () => this.context.playlistModel.activateItem(index);
         const appendToQueue = () => this.context.playQueueModel.appendToQueue(playlistId, index);
