@@ -136,11 +136,17 @@ void CompressionHandler::handleResponse(EventStreamResponse*)
 
 CompressionFilter::CompressionFilter()
 {
+    // these two have "encoding=utf-8" at the end
+    contentTypes_.emplace(ContentType::TEXT_PLAIN_UTF8);
+    contentTypes_.emplace(ContentType::TEXT_HTML_UTF8);
+
+    // these two do not
     contentTypes_.emplace("text/html");
-    contentTypes_.emplace("image/svg+xml");
-    contentTypes_.emplace("application/javascript");
-    contentTypes_.emplace("text/css");
     contentTypes_.emplace("text/plain");
+
+    contentTypes_.emplace(ContentType::IMAGE_SVG);
+    contentTypes_.emplace(ContentType::APPLICATION_JAVASCRIPT);
+    contentTypes_.emplace(ContentType::TEXT_CSS);
 }
 
 CompressionFilter::~CompressionFilter() = default;

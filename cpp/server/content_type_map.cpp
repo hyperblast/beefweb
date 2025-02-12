@@ -1,4 +1,5 @@
 #include "content_type_map.hpp"
+#include "http.hpp"
 #include <stdlib.h>
 
 namespace msrv {
@@ -25,26 +26,25 @@ inline bool matchHeader(
 }
 
 ContentTypeMap::ContentTypeMap()
-    : defaultType_("application/octet-stream"),
-      jpegType_("image/jpeg"),
-      pngType_("image/png"),
-      gifType_("image/gif"),
-      bmpType_("image/bmp")
+    : defaultType_(ContentType::APPLICATION_OCTET_STREAM),
+      jpegType_(ContentType::IMAGE_JPEG),
+      pngType_(ContentType::IMAGE_PNG),
+      gifType_(ContentType::IMAGE_GIF),
+      bmpType_(ContentType::IMAGE_BMP)
 {
-    add("text/html", "htm", "html");
-    add("image/jpeg", "jpg", "jpeg");
-    add("image/png", "png");
-    add("image/gif", "gif");
-    add("image/bmp", "bmp");
-    add("image/svg+xml", "svg");
-    add("application/javascript", "js");
-    add("text/css", "css");
-    add("text/plain", "txt");
+    add(ContentType::TEXT_HTML_UTF8, "htm", "html");
+    add(ContentType::TEXT_PLAIN_UTF8, "txt");
+    add(ContentType::TEXT_CSS, "css");
+    add(ContentType::APPLICATION_JAVASCRIPT, "js");
+    add(ContentType::APPLICATION_JSON, "json");
+    add(ContentType::IMAGE_JPEG, "jpg", "jpeg");
+    add(ContentType::IMAGE_PNG, "png");
+    add(ContentType::IMAGE_GIF, "gif");
+    add(ContentType::IMAGE_BMP, "bmp");
+    add(ContentType::IMAGE_SVG, "svg");
 }
 
-ContentTypeMap::~ContentTypeMap()
-{
-}
+ContentTypeMap::~ContentTypeMap() = default;
 
 const std::string& ContentTypeMap::byFilePath(const Path& path) const
 {

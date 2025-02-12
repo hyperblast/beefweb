@@ -24,6 +24,28 @@ const char HttpHeader::CONTENT_ENCODING[] = "Content-Encoding";
 
 const char HttpHeader::LOCATION[] = "Location";
 
+const char ContentType::APPLICATION_OCTET_STREAM[] = "application/octet-stream";
+
+const char ContentType::APPLICATION_JSON[] = "application/json";
+
+const char ContentType::APPLICATION_JAVASCRIPT[] = "application/javascript";
+
+const char ContentType::TEXT_PLAIN_UTF8[] = "text/plain; encoding=utf-8";
+
+const char ContentType::TEXT_HTML_UTF8[] = "text/html; encoding=utf-8";
+
+const char ContentType::TEXT_CSS[] = "text/css";
+
+const char ContentType::IMAGE_SVG[] = "image/svg+xml";
+
+const char ContentType::IMAGE_JPEG[] = "image/jpeg";
+
+const char ContentType::IMAGE_PNG[] = "image/png";
+
+const char ContentType::IMAGE_GIF[] = "image/gif";
+
+const char ContentType::IMAGE_BMP[] = "image/bmp";
+
 std::string toString(HttpMethod method)
 {
     switch (method)

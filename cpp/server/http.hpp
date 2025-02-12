@@ -48,6 +48,21 @@ struct HttpHeader
     static const char LOCATION[];
 };
 
+struct ContentType
+{
+    static const char APPLICATION_OCTET_STREAM[];
+    static const char APPLICATION_JSON[];
+    static const char APPLICATION_JAVASCRIPT[];
+    static const char TEXT_PLAIN_UTF8[];
+    static const char TEXT_HTML_UTF8[];
+    static const char TEXT_CSS[];
+    static const char IMAGE_SVG[];
+    static const char IMAGE_JPEG[];
+    static const char IMAGE_PNG[];
+    static const char IMAGE_GIF[];
+    static const char IMAGE_BMP[];
+};
+
 std::string toString(HttpMethod method);
 std::string toString(HttpStatus status);
 
