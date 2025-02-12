@@ -13,6 +13,7 @@
 ### foobar2000
 - Add option to show authentication password
 - Add useful links to settings page
+- Update foobar2000 SDK to 2024-12-03
 ### DeaDBeeF
 - Raise minimal API version to v1.10 (corresponds to DeaDBeeF v1.8.0)
 - Add support for artwork plugin v2 (used since DeaDBeeF v1.9)
