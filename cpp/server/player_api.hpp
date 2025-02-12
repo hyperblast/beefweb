@@ -311,15 +311,15 @@ public:
     {
         switch (value)
         {
-        case Switch::S_FALSE:
+        case Switch::SW_FALSE:
             setValue(false);
             break;
 
-        case Switch::S_TRUE:
+        case Switch::SW_TRUE:
             setValue(true);
             break;
 
-        case Switch::S_TOGGLE:
+        case Switch::SW_TOGGLE:
             setValue(!getValue());
             break;
         }

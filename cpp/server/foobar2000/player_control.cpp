@@ -224,17 +224,17 @@ void PlayerImpl::setMuted(Switch val)
 {
     switch (val)
     {
-    case Switch::S_FALSE:
+    case Switch::SW_FALSE:
         if (playbackControl_->is_muted())
             playbackControl_->volume_mute_toggle();
         break;
 
-    case Switch::S_TRUE:
+    case Switch::SW_TRUE:
         if (!playbackControl_->is_muted())
             playbackControl_->volume_mute_toggle();
         break;
 
-    case Switch::S_TOGGLE:
+    case Switch::SW_TOGGLE:
         playbackControl_->volume_mute_toggle();
         break;
     }

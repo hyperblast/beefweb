@@ -12,10 +12,10 @@ namespace msrv {
 
 enum class Switch
 {
-    // S_ prefix to avoid clashes with frequently defined FALSE/TRUE constants, S_TOGGLE for consistency
-    S_FALSE,
-    S_TRUE,
-    S_TOGGLE
+    // SW_ prefix to avoid clashes with frequently defined FALSE/TRUE constants, SW_TOGGLE for consistency
+    SW_FALSE,
+    SW_TRUE,
+    SW_TOGGLE
 };
 
 struct Range

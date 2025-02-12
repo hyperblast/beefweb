@@ -13,15 +13,15 @@ void to_json(Json& json, const Switch& value)
 {
     switch (value)
     {
-    case Switch::S_FALSE:
+    case Switch::SW_FALSE:
         json = false;
         break;
 
-    case Switch::S_TRUE:
+    case Switch::SW_TRUE:
         json = true;
         break;
 
-    case Switch::S_TOGGLE:
+    case Switch::SW_TOGGLE:
         json = "toggle";
         break;
 
@@ -34,7 +34,7 @@ void from_json(const Json& json, Switch& value)
 {
     if (json.is_boolean())
     {
-        value = json.get<bool>() ? Switch::S_TRUE : Switch::S_FALSE;
+        value = json.get<bool>() ? Switch::SW_TRUE : Switch::SW_FALSE;
         return;
     }
 

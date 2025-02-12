@@ -41,7 +41,7 @@ bool ValueParser<Switch>::tryParse(StringView str, Switch* outVal)
     case 4:
         if (::memcmp(str.data(), "true", 4) == 0)
         {
-            *outVal = Switch::S_TRUE;
+            *outVal = Switch::SW_TRUE;
             return true;
         }
 
@@ -50,7 +50,7 @@ bool ValueParser<Switch>::tryParse(StringView str, Switch* outVal)
     case 5:
         if (::memcmp(str.data(), "false", 5) == 0)
         {
-            *outVal = Switch::S_FALSE;
+            *outVal = Switch::SW_FALSE;
             return true;
         }
 
@@ -59,7 +59,7 @@ bool ValueParser<Switch>::tryParse(StringView str, Switch* outVal)
     case 6:
         if (::memcmp(str.data(), "toggle", 6) == 0)
         {
-            *outVal = Switch::S_TOGGLE;
+            *outVal = Switch::SW_TOGGLE;
             return true;
         }
 

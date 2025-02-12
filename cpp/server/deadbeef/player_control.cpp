@@ -227,15 +227,15 @@ void PlayerImpl::setMuted(Switch value)
 {
     switch (value)
     {
-    case Switch::S_FALSE:
+    case Switch::SW_FALSE:
         ddbApi->audio_set_mute(0);
         break;
 
-    case Switch::S_TRUE:
+    case Switch::SW_TRUE:
         ddbApi->audio_set_mute(1);
         break;
 
-    case Switch::S_TOGGLE:
+    case Switch::SW_TOGGLE:
         ddbApi->audio_set_mute(!ddbApi->audio_is_mute());
         break;
     }
