@@ -145,15 +145,15 @@ q.test('get subdir file of nested prefix', async assert =>
 q.test('provide content type', async assert =>
 {
     const contentTypes = {
-        'file.html': 'text/html; encoding=utf-8',
-        'file.htm': 'text/html; encoding=utf-8',
+        'file.html': 'text/html; charset=utf-8',
+        'file.htm': 'text/html; charset=utf-8',
         'file.css': 'text/css',
         'file.svg': 'image/svg+xml',
         'file.js': 'application/javascript',
         'file.png': 'image/png',
         'file.jpeg': 'image/jpeg',
         'file.jpg': 'image/jpeg',
-        'file.txt': 'text/plain; encoding=utf-8',
+        'file.txt': 'text/plain; charset=utf-8',
     };
 
     for (let file of Object.keys(contentTypes))
