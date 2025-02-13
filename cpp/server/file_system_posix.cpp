@@ -115,7 +115,7 @@ void setPosition(FileHandle::Type handle, int64_t position)
 {
     static_assert(sizeof(off_t) >= 8, "64-bit off_t is required");
     auto ret = ::lseek(handle, position, SEEK_SET);
-    throwIfFailed("lseek64", ret >= 0);
+    throwIfFailed("lseek", ret >= 0);
 }
 
 void write(const Path& path, const void* buffer, size_t bytes)
