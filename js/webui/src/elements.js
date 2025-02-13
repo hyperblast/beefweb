@@ -139,6 +139,7 @@ export function PanelHeader(props)
         </div>
     );
 }
+
 PanelHeader.propTypes = {
     title: PropTypes.string.isRequired
 };
