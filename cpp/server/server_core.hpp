@@ -34,7 +34,7 @@ public:
     static ServerCorePtr create();
 
     ServerCore() = default;
-    virtual ~ServerCore();
+    virtual ~ServerCore() = default;
 
     virtual WorkQueue* workQueue() = 0;
     virtual TimerFactory* timerFactory() = 0;

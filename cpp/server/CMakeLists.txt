@@ -107,7 +107,7 @@ set(
     response_sender.cpp response_sender.hpp
     router.cpp router.hpp
     server.cpp server.hpp
-    server_core.cpp server_core.hpp
+    server_core.hpp
     server_host.cpp server_host.hpp
     server_thread.cpp server_thread.hpp
     settings.cpp settings.hpp
