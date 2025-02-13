@@ -49,7 +49,7 @@ public:
     {
     }
 
-    ~InvalidRequestException();
+    ~InvalidRequestException() = default;
 };
 
 template<typename T>
