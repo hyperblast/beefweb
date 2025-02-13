@@ -113,7 +113,8 @@ size_t read(FileHandle::Type handle, void* buffer, size_t bytes)
 
 void setPosition(FileHandle::Type handle, int64_t position)
 {
-    auto ret = ::lseek64(handle, position, SEEK_SET);
+    static_assert(sizeof(off_t) >= 8, "64-bit off_t is required");
+    auto ret = ::lseek(handle, position, SEEK_SET);
     throwIfFailed("lseek64", ret >= 0);
 }
 
