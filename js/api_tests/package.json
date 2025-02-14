@@ -1,6 +1,6 @@
 {
   "name": "beefweb-api-tests",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Beefweb API tests",
   "main": "src/main.js",
   "type": "module",

@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Player API
-  version: '0.9'
+  version: '0.10'
 servers:
 - url: http://localhost:8880/api
 tags:

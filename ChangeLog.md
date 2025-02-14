@@ -1,3 +1,6 @@
+# Changes in v0.10 (not released)
+
+
 # Changes in v0.9 (released 2025-02-14)
 - Add album art display
 - Add about box in web UI
