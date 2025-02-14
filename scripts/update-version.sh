@@ -85,27 +85,27 @@ function update_jslib
 
 function add_change_log_entry
 {
-    cd "$root_dir/docs"
+    cd "$root_dir"
 
     change_log_data="# Changes in v$version (not released)
 
 
-$(cat change-log.md)"
+$(cat ChangeLog.md)"
 
-    echo "$change_log_data" > change-log.md
+    echo "$change_log_data" > ChangeLog.md
 }
 
 function mark_change_log_entry_as_released
 {
-    cd "$root_dir/docs"
+    cd "$root_dir"
     release_date=$(date -u +%F)
-    sed -i "s|v$version (.*)|v$version (released $release_date)|" change-log.md
+    sed -i "s|v$version (.*)|v$version (released $release_date)|" ChangeLog.md
 }
 
 function unmark_change_log_entry_as_released
 {
-    cd "$root_dir/docs"
-    sed -i "s|v$version (.*)|v$version (not released)|" change-log.md
+    cd "$root_dir"
+    sed -i "s|v$version (.*)|v$version (not released)|" ChangeLog.md
 }
 
 update_change_log=""
