@@ -299,12 +299,15 @@ void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& d
     {
         // Output plugin is changed
         ddbApi->conf_set_str(outputPluginConfigKey, typeId.c_str());
-        ddbApi->conf_set_str(outputDeviceConfigKey(typeId).c_str(), deviceId.c_str());
+
+        if (plugin->enum_soundcards)
+            ddbApi->conf_set_str(outputDeviceConfigKey(typeId).c_str(), deviceId.c_str());
+
         ddbApi->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
         return;
     }
 
-    if (output.deviceId == deviceId)
+    if (output.deviceId == deviceId || !plugin->enum_soundcards)
     {
         // No changes
         return;
