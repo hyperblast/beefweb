@@ -126,8 +126,8 @@ private:
     void queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, ColumnsQuery* query);
     void queryVolume(VolumeInfo* info);
     void queryInfo(PlayerInfo* info);
-    void initVersion();
-    void initArtwork();
+    bool checkOutputChanged();
+    ActiveOutputInfo getActiveOutput();
     bool playNextBy(const std::string& expression, PlaylistItemSelector selector);
     PlaylistInfo getPlaylistInfo(ddb_playlist_t* playlist, int index, bool isCurrent);
 
@@ -143,6 +143,7 @@ private:
 
     std::string version_;
     std::unique_ptr<ArtworkFetcher> artworkFetcher_;
+    ActiveOutputInfo activeOutput_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };

@@ -71,8 +71,15 @@ std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
     return std::make_unique<ThreadWorkQueue>();
 }
 
-void PlayerImpl::initArtwork()
+void PlayerImpl::connect()
 {
+    {
+        ConfigLockGuard lock(configMutex_);
+        version_ = ddbApi->conf_get_str_fast("deadbeef_version", "");
+    }
+
+    activeOutput_ = getActiveOutput();
+
     artworkFetcher_ = ArtworkFetcher::createV2();
 
     if (!artworkFetcher_)
@@ -81,21 +88,31 @@ void PlayerImpl::initArtwork()
     }
 }
 
-void PlayerImpl::initVersion()
-{
-    ConfigLockGuard lock(configMutex_);
-    version_ = ddbApi->conf_get_str_fast("deadbeef_version", "");
-}
-
-void PlayerImpl::connect()
-{
-    initVersion();
-    initArtwork();
-}
-
 void PlayerImpl::disconnect()
 {
     artworkFetcher_.reset();
+}
+
+bool PlayerImpl::checkOutputChanged()
+{
+    auto output = getActiveOutput();
+    if (output == activeOutput_)
+        return false;
+
+    activeOutput_ = std::move(output);
+    return true;
+}
+
+ActiveOutputInfo PlayerImpl::getActiveOutput()
+{
+    ActiveOutputInfo config;
+    ConfigLockGuard lock(configMutex_);
+
+    config.typeId = ddbApi->conf_get_str_fast(outputPluginConfigKey, "alsa");
+    config.deviceId = ddbApi->conf_get_str_fast(
+        outputDeviceConfigKey(config.typeId).c_str(), MSRV_OUTPUT_DEFAULT_DEVICE_ID);
+
+    return config;
 }
 
 std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
@@ -244,16 +261,7 @@ OutputsInfo PlayerImpl::getOutputs()
         plugins++;
     }
 
-    {
-        ConfigLockGuard lock(configMutex_);
-
-        std::string pluginId(ddbApi->conf_get_str_fast(outputPluginConfigKey, "alsa"));
-        std::string deviceId(ddbApi->conf_get_str_fast(
-            outputDeviceConfigKey(pluginId).c_str(), MSRV_OUTPUT_DEFAULT_DEVICE_ID));
-
-        info.active = ActiveOutputInfo(std::move(pluginId), std::move(deviceId));
-    }
-
+    info.active = getActiveOutput();
     return info;
 }
 
@@ -277,9 +285,27 @@ void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& d
     }
 
     ConfigLockGuard lock(configMutex_);
-    ddbApi->conf_set_str(outputPluginConfigKey, typeId.c_str());
+
+    auto output = getActiveOutput();
+
+    if (output.typeId != typeId)
+    {
+        // Output plugin is changed
+        ddbApi->conf_set_str(outputPluginConfigKey, typeId.c_str());
+        ddbApi->conf_set_str(outputDeviceConfigKey(typeId).c_str(), deviceId.c_str());
+        ddbApi->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+        return;
+    }
+
+    if (output.deviceId == deviceId)
+    {
+        // No changes
+        return;
+    }
+
+    // Only output device is changed
     ddbApi->conf_set_str(outputDeviceConfigKey(typeId).c_str(), deviceId.c_str());
-    ddbApi->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+    ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
 void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
@@ -287,6 +313,19 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
     switch (id)
     {
     case DB_EV_CONFIGCHANGED:
+    {
+        // DB_EV_REINIT_SOUND is not sent when only device is changed.
+        // Check previously stored device and emit event if necessary.
+
+        auto events = PlayerEvents::PLAYER_CHANGED;
+
+        if (checkOutputChanged())
+            events |= PlayerEvents::OUTPUTS_CHANGED;
+
+        emitEvents(events);
+        break;
+    }
+
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGCHANGED:
     case DB_EV_SONGFINISHED:
@@ -297,7 +336,8 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
         break;
 
     case DB_EV_OUTPUTCHANGED:
-        emitEvents(PlayerEvents::OUTPUTS_CHANGED);
+        if (checkOutputChanged())
+            emitEvents(PlayerEvents::OUTPUTS_CHANGED);
         break;
 
     case DB_EV_TRACKINFOCHANGED:

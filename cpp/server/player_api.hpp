@@ -388,11 +388,24 @@ struct ActiveOutputInfo
 {
     ActiveOutputInfo() = default;
     ActiveOutputInfo(ActiveOutputInfo&&) = default;
+
     ActiveOutputInfo(std::string typeIdVal, std::string deviceIdVal)
-        : typeId(std::move(typeIdVal)), deviceId(std::move(deviceIdVal)) { }
+        : typeId(std::move(typeIdVal)), deviceId(std::move(deviceIdVal))
+    {
+    }
 
     std::string typeId;
     std::string deviceId;
+
+    bool operator==(const ActiveOutputInfo& other) const
+    {
+        return typeId == other.typeId && deviceId == other.deviceId;
+    }
+
+    bool operator!=(const ActiveOutputInfo& other) const
+    {
+        return !(*this == other);
+    }
 
     ActiveOutputInfo& operator=(ActiveOutputInfo&&) = default;
 };
