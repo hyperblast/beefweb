@@ -234,10 +234,10 @@ OutputsInfo PlayerImpl::getOutputs()
 
         OutputTypeInfo typeInfo(p->plugin.id, p->plugin.name, {});
 
-        typeInfo.devices.emplace_back(MSRV_OUTPUT_DEFAULT_DEVICE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_NAME);
-
         if (p->enum_soundcards)
             p->enum_soundcards(addCardCallback, &typeInfo);
+        else
+            typeInfo.devices.emplace_back(MSRV_OUTPUT_DEFAULT_DEVICE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_NAME);
 
         info.types.emplace_back(std::move(typeInfo));
 
