@@ -18,8 +18,7 @@ ResponsePtr OutputsController::getOutputs()
 
 void OutputsController::setOutputDevice()
 {
-    std::string empty;
-    auto typeId = optionalParam<std::string>("typeId", empty);
+    auto typeId = optionalParam<std::string>("typeId", {});
     auto deviceId = param<std::string>("deviceId");
     player_->setOutputDevice(typeId, deviceId);
 }
