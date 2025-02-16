@@ -96,8 +96,8 @@ public:
     void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) override;
     void clearPlayQueue() override;
 
-    std::vector<OutputInfo> getOutputs() override;
-    void setActiveOutput(const std::string& typeId, const std::string& outputId) override;
+    OutputsInfo getOutputs() override;
+    void setOutputDevice(const std::string& typeId, const std::string& deviceId) override;
 
     boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;

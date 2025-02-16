@@ -354,6 +354,7 @@ private:
 struct OutputDeviceInfo
 {
     OutputDeviceInfo() = default;
+    OutputDeviceInfo(OutputDeviceInfo&&) = default;
     OutputDeviceInfo(std::string idVal, std::string nameVal)
         : id(std::move(idVal)), name(std::move(nameVal)) { }
 
@@ -366,6 +367,7 @@ struct OutputDeviceInfo
 struct OutputTypeInfo
 {
     OutputTypeInfo() = default;
+    OutputTypeInfo(OutputTypeInfo&&) = default;
     OutputTypeInfo(std::string idVal, std::string nameVal, std::vector<OutputDeviceInfo> devicesVal)
         : id(std::move(idVal)), name(std::move(nameVal)), devices(std::move(devicesVal)) { }
 
@@ -379,6 +381,7 @@ struct OutputTypeInfo
 struct CurrentOutputInfo
 {
     CurrentOutputInfo() = default;
+    CurrentOutputInfo(CurrentOutputInfo&&) = default;
     CurrentOutputInfo(std::string typeIdVal, std::string deviceIdVal)
         : typeId(std::move(typeIdVal)), deviceId(std::move(deviceIdVal)) { }
 
@@ -390,9 +393,12 @@ struct CurrentOutputInfo
 
 struct OutputsInfo
 {
+    OutputsInfo() = default;
+    OutputsInfo(OutputsInfo&&) = default;
+
     CurrentOutputInfo current;
     std::vector<OutputTypeInfo> types;
-    bool isSingleType = false;
+    bool supportsMultipleOutputTypes = false;
 
     OutputsInfo& operator=(OutputsInfo&&) = default;
 };
@@ -507,11 +513,19 @@ public:
 
     // Output API
 
-    virtual OutputsInfo getOutputs() { return {}; }
-
-    virtual void setActiveOutput(const std::string& outputType, const std::string& deviceId)
+    virtual bool supportsMultipleOutputTypes()
     {
-        (void) outputType;
+        return false;
+    }
+
+    virtual OutputsInfo getOutputs()
+    {
+        return {};
+    }
+
+    virtual void setOutputDevice(const std::string& typeId, const std::string& deviceId)
+    {
+        (void) typeId;
         (void) deviceId;
     }
 

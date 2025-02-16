@@ -206,7 +206,7 @@ void to_json(Json& json, const OutputsInfo& value)
 {
     json["current"] = value.current;
     json["types"] = value.types;
-    json["isSingleType"] = value.isSingleType;
+    json["supportsMultipleOutputTypes"] = value.supportsMultipleOutputTypes;
 }
 
 }

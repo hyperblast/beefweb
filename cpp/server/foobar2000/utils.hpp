@@ -8,15 +8,9 @@
 namespace msrv {
 namespace player_foobar2000 {
 
-inline boost::optional<GUID> tryParseGuid(const char* str)
-{
-    auto result = pfc::GUID_from_text(str);
-
-    if (result != pfc::guid_null || strcmp(str, "00000000-0000-0000-0000-000000000000") == 0)
-        return result;
-
-    return boost::none;
-}
+boost::optional<GUID> tryParseGuid(const char* str);
+boost::optional<std::pair<GUID, GUID>> tryParseDoubleGuid(const char* str);
+std::string doubleGuidToString(const GUID& guid1, const GUID& guid2);
 
 using TitleFormatVector = std::vector<service_ptr_t<titleformat_object>>;
 

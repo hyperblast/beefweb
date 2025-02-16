@@ -145,38 +145,29 @@ void PlayerImpl::clearPlayQueue()
     playlistManager_->queue_flush();
 }
 
-std::vector<OutputInfo> PlayerImpl::getOutputs()
+OutputsInfo PlayerImpl::getOutputs()
 {
-    std::vector<OutputInfo> result;
+    OutputTypeInfo outputType{MSRV_PLAYER_FOOBAR2000, MSRV_PLAYER_FOOBAR2000, {}};
+
+    outputManager_->listDevices([&outputType](const char* name, const GUID& outputGuid, const GUID& deviceGuid) {
+        outputType.devices.emplace_back(doubleGuidToString(outputGuid, deviceGuid), name);
+    });
 
     auto config = outputManager_->getCoreConfig();
 
-    outputManager_->listDevices([&](const char* name, const GUID& type, const GUID& device) {
-        auto typeStr = pfc::print_guid(type);
-        auto deviceStr = pfc::print_guid(device);
-        auto isActive = config.m_output == type && config.m_device == device;
-
-        result.emplace_back(
-            std::string(typeStr.c_str(), typeStr.length()),
-            std::string(deviceStr.c_str(), deviceStr.length()),
-            name,
-            isActive);
-    });
-
+    OutputsInfo result;
+    result.types.emplace_back(std::move(outputType));
+    result.current = CurrentOutputInfo(MSRV_PLAYER_FOOBAR2000, doubleGuidToString(config.m_output, config.m_device));
     return result;
 }
 
-void PlayerImpl::setActiveOutput(const std::string& outputType, const std::string& deviceId)
+void PlayerImpl::setOutputDevice(const std::string&, const std::string& deviceId)
 {
-    auto outputGuid = tryParseGuid(outputType.c_str());
-    if (!outputGuid)
-        throw InvalidRequestException("invalid outputType: " + outputType);
+    auto deviceRef = tryParseDoubleGuid(deviceId.c_str());
+    if (!deviceRef)
+        throw InvalidRequestException("invalid output device id: " + deviceId);
 
-    auto deviceGuid = tryParseGuid(deviceId.c_str());
-    if (!deviceGuid)
-        throw InvalidRequestException("invalid deviceId: " + deviceId);
-
-    outputManager_->setCoreConfigDevice(outputGuid.get(), deviceGuid.get());
+    outputManager_->setCoreConfigDevice(deviceRef->first, deviceRef->second);
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const
