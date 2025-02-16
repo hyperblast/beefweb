@@ -311,7 +311,7 @@ void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& d
     }
 
     // Only output device is changed
-    ddbApi->conf_set_str(outputDeviceConfigKey(typeId).c_str(), deviceId.c_str());
+    ddbApi->conf_set_str(outputDeviceConfigKey(output.typeId).c_str(), deviceId.c_str());
     ddbApi->sendmessage(DB_EV_CONFIGCHANGED, 0, 0, 0);
 }
 
