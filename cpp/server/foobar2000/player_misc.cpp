@@ -147,7 +147,7 @@ void PlayerImpl::clearPlayQueue()
 
 OutputsInfo PlayerImpl::getOutputs()
 {
-    OutputTypeInfo outputType{MSRV_PLAYER_FOOBAR2000, MSRV_PLAYER_FOOBAR2000, {}};
+    OutputTypeInfo outputType{MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_TYPE_NAME, {}};
 
     outputManager_->listDevices([&outputType](const char* name, const GUID& outputGuid, const GUID& deviceGuid) {
         outputType.devices.emplace_back(doubleGuidToString(outputGuid, deviceGuid), name);
@@ -157,7 +157,7 @@ OutputsInfo PlayerImpl::getOutputs()
 
     OutputsInfo result;
     result.types.emplace_back(std::move(outputType));
-    result.current = CurrentOutputInfo(MSRV_PLAYER_FOOBAR2000, doubleGuidToString(config.m_output, config.m_device));
+    result.current = CurrentOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, doubleGuidToString(config.m_output, config.m_device));
     return result;
 }
 

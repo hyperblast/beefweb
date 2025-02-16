@@ -11,6 +11,11 @@
 
 #include <boost/thread/future.hpp>
 
+#define MSRV_OUTPUT_DEFAULT_TYPE_ID "output"
+#define MSRV_OUTPUT_DEFAULT_TYPE_NAME "Output"
+#define MSRV_OUTPUT_DEFAULT_DEVICE_ID "default"
+#define MSRV_OUTPUT_DEFAULT_DEVICE_NAME "Default output device"
+
 namespace msrv {
 
 class WorkQueue;
@@ -355,6 +360,7 @@ struct OutputDeviceInfo
 {
     OutputDeviceInfo() = default;
     OutputDeviceInfo(OutputDeviceInfo&&) = default;
+    OutputDeviceInfo(const OutputDeviceInfo&) = default;
     OutputDeviceInfo(std::string idVal, std::string nameVal)
         : id(std::move(idVal)), name(std::move(nameVal)) { }
 
@@ -401,6 +407,15 @@ struct OutputsInfo
     bool supportsMultipleOutputTypes = false;
 
     OutputsInfo& operator=(OutputsInfo&&) = default;
+
+    static OutputsInfo defaultInfo()
+    {
+        OutputsInfo info;
+        std::vector<OutputDeviceInfo> devices{OutputDeviceInfo(MSRV_OUTPUT_DEFAULT_DEVICE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_NAME)};
+        info.current = CurrentOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_ID);
+        info.types.emplace_back(MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_TYPE_NAME, std::move(devices));
+        return info;
+    }
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
@@ -520,7 +535,7 @@ public:
 
     virtual OutputsInfo getOutputs()
     {
-        return {};
+        return OutputsInfo::defaultInfo();
     }
 
     virtual void setOutputDevice(const std::string& typeId, const std::string& deviceId)
