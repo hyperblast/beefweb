@@ -17,7 +17,10 @@ void to_json(Json& json, const PlaylistInfo& value);
 void to_json(Json& json, const PlaylistItemInfo& value);
 void to_json(Json& json, const PlaylistItemsResult& value);
 void to_json(Json& json, const PlayQueueItemInfo& value);
-void to_json(Json& json, const OutputInfo& value);
+void to_json(Json& json, const OutputDeviceInfo& value);
+void to_json(Json& json, const OutputTypeInfo& value);
+void to_json(Json& json, const CurrentOutputInfo& value);
+void to_json(Json& json, const OutputsInfo& value);
 void to_json(Json& json, PlayerOption* const& value);
 
 }

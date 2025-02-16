@@ -351,27 +351,50 @@ private:
     const std::vector<std::string> enumNames_;
 };
 
-struct OutputInfo
+struct OutputDeviceInfo
 {
-    OutputInfo(OutputInfo&&) = default;
+    OutputDeviceInfo() = default;
+    OutputDeviceInfo(std::string idVal, std::string nameVal)
+        : id(std::move(idVal)), name(std::move(nameVal)) { }
 
-    OutputInfo(
-        std::string outputTypeVal,
-        std::string deviceIdVal,
-        std::string nameVal,
-        bool isActiveVal = false)
-        : outputType(
-            std::move(outputTypeVal)),
-            deviceId(std::move(deviceIdVal)),
-            name(std::move(nameVal)),
-            isActive(isActiveVal) { }
-
-    std::string outputType;
-    std::string deviceId;
+    std::string id;
     std::string name;
-    bool isActive = false;
 
-    OutputInfo& operator=(OutputInfo&&) = default;
+    OutputDeviceInfo& operator=(OutputDeviceInfo&&) = default;
+};
+
+struct OutputTypeInfo
+{
+    OutputTypeInfo() = default;
+    OutputTypeInfo(std::string idVal, std::string nameVal, std::vector<OutputDeviceInfo> devicesVal)
+        : id(std::move(idVal)), name(std::move(nameVal)), devices(std::move(devicesVal)) { }
+
+    std::string id;
+    std::string name;
+    std::vector<OutputDeviceInfo> devices;
+
+    OutputTypeInfo& operator=(OutputTypeInfo&&) = default;
+};
+
+struct CurrentOutputInfo
+{
+    CurrentOutputInfo() = default;
+    CurrentOutputInfo(std::string typeIdVal, std::string deviceIdVal)
+        : typeId(std::move(typeIdVal)), deviceId(std::move(deviceIdVal)) { }
+
+    std::string typeId;
+    std::string deviceId;
+
+    CurrentOutputInfo& operator=(CurrentOutputInfo&&) = default;
+};
+
+struct OutputsInfo
+{
+    CurrentOutputInfo current;
+    std::vector<OutputTypeInfo> types;
+    bool isSingleType = false;
+
+    OutputsInfo& operator=(OutputsInfo&&) = default;
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
@@ -484,7 +507,8 @@ public:
 
     // Output API
 
-    virtual std::vector<OutputInfo> getOutputs() { return {}; }
+    virtual OutputsInfo getOutputs() { return {}; }
+
     virtual void setActiveOutput(const std::string& outputType, const std::string& deviceId)
     {
         (void) outputType;
