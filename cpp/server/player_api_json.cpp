@@ -196,7 +196,7 @@ void to_json(Json& json, const OutputTypeInfo& value)
     json["devices"] = value.devices;
 }
 
-void to_json(Json& json, const CurrentOutputInfo& value)
+void to_json(Json& json, const ActiveOutputInfo& value)
 {
     json["typeId"] = value.typeId;
     json["deviceId"] = value.deviceId;
@@ -204,7 +204,7 @@ void to_json(Json& json, const CurrentOutputInfo& value)
 
 void to_json(Json& json, const OutputsInfo& value)
 {
-    json["current"] = value.current;
+    json["active"] = value.active;
     json["types"] = value.types;
     json["supportsMultipleOutputTypes"] = value.supportsMultipleOutputTypes;
 }

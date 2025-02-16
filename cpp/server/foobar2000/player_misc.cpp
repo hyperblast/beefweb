@@ -158,7 +158,7 @@ OutputsInfo PlayerImpl::getOutputs()
 
     OutputsInfo result;
     result.types.emplace_back(std::move(outputType));
-    result.current = CurrentOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, doubleGuidToString(config.m_output, config.m_device));
+    result.active = ActiveOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, doubleGuidToString(config.m_output, config.m_device));
     return result;
 }
 

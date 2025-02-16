@@ -384,17 +384,17 @@ struct OutputTypeInfo
     OutputTypeInfo& operator=(OutputTypeInfo&&) = default;
 };
 
-struct CurrentOutputInfo
+struct ActiveOutputInfo
 {
-    CurrentOutputInfo() = default;
-    CurrentOutputInfo(CurrentOutputInfo&&) = default;
-    CurrentOutputInfo(std::string typeIdVal, std::string deviceIdVal)
+    ActiveOutputInfo() = default;
+    ActiveOutputInfo(ActiveOutputInfo&&) = default;
+    ActiveOutputInfo(std::string typeIdVal, std::string deviceIdVal)
         : typeId(std::move(typeIdVal)), deviceId(std::move(deviceIdVal)) { }
 
     std::string typeId;
     std::string deviceId;
 
-    CurrentOutputInfo& operator=(CurrentOutputInfo&&) = default;
+    ActiveOutputInfo& operator=(ActiveOutputInfo&&) = default;
 };
 
 struct OutputsInfo
@@ -402,7 +402,7 @@ struct OutputsInfo
     OutputsInfo() = default;
     OutputsInfo(OutputsInfo&&) = default;
 
-    CurrentOutputInfo current;
+    ActiveOutputInfo active;
     std::vector<OutputTypeInfo> types;
     bool supportsMultipleOutputTypes = false;
 
@@ -412,7 +412,7 @@ struct OutputsInfo
     {
         OutputsInfo info;
         std::vector<OutputDeviceInfo> devices{OutputDeviceInfo(MSRV_OUTPUT_DEFAULT_DEVICE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_NAME)};
-        info.current = CurrentOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_ID);
+        info.active = ActiveOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_ID);
         info.types.emplace_back(MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_TYPE_NAME, std::move(devices));
         return info;
     }
