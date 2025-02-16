@@ -327,7 +327,6 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
             (checkOutputChanged() ? PlayerEvents::OUTPUTS_CHANGED : PlayerEvents::NONE));
         break;
 
-
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGCHANGED:
     case DB_EV_SONGFINISHED:
