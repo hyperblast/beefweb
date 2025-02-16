@@ -320,18 +320,13 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
     switch (id)
     {
     case DB_EV_CONFIGCHANGED:
-    {
         // DB_EV_REINIT_SOUND is not sent when only device is changed.
         // Check previously stored device and emit event if necessary.
-
-        auto events = PlayerEvents::PLAYER_CHANGED;
-
-        if (checkOutputChanged())
-            events |= PlayerEvents::OUTPUTS_CHANGED;
-
-        emitEvents(events);
+        emitEvents(
+            PlayerEvents::PLAYER_CHANGED |
+            (checkOutputChanged() ? PlayerEvents::OUTPUTS_CHANGED : PlayerEvents::NONE));
         break;
-    }
+
 
     case DB_EV_SONGSTARTED:
     case DB_EV_SONGCHANGED:
