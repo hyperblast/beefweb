@@ -183,4 +183,12 @@ void to_json(Json& json, const PlayQueueItemInfo& value)
     json["columns"] = value.columns;
 }
 
+void to_json(Json& json, const OutputInfo& value)
+{
+    json["typeId"] = value.typeId;
+    json["outputId"] = value.outputId;
+    json["outputName"] = value.outputName;
+    json["isActive"] = value.isActive;
+}
+
 }

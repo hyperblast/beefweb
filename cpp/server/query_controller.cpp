@@ -17,6 +17,8 @@ constexpr char PLAYLIST_ITEMS_KEY[] = "playlistItems";
 
 constexpr char PLAY_QUEUE_KEY[] = "playQueue";
 
+constexpr char OUTPUTS_KEY[] = "outputs";
+
 }
 
 QueryController::QueryController(Request* request, Player* player, EventDispatcher* dispatcher)
@@ -58,17 +60,20 @@ PlayerEvents QueryController::readEventMask()
 {
     auto mask = PlayerEvents::NONE;
 
-    if (optionalParam<bool>(PLAYER_KEY, false))
+    if (optionalParam(PLAYER_KEY, false))
         mask |= PlayerEvents::PLAYER_CHANGED;
 
-    if (optionalParam<bool>(PLAYLISTS_KEY, false))
+    if (optionalParam(PLAYLISTS_KEY, false))
         mask |= PlayerEvents::PLAYLIST_SET_CHANGED;
 
-    if (optionalParam<bool>(PLAYLIST_ITEMS_KEY, false))
+    if (optionalParam(PLAYLIST_ITEMS_KEY, false))
         mask |= PlayerEvents::PLAYLIST_ITEMS_CHANGED;
 
-    if (optionalParam<bool>(PLAY_QUEUE_KEY, false))
+    if (optionalParam(PLAY_QUEUE_KEY, false))
         mask |= PlayerEvents::PLAY_QUEUE_CHANGED;
+
+    if (optionalParam(OUTPUTS_KEY, false))
+        mask |= PlayerEvents::OUTPUTS_CHANGED;
 
     if (mask == PlayerEvents::NONE)
         throw InvalidRequestException("at least one key is required");
@@ -121,6 +126,9 @@ Json QueryController::eventsToJson(PlayerEvents events)
     if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
         obj[PLAY_QUEUE_KEY] = true;
 
+    if (hasFlags(events, PlayerEvents::OUTPUTS_CHANGED))
+        obj[OUTPUTS_KEY] = true;
+
     return obj;
 }
 
@@ -140,6 +148,9 @@ Json QueryController::stateToJson(PlayerEvents events)
     if (hasFlags(events, PlayerEvents::PLAY_QUEUE_CHANGED))
         obj[PLAY_QUEUE_KEY] = player_->getPlayQueue(queueQuery_.get());
 
+    if (hasFlags(events, PlayerEvents::OUTPUTS_CHANGED))
+        obj[OUTPUTS_KEY] = player_->getOutputs();
+
     return obj;
 }
 
@@ -147,12 +158,8 @@ void QueryController::defineRoutes(Router* router, WorkQueue* workQueue, Player*
 {
     auto routes = router->defineRoutes<QueryController>();
 
-    routes.createWith([=](Request* request) {
-        return new QueryController(request, player, dispatcher);
-    });
-
+    routes.createWith([=](Request* request) { return new QueryController(request, player, dispatcher); });
     routes.useWorkQueue(workQueue);
-
     routes.setPrefix("api/query");
 
     routes.get("", &QueryController::query);

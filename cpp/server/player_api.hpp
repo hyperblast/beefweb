@@ -33,10 +33,11 @@ enum class PlaybackState
 enum class PlayerEvents : int
 {
     NONE = 0,
-    PLAYER_CHANGED = 1,
-    PLAYLIST_SET_CHANGED = 2,
-    PLAYLIST_ITEMS_CHANGED = 4,
-    PLAY_QUEUE_CHANGED = 8,
+    PLAYER_CHANGED = 1 << 0,
+    PLAYLIST_SET_CHANGED = 1 << 1,
+    PLAYLIST_ITEMS_CHANGED = 1 << 2,
+    PLAY_QUEUE_CHANGED = 1 << 3,
+    OUTPUTS_CHANGED = 1 << 4,
 };
 
 MSRV_ENUM_FLAGS(PlayerEvents, int);
@@ -86,8 +87,8 @@ struct ActiveItemInfo
 struct PlayerState
 {
     PlayerInfo info;
-    PlaybackState playbackState;
-    VolumeInfo volume;
+    PlaybackState playbackState = PlaybackState::STOPPED;
+    VolumeInfo volume{};
     ActiveItemInfo activeItem;
 
     const std::vector<PlayerOption*>* options = nullptr;
@@ -101,11 +102,11 @@ struct PlaylistInfo
     PlaylistInfo& operator=(PlaylistInfo&&) = default;
 
     std::string id;
-    int32_t index;
+    int32_t index = 0;
     std::string title;
-    int32_t itemCount;
-    double totalTime;
-    bool isCurrent;
+    int32_t itemCount = 0;
+    double totalTime = 0;
+    bool isCurrent = false;
 };
 
 struct PlaylistItemInfo
@@ -242,16 +243,14 @@ struct ArtworkQuery
 
 struct ArtworkResult
 {
-    ArtworkResult()
-    {
-    }
+    ArtworkResult() = default;
 
-    ArtworkResult(std::string filePathVal)
+    explicit ArtworkResult(std::string filePathVal)
         : filePath(std::move(filePathVal))
     {
     }
 
-    ArtworkResult(std::vector<uint8_t> fileDataVal)
+    explicit ArtworkResult(std::vector<uint8_t> fileDataVal)
         : fileData(std::move(fileDataVal))
     {
     }
@@ -350,6 +349,29 @@ public:
 
 private:
     const std::vector<std::string> enumNames_;
+};
+
+struct OutputInfo
+{
+    OutputInfo(OutputInfo&&) = default;
+
+    OutputInfo(
+        std::string typeIdVal,
+        std::string outputIdVal,
+        std::string outputNameVal,
+        bool isActiveVal = false)
+        : typeId(
+            std::move(typeIdVal)),
+            outputId(std::move(outputIdVal)),
+            outputName(std::move(outputNameVal)),
+            isActive(isActiveVal) { }
+
+    std::string typeId;
+    std::string outputId;
+    std::string outputName;
+    bool isActive = false;
+
+    OutputInfo& operator=(OutputInfo&&) = default;
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
@@ -459,6 +481,15 @@ public:
     virtual void removeFromPlayQueue(int32_t queueIndex) = 0;
     virtual void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) = 0;
     virtual void clearPlayQueue() = 0;
+
+    // Output API
+
+    virtual std::vector<OutputInfo> getOutputs() { return {}; }
+    virtual void setActiveOutput(const std::string& typeId, const std::string& outputId)
+    {
+        (void)typeId;
+        (void)outputId;
+    }
 
     // Artwork API
 
