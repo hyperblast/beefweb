@@ -96,6 +96,9 @@ public:
     void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) override;
     void clearPlayQueue() override;
 
+    std::vector<OutputInfo> getOutputs() override;
+    void setActiveOutput(const std::string& typeId, const std::string& outputId) override;
+
     boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;
 
@@ -135,6 +138,7 @@ private:
 
     service_ptr_t<playback_control> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;
+    service_ptr_t<output_manager_v2> outputManager_;
     service_ptr_t<playlist_incoming_item_filter_v3> incomingItemFilter_;
     service_ptr_t<album_art_manager_v3> albumArtManager_;
     service_ptr_t<titleformat_compiler> titleFormatCompiler_;

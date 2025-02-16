@@ -356,19 +356,19 @@ struct OutputInfo
     OutputInfo(OutputInfo&&) = default;
 
     OutputInfo(
-        std::string typeIdVal,
-        std::string outputIdVal,
-        std::string outputNameVal,
+        std::string outputTypeVal,
+        std::string deviceIdVal,
+        std::string nameVal,
         bool isActiveVal = false)
-        : typeId(
-            std::move(typeIdVal)),
-            outputId(std::move(outputIdVal)),
-            outputName(std::move(outputNameVal)),
+        : outputType(
+            std::move(outputTypeVal)),
+            deviceId(std::move(deviceIdVal)),
+            name(std::move(nameVal)),
             isActive(isActiveVal) { }
 
-    std::string typeId;
-    std::string outputId;
-    std::string outputName;
+    std::string outputType;
+    std::string deviceId;
+    std::string name;
     bool isActive = false;
 
     OutputInfo& operator=(OutputInfo&&) = default;
@@ -485,10 +485,10 @@ public:
     // Output API
 
     virtual std::vector<OutputInfo> getOutputs() { return {}; }
-    virtual void setActiveOutput(const std::string& typeId, const std::string& outputId)
+    virtual void setActiveOutput(const std::string& outputType, const std::string& deviceId)
     {
-        (void)typeId;
-        (void)outputId;
+        (void) outputType;
+        (void) deviceId;
     }
 
     // Artwork API

@@ -7,6 +7,7 @@ namespace player_foobar2000 {
 PlayerImpl::PlayerImpl()
     : playbackControl_(playback_control::get()),
       playlistManager_(playlist_manager_v4::get()),
+      outputManager_(output_manager_v2::get()),
       incomingItemFilter_(playlist_incoming_item_filter_v3::get()),
       albumArtManager_(album_art_manager_v3::get()),
       titleFormatCompiler_(titleformat_compiler::get()),
@@ -142,6 +143,40 @@ void PlayerImpl::removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex
 void PlayerImpl::clearPlayQueue()
 {
     playlistManager_->queue_flush();
+}
+
+std::vector<OutputInfo> PlayerImpl::getOutputs()
+{
+    std::vector<OutputInfo> result;
+
+    auto config = outputManager_->getCoreConfig();
+
+    outputManager_->listDevices([&](const char* name, const GUID& type, const GUID& device) {
+        auto typeStr = pfc::print_guid(type);
+        auto deviceStr = pfc::print_guid(device);
+        auto isActive = config.m_output == type && config.m_device == device;
+
+        result.emplace_back(
+            std::string(typeStr.c_str(), typeStr.length()),
+            std::string(deviceStr.c_str(), deviceStr.length()),
+            name,
+            isActive);
+    });
+
+    return result;
+}
+
+void PlayerImpl::setActiveOutput(const std::string& outputType, const std::string& deviceId)
+{
+    auto outputGuid = tryParseGuid(outputType.c_str());
+    if (!outputGuid)
+        throw InvalidRequestException("invalid outputType: " + outputType);
+
+    auto deviceGuid = tryParseGuid(deviceId.c_str());
+    if (!deviceGuid)
+        throw InvalidRequestException("invalid deviceId: " + deviceId);
+
+    outputManager_->setCoreConfigDevice(outputGuid.get(), deviceGuid.get());
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const

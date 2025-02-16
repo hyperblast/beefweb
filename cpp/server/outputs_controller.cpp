@@ -18,9 +18,9 @@ ResponsePtr OutputsController::getAll()
 
 void OutputsController::setActive()
 {
-    auto typeId = param<std::string>("typeId");
-    auto outputId = param<std::string>("outputId");
-    player_->setActiveOutput(typeId, outputId);
+    auto outputType = param<std::string>("outputType");
+    auto deviceId = param<std::string>("deviceId");
+    player_->setActiveOutput(outputType, deviceId);
 }
 
 void OutputsController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player)

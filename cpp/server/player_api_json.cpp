@@ -185,9 +185,9 @@ void to_json(Json& json, const PlayQueueItemInfo& value)
 
 void to_json(Json& json, const OutputInfo& value)
 {
-    json["typeId"] = value.typeId;
-    json["outputId"] = value.outputId;
-    json["outputName"] = value.outputName;
+    json["outputType"] = value.outputType;
+    json["deviceId"] = value.deviceId;
+    json["name"] = value.name;
     json["isActive"] = value.isActive;
 }
 
