@@ -3,6 +3,50 @@
 
 namespace msrv::player_deadbeef {
 
+namespace {
+
+constexpr char outputPluginConfigKey[] = "output_plugin";
+
+inline std::string outputDeviceConfigKey(const std::string& pluginId)
+{
+    constexpr char suffix[] = "_soundcard";
+
+    std::string key;
+    key.reserve(pluginId.length() + sizeof(suffix) - 1);
+    key.append(pluginId);
+    key.append(suffix);
+
+    return key;
+}
+
+struct CheckCardContext
+{
+    explicit CheckCardContext(const std::string& id) : idToCheck(id) { }
+
+    const std::string& idToCheck;
+    bool found = false;
+};
+
+void addCardCallback(const char* id, const char* name, void* data)
+{
+    auto typeInfo = static_cast<OutputTypeInfo*>(data);
+
+    tryCatchLog([&] { typeInfo->devices.emplace_back(id, name); });
+}
+
+void checkCardCallback(const char* id, const char*, void* data)
+{
+    auto context = static_cast<CheckCardContext*>(data);
+
+    if (context->found)
+        return;
+
+    if (context->idToCheck == id)
+        context->found = true;
+}
+
+}
+
 PlayerImpl::PlayerImpl()
 {
     setPlaybackModeOption(&playbackModeOption_);
@@ -177,6 +221,67 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
     return artworkFetcher_->fetchArtwork(std::move(playlist), std::move(item));
 }
 
+OutputsInfo PlayerImpl::getOutputs()
+{
+    OutputsInfo info;
+    info.supportsMultipleOutputTypes = true;
+
+    auto plugins = ddbApi->plug_get_output_list();
+
+    while (*plugins != nullptr)
+    {
+        auto p = *plugins;
+
+        OutputTypeInfo typeInfo(p->plugin.id, p->plugin.name, {});
+
+        typeInfo.devices.emplace_back(MSRV_OUTPUT_DEFAULT_DEVICE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_NAME);
+
+        if (p->enum_soundcards)
+            p->enum_soundcards(addCardCallback, &typeInfo);
+
+        info.types.emplace_back(std::move(typeInfo));
+
+        plugins++;
+    }
+
+    {
+        ConfigLockGuard lock(configMutex_);
+
+        std::string pluginId(ddbApi->conf_get_str_fast(outputPluginConfigKey, "alsa"));
+        std::string deviceId(ddbApi->conf_get_str_fast(
+            outputDeviceConfigKey(pluginId).c_str(), MSRV_OUTPUT_DEFAULT_DEVICE_ID));
+
+        info.active = ActiveOutputInfo(std::move(pluginId), std::move(deviceId));
+    }
+
+    return info;
+}
+
+void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& deviceId)
+{
+    auto pluginBase = ddbApi->plug_get_for_id(typeId.c_str());
+    if (!pluginBase || pluginBase->type != DB_PLUGIN_OUTPUT)
+        throw InvalidRequestException("invalid type id: " + typeId);
+
+    auto plugin = reinterpret_cast<DB_output_t*>(pluginBase);
+
+    if (deviceId != MSRV_OUTPUT_DEFAULT_DEVICE_ID)
+    {
+        CheckCardContext context(deviceId);
+
+        if (plugin->enum_soundcards)
+            plugin->enum_soundcards(checkCardCallback, &context);
+
+        if (!context.found)
+            throw InvalidRequestException("invalid device id: " + deviceId);
+    }
+
+    ConfigLockGuard lock(configMutex_);
+    ddbApi->conf_set_str(outputPluginConfigKey, typeId.c_str());
+    ddbApi->conf_set_str(outputDeviceConfigKey(typeId).c_str(), deviceId.c_str());
+    ddbApi->sendmessage(DB_EV_REINIT_SOUND, 0, 0, 0);
+}
+
 void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
 {
     switch (id)
@@ -189,6 +294,10 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
     case DB_EV_SEEKED:
     case DB_EV_VOLUMECHANGED:
         emitEvents(PlayerEvents::PLAYER_CHANGED);
+        break;
+
+    case DB_EV_OUTPUTCHANGED:
+        emitEvents(PlayerEvents::OUTPUTS_CHANGED);
         break;
 
     case DB_EV_TRACKINFOCHANGED:

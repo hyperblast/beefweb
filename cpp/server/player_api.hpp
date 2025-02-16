@@ -14,7 +14,7 @@
 #define MSRV_OUTPUT_DEFAULT_TYPE_ID "output"
 #define MSRV_OUTPUT_DEFAULT_TYPE_NAME "Output"
 #define MSRV_OUTPUT_DEFAULT_DEVICE_ID "default"
-#define MSRV_OUTPUT_DEFAULT_DEVICE_NAME "Default output device"
+#define MSRV_OUTPUT_DEFAULT_DEVICE_NAME "Default audio device"
 
 namespace msrv {
 
