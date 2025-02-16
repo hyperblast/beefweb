@@ -10,15 +10,16 @@ OutputsController::OutputsController(Request* request, Player* player)
 {
 }
 
-ResponsePtr OutputsController::getAll()
+ResponsePtr OutputsController::getOutputs()
 {
     auto outputs = player_->getOutputs();
     return Response::json({{"outputs", outputs}});
 }
 
-void OutputsController::setActive()
+void OutputsController::setOutputDevice()
 {
-    auto typeId = player_->supportsMultipleOutputTypes() ? param<std::string>("typeId") : std::string();
+    std::string empty;
+    auto typeId = optionalParam<std::string>("typeId", empty);
     auto deviceId = param<std::string>("deviceId");
     player_->setOutputDevice(typeId, deviceId);
 }
@@ -29,8 +30,8 @@ void OutputsController::defineRoutes(Router* router, WorkQueue* workQueue, Playe
     routes.createWith([=](Request* r) { return new OutputsController(r, player); });
     routes.useWorkQueue(workQueue);
     routes.setPrefix("api/outputs");
-    routes.get("", &OutputsController::getAll);
-    routes.post("active", &OutputsController::setActive);
+    routes.get("", &OutputsController::getOutputs);
+    routes.post("active", &OutputsController::setOutputDevice);
 }
 
 }

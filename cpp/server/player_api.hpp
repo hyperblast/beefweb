@@ -541,11 +541,6 @@ public:
 
     // Output API
 
-    virtual bool supportsMultipleOutputTypes()
-    {
-        return false;
-    }
-
     virtual OutputsInfo getOutputs()
     {
         return OutputsInfo::defaultInfo();

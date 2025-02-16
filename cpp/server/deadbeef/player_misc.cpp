@@ -267,28 +267,35 @@ OutputsInfo PlayerImpl::getOutputs()
 
 void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& deviceId)
 {
-    auto pluginBase = ddbApi->plug_get_for_id(typeId.c_str());
-    if (!pluginBase || pluginBase->type != DB_PLUGIN_OUTPUT)
-        throw InvalidRequestException("invalid type id: " + typeId);
+    DB_output_t* plugin;
 
-    auto plugin = reinterpret_cast<DB_output_t*>(pluginBase);
-
-    if (deviceId != MSRV_OUTPUT_DEFAULT_DEVICE_ID)
+    if (typeId.empty())
     {
-        CheckCardContext context(deviceId);
-
-        if (plugin->enum_soundcards)
-            plugin->enum_soundcards(checkCardCallback, &context);
-
-        if (!context.found)
-            throw InvalidRequestException("invalid device id: " + deviceId);
+        plugin = ddbApi->get_output();
     }
+    else
+    {
+        auto plug = ddbApi->plug_get_for_id(typeId.c_str());
+        if (!plug || plug->type != DB_PLUGIN_OUTPUT)
+            throw InvalidRequestException("invalid type id: " + typeId);
+        plugin = reinterpret_cast<DB_output_t*>(plug);
+    }
+
+    CheckCardContext context(deviceId);
+
+    if (plugin->enum_soundcards)
+        plugin->enum_soundcards(checkCardCallback, &context);
+    else
+        context.found = deviceId == MSRV_OUTPUT_DEFAULT_DEVICE_ID;
+
+    if (!context.found)
+        throw InvalidRequestException("invalid device id: " + deviceId);
 
     ConfigLockGuard lock(configMutex_);
 
     auto output = getActiveOutput();
 
-    if (output.typeId != typeId)
+    if (!typeId.empty() && output.typeId != typeId)
     {
         // Output plugin is changed
         ddbApi->conf_set_str(outputPluginConfigKey, typeId.c_str());

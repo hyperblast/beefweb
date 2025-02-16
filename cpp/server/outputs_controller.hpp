@@ -13,8 +13,8 @@ class OutputsController : public ControllerBase
 public:
     OutputsController(Request* request, Player* player);
 
-    ResponsePtr getAll();
-    void setActive();
+    ResponsePtr getOutputs();
+    void setOutputDevice();
 
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player);
 
