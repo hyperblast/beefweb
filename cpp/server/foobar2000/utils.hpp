@@ -34,8 +34,16 @@ protected:
 class PlayerEventAdapter final : play_callback
 {
 public:
-    PlayerEventAdapter();
-    ~PlayerEventAdapter();
+    PlayerEventAdapter()
+    {
+        constexpr auto flags = flag_on_playback_all & ~(flag_on_playback_dynamic_info | flag_on_playback_time) | flag_on_volume_change;
+        play_callback_manager::get()->register_callback(this, flags, false);
+    }
+
+    ~PlayerEventAdapter()
+    {
+        play_callback_manager::get()->unregister_callback(this);
+    }
 
     void setCallback(PlayerEventsCallback callback)
     {
@@ -107,8 +115,27 @@ private:
 class PlaylistEventAdapter final : playlist_callback
 {
 public:
-    PlaylistEventAdapter();
-    ~PlaylistEventAdapter();
+    PlaylistEventAdapter()
+    {
+        constexpr auto flags = flag_on_items_added
+            | flag_on_items_reordered
+            | flag_on_items_removed
+            | flag_on_items_modified
+            | flag_on_items_replaced
+            | flag_on_playlist_activate
+            | flag_on_playlist_created
+            | flag_on_playlists_reorder
+            | flag_on_playlists_removed
+            | flag_on_playlist_renamed
+            | flag_on_playback_order_changed;
+
+        playlist_manager::get()->register_callback(this, flags);
+    }
+
+    ~PlaylistEventAdapter()
+    {
+        playlist_manager::get()->unregister_callback(this);
+    }
 
     void setCallback(PlayerEventsCallback callback)
     {
@@ -266,6 +293,36 @@ private:
     PlayerEventsCallback callback_;
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistEventAdapter);
+};
+
+class OutputEventAdapter final : public output_config_change_callback
+{
+public:
+    OutputEventAdapter()
+    {
+        output_manager_v2::get()->addCallback(this);
+    }
+
+    ~OutputEventAdapter()
+    {
+        output_manager_v2::get()->removeCallback(this);
+    }
+
+    void setCallback(PlayerEventsCallback callback)
+    {
+        callback_ = std::move(callback);
+    }
+
+private:
+    void outputConfigChanged() override
+    {
+        if (callback_)
+            callback_(PlayerEvents::OUTPUTS_CHANGED);
+    }
+
+    PlayerEventsCallback callback_;
+
+    MSRV_NO_COPY_AND_ASSIGN(OutputEventAdapter);
 };
 
 class PlayQueueEventAdapter : public playback_queue_callback

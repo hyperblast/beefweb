@@ -146,6 +146,7 @@ private:
     std::shared_ptr<PlaylistMapping> playlists_;
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
+    OutputEventAdapter outputEventAdapter_;
     PlaybackOrderOption playbackOrderOption_;
     StopAfterCurrentTrackOption stopAfterCurrentTrackOption_;
 

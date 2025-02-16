@@ -20,6 +20,7 @@ PlayerImpl::PlayerImpl()
     playerEventAdapter_.setCallback(callback);
     playlistEventAdapter_.setCallback(callback);
     stopAfterCurrentTrackOption_.setCallback(callback);
+    outputEventAdapter_.setCallback(callback);
     playQueueEventAdapterFactory.get_static_instance().setCallback(callback);
 
     setPlaybackModeOption(&playbackOrderOption_);
