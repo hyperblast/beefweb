@@ -66,8 +66,7 @@ class OutputSettings extends React.PureComponent
         return <form className='settings-form'>
             { supportsMultipleOutputTypes ? this.renderOutputTypeSelector() : null }
             { this.renderOutputDeviceSelector() }
-            <span></span>
-            <div>
+            <div className='settings-buttons'>
                 <DialogButton type='apply' onClick={this.handleApply} />
                 <DialogButton type='revert' onClick={this.handleRevert} />
             </div>
