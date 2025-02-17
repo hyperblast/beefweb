@@ -241,6 +241,16 @@ export default class PlayerClient
         return this.post('api/playqueue/clear');
     }
 
+    getOutputs()
+    {
+        return this.get('api/outputs');
+    }
+
+    setOutputDevice(typeId, deviceId)
+    {
+        return this.post('api/outputs/active', { typeId, deviceId });
+    }
+
     getFileSystemRoots()
     {
         return this.get('api/browser/roots');

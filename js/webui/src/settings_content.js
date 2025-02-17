@@ -6,10 +6,12 @@ import GeneralSettings from './general_settings.js';
 import ColumnsSettings from './columns_settings.js';
 import ServiceContext from './service_context.js';
 import AboutBox from './about_box.js';
+import OutputSettings from './output_settings.js';
 
 const settingsViews = {
     [SettingsView.general]: GeneralSettings,
     [SettingsView.columns]: ColumnsSettings,
+    [SettingsView.output]: OutputSettings,
     [SettingsView.defaults]: DefaultsSettings,
     [SettingsView.about]: AboutBox,
 };

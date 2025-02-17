@@ -5,7 +5,9 @@ import { bindHandlers } from './utils.js'
 
 const dialogTitles = Object.freeze({
     ok: 'OK',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    apply: 'Apply',
+    revert: 'Revert',
 });
 
 export function DialogButton(props)
@@ -22,7 +24,7 @@ export function DialogButton(props)
 }
 
 DialogButton.propTypes = {
-    type: PropTypes.oneOf(['ok', 'cancel']).isRequired,
+    type: PropTypes.oneOf(['ok', 'cancel', 'apply', 'revert']).isRequired,
     onClick: PropTypes.func,
 };
 

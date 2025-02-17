@@ -2,7 +2,7 @@ import EventEmitter from 'wolfy87-eventemitter'
 import Timer from './timer.js'
 import { looseDeepEqual } from './utils.js'
 
-const eventNames = ['player', 'playlists', 'playlistItems', 'playQueue'];
+const eventNames = ['player', 'playlists', 'playlistItems', 'playQueue', 'outputs'];
 
 export default class DataSource extends EventEmitter
 {

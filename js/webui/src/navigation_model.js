@@ -11,6 +11,7 @@ export const View = Object.freeze({
 export const SettingsView = Object.freeze({
     general: 'general',
     columns: 'columns',
+    output: 'output',
     defaults: 'defaults',
     about: 'about',
 });
