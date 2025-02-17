@@ -12,8 +12,8 @@ export default class OutputSettingsModel extends EventEmitter
         this.supportsMultipleOutputTypes = false;
         this.outputTypes = [];
         this.activeOutput = {};
-        this.selectedOutputType = { devices: [] };
-        this.selectedOutputDevice = '';
+        this.selectedOutputType = null;
+        this.selectedOutputDevice = null;
 
         this.defineEvent('change');
     }
@@ -30,7 +30,7 @@ export default class OutputSettingsModel extends EventEmitter
         this.outputTypes = outputs.types;
         this.activeOutput = outputs.active;
 
-        const oldOutputTypeId = this.selectedOutputType.id;
+        const oldOutputTypeId = this.selectedOutputType?.id;
 
         if (oldOutputTypeId)
         {
@@ -42,7 +42,7 @@ export default class OutputSettingsModel extends EventEmitter
             this.selectedOutputType = this.findOutputType(this.activeOutput.typeId);
         }
 
-        if (oldOutputTypeId !== this.selectedOutputType.id)
+        if (oldOutputTypeId !== this.selectedOutputType?.id)
             this.selectedOutputDevice = this.activeOutput.deviceId;
 
         this.emit('change');
@@ -74,11 +74,17 @@ export default class OutputSettingsModel extends EventEmitter
 
     setOutputType(typeId)
     {
-        if (this.selectedOutputType.id === typeId)
+        if (this.selectedOutputType?.id === typeId)
             return;
 
-        this.selectedOutputType = this.findOutputType(typeId);
-        this.selectedOutputDevice = this.findOutputDevice('default') || this.selectedOutputType.devices[0].id;
+        const outputType = this.findOutputType(typeId);
+        if (!outputType)
+            return;
+
+        this.selectedOutputType = outputType;
+        this.selectedOutputDevice = this.findOutputDevice('default')
+            || (outputType.devices.length > 0 ? outputType.devices[0].id : null);
+
         this.emit('change');
     }
 
@@ -93,8 +99,8 @@ export default class OutputSettingsModel extends EventEmitter
 
     apply()
     {
-        if (!this.selectedOutputType || !this.selectedOutputDevice)
-            throw new Error('No output is selected');
+        if (!this.selectedOutputType?.id || !this.selectedOutputDevice)
+            return;
 
         this.client.setOutputDevice(this.selectedOutputType.id, this.selectedOutputDevice);
     }

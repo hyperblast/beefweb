@@ -3,6 +3,7 @@ import React from 'react';
 import ModelBinding from './model_binding.js';
 import { bindHandlers } from './utils.js';
 import { DialogButton } from './dialogs.js';
+import { Select } from './elements.js';
 
 class OutputSettings extends React.PureComponent
 {
@@ -58,9 +59,9 @@ class OutputSettings extends React.PureComponent
 
     render()
     {
-        const { supportsMultipleOutputTypes, selectedOutputType, selectedOutputDevice } = this.state;
+        const { supportsMultipleOutputTypes, selectedOutputType } = this.state;
 
-        if (!selectedOutputType.id || !selectedOutputDevice)
+        if (!selectedOutputType)
             return null;
 
         return <form className='settings-form'>
@@ -75,16 +76,15 @@ class OutputSettings extends React.PureComponent
 
     renderOutputTypeSelector()
     {
-        const { selectedOutputType, outputTypes } = this.state;
+        const { outputTypes, selectedOutputType } = this.state;
 
         return <>
             <label className='setting-editor-label' htmlFor='output-type-selector'>Output type:</label>
-            <select className='setting-editor-enum-large' id='output-type-selector'
-                    value={selectedOutputType.id} onChange={this.handleOutputTypeChange}>
-                {
-                    outputTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)
-                }
-            </select>
+            <Select id='output-type-selector'
+                    selectedItemId={selectedOutputType.id}
+                    items={outputTypes}
+                    onChange={this.handleOutputTypeChange}
+                    className='setting-editor-enum-large'/>
         </>;
     }
 
@@ -94,12 +94,11 @@ class OutputSettings extends React.PureComponent
 
         return <>
             <label className='setting-editor-label' htmlFor='output-device-selector'>Output device:</label>
-            <select className='setting-editor-enum-large' id='output-device-selector'
-                    value={selectedOutputDevice} onChange={this.handleOutputDeviceChange}>
-                {
-                    selectedOutputType.devices.map(t => <option key={t.id} value={t.id}>{t.name}</option>)
-                }
-            </select>
+            <Select id='output-device-selector'
+                    selectedItemId={selectedOutputDevice}
+                    items={selectedOutputType.devices}
+                    onChange={this.handleOutputDeviceChange}
+                    className='setting-editor-enum-large'/>
         </>;
     }
 }
