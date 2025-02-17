@@ -30,9 +30,20 @@ export default class OutputSettingsModel extends EventEmitter
         this.outputTypes = outputs.types;
         this.activeOutput = outputs.active;
 
-        this.selectedOutputType =
-            this.findOutputType(this.selectedOutputType.id || this.activeOutput.typeId)
-            || this.findOutputType(this.activeOutput.typeId);
+        const oldOutputTypeId = this.selectedOutputType.id;
+
+        if (oldOutputTypeId)
+        {
+            this.selectedOutputType = this.findOutputType(oldOutputTypeId)
+                || this.findOutputType(this.activeOutput.typeId);
+        }
+        else
+        {
+            this.selectedOutputType = this.findOutputType(this.activeOutput.typeId);
+        }
+
+        if (oldOutputTypeId !== this.selectedOutputType.id)
+            this.selectedOutputDevice = this.activeOutput.deviceId;
 
         this.emit('change');
     }
@@ -73,6 +84,9 @@ export default class OutputSettingsModel extends EventEmitter
 
     setOutputDevice(deviceId)
     {
+        if (this.selectedOutputDevice === deviceId)
+            return;
+
         this.selectedOutputDevice = deviceId;
         this.emit('change');
     }

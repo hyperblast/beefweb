@@ -50,15 +50,18 @@ class OutputSettings extends React.PureComponent
             supportsMultipleOutputTypes,
             outputTypes,
             selectedOutputType,
-            activeOutput,
+            selectedOutputDevice,
         } = this.context.outputSettingsModel;
 
-        return { supportsMultipleOutputTypes, outputTypes, selectedOutputType, activeOutput };
+        return { supportsMultipleOutputTypes, outputTypes, selectedOutputType, selectedOutputDevice };
     }
 
     render()
     {
-        const { supportsMultipleOutputTypes } = this.state;
+        const { supportsMultipleOutputTypes, selectedOutputType, selectedOutputDevice } = this.state;
+
+        if (!selectedOutputType.id || !selectedOutputDevice)
+            return null;
 
         return <form className='settings-form'>
             { supportsMultipleOutputTypes ? this.renderOutputTypeSelector() : null }
