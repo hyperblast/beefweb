@@ -29,16 +29,7 @@ q.test('set output device', async assert =>
     {
         for (const deviceId of config.deviceIds)
         {
-            try
-            {
-                await client.setOutputDevice(config.typeId, deviceId);
-            }
-            catch(error)
-            {
-                throw new Error(
-                    `setOutputDevice error: type: ${config.typeId}; device: ${deviceId}; error: ${error.message}`);
-            }
-
+            await client.setOutputDevice(config.typeId, deviceId);
             const output = (await client.getOutputs()).active;
             assert.equal(output.typeId, config.typeId);
             assert.equal(output.deviceId, deviceId);
