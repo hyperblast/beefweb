@@ -764,10 +764,10 @@ paths:
           type: string | number
       - name: index
         in: path
-        description: Item index
+        description: Playlist item index
         required: true
         schema:
-          type: string
+          type: number
       responses:
         200:
           description: Success
