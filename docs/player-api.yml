@@ -61,7 +61,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /player/play:
     post:
       tags:
@@ -281,7 +280,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PlaylistInfo'
-      x-codegen-request-body-name: request
   /playlists/remove/{playlistId}:
     post:
       tags:
@@ -443,7 +441,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/copy:
     post:
       tags:
@@ -474,7 +471,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{sourceId}/{targetId}/items/copy:
     post:
       tags:
@@ -511,7 +507,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/move:
     post:
       tags:
@@ -542,7 +537,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{sourceId}/{targetId}/items/move:
     post:
       tags:
@@ -579,7 +573,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/remove:
     post:
       tags:
@@ -604,7 +597,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/sort:
     post:
       tags:
