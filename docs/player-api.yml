@@ -454,18 +454,12 @@ paths:
         required: true
         schema:
           type: string
-      - name: targetIndex
-        in: query
-        description: Position to copy items to. Items are copied to the end of the
-          playlist by default
-        schema:
-          type: number
       requestBody:
-        description: Indexes of items to copy
+        description: Copy items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
@@ -490,18 +484,12 @@ paths:
         required: true
         schema:
           type: string
-      - name: targetIndex
-        in: query
-        description: Playlist position to copy items to. Items are copied to the end
-          of the playlist by default
-        schema:
-          type: number
       requestBody:
-        description: Indexes of items to copy
+        description: Copy items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
@@ -520,18 +508,12 @@ paths:
         required: true
         schema:
           type: string
-      - name: targetIndex
-        in: query
-        description: Position to move items to. Items are moved to the end of the
-          playlist by default
-        schema:
-          type: number
       requestBody:
-        description: Indexes of items to move
+        description: Move items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
@@ -556,18 +538,12 @@ paths:
         required: true
         schema:
           type: string
-      - name: targetIndex
-        in: query
-        description: Position to move items to. Items are moved to the end of the
-          playlist by default
-        schema:
-          type: number
       requestBody:
-        description: Indexes of items to move
+        description: Move items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
@@ -591,7 +567,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/RemovePlaylistItemsRequest'
         required: true
       responses:
         204:
@@ -610,21 +586,12 @@ paths:
         required: true
         schema:
           type: string
-      - name: by
-        in: query
-        description: Expression to sort by (e.g. %title%)
-        schema:
-          type: string
-      - name: desc
-        in: query
-        description: Sort in descending order
-        schema:
-          type: boolean
-      - name: random
-        in: query
-        description: Sort randomly
-        schema:
-          type: boolean
+      requestBody:
+        description: Sort parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SortPlaylistItemsRequest'
       responses:
         204:
           description: Success
@@ -1054,7 +1021,7 @@ components:
           description: Items to add (files, directories, URLs)
           items:
             type: string
-    ItemIndexesRequest:
+    TransferPlaylistItemsRequest:
       type: object
       required: [items]
       properties:
@@ -1062,6 +1029,19 @@ components:
           type: array
           items:
             type: number
+          description: Item indices to process
+        targetIndex:
+          type: number
+          description: Position to add items at. By default items are added at the end of the playlist
+    RemovePlaylistItemsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: number
+          description: item indices to process
     AddToPlayQueueRequest:
       type: object
       required: [plref, itemIndex]
@@ -1108,6 +1088,18 @@ components:
       properties:
         playQueue:
           $ref: '#/components/schemas/PlayQueueItemsResult'
+    SortPlaylistItemsRequest:
+      type: object
+      properties:
+        by:
+          type: string
+          description: Expression to sort by (e.g. %title%)
+        desc:
+          type: boolean
+          description: Sort in descending order
+        random:
+          type: boolean
+          description: Sort randomly
     OutputDeviceInfo:
       type: object
       properties:
