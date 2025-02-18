@@ -7,7 +7,11 @@ q.test('get outputs config', async assert =>
 {
    const outputs = await client.getOutputs();
 
-   console.log(outputs);
+   for (const type of outputs.types)
+   {
+       if (type.id === 'alsa')
+           console.log(type.devices);
+   }
 
    assert.ok(typeof outputs.supportsMultipleOutputTypes === 'boolean');
    assert.ok(typeof outputs.active === 'object');
