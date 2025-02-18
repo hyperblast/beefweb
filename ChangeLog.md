@@ -1,6 +1,6 @@
 # Changes in v0.10 (not released)
 - Add ability to configure output device
-
+- Fix various issues in API documentation
 
 # Changes in v0.9 (released 2025-02-14)
 - Add album art display
