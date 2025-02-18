@@ -919,6 +919,7 @@ components:
         by:
           type: string
           description: Expression to select next item by (e.g. %artist%)
+          nullable: true
     SetOptionRequest:
       type: object
       properties:
@@ -934,24 +935,30 @@ components:
         volume:
           type: number
           description: New volume value
+          nullable: true
         isMuted:
           type: boolean
           description: New mute state
+          nullable: true
         position:
           type: number
           description: New absolute playback position (seconds)
+          nullable: true
         relativePosition:
           type: number
           description: New relative playback position (seconds)
+          nullable: true
         playbackMode:
           type: integer
           description: New playback mode index
           deprecated: true
+          nullable: true
         options:
           type: array
           description: Options to modify
           items:
             $ref: '#/components/schemas/SetOptionRequest'
+          nullable: true
     PlaylistInfo:
       type: object
       properties:
@@ -1005,21 +1012,25 @@ components:
         current:
           type: string | number
           description: Playlist id or index to select
+          nullable: true
     UpdatePlaylistRequest:
       type: object
       properties:
         title:
           type: string
           description: New playlist title
+          nullable: true
     AddPlaylistRequest:
       type: object
       properties:
         index:
           type: integer
           description: Position to add playlist at. By default playlist is added to the last position
+          nullable: true
         title:
           type: string
           description: New playlist title
+          nullable: true
         setCurrent:
           type: boolean
           description: Select playlist after creation
@@ -1030,6 +1041,7 @@ components:
         index:
           type: integer
           description: Position to add items at
+          nullable: true
         async:
           type: boolean
           description: Process request asynchronously
@@ -1055,6 +1067,7 @@ components:
           description: Item indices to process
         targetIndex:
           type: integer
+          nullable: true
           description: Position to add items at. By default items are added at the end of the playlist
     RemovePlaylistItemsRequest:
       type: object
@@ -1078,18 +1091,22 @@ components:
         queueIndex:
           type: integer
           description: Queue index to insert at (currently only supported by DeaDBeeF)
+          nullable: true
     RemoveFromPlayQueueRequest:
       type: object
       properties:
         plref:
           type: string | number
           description: Id or index of playlist which contains item to be removed from queue
+          nullable: true
         itemIndex:
           type: integer
           description: Item index in the specified playlist
+          nullable: true
         queueIndex:
           type: integer
           description: Play queue item index to remove
+          nullable: true
     PlayQueueItemInfo:
       type: object
       properties:
@@ -1169,7 +1186,8 @@ components:
       properties:
         typeId:
           type: string
-          description: Output type id. Omit if not changing output type
+          description: Output type id. If not specified current output type is preserved
+          nullable: true
         deviceId:
           type: string
           description: Output device id
