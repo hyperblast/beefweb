@@ -8,9 +8,7 @@ q.test('get outputs config', async assert =>
    const outputs = await client.getOutputs();
 
    assert.ok(typeof outputs.supportsMultipleOutputTypes === 'boolean');
-   assert.ok(typeof outputs.active === 'object');
-   assert.equal(outputs.active.typeId, outputConfigs.default.typeId);
-   assert.equal(outputs.active.deviceId, outputConfigs.default.deviceId);
+   assert.deepEqual(outputs.active, outputConfigs.default);
    assert.ok(Array.isArray(outputs.types));
 
    const type = outputs.types[0];
