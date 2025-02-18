@@ -142,9 +142,7 @@ q.test('expect output config events', async assert =>
 {
     const expectation = client.expectEvent({ outputs: true }, e => e.outputs === true);
     await expectation.ready;
-    await client.setOutputDevice(
-        outputConfigs.alternate[0].typeId,
-        outputConfigs.alternate[0].deviceIds[0]);
+    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
     await expectation.done;
     assert.ok(true);
 });
@@ -333,9 +331,7 @@ q.test('expect output config updates', async assert =>
 {
     const expectation = client.expectUpdate({ outputs: true }, e => typeof e.outputs === 'object');
     await expectation.ready;
-    await client.setOutputDevice(
-        outputConfigs.alternate[0].typeId,
-        outputConfigs.alternate[0].deviceIds[0]);
+    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId[0]);
     await expectation.done;
 
     const expected = await client.getOutputs();

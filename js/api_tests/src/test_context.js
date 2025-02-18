@@ -132,7 +132,9 @@ export class TestContextFactory
     {
         return {
             default: { typeId: 'output', deviceId: 'default' },
-            alternate: [{ typeId: 'output', deviceIds: ['other_device'] }],
+            alternate: [
+                { typeId: 'output', deviceId: 'other_device' }
+            ],
         }
     }
 

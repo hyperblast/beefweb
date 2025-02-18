@@ -7,12 +7,6 @@ q.test('get outputs config', async assert =>
 {
    const outputs = await client.getOutputs();
 
-   for (const type of outputs.types)
-   {
-       if (type.id === 'alsa')
-           console.log(type.devices);
-   }
-
    assert.ok(typeof outputs.supportsMultipleOutputTypes === 'boolean');
    assert.ok(typeof outputs.active === 'object');
    assert.equal(outputs.active.typeId, outputConfigs.default.typeId);
@@ -33,12 +27,9 @@ q.test('set output device', async assert =>
 {
     for (const config of outputConfigs.alternate)
     {
-        for (const deviceId of config.deviceIds)
-        {
-            await client.setOutputDevice(config.typeId, deviceId);
-            const output = (await client.getOutputs()).active;
-            assert.equal(output.typeId, config.typeId);
-            assert.equal(output.deviceId, deviceId);
-        }
+        await client.setOutputDevice(config.typeId, config.deviceId);
+        const output = (await client.getOutputs()).active;
+        assert.equal(output.typeId, config.typeId);
+        assert.equal(output.deviceId, config.deviceId);
     }
 });

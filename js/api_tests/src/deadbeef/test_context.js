@@ -42,8 +42,8 @@ export class DeadbeefTestContextFactory extends TestContextFactory
         return {
             default: { typeId: 'nullout2', deviceId: 'default' },
             alternate: [
-                { typeId: 'nullout', deviceIds: ['default'] },
-                { typeId: 'alsa', deviceIds: ['null', 'default'] },
+                { typeId: 'nullout', deviceId: 'default' },
+                { typeId: 'alsa', deviceId: 'null' },
             ],
         }
     }

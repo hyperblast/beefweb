@@ -41,7 +41,7 @@ export class Foobar2000TestContextFactory extends TestContextFactory
                 {
                     // Primary Sound Driver
                     typeId: 'output',
-                    deviceIds: ['D41D2423-FBB0-4635-B233-7054F79814AB:00000000-0000-0000-0000-000000000000']
+                    deviceId: 'D41D2423-FBB0-4635-B233-7054F79814AB:00000000-0000-0000-0000-000000000000'
                 }
             ]
         }
