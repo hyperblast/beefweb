@@ -767,7 +767,7 @@ paths:
         description: Playlist item index
         required: true
         schema:
-          type: number
+          type: integer
       responses:
         200:
           description: Success
@@ -867,9 +867,9 @@ components:
         playlistId:
           type: string
         playlistIndex:
-          type: number
+          type: integer
         index:
-          type: number
+          type: integer
         position:
           type: number
         duration:
@@ -899,7 +899,7 @@ components:
         playbackState:
           $ref: '#/components/schemas/PlaybackState'
         playbackMode:
-          type: number
+          type: integer
           deprecated: true
         playbackModes:
           type: array
@@ -935,7 +935,7 @@ components:
           type: number
           description: New relative playback position (seconds)
         playbackMode:
-          type: number
+          type: integer
           description: New playback mode index
           deprecated: true
         options:
@@ -948,7 +948,7 @@ components:
                 type: string
                 description: Option identifier
               value:
-                type: number
+                type: integer | boolean
                 description: New option value
     PlaylistInfo:
       type: object
@@ -956,13 +956,13 @@ components:
         id:
           type: string
         index:
-          type: number
+          type: integer
         title:
           type: string
         isCurrent:
           type: boolean
         itemCount:
-          type: number
+          type: integer
         totalTime:
           type: number
     PlaylistsResult:
@@ -980,9 +980,9 @@ components:
       type: object
       properties:
         offset:
-          type: number
+          type: integer
         totalCount:
-          type: number
+          type: integer
         items:
           type: array
           items:
@@ -1013,7 +1013,7 @@ components:
       type: object
       properties:
         index:
-          type: number
+          type: integer
           description: Position to add playlist at. By default playlist is added to the last position
         title:
           type: string
@@ -1026,7 +1026,7 @@ components:
       required: [items]
       properties:
         index:
-          type: number
+          type: integer
           description: Position to add items at
         async:
           type: boolean
@@ -1049,10 +1049,10 @@ components:
         items:
           type: array
           items:
-            type: number
+            type: integer
           description: Item indices to process
         targetIndex:
-          type: number
+          type: integer
           description: Position to add items at. By default items are added at the end of the playlist
     RemovePlaylistItemsRequest:
       type: object
@@ -1061,8 +1061,8 @@ components:
         items:
           type: array
           items:
-            type: number
-          description: item indices to process
+            type: integer
+          description: Item indices to remove
     AddToPlayQueueRequest:
       type: object
       required: [plref, itemIndex]
@@ -1071,10 +1071,10 @@ components:
           type: string | number
           description: Id or index of playlist which contains item to be added to queue
         itemIndex:
-          type: number
+          type: integer
           description: Item index in the specified playlist
         queueIndex:
-          type: number
+          type: integer
           description: Queue index to insert at (currently only supported by DeaDBeeF)
     RemoveFromPlayQueueRequest:
       type: object
@@ -1083,10 +1083,10 @@ components:
           type: string | number
           description: Id or index of playlist which contains item to be removed from queue
         itemIndex:
-          type: number
+          type: integer
           description: Item index in the specified playlist
         queueIndex:
-          type: number
+          type: integer
           description: Play queue item index to remove
     PlayQueueItemInfo:
       type: object
@@ -1095,7 +1095,7 @@ components:
           type: string
           description: Playlist id
         playlistIndex:
-          type: number
+          type: integer
           description: Playlist index
         itemIndex:
           type: integer
@@ -1205,10 +1205,10 @@ components:
           - D
           - F
         size:
-          type: number
+          type: integer
           description: File size in bytes
         timestamp:
-          type: number
+          type: integer
           description: File timestamp (seconds since Unix epoch)
     FileSystemRootsResponse:
       type: object
