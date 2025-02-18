@@ -919,6 +919,15 @@ components:
         by:
           type: string
           description: Expression to select next item by (e.g. %artist%)
+    SetOptionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Option identifier
+        value:
+          type: integer | boolean
+          description: New option value
     SetPlayerStateRequest:
       type: object
       properties:
@@ -942,14 +951,7 @@ components:
           type: array
           description: Options to modify
           items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: Option identifier
-              value:
-                type: integer | boolean
-                description: New option value
+            $ref: '#/components/schemas/SetOptionRequest'
     PlaylistInfo:
       type: object
       properties:
