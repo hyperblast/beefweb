@@ -1200,15 +1200,25 @@ components:
       type: object
       properties:
         player:
-          $ref: '#/components/schemas/PlayerState'
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlayerState'
         playlists:
-          $ref: '#/components/schemas/PlaylistsResult'
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlaylistsResult'
         playlistItems:
-          $ref: '#/components/schemas/PlaylistItemsResult'
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlaylistItemsResult'
         playQueue:
-          $ref: '#/components/schemas/PlayQueueItemsResult'
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlayQueueItemsResult'
         outputs:
-          $ref: '#/components/schemas/OutputsInfo'
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/OutputsInfo'
     FileSystemEntryType:
       type: string
       description: File system entry type (directory or file)
