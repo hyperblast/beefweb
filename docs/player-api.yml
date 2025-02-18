@@ -1209,6 +1209,12 @@ components:
           $ref: '#/components/schemas/PlayQueueItemsResult'
         outputs:
           $ref: '#/components/schemas/OutputsInfo'
+    FileSystemEntryType:
+      type: string
+      description: File system entry type (directory or file)
+      enum:
+      - D
+      - F
     FileSystemEntry:
       type: object
       properties:
@@ -1219,11 +1225,7 @@ components:
           type: string
           description: Full file path
         type:
-          type: string
-          description: File type
-          enum:
-          - D
-          - F
+          $ref: '#/components/schemas/FileSystemEntryType'
         size:
           type: integer
           description: File size in bytes
@@ -1250,4 +1252,3 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FileSystemEntry'
-
