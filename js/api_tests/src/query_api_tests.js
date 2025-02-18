@@ -1,11 +1,7 @@
 import q from 'qunit';
 import { client, tracks, outputConfigs, usePlayer } from './test_env.js';
 
-const resetOptions = {
-    output: true
-};
-
-q.module('query api', usePlayer({ resetOptions }));
+q.module('query api', usePlayer());
 
 q.test('query player', async assert =>
 {

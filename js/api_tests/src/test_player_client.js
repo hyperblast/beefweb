@@ -58,11 +58,8 @@ class TestPlayerClient extends PlayerClient
         for (let p of playlists)
             await this.removePlaylist(p.id);
 
-        if (options.output)
-        {
-            const config = options.outputConfigs.default;
-            await this.setOutputDevice(config.typeId, config.deviceId);
-        }
+        const config = options.outputConfigs.default;
+        await this.setOutputDevice(config.typeId, config.deviceId);
     }
 
     async waitUntilReady()
