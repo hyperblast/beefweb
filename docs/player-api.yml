@@ -1095,11 +1095,9 @@ components:
         plref:
           type: string
           description: Id or index of playlist which contains item to be added to queue
-          required: true
         itemIndex:
           type: number
           description: Item index in the specified playlist
-          required: true
         queueIndex:
           type: number
           description: Queue index to insert at (currently only supported by DeaDBeeF)
@@ -1180,7 +1178,6 @@ components:
         deviceId:
           type: string
           description: Output device id
-          required: true
     FileSystemEntry:
       type: object
       properties:
