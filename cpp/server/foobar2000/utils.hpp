@@ -295,7 +295,7 @@ private:
     MSRV_NO_COPY_AND_ASSIGN(PlaylistEventAdapter);
 };
 
-class OutputEventAdapter final : public output_config_change_callback
+class OutputEventAdapter final : output_config_change_callback
 {
 public:
     OutputEventAdapter()
