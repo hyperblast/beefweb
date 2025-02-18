@@ -435,7 +435,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddItemsRequest'
+              $ref: '#/components/schemas/AddPlaylistItemsRequest'
         required: true
       responses:
         202:
@@ -1034,7 +1034,7 @@ components:
         setCurrent:
           type: boolean
           description: Select playlist after creation
-    AddItemsRequest:
+    AddPlaylistItemsRequest:
       type: object
       required: [items]
       properties:
