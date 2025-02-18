@@ -23,7 +23,7 @@ export class TestContext
         const pluginSettings = Object.assign({}, this.config.pluginSettings, options.pluginSettings);
 
         const resetOptions = Object.assign(
-            { playerState: true, output: false, outputConfigs: this.outputConfigs },
+            { playerState: true, outputConfigs: this.outputConfigs },
             options.resetOptions);
 
         const axiosConfig = options.axiosConfig || null;
