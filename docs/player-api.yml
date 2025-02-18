@@ -110,12 +110,12 @@ paths:
       - player
       summary: Play next item in currently played playlist
       operationId: playNext
-      parameters:
-      - name: by
-        in: query
-        description: Expression to select next item by (e.g. %artist%).
-        schema:
-          type: string
+      requestBody:
+        description: Additional request parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeActiveItemRequest'
       responses:
         204:
           description: Success
@@ -126,12 +126,12 @@ paths:
       - player
       summary: Play previous item in currently played playlist
       operationId: playPrevious
-      parameters:
-      - name: by
-        in: query
-        description: Expression to select previous item by (e.g. %artist%).
-        schema:
-          type: string
+      requestBody:
+        description: Additional request parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeActiveItemRequest'
       responses:
         204:
           description: Success
@@ -913,6 +913,12 @@ components:
       properties:
         player:
           $ref: '#/components/schemas/PlayerState'
+    ChangeActiveItemRequest:
+      type: object
+      properties:
+        by:
+          type: string
+          description: Expression to select next item by (e.g. %artist%)
     SetPlayerStateRequest:
       type: object
       properties:
