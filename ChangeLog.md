@@ -1,5 +1,5 @@
 # Changes in v0.10 (not released)
-- Add output device configuration
+- Add ability to configure output device
 
 
 # Changes in v0.9 (released 2025-02-14)
