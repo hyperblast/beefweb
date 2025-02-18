@@ -1227,9 +1227,11 @@ components:
         size:
           type: integer
           description: File size in bytes
+          format: int64
         timestamp:
           type: integer
           description: File timestamp (seconds since Unix epoch)
+          format: int64
     FileSystemRootsResponse:
       type: object
       properties:
