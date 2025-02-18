@@ -19,11 +19,11 @@ inline std::string outputDeviceConfigKey(const std::string& pluginId)
     return key;
 }
 
-struct CheckCardContext
+struct FindCardContext
 {
-    explicit CheckCardContext(const std::string& id) : idToCheck(id) { }
+    explicit FindCardContext(const std::string& id) : idToFind(id) { }
 
-    const std::string& idToCheck;
+    const std::string& idToFind;
     bool found = false;
 };
 
@@ -34,14 +34,14 @@ void addCardCallback(const char* id, const char* name, void* data)
     tryCatchLog([&] { typeInfo->devices.emplace_back(id, name); });
 }
 
-void checkCardCallback(const char* id, const char*, void* data)
+void findCardCallback(const char* id, const char*, void* data)
 {
-    auto context = static_cast<CheckCardContext*>(data);
+    auto context = static_cast<FindCardContext*>(data);
 
     if (context->found)
         return;
 
-    if (context->idToCheck == id)
+    if (context->idToFind == id)
         context->found = true;
 }
 
@@ -109,8 +109,7 @@ ActiveOutputInfo PlayerImpl::getActiveOutput()
     ConfigLockGuard lock(configMutex_);
 
     config.typeId = ddbApi->conf_get_str_fast(outputPluginConfigKey, "alsa");
-    config.deviceId = ddbApi->conf_get_str_fast(
-        outputDeviceConfigKey(config.typeId).c_str(), MSRV_OUTPUT_DEFAULT_DEVICE_ID);
+    config.deviceId = ddbApi->conf_get_str_fast(outputDeviceConfigKey(config.typeId).c_str(), default_output::deviceId);
 
     return config;
 }
@@ -243,22 +242,18 @@ OutputsInfo PlayerImpl::getOutputs()
     OutputsInfo info;
     info.supportsMultipleOutputTypes = true;
 
-    auto plugins = ddbApi->plug_get_output_list();
-
-    while (*plugins != nullptr)
+    for (auto plist = ddbApi->plug_get_output_list(); *plist; plist++)
     {
-        auto p = *plugins;
+        auto p = *plist;
 
         OutputTypeInfo typeInfo(p->plugin.id, p->plugin.name, {});
 
         if (p->enum_soundcards)
             p->enum_soundcards(addCardCallback, &typeInfo);
         else
-            typeInfo.devices.emplace_back(MSRV_OUTPUT_DEFAULT_DEVICE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_NAME);
+            typeInfo.devices.emplace_back(default_output::deviceId, default_output::deviceName);
 
         info.types.emplace_back(std::move(typeInfo));
-
-        plugins++;
     }
 
     info.active = getActiveOutput();
@@ -281,12 +276,12 @@ void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& d
         plugin = reinterpret_cast<DB_output_t*>(plug);
     }
 
-    CheckCardContext context(deviceId);
+    FindCardContext context(deviceId);
 
     if (plugin->enum_soundcards)
-        plugin->enum_soundcards(checkCardCallback, &context);
+        plugin->enum_soundcards(findCardCallback, &context);
     else
-        context.found = deviceId == MSRV_OUTPUT_DEFAULT_DEVICE_ID;
+        context.found = deviceId == default_output::deviceId;
 
     if (!context.found)
         throw InvalidRequestException("invalid device id: " + deviceId);

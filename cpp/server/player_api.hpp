@@ -11,11 +11,6 @@
 
 #include <boost/thread/future.hpp>
 
-#define MSRV_OUTPUT_DEFAULT_TYPE_ID "output"
-#define MSRV_OUTPUT_DEFAULT_TYPE_NAME "Output"
-#define MSRV_OUTPUT_DEFAULT_DEVICE_ID "default"
-#define MSRV_OUTPUT_DEFAULT_DEVICE_NAME "Default audio device"
-
 namespace msrv {
 
 class WorkQueue;
@@ -356,6 +351,13 @@ private:
     const std::vector<std::string> enumNames_;
 };
 
+namespace default_output {
+constexpr char typeId[] = "output";
+constexpr char typeName[] = "Output";
+constexpr char deviceId[] = "default";
+constexpr char deviceName[] = "Default audio device";
+}
+
 struct OutputDeviceInfo
 {
     OutputDeviceInfo() = default;
@@ -424,9 +426,9 @@ struct OutputsInfo
     static OutputsInfo defaultInfo()
     {
         OutputsInfo info;
-        std::vector<OutputDeviceInfo> devices{OutputDeviceInfo(MSRV_OUTPUT_DEFAULT_DEVICE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_NAME)};
-        info.active = ActiveOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_DEVICE_ID);
-        info.types.emplace_back(MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_TYPE_NAME, std::move(devices));
+        std::vector<OutputDeviceInfo> devices{OutputDeviceInfo(default_output::deviceId, default_output::deviceName)};
+        info.active = ActiveOutputInfo(default_output::typeId, default_output::deviceId);
+        info.types.emplace_back(default_output::typeId, default_output::typeName, std::move(devices));
         return info;
     }
 };

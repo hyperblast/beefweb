@@ -148,7 +148,7 @@ void PlayerImpl::clearPlayQueue()
 
 OutputsInfo PlayerImpl::getOutputs()
 {
-    OutputTypeInfo outputType{MSRV_OUTPUT_DEFAULT_TYPE_ID, MSRV_OUTPUT_DEFAULT_TYPE_NAME, {}};
+    OutputTypeInfo outputType{default_output::typeId, default_output::typeName, {}};
 
     outputManager_->listDevices([&outputType](const char* name, const GUID& outputGuid, const GUID& deviceGuid) {
         outputType.devices.emplace_back(doubleGuidToString(outputGuid, deviceGuid), name);
@@ -158,12 +158,15 @@ OutputsInfo PlayerImpl::getOutputs()
 
     OutputsInfo result;
     result.types.emplace_back(std::move(outputType));
-    result.active = ActiveOutputInfo(MSRV_OUTPUT_DEFAULT_TYPE_ID, doubleGuidToString(config.m_output, config.m_device));
+    result.active = ActiveOutputInfo(default_output::typeId, doubleGuidToString(config.m_output, config.m_device));
     return result;
 }
 
-void PlayerImpl::setOutputDevice(const std::string&, const std::string& deviceId)
+void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& deviceId)
 {
+    if (!typeId.empty() && typeId != default_output::typeId)
+        throw InvalidRequestException("invalid output type id: " + typeId);
+
     auto deviceRef = tryParseDoubleGuid(deviceId.c_str());
     if (!deviceRef)
         throw InvalidRequestException("invalid output device id: " + deviceId);
