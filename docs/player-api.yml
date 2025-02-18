@@ -7,10 +7,10 @@ servers:
 tags:
 - name: player
   description: Player APIs
-- name: playqueue
-  description: Playback queue APIs
 - name: playlists
   description: Playlist APIs
+- name: playqueue
+  description: Playback queue APIs
 - name: outputs
   description: Output configuration APIs
 - name: query
@@ -44,10 +44,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  player:
-                    $ref: '#/components/schemas/PlayerState'
+                $ref: '#/components/schemas/GetPlayerStateResponse'
     post:
       tags:
       - player
@@ -64,7 +61,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /player/play:
     post:
       tags:
@@ -87,7 +83,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       - name: index
         in: path
         description: Item index
@@ -114,12 +110,12 @@ paths:
       - player
       summary: Play next item in currently played playlist
       operationId: playNext
-      parameters:
-      - name: by
-        in: query
-        description: Expression to select next item by (e.g. %artist%).
-        schema:
-          type: string
+      requestBody:
+        description: Additional request parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeActiveItemRequest'
       responses:
         204:
           description: Success
@@ -130,12 +126,12 @@ paths:
       - player
       summary: Play previous item in currently played playlist
       operationId: playPrevious
-      parameters:
-      - name: by
-        in: query
-        description: Expression to select previous item by (e.g. %artist%).
-        schema:
-          type: string
+      requestBody:
+        description: Additional request parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeActiveItemRequest'
       responses:
         204:
           description: Success
@@ -192,10 +188,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  playQueue:
-                    $ref: '#/components/schemas/PlayQueueItemsResult'
+                $ref: '#/components/schemas/GetPlayQueueResponse'
   /playqueue/add:
     post:
       tags:
@@ -252,21 +245,19 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  playlists:
-                    $ref: '#/components/schemas/PlaylistsResult'
+               $ref: '#/components/schemas/GetPlaylistsResponse'
     post:
       tags:
       - playlists
       summary: Update playlist collection
       operationId: updatePlaylists
-      parameters:
-      - name: current
-        in: query
-        description: Playlist id or index to make current
-        schema:
-          type: string
+      requestBody:
+        description: Request to update playlists
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlaylistsRequest'
+        required: true
       responses:
         204:
           description: Success
@@ -277,22 +268,19 @@ paths:
       - playlists
       summary: Add playlist
       operationId: addPlaylist
-      parameters:
-      - name: index
-        in: query
-        description: Position to add playlist at. By default playlist is added to
-          the last position
-        schema:
-          type: number
-      - name: title
-        in: query
-        description: New playlist title
-        schema:
-          type: string
+      requestBody:
+        description: Request to add playlist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPlaylistRequest'
       responses:
-        204:
+        200:
           description: Success
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistInfo'
   /playlists/remove/{playlistId}:
     post:
       tags:
@@ -305,7 +293,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       responses:
         204:
           description: Success
@@ -322,7 +310,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       - name: index
         in: path
         description: Target position. Use negative value to move to the last position
@@ -345,7 +333,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       - name: range
         in: path
         description: Playlist item range in form offset:count
@@ -368,10 +356,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  playlistItems:
-                    $ref: '#/components/schemas/PlaylistItemsResult'
+                $ref: '#/components/schemas/GetPlaylistItemsResponse'
   /playlists/{playlistId}:
     get:
       tags:
@@ -384,7 +369,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       responses:
         200:
           description: Success
@@ -404,11 +389,13 @@ paths:
         required: true
         schema:
           type: string
-      - name: title
-        in: query
-        description: New playlist title
-        schema:
-          type: string
+      requestBody:
+        description: Request to update playlist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlaylistRequest'
+        required: true
       responses:
         204:
           description: Success
@@ -425,7 +412,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       responses:
         204:
           description: Success
@@ -442,13 +429,13 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       requestBody:
         description: Items to add
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddItemsRequest'
+              $ref: '#/components/schemas/AddPlaylistItemsRequest'
         required: true
       responses:
         202:
@@ -457,7 +444,6 @@ paths:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/copy:
     post:
       tags:
@@ -470,25 +456,18 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
-      - name: targetIndex
-        in: query
-        description: Position to copy items to. Items are copied to the end of the
-          playlist by default
-        schema:
-          type: number
+          type: string | integer
       requestBody:
-        description: Indexes of items to copy
+        description: Copy items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{sourceId}/{targetId}/items/copy:
     post:
       tags:
@@ -501,31 +480,24 @@ paths:
         description: Source playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       - name: targetId
         in: path
         description: Target playlist id or index
         required: true
         schema:
-          type: string
-      - name: targetIndex
-        in: query
-        description: Playlist position to copy items to. Items are copied to the end
-          of the playlist by default
-        schema:
-          type: number
+          type: string | integer
       requestBody:
-        description: Indexes of items to copy
+        description: Copy items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/move:
     post:
       tags:
@@ -538,25 +510,18 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
-      - name: targetIndex
-        in: query
-        description: Position to move items to. Items are moved to the end of the
-          playlist by default
-        schema:
-          type: number
+          type: string | integer
       requestBody:
-        description: Indexes of items to move
+        description: Move items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{sourceId}/{targetId}/items/move:
     post:
       tags:
@@ -569,31 +534,24 @@ paths:
         description: Source playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       - name: targetId
         in: path
         description: Target playlist id or index
         required: true
         schema:
-          type: string
-      - name: targetIndex
-        in: query
-        description: Position to move items to. Items are moved to the end of the
-          playlist by default
-        schema:
-          type: number
+          type: string | integer
       requestBody:
-        description: Indexes of items to move
+        description: Move items request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/TransferPlaylistItemsRequest'
         required: true
       responses:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/remove:
     post:
       tags:
@@ -606,19 +564,18 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       requestBody:
         description: Indexes of items to remove
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ItemIndexesRequest'
+              $ref: '#/components/schemas/RemovePlaylistItemsRequest'
         required: true
       responses:
         204:
           description: Success
           content: {}
-      x-codegen-request-body-name: request
   /playlists/{playlistId}/items/sort:
     post:
       tags:
@@ -631,22 +588,13 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
-      - name: by
-        in: query
-        description: Expression to sort by (e.g. %title%)
-        schema:
-          type: string
-      - name: desc
-        in: query
-        description: Sort in descending order
-        schema:
-          type: boolean
-      - name: random
-        in: query
-        description: Sort randomly
-        schema:
-          type: boolean
+          type: string | integer
+      requestBody:
+        description: Sort parameters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SortPlaylistItemsRequest'
       responses:
         204:
           description: Success
@@ -663,10 +611,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  outputs:
-                    $ref: '#/components/schemas/OutputsInfo'
+                $ref: '#/components/schemas/GetOutputsResponse'
   /outputs/active:
     post:
       tags:
@@ -732,7 +677,7 @@ paths:
         in: query
         description: Playlist id or index to return items from
         schema:
-          type: string
+          type: string | integer
       - name: plrange
         in: query
         description: Playlist range to return items from
@@ -758,18 +703,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  player:
-                    $ref: '#/components/schemas/PlayerState'
-                  playlists:
-                    $ref: '#/components/schemas/PlaylistsResult'
-                  playlistItems:
-                    $ref: '#/components/schemas/PlaylistItemsResult'
-                  playQueue:
-                    $ref: '#/components/schemas/PlayQueueItemsResult'
-                  outputs:
-                    $ref: '#/components/schemas/OutputsInfo'
+                $ref: '#/components/schemas/QueryResponse'
   /browser/roots:
     get:
       tags:
@@ -782,20 +716,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  pathSeparator:
-                    type: string
-                  roots:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/FileSystemEntry'
+                $ref: '#/components/schemas/FileSystemRootsResponse'
   /browser/entries:
     get:
       tags:
       - browser
       summary: Get file system entries
-      operationId: getFsEntries
+      operationId: getFileSystemEntries
       parameters:
       - name: path
         in: query
@@ -808,14 +735,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  pathSeparator:
-                    type: string
-                  entries:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/FileSystemEntry'
+                $ref: '#/components/schemas/FileSystemEntriesResponse'
   /artwork/current:
     get:
       tags:
@@ -841,13 +761,13 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string
+          type: string | integer
       - name: index
         in: path
-        description: Item index
+        description: Playlist item index
         required: true
         schema:
-          type: string
+          type: integer
       responses:
         200:
           description: Success
@@ -928,51 +848,36 @@ components:
       enum:
       - db
       - linear
-    PlayerState:
+    VolumeInfo:
       type: object
       properties:
-        info:
-          $ref: '#/components/schemas/PlayerInfo'
-        activeItem:
-          type: object
-          properties:
-            playlistId:
-              type: string
-            playlistIndex:
-              type: number
-            index:
-              type: number
-            position:
-              type: number
-            duration:
-              type: number
-            columns:
-              type: array
-              items:
-                type: string
-        playbackState:
-          $ref: '#/components/schemas/PlaybackState'
-        playbackMode:
+        type:
+          $ref: '#/components/schemas/VolumeType'
+        min:
           type: number
-          deprecated: true
-        playbackModes:
+        max:
+          type: number
+        value:
+          type: number
+        isMuted:
+          type: boolean
+    ActiveItemInfo:
+      type: object
+      properties:
+        playlistId:
+          type: string
+        playlistIndex:
+          type: integer
+        index:
+          type: integer
+        position:
+          type: number
+        duration:
+          type: number
+        columns:
           type: array
           items:
             type: string
-          deprecated: true
-        volume:
-          type: object
-          properties:
-            type:
-              $ref: '#/components/schemas/VolumeType'
-            min:
-              type: number
-            max:
-              type: number
-            value:
-              type: number
-            isMuted:
-              type: boolean
     PlayerInfo:
       type: object
       properties:
@@ -984,19 +889,89 @@ components:
           type: string
         pluginVersion:
           type: string
+    PlayerState:
+      type: object
+      properties:
+        info:
+          $ref: '#/components/schemas/PlayerInfo'
+        activeItem:
+          $ref: '#/components/schemas/ActiveItemInfo'
+        playbackState:
+          $ref: '#/components/schemas/PlaybackState'
+        playbackMode:
+          type: integer
+          deprecated: true
+        playbackModes:
+          type: array
+          items:
+            type: string
+          deprecated: true
+        volume:
+          $ref: '#/components/schemas/VolumeInfo'
+    GetPlayerStateResponse:
+      type: object
+      properties:
+        player:
+          $ref: '#/components/schemas/PlayerState'
+    ChangeActiveItemRequest:
+      type: object
+      properties:
+        by:
+          type: string
+          description: Expression to select next item by (e.g. %artist%)
+          nullable: true
+    SetOptionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Option identifier
+        value:
+          type: integer | boolean
+          description: New option value
+    SetPlayerStateRequest:
+      type: object
+      properties:
+        volume:
+          type: number
+          description: New volume value
+          nullable: true
+        isMuted:
+          type: boolean
+          description: New mute state
+          nullable: true
+        position:
+          type: number
+          description: New absolute playback position (seconds)
+          nullable: true
+        relativePosition:
+          type: number
+          description: New relative playback position (seconds)
+          nullable: true
+        playbackMode:
+          type: integer
+          description: New playback mode index
+          deprecated: true
+          nullable: true
+        options:
+          type: array
+          description: Options to modify
+          items:
+            $ref: '#/components/schemas/SetOptionRequest'
+          nullable: true
     PlaylistInfo:
       type: object
       properties:
         id:
           type: string
         index:
-          type: number
+          type: integer
         title:
           type: string
         isCurrent:
           type: boolean
         itemCount:
-          type: number
+          type: integer
         totalTime:
           type: number
     PlaylistsResult:
@@ -1014,50 +989,59 @@ components:
       type: object
       properties:
         offset:
-          type: number
+          type: integer
         totalCount:
-          type: number
+          type: integer
         items:
           type: array
           items:
             $ref: '#/components/schemas/PlaylistItemInfo'
-    SetPlayerStateRequest:
+    GetPlaylistsResponse:
       type: object
       properties:
-        volume:
-          type: number
-          description: New volume value
-        isMuted:
-          type: boolean
-          description: New mute state
-        position:
-          type: number
-          description: New absolute playback position (seconds)
-        relativePosition:
-          type: number
-          description: New relative playback position (seconds)
-        playbackMode:
-          type: number
-          description: New playback mode index
-          deprecated: true
-        options:
-          type: array
-          description: Options to modify
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: Option identifier
-              value:
-                type: number
-                description: New option value
-    AddItemsRequest:
+        playlists:
+          $ref: '#/components/schemas/PlaylistsResult'
+    GetPlaylistItemsResponse:
+      type: object
+      properties:
+        playlistItems:
+          $ref: '#/components/schemas/PlaylistItemsResult'
+    UpdatePlaylistsRequest:
+      type: object
+      properties:
+        current:
+          type: string | integer
+          description: Playlist id or index to select
+          nullable: true
+    UpdatePlaylistRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: New playlist title
+          nullable: true
+    AddPlaylistRequest:
       type: object
       properties:
         index:
-          type: number
+          type: integer
+          description: Position to add playlist at. By default playlist is added to the last position
+          nullable: true
+        title:
+          type: string
+          description: New playlist title
+          nullable: true
+        setCurrent:
+          type: boolean
+          description: Select playlist after creation
+    AddPlaylistItemsRequest:
+      type: object
+      required: [items]
+      properties:
+        index:
+          type: integer
           description: Position to add items at
+          nullable: true
         async:
           type: boolean
           description: Process request asynchronously
@@ -1072,39 +1056,57 @@ components:
           description: Items to add (files, directories, URLs)
           items:
             type: string
-    ItemIndexesRequest:
+    TransferPlaylistItemsRequest:
       type: object
+      required: [items]
       properties:
         items:
           type: array
           items:
-            type: number
+            type: integer
+          description: Item indices to process
+        targetIndex:
+          type: integer
+          nullable: true
+          description: Position to add items at. By default items are added at the end of the playlist
+    RemovePlaylistItemsRequest:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            type: integer
+          description: Item indices to remove
     AddToPlayQueueRequest:
       type: object
+      required: [plref, itemIndex]
       properties:
         plref:
-          type: string
+          type: string | integer
           description: Id or index of playlist which contains item to be added to queue
-          required: true
         itemIndex:
-          type: number
+          type: integer
           description: Item index in the specified playlist
-          required: true
         queueIndex:
-          type: number
+          type: integer
           description: Queue index to insert at (currently only supported by DeaDBeeF)
+          nullable: true
     RemoveFromPlayQueueRequest:
       type: object
       properties:
         plref:
-          type: string
+          type: string | integer
           description: Id or index of playlist which contains item to be removed from queue
+          nullable: true
         itemIndex:
-          type: number
+          type: integer
           description: Item index in the specified playlist
+          nullable: true
         queueIndex:
-          type: number
+          type: integer
           description: Play queue item index to remove
+          nullable: true
     PlayQueueItemInfo:
       type: object
       properties:
@@ -1112,7 +1114,7 @@ components:
           type: string
           description: Playlist id
         playlistIndex:
-          type: number
+          type: integer
           description: Playlist index
         itemIndex:
           type: integer
@@ -1121,6 +1123,23 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/PlayQueueItemInfo'
+    GetPlayQueueResponse:
+      type: object
+      properties:
+        playQueue:
+          $ref: '#/components/schemas/PlayQueueItemsResult'
+    SortPlaylistItemsRequest:
+      type: object
+      properties:
+        by:
+          type: string
+          description: Expression to sort by (e.g. %title%)
+        desc:
+          type: boolean
+          description: Sort in descending order
+        random:
+          type: boolean
+          description: Sort randomly
     OutputDeviceInfo:
       type: object
       properties:
@@ -1163,14 +1182,49 @@ components:
             $ref: '#/components/schemas/OutputTypeInfo'
     SetOutputDeviceRequest:
       type: object
+      required: [deviceId]
       properties:
         typeId:
           type: string
-          description: Output type id. Omit if not changing output type
+          description: Output type id. If not specified current output type is preserved
+          nullable: true
         deviceId:
           type: string
           description: Output device id
-          required: true
+    GetOutputsResponse:
+      type: object
+      properties:
+        outputs:
+          $ref: '#/components/schemas/OutputsInfo'
+    QueryResponse:
+      type: object
+      properties:
+        player:
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlayerState'
+        playlists:
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlaylistsResult'
+        playlistItems:
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlaylistItemsResult'
+        playQueue:
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/PlayQueueItemsResult'
+        outputs:
+          nullable: true
+          anyOf:
+          - $ref: '#/components/schemas/OutputsInfo'
+    FileSystemEntryType:
+      type: string
+      description: File system entry type (directory or file)
+      enum:
+      - D
+      - F
     FileSystemEntry:
       type: object
       properties:
@@ -1181,14 +1235,30 @@ components:
           type: string
           description: Full file path
         type:
-          type: string
-          description: File type
-          enum:
-          - D
-          - F
+          $ref: '#/components/schemas/FileSystemEntryType'
         size:
-          type: number
+          type: integer
           description: File size in bytes
+          format: int64
         timestamp:
-          type: number
+          type: integer
           description: File timestamp (seconds since Unix epoch)
+          format: int64
+    FileSystemRootsResponse:
+      type: object
+      properties:
+        pathSeparator:
+          type: string
+        roots:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileSystemEntry'
+    FileSystemEntriesResponse:
+      type: object
+      properties:
+        pathSeparator:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileSystemEntry'
