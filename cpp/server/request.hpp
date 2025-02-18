@@ -134,8 +134,7 @@ template<typename T>
 bool Request::tryGetParam(const Json& json, const std::string& key, T* outVal)
 {
     auto value = json.find(key);
-
-    if (value == json.end())
+    if (value == json.end() || value->is_null())
         return false;
 
     std::string errorMessage;
