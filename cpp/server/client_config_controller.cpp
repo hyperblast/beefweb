@@ -40,7 +40,7 @@ void ClientConfigController::removeConfig()
 
 Path ClientConfigController::getFilePath()
 {
-    static const std::regex idPattern("^[a-z0-9_]+$", std::regex::ECMAScript);
+    static const std::regex idPattern("^[a-z0-9_]{1,64}$", std::regex::ECMAScript);
 
     auto id = param<std::string>("id");
 
