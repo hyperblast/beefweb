@@ -926,28 +926,30 @@ components:
       enum:
       - db
       - linear
+    ActiveItemInfo:
+      type: object
+      properties:
+        playlistId:
+          type: string
+        playlistIndex:
+          type: number
+        index:
+          type: number
+        position:
+          type: number
+        duration:
+          type: number
+        columns:
+          type: array
+          items:
+            type: string
     PlayerState:
       type: object
       properties:
         info:
           $ref: '#/components/schemas/PlayerInfo'
         activeItem:
-          type: object
-          properties:
-            playlistId:
-              type: string
-            playlistIndex:
-              type: number
-            index:
-              type: number
-            position:
-              type: number
-            duration:
-              type: number
-            columns:
-              type: array
-              items:
-                type: string
+          $ref: '#/components/schemas/ActiveItemInfo'
         playbackState:
           $ref: '#/components/schemas/PlaybackState'
         playbackMode:
