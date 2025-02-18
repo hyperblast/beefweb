@@ -251,12 +251,13 @@ paths:
       - playlists
       summary: Update playlist collection
       operationId: updatePlaylists
-      parameters:
-      - name: current
-        in: query
-        description: Playlist id or index to make current
-        schema:
-          type: string
+      requestBody:
+        description: Request to update playlists
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlaylistsRequest'
+        required: true
       responses:
         204:
           description: Success
@@ -388,11 +389,13 @@ paths:
         required: true
         schema:
           type: string
-      - name: title
-        in: query
-        description: New playlist title
-        schema:
-          type: string
+      requestBody:
+        description: Request to update playlist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePlaylistRequest'
+        required: true
       responses:
         204:
           description: Success
@@ -988,6 +991,18 @@ components:
       properties:
         playlistItems:
           $ref: '#/components/schemas/PlaylistItemsResult'
+    UpdatePlaylistsRequest:
+      type: object
+      properties:
+        current:
+          type: string | number
+          description: Playlist id or index to select
+    UpdatePlaylistRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: New playlist title
     AddPlaylistRequest:
       type: object
       properties:
@@ -1047,7 +1062,7 @@ components:
       required: [plref, itemIndex]
       properties:
         plref:
-          type: string
+          type: string | number
           description: Id or index of playlist which contains item to be added to queue
         itemIndex:
           type: number
