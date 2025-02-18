@@ -331,7 +331,7 @@ q.test('expect output config updates', async assert =>
 {
     const expectation = client.expectUpdate({ outputs: true }, e => typeof e.outputs === 'object');
     await expectation.ready;
-    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId[0]);
+    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
     await expectation.done;
 
     const expected = await client.getOutputs();
