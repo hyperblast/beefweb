@@ -1043,6 +1043,7 @@ components:
           description: Select playlist after creation
     AddItemsRequest:
       type: object
+      required: [items]
       properties:
         index:
           type: number
@@ -1063,6 +1064,7 @@ components:
             type: string
     ItemIndexesRequest:
       type: object
+      required: [items]
       properties:
         items:
           type: array
@@ -1070,6 +1072,7 @@ components:
             type: number
     AddToPlayQueueRequest:
       type: object
+      required: [plref, itemIndex]
       properties:
         plref:
           type: string
@@ -1155,6 +1158,7 @@ components:
             $ref: '#/components/schemas/OutputTypeInfo'
     SetOutputDeviceRequest:
       type: object
+      required: [deviceId]
       properties:
         typeId:
           type: string
