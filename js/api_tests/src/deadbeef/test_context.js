@@ -37,6 +37,17 @@ export class DeadbeefTestContextFactory extends TestContextFactory
         return config;
     }
 
+    createOutputConfigs()
+    {
+        return {
+            default: { typeId: 'nullout2', deviceId: 'default' },
+            alternate: [
+                { typeId: 'nullout', deviceIds: ['default'] },
+                { typeId: 'alsa', deviceIds: ['null', 'default'] },
+            ],
+        }
+    }
+
     createPlayer(config)
     {
         return new PlayerController(config);

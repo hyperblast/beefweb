@@ -12,6 +12,7 @@ set(
     src/foobar2000/test_context.js
     src/http_features_tests.js
     src/main.js
+    src/outputs_api_tests.js
     src/play_queue_api_tests.js
     src/player_api_tests.js
     src/playlists_api_tests.js

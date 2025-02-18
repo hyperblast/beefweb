@@ -243,7 +243,7 @@ export default class PlayerClient
 
     getOutputs()
     {
-        return this.get('api/outputs');
+        return this.get('api/outputs').then(r => r.outputs);
     }
 
     setOutputDevice(typeId, deviceId)
