@@ -7,10 +7,10 @@ servers:
 tags:
 - name: player
   description: Player APIs
-- name: playqueue
-  description: Playback queue APIs
 - name: playlists
   description: Playlist APIs
+- name: playqueue
+  description: Playback queue APIs
 - name: outputs
   description: Output configuration APIs
 - name: query
@@ -44,10 +44,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  player:
-                    $ref: '#/components/schemas/PlayerState'
+                $ref: '#/components/schemas/GetPlayerStateResponse'
     post:
       tags:
       - player
@@ -192,10 +189,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  playQueue:
-                    $ref: '#/components/schemas/PlayQueueItemsResult'
+                $ref: '#/components/schemas/GetPlayQueueResponse'
   /playqueue/add:
     post:
       tags:
@@ -252,10 +246,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  playlists:
-                    $ref: '#/components/schemas/PlaylistsResult'
+               $ref: '#/components/schemas/GetPlaylistsResponse'
     post:
       tags:
       - playlists
@@ -366,10 +357,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  playlistItems:
-                    $ref: '#/components/schemas/PlaylistItemsResult'
+                $ref: '#/components/schemas/GetPlaylistItemsResponse'
   /playlists/{playlistId}:
     get:
       tags:
@@ -661,10 +649,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  outputs:
-                    $ref: '#/components/schemas/OutputsInfo'
+                $ref: '#/components/schemas/GetOutputsResponse'
   /outputs/active:
     post:
       tags:
@@ -756,18 +741,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  player:
-                    $ref: '#/components/schemas/PlayerState'
-                  playlists:
-                    $ref: '#/components/schemas/PlaylistsResult'
-                  playlistItems:
-                    $ref: '#/components/schemas/PlaylistItemsResult'
-                  playQueue:
-                    $ref: '#/components/schemas/PlayQueueItemsResult'
-                  outputs:
-                    $ref: '#/components/schemas/OutputsInfo'
+                $ref: '#/components/schemas/QueryResponse'
   /browser/roots:
     get:
       tags:
@@ -780,20 +754,13 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  pathSeparator:
-                    type: string
-                  roots:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/FileSystemEntry'
+                $ref: '#/components/schemas/FileSystemRootsResponse'
   /browser/entries:
     get:
       tags:
       - browser
       summary: Get file system entries
-      operationId: getFsEntries
+      operationId: getFileSystemEntries
       parameters:
       - name: path
         in: query
@@ -806,14 +773,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  pathSeparator:
-                    type: string
-                  entries:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/FileSystemEntry'
+                $ref: '#/components/schemas/FileSystemEntriesResponse'
   /artwork/current:
     get:
       tags:
@@ -926,6 +886,19 @@ components:
       enum:
       - db
       - linear
+    VolumeInfo:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/VolumeType'
+        min:
+          type: number
+        max:
+          type: number
+        value:
+          type: number
+        isMuted:
+          type: boolean
     ActiveItemInfo:
       type: object
       properties:
@@ -943,6 +916,17 @@ components:
           type: array
           items:
             type: string
+    PlayerInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        version:
+          type: string
+        pluginVersion:
+          type: string
     PlayerState:
       type: object
       properties:
@@ -961,29 +945,43 @@ components:
             type: string
           deprecated: true
         volume:
-          type: object
-          properties:
-            type:
-              $ref: '#/components/schemas/VolumeType'
-            min:
-              type: number
-            max:
-              type: number
-            value:
-              type: number
-            isMuted:
-              type: boolean
-    PlayerInfo:
+          $ref: '#/components/schemas/VolumeInfo'
+    GetPlayerStateResponse:
       type: object
       properties:
-        name:
-          type: string
-        title:
-          type: string
-        version:
-          type: string
-        pluginVersion:
-          type: string
+        player:
+          $ref: '#/components/schemas/PlayerState'
+    SetPlayerStateRequest:
+      type: object
+      properties:
+        volume:
+          type: number
+          description: New volume value
+        isMuted:
+          type: boolean
+          description: New mute state
+        position:
+          type: number
+          description: New absolute playback position (seconds)
+        relativePosition:
+          type: number
+          description: New relative playback position (seconds)
+        playbackMode:
+          type: number
+          description: New playback mode index
+          deprecated: true
+        options:
+          type: array
+          description: Options to modify
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Option identifier
+              value:
+                type: number
+                description: New option value
     PlaylistInfo:
       type: object
       properties:
@@ -1021,37 +1019,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PlaylistItemInfo'
-    SetPlayerStateRequest:
+    GetPlaylistsResponse:
       type: object
       properties:
-        volume:
-          type: number
-          description: New volume value
-        isMuted:
-          type: boolean
-          description: New mute state
-        position:
-          type: number
-          description: New absolute playback position (seconds)
-        relativePosition:
-          type: number
-          description: New relative playback position (seconds)
-        playbackMode:
-          type: number
-          description: New playback mode index
-          deprecated: true
-        options:
-          type: array
-          description: Options to modify
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-                description: Option identifier
-              value:
-                type: number
-                description: New option value
+        playlists:
+          $ref: '#/components/schemas/PlaylistsResult'
+    GetPlaylistItemsResponse:
+      type: object
+      properties:
+        playlistItems:
+          $ref: '#/components/schemas/PlaylistItemsResult'
     AddPlaylistRequest:
       type: object
       properties:
@@ -1131,6 +1108,11 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/PlayQueueItemInfo'
+    GetPlayQueueResponse:
+      type: object
+      properties:
+        playQueue:
+          $ref: '#/components/schemas/PlayQueueItemsResult'
     OutputDeviceInfo:
       type: object
       properties:
@@ -1180,6 +1162,24 @@ components:
         deviceId:
           type: string
           description: Output device id
+    GetOutputsResponse:
+      type: object
+      properties:
+        outputs:
+          $ref: '#/components/schemas/OutputsInfo'
+    QueryResponse:
+      type: object
+      properties:
+        player:
+          $ref: '#/components/schemas/PlayerState'
+        playlists:
+          $ref: '#/components/schemas/PlaylistsResult'
+        playlistItems:
+          $ref: '#/components/schemas/PlaylistItemsResult'
+        playQueue:
+          $ref: '#/components/schemas/PlayQueueItemsResult'
+        outputs:
+          $ref: '#/components/schemas/OutputsInfo'
     FileSystemEntry:
       type: object
       properties:
@@ -1201,3 +1201,22 @@ components:
         timestamp:
           type: number
           description: File timestamp (seconds since Unix epoch)
+    FileSystemRootsResponse:
+      type: object
+      properties:
+        pathSeparator:
+          type: string
+        roots:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileSystemEntry'
+    FileSystemEntriesResponse:
+      type: object
+      properties:
+        pathSeparator:
+          type: string
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileSystemEntry'
+
