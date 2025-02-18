@@ -11,6 +11,8 @@ tags:
   description: Playback queue APIs
 - name: playlists
   description: Playlist APIs
+- name: outputs
+  description: Output configuration APIs
 - name: query
   description: Query APIs
 - name: browser
@@ -377,12 +379,12 @@ paths:
       summary: Get single playlist
       operationId: getPlaylist
       parameters:
-        - name: playlistId
-          in: path
-          description: Playlist id or index
-          required: true
-          schema:
-            type: string
+      - name: playlistId
+        in: path
+        description: Playlist id or index
+        required: true
+        schema:
+          type: string
       responses:
         200:
           description: Success
@@ -649,6 +651,39 @@ paths:
         204:
           description: Success
           content: {}
+  /outputs:
+    get:
+      tags:
+      - outputs
+      summary: Get outputs configuration
+      operationId: getOutputs
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  outputs:
+                    $ref: '#/components/schemas/OutputsInfo'
+  /outputs/active:
+    post:
+      tags:
+      - outputs
+      summary: Set output device
+      operationId: setOutputDevice
+      requestBody:
+        description: Client config data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetOutputDeviceRequest'
+        required: true
+      responses:
+        204:
+          description: Success
+          content: {}
   /query:
     get:
       tags:
@@ -712,6 +747,11 @@ paths:
           type: array
           items:
             type: string
+      - name: outputs
+        in: query
+        description: Request output configuration
+        schema:
+          type: boolean
       responses:
         200:
           description: Success
@@ -728,6 +768,8 @@ paths:
                     $ref: '#/components/schemas/PlaylistItemsResult'
                   playQueue:
                     $ref: '#/components/schemas/PlayQueueItemsResult'
+                  outputs:
+                    $ref: '#/components/schemas/OutputsInfo'
   /browser/roots:
     get:
       tags:
@@ -1079,6 +1121,56 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/PlayQueueItemInfo'
+    OutputDeviceInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Output device id
+        name:
+          type: string
+          description: Output device name
+    OutputTypeInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Output type id
+        name:
+          type: string
+          description: Output type name
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutputDeviceInfo'
+    ActiveOutputInfo:
+      type: object
+      properties:
+        typeId:
+          type: string
+          description: Active output type id
+        deviceId:
+          type: string
+          description: Active output device id
+    OutputsInfo:
+      type: object
+      properties:
+        active:
+          $ref: '#/components/schemas/ActiveOutputInfo'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutputTypeInfo'
+    SetOutputDeviceRequest:
+      type: object
+      properties:
+        typeId:
+          type: string
+          description: Output type id
+        deviceId:
+          type: string
+          description: Output device id
+          required: true
     FileSystemEntry:
       type: object
       properties:
