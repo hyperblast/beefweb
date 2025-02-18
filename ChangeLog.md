@@ -1,4 +1,5 @@
 # Changes in v0.10 (not released)
+- Add output device configuration
 
 
 # Changes in v0.9 (released 2025-02-14)
