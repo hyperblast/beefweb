@@ -674,7 +674,7 @@ paths:
       summary: Set output device
       operationId: setOutputDevice
       requestBody:
-        description: Client config data
+        description: Output device identification
         content:
           application/json:
             schema:
@@ -749,7 +749,7 @@ paths:
             type: string
       - name: outputs
         in: query
-        description: Request output configuration
+        description: Request outputs configuration
         schema:
           type: boolean
       responses:
@@ -1166,7 +1166,7 @@ components:
       properties:
         typeId:
           type: string
-          description: Output type id
+          description: Output type id. Omit if not changing output type
         deviceId:
           type: string
           description: Output device id
