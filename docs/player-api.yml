@@ -83,7 +83,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       - name: index
         in: path
         description: Item index
@@ -293,7 +293,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       responses:
         204:
           description: Success
@@ -310,7 +310,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       - name: index
         in: path
         description: Target position. Use negative value to move to the last position
@@ -333,7 +333,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       - name: range
         in: path
         description: Playlist item range in form offset:count
@@ -369,7 +369,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       responses:
         200:
           description: Success
@@ -412,7 +412,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       responses:
         204:
           description: Success
@@ -429,7 +429,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       requestBody:
         description: Items to add
         content:
@@ -456,7 +456,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       requestBody:
         description: Copy items request
         content:
@@ -480,13 +480,13 @@ paths:
         description: Source playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       - name: targetId
         in: path
         description: Target playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       requestBody:
         description: Copy items request
         content:
@@ -510,7 +510,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       requestBody:
         description: Move items request
         content:
@@ -534,13 +534,13 @@ paths:
         description: Source playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       - name: targetId
         in: path
         description: Target playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       requestBody:
         description: Move items request
         content:
@@ -564,7 +564,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       requestBody:
         description: Indexes of items to remove
         content:
@@ -588,7 +588,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       requestBody:
         description: Sort parameters
         content:
@@ -677,7 +677,7 @@ paths:
         in: query
         description: Playlist id or index to return items from
         schema:
-          type: string | number
+          type: string | integer
       - name: plrange
         in: query
         description: Playlist range to return items from
@@ -761,7 +761,7 @@ paths:
         description: Playlist id or index
         required: true
         schema:
-          type: string | number
+          type: string | integer
       - name: index
         in: path
         description: Playlist item index
@@ -1010,7 +1010,7 @@ components:
       type: object
       properties:
         current:
-          type: string | number
+          type: string | integer
           description: Playlist id or index to select
           nullable: true
     UpdatePlaylistRequest:
@@ -1083,7 +1083,7 @@ components:
       required: [plref, itemIndex]
       properties:
         plref:
-          type: string | number
+          type: string | integer
           description: Id or index of playlist which contains item to be added to queue
         itemIndex:
           type: integer
@@ -1096,7 +1096,7 @@ components:
       type: object
       properties:
         plref:
-          type: string | number
+          type: string | integer
           description: Id or index of playlist which contains item to be removed from queue
           nullable: true
         itemIndex:
