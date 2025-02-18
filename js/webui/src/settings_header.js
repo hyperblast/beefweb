@@ -16,6 +16,10 @@ const settingsTabs = [
         title: 'Columns',
     },
     {
+        key: SettingsView.output,
+        title: 'Output',
+    },
+    {
         key: SettingsView.defaults,
         title: 'Defaults',
     },

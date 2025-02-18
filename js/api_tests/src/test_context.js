@@ -8,19 +8,24 @@ const __dirname = path.dirname(__filename);
 
 export class TestContext
 {
-    constructor(config, tracks, client, player)
+    constructor(config, player, client, tracks, outputConfigs)
     {
         this.config = config;
-        this.tracks = tracks;
-        this.client = client;
         this.player = player;
+        this.client = client;
+        this.tracks = tracks;
+        this.outputConfigs = outputConfigs;
         this.options = null;
     }
 
     async beginSuite(options = {})
     {
         const pluginSettings = Object.assign({}, this.config.pluginSettings, options.pluginSettings);
-        const resetOptions = Object.assign({ playerState: true }, options.resetOptions);
+
+        const resetOptions = Object.assign(
+            { playerState: true, outputConfigs: this.outputConfigs },
+            options.resetOptions);
+
         const axiosConfig = options.axiosConfig || null;
         const environment = options.environment || null;
 
@@ -70,9 +75,10 @@ export class TestContextFactory
     {
         const config = Object.freeze(this.createConfig());
         const tracks = Object.freeze(this.createTracks(config));
-        const client = this.createClient(config);
+        const outputConfigs = Object.freeze(this.createOutputConfigs());
         const player = this.createPlayer(config);
-        return new TestContext(config, tracks, client, player);
+        const client = this.createClient(config);
+        return new TestContext(config, player, client, tracks, outputConfigs);
     }
 
     createConfig()
@@ -119,6 +125,16 @@ export class TestContextFactory
             t2Alt: path.join(musicDir, 'subdir', 'track2.flac'),
             t3: path.join(musicDir, 'subdir', 'track3.flac'),
             emptyDir: path.join(musicDir, 'empty'),
+        }
+    }
+
+    createOutputConfigs()
+    {
+        return {
+            default: { typeId: 'output', deviceId: 'default' },
+            alternate: [
+                { typeId: 'output', deviceId: 'other_device' }
+            ],
         }
     }
 

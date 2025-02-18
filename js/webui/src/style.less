@@ -759,6 +759,7 @@ body {
 }
 
 .setting-editor-enum,
+.setting-editor-enum-large,
 .setting-editor-text {
     .input-element();
 }
@@ -795,6 +796,10 @@ body {
         grid-template-columns: 13rem 1fr;
     }
 
+    .settings-buttons {
+        grid-column: 2;
+    }
+
     .setting-editor-label {
         text-align: right;
         padding-top: 0.5rem;
@@ -802,6 +807,10 @@ body {
 
     .setting-editor-enum {
         max-width: 15rem;
+    }
+
+    .setting-editor-enum-large {
+        max-width: 30rem;
     }
 
     .setting-editor-text {
@@ -814,9 +823,14 @@ body {
 }
 
 .st-mediasize-small-down {
+    .settings-buttons {
+        float: right;
+    }
+
     .setting-editor-label,
     .setting-editor-bool,
     .setting-editor-enum,
+    .setting-editor-enum-large,
     .setting-editor-text {
         display: block;
         width: 100%;
@@ -828,6 +842,7 @@ body {
 
     .setting-editor-bool,
     .setting-editor-enum,
+    .setting-editor-enum-large,
     .setting-editor-text {
         margin-bottom: 1rem;
     }

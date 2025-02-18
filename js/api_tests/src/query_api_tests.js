@@ -1,5 +1,5 @@
 import q from 'qunit';
-import { client, tracks, usePlayer } from './test_env.js';
+import { client, tracks, outputConfigs, usePlayer } from './test_env.js';
 
 q.module('query api', usePlayer());
 
@@ -46,18 +46,11 @@ q.test('query playlist items', async assert =>
     assert.deepEqual(result.playlistItems, playlistItems);
 });
 
-q.test('query play queue items', async assert =>
+q.test('query outputs', async assert =>
 {
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
-    await client.addToPlayQueue(0, 0);
-
-    const queue = await client.getPlayQueue();
-
-    const result = await client.query({
-        playQueue: true
-    });
-
-    assert.deepEqual(result.playQueue, queue);
+    const queue = await client.getOutputs();
+    const result = await client.query({ outputs: true });
+    assert.deepEqual(result.outputs, queue);
 });
 
 q.test('query all', async assert =>
@@ -80,6 +73,7 @@ q.test('query all', async assert =>
         playlists: await client.getPlaylists(),
         playlistItems: await client.getPlaylistItems(0, columns),
         playQueue: await client.getPlayQueue(),
+        outputs: await client.getOutputs(),
     };
 
     const result = await client.query({
@@ -90,6 +84,7 @@ q.test('query all', async assert =>
         plref: 0,
         plcolumns: columns,
         playQueue: true,
+        outputs: true,
     });
 
     assert.deepEqual(result, expected);
@@ -99,8 +94,7 @@ q.test('expect player events', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
 
-    const expectation = client.expectEvent(
-        { player: true }, e => e.player === true);
+    const expectation = client.expectEvent({ player: true }, e => e.player === true);
 
     await expectation.ready;
     await client.play(0, 0);
@@ -111,8 +105,7 @@ q.test('expect player events', async assert =>
 
 q.test('expect playlist events', async assert =>
 {
-    const expectation = client.expectEvent(
-        { playlists: true }, e => e.playlists === true);
+    const expectation = client.expectEvent({ playlists: true }, e => e.playlists === true);
 
     await expectation.ready;
     await client.addPlaylist();
@@ -123,8 +116,7 @@ q.test('expect playlist events', async assert =>
 
 q.test('expect playlist items events', async assert =>
 {
-    const expectation = client.expectEvent(
-        { playlistItems: true }, e => e.playlistItems === true);
+    const expectation = client.expectEvent({ playlistItems: true }, e => e.playlistItems === true);
 
     await expectation.ready;
     await client.addPlaylistItems(0, [tracks.t1]);
@@ -137,8 +129,7 @@ q.test('expect play queue events', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
 
-    const expectation = client.expectEvent(
-        { playQueue: true }, e => e.playQueue === true);
+    const expectation = client.expectEvent({ playQueue: true }, e => e.playQueue === true);
 
     await expectation.ready;
     await client.addToPlayQueue(0, 0);
@@ -147,12 +138,20 @@ q.test('expect play queue events', async assert =>
     assert.ok(true);
 });
 
+q.test('expect output config events', async assert =>
+{
+    const expectation = client.expectEvent({ outputs: true }, e => e.outputs === true);
+    await expectation.ready;
+    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
+    await expectation.done;
+    assert.ok(true);
+});
+
 q.test('expect player updates', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1]);
 
-    const expectation = client.expectUpdate(
-        { player: true }, e => typeof e.player === 'object');
+    const expectation = client.expectUpdate({ player: true }, e => typeof e.player === 'object');
 
     await expectation.ready;
     await client.play(0, 0);
@@ -169,8 +168,7 @@ q.test('expect player updates', async assert =>
 
 q.test('expect playlist updates', async assert =>
 {
-    const expectation = client.expectUpdate(
-        { playlists: true }, e => typeof e.playlists === 'object');
+    const expectation = client.expectUpdate({ playlists: true }, e => typeof e.playlists === 'object');
 
     await expectation.ready;
     await client.addPlaylist({ title: 'My list' });
@@ -325,6 +323,19 @@ q.test('expect play queue updates', async assert =>
 
     const expected = await client.getPlayQueue(columns);
     const actual = expectation.lastEvent.playQueue;
+
+    assert.deepEqual(actual, expected);
+});
+
+q.test('expect output config updates', async assert =>
+{
+    const expectation = client.expectUpdate({ outputs: true }, e => typeof e.outputs === 'object');
+    await expectation.ready;
+    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
+    await expectation.done;
+
+    const expected = await client.getOutputs();
+    const actual = expectation.lastEvent.outputs;
 
     assert.deepEqual(actual, expected);
 });

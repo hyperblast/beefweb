@@ -163,3 +163,32 @@ PanelHeaderTab.propTypes = {
     href: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
 };
+
+export function Select(props)
+{
+    const { id, selectedItemId, items, onChange, className } = props;
+
+    if (!items || items.length === 0)
+    {
+        return <select className={className} id={id} disabled={true}>
+            <option>Not available</option>
+        </select>
+    }
+
+    return <select className={className} id={id} value={selectedItemId} onChange={onChange}>
+        {items.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+    </select>;
+}
+
+Select.propTypes = {
+    id: PropTypes.string.isRequired,
+    selectedItemId: PropTypes.string,
+    items: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+        })
+    ),
+    onChange: PropTypes.func,
+    className: PropTypes.string,
+};

@@ -33,10 +33,11 @@ enum class PlaybackState
 enum class PlayerEvents : int
 {
     NONE = 0,
-    PLAYER_CHANGED = 1,
-    PLAYLIST_SET_CHANGED = 2,
-    PLAYLIST_ITEMS_CHANGED = 4,
-    PLAY_QUEUE_CHANGED = 8,
+    PLAYER_CHANGED = 1 << 0,
+    PLAYLIST_SET_CHANGED = 1 << 1,
+    PLAYLIST_ITEMS_CHANGED = 1 << 2,
+    PLAY_QUEUE_CHANGED = 1 << 3,
+    OUTPUTS_CHANGED = 1 << 4,
 };
 
 MSRV_ENUM_FLAGS(PlayerEvents, int);
@@ -86,8 +87,8 @@ struct ActiveItemInfo
 struct PlayerState
 {
     PlayerInfo info;
-    PlaybackState playbackState;
-    VolumeInfo volume;
+    PlaybackState playbackState = PlaybackState::STOPPED;
+    VolumeInfo volume{};
     ActiveItemInfo activeItem;
 
     const std::vector<PlayerOption*>* options = nullptr;
@@ -101,11 +102,11 @@ struct PlaylistInfo
     PlaylistInfo& operator=(PlaylistInfo&&) = default;
 
     std::string id;
-    int32_t index;
+    int32_t index = 0;
     std::string title;
-    int32_t itemCount;
-    double totalTime;
-    bool isCurrent;
+    int32_t itemCount = 0;
+    double totalTime = 0;
+    bool isCurrent = false;
 };
 
 struct PlaylistItemInfo
@@ -242,16 +243,14 @@ struct ArtworkQuery
 
 struct ArtworkResult
 {
-    ArtworkResult()
-    {
-    }
+    ArtworkResult() = default;
 
-    ArtworkResult(std::string filePathVal)
+    explicit ArtworkResult(std::string filePathVal)
         : filePath(std::move(filePathVal))
     {
     }
 
-    ArtworkResult(std::vector<uint8_t> fileDataVal)
+    explicit ArtworkResult(std::vector<uint8_t> fileDataVal)
         : fileData(std::move(fileDataVal))
     {
     }
@@ -350,6 +349,88 @@ public:
 
 private:
     const std::vector<std::string> enumNames_;
+};
+
+namespace default_output {
+constexpr char typeId[] = "output";
+constexpr char typeName[] = "Output";
+constexpr char deviceId[] = "default";
+constexpr char deviceName[] = "Default audio device";
+}
+
+struct OutputDeviceInfo
+{
+    OutputDeviceInfo() = default;
+    OutputDeviceInfo(OutputDeviceInfo&&) = default;
+    OutputDeviceInfo(const OutputDeviceInfo&) = default;
+    OutputDeviceInfo(std::string idVal, std::string nameVal)
+        : id(std::move(idVal)), name(std::move(nameVal)) { }
+
+    std::string id;
+    std::string name;
+
+    OutputDeviceInfo& operator=(OutputDeviceInfo&&) = default;
+};
+
+struct OutputTypeInfo
+{
+    OutputTypeInfo() = default;
+    OutputTypeInfo(OutputTypeInfo&&) = default;
+    OutputTypeInfo(std::string idVal, std::string nameVal, std::vector<OutputDeviceInfo> devicesVal)
+        : id(std::move(idVal)), name(std::move(nameVal)), devices(std::move(devicesVal)) { }
+
+    std::string id;
+    std::string name;
+    std::vector<OutputDeviceInfo> devices;
+
+    OutputTypeInfo& operator=(OutputTypeInfo&&) = default;
+};
+
+struct ActiveOutputInfo
+{
+    ActiveOutputInfo() = default;
+    ActiveOutputInfo(ActiveOutputInfo&&) = default;
+
+    ActiveOutputInfo(std::string typeIdVal, std::string deviceIdVal)
+        : typeId(std::move(typeIdVal)), deviceId(std::move(deviceIdVal))
+    {
+    }
+
+    std::string typeId;
+    std::string deviceId;
+
+    bool operator==(const ActiveOutputInfo& other) const
+    {
+        return typeId == other.typeId && deviceId == other.deviceId;
+    }
+
+    bool operator!=(const ActiveOutputInfo& other) const
+    {
+        return !(*this == other);
+    }
+
+    ActiveOutputInfo& operator=(ActiveOutputInfo&&) = default;
+};
+
+struct OutputsInfo
+{
+    OutputsInfo() = default;
+    OutputsInfo(OutputsInfo&&) = default;
+
+    ActiveOutputInfo active;
+    std::vector<OutputTypeInfo> types;
+    bool supportsMultipleOutputTypes = false;
+
+    OutputsInfo& operator=(OutputsInfo&&) = default;
+
+    static OutputsInfo defaultInfo()
+    {
+        OutputsInfo info;
+        std::vector<OutputDeviceInfo> devices{OutputDeviceInfo(default_output::deviceId, default_output::deviceName)};
+        info.active = ActiveOutputInfo(default_output::typeId, default_output::deviceId);
+        info.types.emplace_back(default_output::typeId, default_output::typeName, std::move(devices));
+        return info;
+    }
 };
 
 using PlayerStatePtr = std::unique_ptr<PlayerState>;
@@ -459,6 +540,19 @@ public:
     virtual void removeFromPlayQueue(int32_t queueIndex) = 0;
     virtual void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) = 0;
     virtual void clearPlayQueue() = 0;
+
+    // Output API
+
+    virtual OutputsInfo getOutputs()
+    {
+        return OutputsInfo::defaultInfo();
+    }
+
+    virtual void setOutputDevice(const std::string& typeId, const std::string& deviceId)
+    {
+        (void) typeId;
+        (void) deviceId;
+    }
 
     // Artwork API
 

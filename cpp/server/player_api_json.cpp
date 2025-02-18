@@ -183,4 +183,30 @@ void to_json(Json& json, const PlayQueueItemInfo& value)
     json["columns"] = value.columns;
 }
 
+void to_json(Json& json, const OutputDeviceInfo& value)
+{
+    json["id"] = value.id;
+    json["name"] = value.name;
+}
+
+void to_json(Json& json, const OutputTypeInfo& value)
+{
+    json["id"] = value.id;
+    json["name"] = value.name;
+    json["devices"] = value.devices;
+}
+
+void to_json(Json& json, const ActiveOutputInfo& value)
+{
+    json["typeId"] = value.typeId;
+    json["deviceId"] = value.deviceId;
+}
+
+void to_json(Json& json, const OutputsInfo& value)
+{
+    json["active"] = value.active;
+    json["types"] = value.types;
+    json["supportsMultipleOutputTypes"] = value.supportsMultipleOutputTypes;
+}
+
 }

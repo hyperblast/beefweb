@@ -4,6 +4,55 @@
 namespace msrv {
 namespace player_foobar2000 {
 
+boost::optional<GUID> tryParseGuid(const char* str)
+{
+    auto result = pfc::GUID_from_text(str);
+
+    if (result != pfc::guid_null || strcmp(str, "00000000-0000-0000-0000-000000000000") == 0)
+        return result;
+
+    return boost::none;
+}
+
+boost::optional<std::pair<GUID, GUID>> tryParseDoubleGuid(const char* str)
+{
+    auto sep = strchr(str, ':');
+    if (!sep)
+        return boost::none;
+
+    char firstStr[37]; // 32 hex chars + 4 separators + 1 null terminator
+
+    auto firstLen = sep - str;
+    if (firstLen + 1 > sizeof(firstStr))
+        return boost::none;
+
+    memcpy(firstStr, str, firstLen);
+    firstStr[firstLen] = '\0';
+
+    auto secondStr = sep + 1;
+
+    auto firstGuid = tryParseGuid(firstStr);
+    auto secondGuid = tryParseGuid(secondStr);
+
+    if (firstGuid && secondGuid)
+        return std::make_pair(firstGuid.get(), secondGuid.get());
+
+    return boost::none;
+}
+
+std::string doubleGuidToString(const GUID& guid1, const GUID& guid2)
+{
+    auto str1 = pfc::print_guid(guid1);
+    auto str2 = pfc::print_guid(guid2);
+
+    std::string result;
+    result.reserve(str1.length() + str2.length() + 1);
+    result.append(str1.c_str(), str1.length());
+    result.append(":", 1);
+    result.append(str2.c_str(), str2.length());
+    return result;
+}
+
 service_factory_single_t<PlayQueueEventAdapter> playQueueEventAdapterFactory;
 
 Fb2kLogger::Fb2kLogger()
@@ -19,42 +68,6 @@ void Fb2kLogger::log(LogLevel, const char* fmt, va_list va)
 void Fb2kWorkQueue::schedule(WorkCallback callback)
 {
     fb2k::inMainThread(std::move(callback));
-}
-
-PlayerEventAdapter::PlayerEventAdapter()
-{
-    const auto flags = flag_on_playback_all
-        & ~(flag_on_playback_dynamic_info | flag_on_playback_time)
-        | flag_on_volume_change;
-
-    play_callback_manager::get()->register_callback(this, flags, false);
-}
-
-PlayerEventAdapter::~PlayerEventAdapter()
-{
-    play_callback_manager::get()->unregister_callback(this);
-}
-
-PlaylistEventAdapter::PlaylistEventAdapter()
-{
-    const auto flags = flag_on_items_added
-        | flag_on_items_reordered
-        | flag_on_items_removed
-        | flag_on_items_modified
-        | flag_on_items_replaced
-        | flag_on_playlist_activate
-        | flag_on_playlist_created
-        | flag_on_playlists_reorder
-        | flag_on_playlists_removed
-        | flag_on_playlist_renamed
-        | flag_on_playback_order_changed;
-
-    playlist_manager::get()->register_callback(this, flags);
-}
-
-PlaylistEventAdapter::~PlaylistEventAdapter()
-{
-    playlist_manager::get()->unregister_callback(this);
 }
 
 }

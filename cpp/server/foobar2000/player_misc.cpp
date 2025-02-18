@@ -7,6 +7,7 @@ namespace player_foobar2000 {
 PlayerImpl::PlayerImpl()
     : playbackControl_(playback_control::get()),
       playlistManager_(playlist_manager_v4::get()),
+      outputManager_(output_manager_v2::get()),
       incomingItemFilter_(playlist_incoming_item_filter_v3::get()),
       albumArtManager_(album_art_manager_v3::get()),
       titleFormatCompiler_(titleformat_compiler::get()),
@@ -19,6 +20,7 @@ PlayerImpl::PlayerImpl()
     playerEventAdapter_.setCallback(callback);
     playlistEventAdapter_.setCallback(callback);
     stopAfterCurrentTrackOption_.setCallback(callback);
+    outputEventAdapter_.setCallback(callback);
     playQueueEventAdapterFactory.get_static_instance().setCallback(callback);
 
     setPlaybackModeOption(&playbackOrderOption_);
@@ -142,6 +144,34 @@ void PlayerImpl::removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex
 void PlayerImpl::clearPlayQueue()
 {
     playlistManager_->queue_flush();
+}
+
+OutputsInfo PlayerImpl::getOutputs()
+{
+    OutputTypeInfo outputType{default_output::typeId, default_output::typeName, {}};
+
+    outputManager_->listDevices([&outputType](const char* name, const GUID& outputGuid, const GUID& deviceGuid) {
+        outputType.devices.emplace_back(doubleGuidToString(outputGuid, deviceGuid), name);
+    });
+
+    auto config = outputManager_->getCoreConfig();
+
+    OutputsInfo result;
+    result.types.emplace_back(std::move(outputType));
+    result.active = ActiveOutputInfo(default_output::typeId, doubleGuidToString(config.m_output, config.m_device));
+    return result;
+}
+
+void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& deviceId)
+{
+    if (!typeId.empty() && typeId != default_output::typeId)
+        throw InvalidRequestException("invalid output type id: " + typeId);
+
+    auto deviceRef = tryParseDoubleGuid(deviceId.c_str());
+    if (!deviceRef)
+        throw InvalidRequestException("invalid output device id: " + deviceId);
+
+    outputManager_->setCoreConfigDevice(deviceRef->first, deviceRef->second);
 }
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const

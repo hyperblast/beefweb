@@ -33,6 +33,8 @@ set(
     src/navigation_model.js
     src/notification_group.js
     src/notification_model.js
+    src/output_settings.js
+    src/output_settings_model.js
     src/play_queue_model.js
     src/playback_control.js
     src/playback_info_bar.js

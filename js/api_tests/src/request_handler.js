@@ -1,7 +1,7 @@
 import { URL, URLSearchParams } from 'url';
 import axios from 'axios';
 import EventSource from 'eventsource';
-import { formatQueryString } from 'beefweb-client';
+import { formatQueryString, PlayerClientError } from 'beefweb-client';
 
 class TrackedEventSource extends EventSource
 {
@@ -72,7 +72,7 @@ class RequestHandler
     {
         this.lastStatus = 0;
         const config = params ? { params } : undefined;
-        const result = await this.axios.get(url, config);
+        const result = await this.handleError(this.axios.get(url, config));
         this.lastStatus = result.status;
         return result.data;
     }
@@ -80,9 +80,25 @@ class RequestHandler
     async post(url, data)
     {
         this.lastStatus = 0;
-        const result = await this.axios.post(url, data);
+        const result = await this.handleError(this.axios.post(url, data));
         this.lastStatus = result.status;
         return result.data;
+    }
+
+    async handleError(request)
+    {
+        try
+        {
+            return await request;
+        }
+        catch (error)
+        {
+            if (typeof error.response !== 'object')
+                throw error;
+
+            const { status, statusText, data } = error.response;
+            throw PlayerClientError.create(status, statusText, data);
+        }
     }
 
     createEventSource(url, callback, params)

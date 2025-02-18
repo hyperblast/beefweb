@@ -18,6 +18,7 @@ export const context = getContextFactory().createContext();
 export const tracks = context.tracks;
 export const config = context.config;
 export const client = context.client;
+export const outputConfigs = context.outputConfigs;
 
 export function usePlayer(options)
 {

@@ -11,6 +11,7 @@
 #include "basic_auth_filter.hpp"
 #include "response_headers_filter.hpp"
 #include "client_config_controller.hpp"
+#include "outputs_controller.hpp"
 #include "log.hpp"
 
 namespace msrv {
@@ -52,11 +53,15 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
     filters->add(std::make_unique<CacheSupportFilter>());
     filters->add(std::make_unique<ExecuteHandlerFilter>());
 
-    PlayerController::defineRoutes(router, playerWorkQueue_.get(), player_);
-    PlaylistsController::defineRoutes(router, playerWorkQueue_.get(), player_, settings);
-    PlayQueueController::defineRoutes(router, playerWorkQueue_.get(), player_);
-    QueryController::defineRoutes(router, playerWorkQueue_.get(), player_, &dispatcher_);
-    ArtworkController::defineRoutes(router, playerWorkQueue_.get(), player_, contentTypes_);
+    auto playerQueue = playerWorkQueue_.get();
+
+    PlayerController::defineRoutes(router, playerQueue, player_);
+    PlaylistsController::defineRoutes(router, playerQueue, player_, settings);
+    PlayQueueController::defineRoutes(router, playerQueue, player_);
+    OutputsController::defineRoutes(router, playerQueue, player_);
+    QueryController::defineRoutes(router, playerQueue, player_, &dispatcher_);
+    ArtworkController::defineRoutes(router, playerQueue, player_, contentTypes_);
+
     BrowserController::defineRoutes(router, &utilityQueue_, settings);
     StaticController::defineRoutes(router, &utilityQueue_, settings, contentTypes_);
     ClientConfigController::defineRoutes(router, &utilityQueue_, player_->name());
