@@ -1,3 +1,35 @@
+export class PlayerClientError extends Error
+{
+    constructor(message, serverError = {})
+    {
+        super(message);
+
+        this.serverError = serverError;
+    }
+
+    static create(status, statusText, response)
+    {
+        let message = `HTTP error: ${status} ${statusText}`;
+
+        if (typeof response !== 'object' || typeof response.error !== 'object')
+            return new PlayerClientError(message);
+
+        const { message: serverMessage, parameter: serverParameter } = response.error;
+
+        if (serverMessage)
+        {
+            message = `${message}. Server error: ${serverMessage}`
+        }
+
+        if (serverParameter)
+        {
+            message = `${message}. Parameter: ${serverParameter}`;
+        }
+
+        return new PlayerClientError(message, response.error);
+    }
+}
+
 export function skipUndefined(params)
 {
     const result = {};

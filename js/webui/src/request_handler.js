@@ -1,4 +1,4 @@
-import { formatQueryString } from 'beefweb-client'
+import { formatQueryString, PlayerClientError } from 'beefweb-client';
 
 function buildUrl(url, params)
 {
@@ -23,10 +23,6 @@ function buildUrl(url, params)
 function isSuccessStatus(code)
 {
     return code >= 200 && code <= 299;
-}
-
-class ClientError extends Error
-{
 }
 
 class Request
@@ -71,10 +67,7 @@ class Request
     {
         const { status, statusText } = this.httpRequest;
 
-        return Object.assign(
-            new ClientError(),
-            this.parseResponse(),
-            { status, statusText });
+        return PlayerClientError.create(status, statusText, this.parseResponse());
     }
 
     parseResponse()
