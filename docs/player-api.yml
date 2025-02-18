@@ -277,22 +277,20 @@ paths:
       - playlists
       summary: Add playlist
       operationId: addPlaylist
-      parameters:
-      - name: index
-        in: query
-        description: Position to add playlist at. By default playlist is added to
-          the last position
-        schema:
-          type: number
-      - name: title
-        in: query
-        description: New playlist title
-        schema:
-          type: string
+      requestBody:
+        description: Request to add playlist
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPlaylistRequest'
       responses:
-        204:
+        200:
           description: Success
-          content: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaylistItemInfo'
+      x-codegen-request-body-name: request
   /playlists/remove/{playlistId}:
     post:
       tags:
@@ -1052,6 +1050,18 @@ components:
               value:
                 type: number
                 description: New option value
+    AddPlaylistRequest:
+      type: object
+      properties:
+        index:
+          type: number
+          description: Position to add playlist at. By default playlist is added to the last position
+        title:
+          type: string
+          description: New playlist title
+        setCurrent:
+          type: boolean
+          description: Select playlist after creation
     AddItemsRequest:
       type: object
       properties:
