@@ -106,17 +106,6 @@ std::vector<t_size> makeIndexes(t_size count)
     return indexes;
 }
 
-std::vector<t_size> makeIndexesReverse(t_size count)
-{
-    std::vector<t_size> indexes;
-    indexes.reserve(count);
-
-    for (t_size i = count; i > 0; i--)
-        indexes.push_back(i - 1);
-
-    return indexes;
-}
-
 t_size clampIndex(int32_t index, t_size count, t_size fallback)
 {
     return index >= 0 && static_cast<t_size>(index) < count
@@ -214,7 +203,7 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     return playlists;
 }
 
-PlaylistItemsResult  PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query)
+PlaylistItemsResult PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const Range& range, ColumnsQuery* query)
 {
     auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
     if (!queryImpl)
@@ -238,7 +227,10 @@ PlaylistItemsResult  PlayerImpl::getPlaylistItems(const PlaylistRef& plref, cons
             items.emplace_back(evaluatePlaylistColumns(playlist, item, queryImpl->columns, &buffer));
     }
 
-    return PlaylistItemsResult(offset, totalCount, std::move(items));
+    return PlaylistItemsResult(
+        static_cast<int32_t>(offset),
+        static_cast<int32_t>(totalCount),
+        std::move(items));
 }
 
 PlaylistInfo PlayerImpl::addPlaylist(int32_t index, const std::string& title, bool setCurrent)

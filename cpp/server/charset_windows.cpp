@@ -6,7 +6,7 @@ namespace msrv {
 
 namespace {
 
-inline size_t convert8To16(const char* inBuffer, size_t inSize, wchar_t* outBuffer, size_t outSize)
+size_t convert8To16(const char* inBuffer, size_t inSize, wchar_t* outBuffer, size_t outSize)
 {
     auto ret = ::MultiByteToWideChar(
         CP_UTF8,
@@ -14,13 +14,13 @@ inline size_t convert8To16(const char* inBuffer, size_t inSize, wchar_t* outBuff
         inBuffer,
         static_cast<int>(inSize),
         outBuffer,
-        outSize);
+        static_cast<int>(outSize));
 
     throwIfFailed("MultiByteToWideChar", ret != 0);
     return static_cast<size_t>(ret);
 }
 
-inline size_t convert16To8(const wchar_t* inBuffer, size_t inSize, char* outBuffer, size_t outSize)
+size_t convert16To8(const wchar_t* inBuffer, size_t inSize, char* outBuffer, size_t outSize)
 {
     auto ret = ::WideCharToMultiByte(
         CP_UTF8,
@@ -28,7 +28,7 @@ inline size_t convert16To8(const wchar_t* inBuffer, size_t inSize, char* outBuff
         inBuffer,
         static_cast<int>(inSize),
         outBuffer,
-        outSize,
+        static_cast<int>(outSize),
         nullptr,
         nullptr);
 
@@ -46,7 +46,7 @@ std::wstring utf8To16(const char* str, size_t size)
         return result;
 
     result.resize(convert8To16(str, size, nullptr, 0));
-    convert8To16(str, size, &result[0], result.length());
+    convert8To16(str, size, result.data(), result.length());
     return result;
 }
 
@@ -58,7 +58,7 @@ std::string utf16To8(const wchar_t* str, size_t size)
         return result;
 
     result.resize(convert16To8(str, size, nullptr, 0));
-    convert16To8(str, size, &result[0], result.length());
+    convert16To8(str, size, result.data(), result.length());
     return result;
 }
 

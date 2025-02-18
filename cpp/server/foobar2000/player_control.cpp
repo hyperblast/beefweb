@@ -87,8 +87,8 @@ void PlayerImpl::queryActiveItem(ActiveItemInfo* info, ColumnsQuery* query)
     if (playlistManager_->get_playing_item_location(&activePlaylist, &activeItem))
     {
         info->playlistId = playlists_->getId(activePlaylist);
-        info->playlistIndex = activePlaylist;
-        info->index = activeItem;
+        info->playlistIndex = static_cast<int32_t>(activePlaylist);
+        info->index = static_cast<int32_t>(activeItem);
     }
     else
     {
