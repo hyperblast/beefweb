@@ -289,7 +289,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PlaylistItemInfo'
+                $ref: '#/components/schemas/PlaylistInfo'
       x-codegen-request-body-name: request
   /playlists/remove/{playlistId}:
     post:
