@@ -129,6 +129,15 @@ export default class PlayerModel extends EventEmitter
         this.setVolumeRemote(value);
     }
 
+    volumeStep(direction)
+    {
+        const newValue = clamp(this.volume.value + direction, this.volume.min, this.volume.max);
+        if (newValue === this.volume.value)
+            return;
+
+        this.client.volumeStep(direction);
+    }
+
     setPosition(value)
     {
         this.client.setPlaybackPosition(value);

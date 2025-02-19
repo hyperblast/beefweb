@@ -51,6 +51,11 @@ export default class PlayerClient
         return this.setPlayerState({ volume: value });
     }
 
+    volumeStep(direction)
+    {
+        return this.setPlayerState({ volumeStep: direction });
+    }
+
     setPlaybackPosition(value)
     {
         return this.setPlayerState({ position: value });
