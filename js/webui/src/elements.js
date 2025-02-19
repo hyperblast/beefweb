@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
 import { makeClassName } from './dom_utils.js';
+import { bindHandlers } from './utils.js';
 
 function makeClickHandler(callback)
 {
@@ -40,7 +41,7 @@ Icon.propTypes = {
     className: PropTypes.string,
 };
 
-export const Button = React.forwardRef(function Button(props, ref)
+function Button_(props, ref)
 {
     const { name, title, className, href, onClick, active } = props;
 
@@ -58,14 +59,110 @@ export const Button = React.forwardRef(function Button(props, ref)
             <Icon name={name} />
         </a>
     );
-});
+}
 
-Button.propTypes = {
+Button_.propTypes = {
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     className: PropTypes.string,
     href: PropTypes.string,
     onClick: PropTypes.func,
+    active: PropTypes.bool
+};
+
+export const Button = React.forwardRef(Button_);
+
+const repeatInterval = 500;
+
+export class RepeatingButton extends React.PureComponent
+{
+    constructor(props)
+    {
+        super(props);
+        this.intervalId = null;
+        this.hasInitialClick = false;
+        bindHandlers(this);
+    }
+
+    handleTimer()
+    {
+        this.hasInitialClick = true;
+        this.props.onClick();
+    }
+
+    handleClick(e)
+    {
+        if (e.button === 0 || e.button === 1)
+        {
+            e.preventDefault();
+
+            if (e.button === 0 && !this.hasInitialClick)
+                this.props.onClick();
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot)
+    {
+        if (prevProps.onClick === this.props.onClick || !this.intervalId)
+            return;
+
+        clearInterval(this.intervalId);
+        this.intervalId = setInterval(this.handleTimer, repeatInterval);
+    }
+
+    handleStart(e)
+    {
+        if (e.button !== 0 && typeof e.touches === 'undefined')
+            return;
+
+        if (!this.intervalId)
+        {
+            this.hasInitialClick = false;
+            this.intervalId = setInterval(this.handleTimer, repeatInterval);
+        }
+    }
+
+    handleEnd(e)
+    {
+        if (e.button !== 0 && typeof e.touches === 'undefined')
+            return;
+
+        if (this.intervalId)
+        {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+
+    render()
+    {
+        const { name, title, className, active } = this.props;
+
+        const fullClassName = 'button'
+            + (className ? ' ' + className : '')
+            + (active ? ' active' : '');
+
+        return (
+            <a
+                href='#'
+                title={title}
+                className={fullClassName}
+                onMouseDown={this.handleStart}
+                onMouseUp={this.handleEnd}
+                onTouchStart={this.handleStart}
+                onTouchEnd={this.handleEnd}
+                onClick={this.handleClick}>
+                <Icon name={name} />
+            </a>
+        );
+    }
+}
+
+RepeatingButton.propTypes = {
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    onClick: PropTypes.func.isRequired,
     active: PropTypes.bool
 };
 
