@@ -64,10 +64,21 @@ void PlayerImpl::queryInfo(PlayerInfo* info)
 
 void PlayerImpl::queryVolume(VolumeInfo* volume)
 {
-    volume->type = VolumeType::DB;
-    volume->min = playback_control::volume_mute;
-    volume->max = 0.0;
-    volume->value = playbackControl_->get_volume();
+    if (playbackControl_->custom_volume_is_active())
+    {
+        volume->type = VolumeType::UP_DOWN;
+        volume->min = playbackControl_->custom_volume_min();
+        volume->max = playbackControl_->custom_volume_max();
+        volume->value = playbackControl_->custom_volume_get();
+    }
+    else
+    {
+        volume->type = VolumeType::DB;
+        volume->min = playback_control::volume_mute;
+        volume->max = 0.0;
+        volume->value = playbackControl_->get_volume();
+    }
+
     volume->isMuted = playbackControl_->is_muted();
 }
 
@@ -254,6 +265,15 @@ void PlayerImpl::setVolume(double val)
 {
     playbackControl_->set_volume(static_cast<float>(clampVolume(val)));
 }
+
+void PlayerImpl::volumeStep(int direction)
+{
+    if (direction > 0)
+        playbackControl_->volume_up();
+    else if (direction < 0)
+        playbackControl_->volume_down();
+}
+
 
 }
 }

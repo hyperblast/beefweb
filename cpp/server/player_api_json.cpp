@@ -80,6 +80,10 @@ void to_json(Json& json, const VolumeType& type)
         json = "linear";
         break;
 
+    case VolumeType::UP_DOWN:
+        json = "upDown";
+        break;
+
     default:
         throw std::invalid_argument(INVALID_VOLUME_TYPE);
     }
