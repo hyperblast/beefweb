@@ -7,7 +7,6 @@
 #include <string>
 #include <memory>
 #include <functional>
-#include <unordered_map>
 
 #include <boost/thread/future.hpp>
 
@@ -46,6 +45,7 @@ enum class VolumeType
 {
     DB,
     LINEAR,
+    UP_DOWN,
 };
 
 enum class AddItemsOptions : int
@@ -465,6 +465,7 @@ public:
     virtual void seekAbsolute(double offsetSeconds) = 0;
     virtual void seekRelative(double offsetSeconds) = 0;
     virtual void setVolume(double val) = 0;
+    virtual void volumeStep(int direction) = 0;
 
     const std::vector<PlayerOption*>& options()
     {

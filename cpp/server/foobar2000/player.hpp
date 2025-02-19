@@ -47,6 +47,7 @@ public:
     void seekAbsolute(double offsetSeconds) override;
     void seekRelative(double offsetSeconds) override;
     void setVolume(double val) override;
+    void volumeStep(int direction) override;
 
     ColumnsQueryPtr createColumnsQuery(const std::vector<std::string>& columns) override;
 
@@ -136,7 +137,7 @@ private:
 
     boost::unique_future<ArtworkResult> fetchArtwork(const metadb_handle_ptr& itemHandle) const;
 
-    service_ptr_t<playback_control> playbackControl_;
+    service_ptr_t<playback_control_v3> playbackControl_;
     service_ptr_t<playlist_manager_v4> playlistManager_;
     service_ptr_t<output_manager_v2> outputManager_;
     service_ptr_t<playlist_incoming_item_filter_v3> incomingItemFilter_;

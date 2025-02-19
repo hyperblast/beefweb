@@ -5,7 +5,7 @@ namespace msrv {
 namespace player_foobar2000 {
 
 PlayerImpl::PlayerImpl()
-    : playbackControl_(playback_control::get()),
+    : playbackControl_(playback_control_v3::get()),
       playlistManager_(playlist_manager_v4::get()),
       outputManager_(output_manager_v2::get()),
       incomingItemFilter_(playlist_incoming_item_filter_v3::get()),

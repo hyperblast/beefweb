@@ -59,6 +59,7 @@ public:
     void seekAbsolute(double offsetSeconds) override;
     void seekRelative(double offsetSeconds) override;
     void setVolume(double val) override;
+    void volumeStep(int direction) override;
 
     ColumnsQueryPtr createColumnsQuery(const std::vector<std::string>& columns) override;
 

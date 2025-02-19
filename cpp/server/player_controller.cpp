@@ -4,7 +4,6 @@
 #include "player_api.hpp"
 #include "player_api_json.hpp"
 #include "player_api_parsers.hpp"
-#include "http.hpp"
 #include "router.hpp"
 
 namespace msrv {
@@ -42,6 +41,9 @@ void PlayerController::setState()
 {
     if (auto volume = optionalParam<double>("volume"))
         player_->setVolume(*volume);
+
+    if (auto volumeStep = optionalParam<int>("volumeStep"))
+        player_->volumeStep(*volumeStep);
 
     if (auto isMuted = optionalParam<Switch>("isMuted"))
         player_->setMuted(*isMuted);

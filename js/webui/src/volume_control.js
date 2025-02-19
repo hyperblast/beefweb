@@ -28,15 +28,15 @@ class VolumeControl_ extends React.PureComponent
 
         if (type !== 'db')
         {
-            return {type, min, max, value, hintText: value.toFixed(0), isMuted};
+            return {type, min, max, value, valueText: value.toFixed(0), isMuted};
         }
 
         return {
-            type: 'db',
+            type,
             min: 0.0,
             max: 100.0,
             value: dbToLinear(value) * 100.0,
-            hintText: Math.max(value, min).toFixed(0) + ' dB',
+            valueText: Math.max(value, min).toFixed(0) + ' dB',
             isMuted,
         };
     }
@@ -47,6 +47,18 @@ class VolumeControl_ extends React.PureComponent
 
         if (this.props.onAfterMuteClick)
             this.props.onAfterMuteClick();
+    }
+
+    handleVolumeUp(e)
+    {
+        e.preventDefault();
+        this.context.playerModel.volumeStep(1);
+    }
+
+    handleVolumeDown(e)
+    {
+        e.preventDefault();
+        this.context.playerModel.volumeStep(-1);
     }
 
     handleVolumeChange(e)
@@ -61,25 +73,31 @@ class VolumeControl_ extends React.PureComponent
         this.context.playerModel.setVolume(volume);
     }
 
-    render()
-    {
-        const { hintText, min, max, value, isMuted } = this.state;
+    render() {
+        const {valueText, min, max, value, isMuted, type} = this.state;
+        const isUpDown = type === 'upDown';
 
         return (
-            <div className='volume-control'>
-                <div className='button-bar'>
-                    <Button
-                        name={volumeIcon(isMuted)}
-                        onClick={this.handleMuteClick}
-                        title='Toggle mute' />
-                </div>
-                <input type='range'
-                    className='volume-slider'
-                    max={max}
-                    min={min}
-                    value={value}
-                    title={hintText}
-                    onChange={this.handleVolumeChange} />
+            <div className='volume-control button-bar'>
+                <Button
+                    name={volumeIcon(isMuted)}
+                    onClick={this.handleMuteClick}
+                    title='Toggle mute'/>
+                {
+                    isUpDown
+                        ? <>
+                            <Button name='minus' title='Decrease volume' onClick={this.handleVolumeDown}/>
+                            <Button name='plus' title='Increase volume' onClick={this.handleVolumeUp}/>
+                            <div className='volume-text-block'><span className='volume-text'>{valueText}</span></div>
+                        </>
+                        : <input type='range'
+                                 className='volume-slider'
+                                 max={max}
+                                 min={min}
+                                 value={value}
+                                 title={valueText}
+                                 onChange={this.handleVolumeChange}/>
+                }
             </div>
         );
     }
@@ -89,7 +107,7 @@ VolumeControl_.propTypes = {
     onAfterMuteClick: PropTypes.func,
 };
 
-export const VolumeControl = ModelBinding(VolumeControl_, { playerModel: 'change' });
+export const VolumeControl = ModelBinding(VolumeControl_, {playerModel: 'change'});
 
 class VolumeControlButton_ extends React.PureComponent
 {

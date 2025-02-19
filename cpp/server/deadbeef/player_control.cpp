@@ -7,7 +7,7 @@ namespace player_deadbeef {
 
 namespace {
 
-inline float clampVolume(float val)
+float clampVolume(float val)
 {
     return std::max(std::min(val, 0.0f), ddbApi->volume_get_min_db());
 }
@@ -270,6 +270,15 @@ void PlayerImpl::seekRelative(double offsetSeconds)
 void PlayerImpl::setVolume(double value)
 {
     ddbApi->volume_set_db(clampVolume(value));
+}
+
+void PlayerImpl::volumeStep(int direction)
+{
+    auto step = direction > 0 ? 1.f : direction < 0 ? -1.f : 0.f;
+    if (step == 0)
+        return;
+
+    ddbApi->volume_set_db(ddbApi->volume_get_db() + step);
 }
 
 }
