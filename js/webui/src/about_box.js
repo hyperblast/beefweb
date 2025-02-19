@@ -60,4 +60,4 @@ class AboutBox_ extends React.PureComponent
     }
 }
 
-export default ModelBinding(AboutBox_, { playerModel: 'change'});
+export default ModelBinding(AboutBox_, { playerModel: 'change' });

@@ -86,8 +86,8 @@ q.test('set volume', async assert =>
 q.test('volume step', async assert =>
 {
     const state1 = await client.getPlayerState();
-    await client.volumeStep(-1);
 
+    await client.volumeStep(-1);
     const state2 = await client.getPlayerState();
     assert.ok(state2.volume.value < state1.volume.value);
 
