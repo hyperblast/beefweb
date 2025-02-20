@@ -74,7 +74,7 @@ const repeatInterval = 500;
 
 function isLeftButtonOrTouch(e)
 {
-    return e.button === 0 || typeof e.touches != 'undefined';
+    return e.button === 0 || typeof e.touches !== 'undefined';
 }
 
 export class RepeatingButton extends React.PureComponent
