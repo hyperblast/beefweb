@@ -41,7 +41,7 @@ Icon.propTypes = {
     className: PropTypes.string,
 };
 
-function Button_(props, ref)
+export const Button = React.forwardRef(function Button(props, ref)
 {
     const { name, title, className, href, onClick, active } = props;
 
@@ -59,9 +59,9 @@ function Button_(props, ref)
             <Icon name={name} />
         </a>
     );
-}
+});
 
-Button_.propTypes = {
+Button.propTypes = {
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     className: PropTypes.string,
@@ -69,8 +69,6 @@ Button_.propTypes = {
     onClick: PropTypes.func,
     active: PropTypes.bool
 };
-
-export const Button = React.forwardRef(Button_);
 
 const repeatInterval = 500;
 
