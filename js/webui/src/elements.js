@@ -92,13 +92,13 @@ export class RepeatingButton extends React.PureComponent
 
     handleClick(e)
     {
-        if (e.button === 0 || e.button === 1)
-        {
-            e.preventDefault();
+        if (e.button !== 0)
+            return;
 
-            if (e.button === 0 && !this.hasInitialClick)
-                this.props.onClick();
-        }
+        e.preventDefault();
+
+        if (!this.hasInitialClick)
+            this.props.onClick();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot)
