@@ -74,6 +74,11 @@ export const Button = React.forwardRef(Button_);
 
 const repeatInterval = 500;
 
+function isLeftButtonOrTouch(e)
+{
+    return e.button === 0 || typeof e.touches != 'undefined';
+}
+
 export class RepeatingButton extends React.PureComponent
 {
     constructor(props)
@@ -112,26 +117,20 @@ export class RepeatingButton extends React.PureComponent
 
     handleStart(e)
     {
-        if (e.button !== 0 && typeof e.touches === 'undefined')
+        if (!isLeftButtonOrTouch(e) || this.intervalId)
             return;
 
-        if (!this.intervalId)
-        {
-            this.hasInitialClick = false;
-            this.intervalId = setInterval(this.handleTimer, repeatInterval);
-        }
+        this.hasInitialClick = false;
+        this.intervalId = setInterval(this.handleTimer, repeatInterval);
     }
 
     handleEnd(e)
     {
-        if (e.button !== 0 && typeof e.touches === 'undefined')
+        if (!isLeftButtonOrTouch(e) || !this.intervalId)
             return;
 
-        if (this.intervalId)
-        {
-            clearInterval(this.intervalId);
-            this.intervalId = null;
-        }
+        clearInterval(this.intervalId);
+        this.intervalId = null;
     }
 
     render()
