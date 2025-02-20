@@ -3,6 +3,7 @@
 - Fix various issues in API documentation
 - Allow specifying explicit null for optional request parameters
 - Limit client config id to 64 characters
+- Fix view height initialization on mobile browsers
 
 # Changes in v0.9 (released 2025-02-14)
 - Add album art display

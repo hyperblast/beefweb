@@ -156,8 +156,6 @@ function updateViewHeight()
 
 function main()
 {
-    updateViewHeight();
-
     appModel.load().then(() => {
         mediaSizeController.start();
         mediaThemeController.start();
@@ -177,6 +175,8 @@ function main()
         );
 
         ReactDom.render(appComponent, appContainer);
+
+        updateViewHeight();
     });
 }
 
