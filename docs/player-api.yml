@@ -160,7 +160,7 @@ paths:
     post:
       tags:
       - player
-      summary: Toggles between paused and playing state. Unlike playOrPause this does nothing if stopped.
+      summary: Toggles between paused and playing state. Does nothing if stopped.
       operationId: togglePause
       responses:
         204:
@@ -170,7 +170,7 @@ paths:
     post:
       tags:
       - player
-      summary: Toggles between paused and playing state. Unlike togglePause this starts playback if stopped.
+      summary: Toggles between paused and playing state. Starts playback if stopped.
       operationId: playOrPause
       responses:
         204:
