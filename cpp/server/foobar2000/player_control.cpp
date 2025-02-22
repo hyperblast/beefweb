@@ -226,12 +226,14 @@ void PlayerImpl::pause()
     playbackControl_->pause(true);
 }
 
-void PlayerImpl::togglePause(bool playIfStopped)
+void PlayerImpl::playOrPause()
 {
-    if (playIfStopped)
-        playbackControl_->play_or_pause();
-    else
-        playbackControl_->toggle_pause();
+    playbackControl_->play_or_pause();
+}
+
+void PlayerImpl::togglePause()
+{
+    playbackControl_->toggle_pause();
 }
 
 void PlayerImpl::setMuted(Switch val)

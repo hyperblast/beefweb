@@ -160,14 +160,18 @@ paths:
     post:
       tags:
       - player
-      summary: Toggle pause state
+      summary: Toggles between paused and playing state. Unlike playOrPause this does nothing if stopped.
       operationId: togglePause
-      requestBody:
-        description: Request to toggle pause
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TogglePauseRequest'
+      responses:
+        204:
+          description: Success
+          content: {}
+  /player/play-pause:
+    post:
+      tags:
+      - player
+      summary: Toggles between paused and playing state. Unlike togglePause this starts playback if stopped.
+      operationId: playOrPause
       responses:
         204:
           description: Success
@@ -927,12 +931,6 @@ components:
           type: string
           description: Expression to select next item by (e.g. %artist%)
           nullable: true
-    TogglePauseRequest:
-      type: object
-      properties:
-        playIfStopped:
-          type: boolean
-          description: Controls behavior for stopped state: if true starts playback, if false does nothing
     SetOptionRequest:
       type: object
       properties:

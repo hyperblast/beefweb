@@ -218,13 +218,18 @@ void PlayerImpl::pause()
     ddbApi->sendmessage(DB_EV_PAUSE, 0, 0, 0);
 }
 
-void PlayerImpl::togglePause(bool playIfStopped)
+void PlayerImpl::togglePause()
 {
-    if (!playIfStopped && ddbApi->get_output()->state() == OUTPUT_STATE_STOPPED)
+    if (ddbApi->get_output()->state() == OUTPUT_STATE_STOPPED)
     {
         return;
     }
 
+    ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+}
+
+void PlayerImpl::playOrPause()
+{
     ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
 }
 

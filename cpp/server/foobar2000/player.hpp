@@ -41,7 +41,8 @@ public:
     bool playPreviousBy(const std::string& expression) override;
     void stop() override;
     void pause() override;
-    void togglePause(bool playIfStopped) override;
+    void togglePause() override;
+    void playOrPause() override;
 
     void setMuted(Switch val) override;
     void seekAbsolute(double offsetSeconds) override;
