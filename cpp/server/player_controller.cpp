@@ -134,7 +134,7 @@ void PlayerController::pause()
 
 void PlayerController::togglePause()
 {
-    player_->togglePause();
+    player_->togglePause(optionalParam("playIfStopped", false));
 }
 
 void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player)
