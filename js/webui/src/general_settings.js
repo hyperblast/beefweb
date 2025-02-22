@@ -40,6 +40,7 @@ class GeneralSettings extends React.PureComponent
                 <SettingEditor settingKey='fontSize' />
                 <SettingEditor settingKey='inputMode' />
                 <SettingEditor settingKey='defaultAddAction' />
+                <SettingEditor settingKey='combinePlayPause' />
                 <SettingEditor settingKey='showPlaybackInfo' />
                 <SettingEditor settingKey='playbackInfoExpression' disabled={!showPlaybackInfo} />
                 <SettingEditor settingKey='showStatusBar' />

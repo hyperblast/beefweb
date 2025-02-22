@@ -58,6 +58,7 @@ export const AddAction = Object.freeze({
  * @property {boolean} touchMode
  * @property {string} mediaSize
  * @property {boolean} compactMode
+ * @property {boolean} combinePlayPause
  * @property {boolean} showPlaybackInfo
  * @property {boolean} showStatusBar
  * @property {string} uiTheme
@@ -177,6 +178,13 @@ export default class SettingsModel extends SettingsModelBase
 
         this.define({
             key: 'touchMode',
+            type: SettingType.bool,
+            defaultValue: false,
+        });
+
+        this.define({
+            key: 'combinePlayPause',
+            title: 'Combine Play and Pause buttons',
             type: SettingType.bool,
             defaultValue: false,
         });

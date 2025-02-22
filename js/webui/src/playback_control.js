@@ -7,6 +7,7 @@ import { MediaSize } from './settings_model.js';
 import { DropdownButton } from './dropdown.js';
 import { navigationMenuColumns } from './columns.js';
 import ServiceContext from "./service_context.js";
+import { PlaybackState } from 'beefweb-client';
 
 class PlaybackControl extends React.PureComponent
 {
@@ -27,16 +28,18 @@ class PlaybackControl extends React.PureComponent
     getStateFromModel()
     {
         const { playerModel, settingsModel } = this.context;
-        const { options } = playerModel;
-        const { cursorFollowsPlayback } = settingsModel;
+        const { playbackState, options } = playerModel;
+        const { cursorFollowsPlayback, combinePlayPause } = settingsModel;
 
         const menuDirection = settingsModel.mediaSizeUp(MediaSize.medium)
             ? 'right'
             : 'center';
 
         return {
+            playbackState,
             options,
             cursorFollowsPlayback,
+            combinePlayPause,
             menuDirection
         };
     }
@@ -59,6 +62,11 @@ class PlaybackControl extends React.PureComponent
     handlePause()
     {
         this.context.playerModel.pause();
+    }
+
+    handlePlayOrPause()
+    {
+        this.context.playerModel.playOrPause();
     }
 
     handlePrevious()
@@ -106,6 +114,8 @@ class PlaybackControl extends React.PureComponent
     {
         const {
             cursorFollowsPlayback,
+            combinePlayPause,
+            playbackState,
             menuDirection,
             options,
             optionsOpen,
@@ -130,26 +140,20 @@ class PlaybackControl extends React.PureComponent
 
         return (
             <div className='playback-control button-bar'>
-                <Button
-                    name='media-stop'
-                    title='Stop'
-                    onClick={this.handleStop} />
-                <Button
-                    name='media-play'
-                    title='Play'
-                    onClick={this.handlePlay} />
-                <Button
-                    name='media-pause'
-                    title='Pause'
-                    onClick={this.handlePause} />
-                <Button
-                    name='media-step-backward'
-                    title='Previous'
-                    onClick={this.handlePrevious} />
-                <Button
-                    name='media-step-forward'
-                    title='Next'
-                    onClick={this.handleNext} />
+                <Button name='media-stop' title='Stop' onClick={this.handleStop} />
+                {
+                    combinePlayPause
+                        ? <Button
+                            name={playbackState === PlaybackState.playing ? 'media-pause' : 'media-play'}
+                            title='Play'
+                            onClick={this.handlePlayOrPause} />
+                        : <>
+                            <Button name='media-play' title='Play' onClick={this.handlePlay} />
+                            <Button name='media-pause' title='Pause' onClick={this.handlePause} />
+                        </>
+                }
+                <Button name='media-step-backward' title='Previous' onClick={this.handlePrevious} />
+                <Button name='media-step-forward' title='Next' onClick={this.handleNext} />
                 <DropdownButton
                     iconName='audio'
                     title='Options'
@@ -241,5 +245,5 @@ class PlaybackControl extends React.PureComponent
 
 export default ModelBinding(PlaybackControl, {
     playerModel: 'change',
-    settingsModel: [ 'cursorFollowsPlaybackChange', 'mediaSizeChange' ],
+    settingsModel: [ 'cursorFollowsPlaybackChange', 'combinePlayPauseChange', 'mediaSizeChange' ],
 });
