@@ -27,6 +27,7 @@ public:
     void stop();
     void pause();
     void togglePause();
+    void playOrPause();
 
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player);
 

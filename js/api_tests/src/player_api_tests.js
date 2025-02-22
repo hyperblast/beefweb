@@ -225,6 +225,22 @@ q.test('toggle pause', async assert =>
     assert.ok(true);
 });
 
+q.test('play or pause', async assert =>
+{
+    await client.addPlaylistItems(0, [tracks.t1]);
+
+    await client.playOrPause();
+    await client.waitForState('playing');
+
+    await client.playOrPause();
+    await client.waitForState('paused');
+
+    await client.playOrPause();
+    await client.waitForState('playing');
+
+    assert.ok(true);
+});
+
 q.test('next', async assert =>
 {
     await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);

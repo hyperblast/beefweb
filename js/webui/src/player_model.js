@@ -91,6 +91,11 @@ export default class PlayerModel extends EventEmitter
         this.client.stop();
     }
 
+    playOrPause()
+    {
+        this.client.playOrPause();
+    }
+
     pause()
     {
         this.client.togglePause();

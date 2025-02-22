@@ -460,6 +460,7 @@ public:
     virtual void stop() = 0;
     virtual void pause() = 0;
     virtual void togglePause() = 0;
+    virtual void playOrPause() = 0;
 
     virtual void setMuted(Switch val) = 0;
     virtual void seekAbsolute(double offsetSeconds) = 0;

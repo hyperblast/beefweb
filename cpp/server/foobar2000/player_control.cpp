@@ -226,6 +226,11 @@ void PlayerImpl::pause()
     playbackControl_->pause(true);
 }
 
+void PlayerImpl::playOrPause()
+{
+    playbackControl_->play_or_pause();
+}
+
 void PlayerImpl::togglePause()
 {
     playbackControl_->toggle_pause();

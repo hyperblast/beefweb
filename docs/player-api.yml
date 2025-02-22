@@ -160,8 +160,18 @@ paths:
     post:
       tags:
       - player
-      summary: Toggle pause state
+      summary: Toggles between paused and playing state. Does nothing if stopped.
       operationId: togglePause
+      responses:
+        204:
+          description: Success
+          content: {}
+  /player/play-pause:
+    post:
+      tags:
+      - player
+      summary: Toggles between paused and playing state. Starts playback if stopped.
+      operationId: playOrPause
       responses:
         204:
           description: Success

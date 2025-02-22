@@ -137,6 +137,11 @@ void PlayerController::togglePause()
     player_->togglePause();
 }
 
+void PlayerController::playOrPause()
+{
+    player_->playOrPause();
+}
+
 void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player)
 {
     auto routes = router->defineRoutes<PlayerController>();
@@ -154,6 +159,7 @@ void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player
     routes.post("play", &PlayerController::playCurrent);
     routes.post("play/random", &PlayerController::playRandom);
     routes.post("play/:plref/:index", &PlayerController::playItem);
+    routes.post("play-pause", &PlayerController::playOrPause);
     routes.post("next", &PlayerController::playNext);
     routes.post("previous", &PlayerController::playPrevious);
     routes.post("stop", &PlayerController::stop);

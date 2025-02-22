@@ -101,6 +101,11 @@ export default class PlayerClient
         return this.post('api/player/pause');
     }
 
+    playOrPause()
+    {
+        return this.post('api/player/play-pause');
+    }
+
     togglePause()
     {
         return this.post('api/player/pause/toggle');
