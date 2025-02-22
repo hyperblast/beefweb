@@ -222,7 +222,10 @@ void PlayerImpl::togglePause()
 {
     if (ddbApi->get_output()->state() == OUTPUT_STATE_STOPPED)
     {
-        return;
+        PlaylistItemPtr activeItem(ddbApi->streamer_get_playing_track());
+
+        if (!activeItem)
+            return;
     }
 
     ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
