@@ -1,10 +1,12 @@
 # Changes in v0.10 (not released)
 - Add ability to configure output device
-- Fix various issues in API documentation
+- Add ability to combine Play and Pause buttons
 - Allow specifying explicit null for optional request parameters
 - Limit client config id to 64 characters
+- Fix various issues in API documentation
 - Fix view height initialization on mobile browsers
-- Add ability to combine Play and Pause buttons
+### foobar2000
+- Add support for custom volume controls (e.g. for foo_out_upnp)
 
 # Changes in v0.9 (released 2025-02-14)
 - Add album art display

@@ -49,16 +49,14 @@ class VolumeControl_ extends React.PureComponent
             this.props.onAfterMuteClick();
     }
 
-    handleVolumeUp(e)
+    handleVolumeUp()
     {
-        e.preventDefault();
-        this.context.playerModel.volumeStep(1);
+        this.context.playerModel.volumeUp();
     }
 
     handleVolumeDown(e)
     {
-        e.preventDefault();
-        this.context.playerModel.volumeStep(-1);
+        this.context.playerModel.volumeDown();
     }
 
     handleVolumeChange(e)

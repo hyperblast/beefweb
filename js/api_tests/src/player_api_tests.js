@@ -73,7 +73,7 @@ q.test('query current track', async assert =>
     ]);
 });
 
-q.test('set volume', async assert =>
+q.test('set volume absolute', async assert =>
 {
     let state = await client.getPlayerState();
     const newVolume = (state.volume.min + state.volume.max) / 2;
@@ -83,15 +83,28 @@ q.test('set volume', async assert =>
     assert.equal(state.volume.value, newVolume);
 });
 
-q.test('volume step', async assert =>
+q.test('set volume relative', async assert =>
 {
     const state1 = await client.getPlayerState();
 
-    await client.volumeStep(-1);
+    await client.setVolumeRelative(-1);
     const state2 = await client.getPlayerState();
     assert.ok(state2.volume.value < state1.volume.value);
 
-    await client.volumeStep(1);
+    await client.setVolumeRelative(1);
+    const state3 = await client.getPlayerState();
+    assert.equal(state3.volume.value, state1.volume.value);
+});
+
+q.test('volume up/down', async assert =>
+{
+    const state1 = await client.getPlayerState();
+
+    await client.volumeDown();
+    const state2 = await client.getPlayerState();
+    assert.ok(state2.volume.value < state1.volume.value);
+
+    await client.volumeUp();
     const state3 = await client.getPlayerState();
     assert.equal(state3.volume.value, state1.volume.value);
 });

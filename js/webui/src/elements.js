@@ -10,13 +10,11 @@ function makeClickHandler(callback)
 
     return function handleClick(e)
     {
-        if (e.button === 0 || e.button === 1)
-        {
-            e.preventDefault();
+        if (e.button !== 0)
+            return;
 
-            if (e.button === 0)
-                callback(e);
-        }
+        e.preventDefault();
+        callback(e);
     };
 }
 

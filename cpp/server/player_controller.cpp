@@ -40,10 +40,10 @@ ResponsePtr PlayerController::getState()
 void PlayerController::setState()
 {
     if (auto volume = optionalParam<double>("volume"))
-        player_->setVolume(*volume);
+        player_->setVolumeAbsolute(*volume);
 
-    if (auto volumeStep = optionalParam<int>("volumeStep"))
-        player_->volumeStep(*volumeStep);
+    if (auto volume = optionalParam<double>("relativeVolume"))
+        player_->setVolumeRelative(*volume);
 
     if (auto isMuted = optionalParam<Switch>("isMuted"))
         player_->setMuted(*isMuted);
@@ -142,16 +142,22 @@ void PlayerController::playOrPause()
     player_->playOrPause();
 }
 
+void PlayerController::volumeUp()
+{
+    player_->volumeUp();
+}
+
+void PlayerController::volumeDown()
+{
+    player_->volumeDown();
+}
+
 void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player)
 {
     auto routes = router->defineRoutes<PlayerController>();
 
-    routes.createWith([=](Request* request) {
-        return new PlayerController(request, player);
-    });
-
+    routes.createWith([=](Request* request) { return new PlayerController(request, player); });
     routes.useWorkQueue(workQueue);
-
     routes.setPrefix("api/player");
 
     routes.get("", &PlayerController::getState);
@@ -165,6 +171,8 @@ void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player
     routes.post("stop", &PlayerController::stop);
     routes.post("pause", &PlayerController::pause);
     routes.post("pause/toggle", &PlayerController::togglePause);
+    routes.post("volume/up", &PlayerController::volumeUp);
+    routes.post("volume/down", &PlayerController::volumeDown);
 }
 
 }

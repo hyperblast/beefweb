@@ -5,15 +5,6 @@
 namespace msrv {
 namespace player_deadbeef {
 
-namespace {
-
-float clampVolume(float val)
-{
-    return std::max(std::min(val, 0.0f), ddbApi->volume_get_min_db());
-}
-
-}
-
 std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(ColumnsQuery* activeItemQuery)
 {
     auto state = std::make_unique<PlayerState>();
@@ -280,18 +271,24 @@ void PlayerImpl::seekRelative(double offsetSeconds)
     ddbApi->sendmessage(DB_EV_SEEK, 0, newPos, 0);
 }
 
-void PlayerImpl::setVolume(double value)
+void PlayerImpl::setVolumeAbsolute(double val)
 {
-    ddbApi->volume_set_db(clampVolume(value));
+    ddbApi->volume_set_db(static_cast<float>(val));
 }
 
-void PlayerImpl::volumeStep(int direction)
+void PlayerImpl::setVolumeRelative(double val)
 {
-    auto step = direction > 0 ? 1.f : direction < 0 ? -1.f : 0.f;
-    if (step == 0)
-        return;
+    ddbApi->volume_set_db(static_cast<float>(ddbApi->volume_get_db() + val));
+}
 
-    ddbApi->volume_set_db(ddbApi->volume_get_db() + step);
+void PlayerImpl::volumeUp()
+{
+    ddbApi->volume_set_db(ddbApi->volume_get_db() + 1);
+}
+
+void PlayerImpl::volumeDown()
+{
+    ddbApi->volume_set_db(ddbApi->volume_get_db() - 1);
 }
 
 }

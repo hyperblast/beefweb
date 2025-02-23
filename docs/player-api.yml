@@ -176,6 +176,26 @@ paths:
         204:
           description: Success
           content: {}
+  /player/volume/up:
+    post:
+      tags:
+      - player
+      summary: Increase volume
+      operationId: volumeUp
+      responses:
+        204:
+          description: Success
+          content: {}
+  /player/volume/down:
+    post:
+      tags:
+        - player
+      summary: Decrease volume
+      operationId: volumeDown
+      responses:
+        204:
+          description: Success
+          content: {}
   /playqueue:
     get:
       tags:
@@ -945,13 +965,11 @@ components:
       properties:
         volume:
           type: number
-          description: New volume value
+          description: New absolute volume value
           nullable: true
-        volumeStep:
-          type: integer
-          description: Adjust volume in single step (either 1 or -1)
-          min: -1
-          max: 1
+        relativeVolume:
+          type: number
+          description: New relative volume value
           nullable: true
         isMuted:
           type: boolean

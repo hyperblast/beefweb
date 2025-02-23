@@ -266,19 +266,25 @@ void PlayerImpl::seekRelative(double offsetSeconds)
     playbackControl_->playback_seek_delta(offsetSeconds);
 }
 
-void PlayerImpl::setVolume(double val)
+void PlayerImpl::setVolumeAbsolute(double val)
 {
     playbackControl_->set_volume(static_cast<float>(clampVolume(val)));
 }
 
-void PlayerImpl::volumeStep(int direction)
+void PlayerImpl::setVolumeRelative(double val)
 {
-    if (direction > 0)
-        playbackControl_->volume_up();
-    else if (direction < 0)
-        playbackControl_->volume_down();
+    playbackControl_->set_volume(static_cast<float>(clampVolume(playbackControl_->get_volume() + val)));
 }
 
+void PlayerImpl::volumeUp()
+{
+    playbackControl_->volume_up();
+}
+
+void PlayerImpl::volumeDown()
+{
+    playbackControl_->volume_down();
+}
 
 }
 }
