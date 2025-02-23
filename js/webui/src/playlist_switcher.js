@@ -66,7 +66,8 @@ function PlaylistTabList_(props)
         activePlaylistId,
         currentPlaylistId,
         playlists,
-        drawHandle
+        drawHandle,
+        disabled,
     } = props;
 
     return (
@@ -80,7 +81,8 @@ function PlaylistTabList_(props)
                         playbackState={playbackState}
                         activePlaylistId={activePlaylistId}
                         currentPlaylistId={currentPlaylistId}
-                        drawHandle={drawHandle} />
+                        drawHandle={drawHandle}
+                        disabled={disabled} />
                 ))
             }
         </ul>
@@ -102,18 +104,22 @@ class PlaylistSwitcher extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playbackState, activeItem } = this.context.playerModel;
+        const { playbackState, activeItem, permissions } = this.context.playerModel;
         const activePlaylistId = activeItem.playlistId;
 
         const { currentPlaylistId, playlists } = this.context.playlistModel;
-        const { touchMode } = this.context.settingsModel;
+
+        // If playlist changing is not allowed
+        // disable rendering of touch friendly elements since playlist tabs are not draggable anyway
+        const touchMode = this.context.settingsModel.touchMode && permissions.changePlaylists;
 
         return {
             playbackState,
             activePlaylistId,
             currentPlaylistId,
             playlists,
-            touchMode
+            touchMode,
+            allowChangePlaylists: permissions.changePlaylists,
         };
     }
 
@@ -129,7 +135,8 @@ class PlaylistSwitcher extends React.PureComponent
             activePlaylistId,
             currentPlaylistId,
             playlists,
-            touchMode
+            touchMode,
+            allowChangePlaylists,
         } = this.state;
 
         return (
@@ -144,7 +151,8 @@ class PlaylistSwitcher extends React.PureComponent
                 helperClass='dragged'
                 distance={touchMode ? null : 30}
                 useDragHandle={touchMode}
-                drawHandle={touchMode} />
+                drawHandle={touchMode}
+                disabled={!allowChangePlaylists} />
         );
     }
 }
