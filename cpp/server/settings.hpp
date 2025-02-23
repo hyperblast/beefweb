@@ -47,7 +47,7 @@ public:
     static Path getConfigDir(const char* appName);
     static Path getConfigFile(const char* appName);
 
-    void ensurePermission(ApiPermissions p)
+    void ensurePermission(ApiPermissions p) const
     {
         if (!hasFlags(permissions, p))
             throw OperationForbiddenException();

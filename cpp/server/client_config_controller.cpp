@@ -5,8 +5,8 @@
 
 namespace msrv {
 
-ClientConfigController::ClientConfigController(Request* request, const char* appName)
-    : ControllerBase(request), appName_(appName)
+ClientConfigController::ClientConfigController(Request* request, SettingsDataPtr settings, const char* appName)
+    : ControllerBase(request), settings_(std::move(settings)), appName_(appName)
 {
 }
 
@@ -24,6 +24,8 @@ ResponsePtr ClientConfigController::getConfig()
 
 void ClientConfigController::setConfig()
 {
+    checkPermissions();
+
     auto path = getFilePath();
     fs::create_directories(path.parent_path());
     auto data = request()->postData.dump(2);
@@ -33,6 +35,8 @@ void ClientConfigController::setConfig()
 
 void ClientConfigController::removeConfig()
 {
+    checkPermissions();
+
     auto path = getFilePath();
     boost::system::error_code ec;
     fs::remove(path, ec);
@@ -58,12 +62,15 @@ Path ClientConfigController::getFilePath()
     return configDir / MSRV_PATH_LITERAL("clientconfig") / pathFromUtf8(id + ".json");
 }
 
-void ClientConfigController::defineRoutes(Router* router, WorkQueue* workQueue, const char* appName)
+void ClientConfigController::defineRoutes(
+    Router* router, WorkQueue* workQueue, SettingsDataPtr settings, const char* appName)
 {
     auto routes = router->defineRoutes<ClientConfigController>();
-    routes.createWith([=](Request* r) { return new ClientConfigController(r, appName); });
+
+    routes.createWith([=](Request* r) { return new ClientConfigController(r, settings, appName); });
     routes.useWorkQueue(workQueue);
     routes.setPrefix("api/clientconfig");
+
     routes.get(":id", &ClientConfigController::getConfig);
     routes.post(":id", &ClientConfigController::setConfig);
     routes.post("remove/:id", &ClientConfigController::removeConfig);

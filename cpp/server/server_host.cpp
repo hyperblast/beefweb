@@ -58,13 +58,13 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
     PlayerController::defineRoutes(router, playerQueue, player_);
     PlaylistsController::defineRoutes(router, playerQueue, player_, settings);
     PlayQueueController::defineRoutes(router, playerQueue, player_);
-    OutputsController::defineRoutes(router, playerQueue, player_);
+    OutputsController::defineRoutes(router, playerQueue, player_, settings);
     QueryController::defineRoutes(router, playerQueue, player_, &dispatcher_);
     ArtworkController::defineRoutes(router, playerQueue, player_, contentTypes_);
 
     BrowserController::defineRoutes(router, &utilityQueue_, settings);
     StaticController::defineRoutes(router, &utilityQueue_, settings, contentTypes_);
-    ClientConfigController::defineRoutes(router, &utilityQueue_, player_->name());
+    ClientConfigController::defineRoutes(router, &utilityQueue_, settings, player_->name());
 
     serverThread_->restart(std::move(config));
 }

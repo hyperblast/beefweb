@@ -35,7 +35,7 @@ boost::optional<std::string> stripFileScheme(const std::string& url)
 }
 
 PlaylistsController::PlaylistsController(Request* request, Player* player, SettingsDataPtr settings)
-    : ControllerBase(request), player_(player), settings_(settings)
+    : ControllerBase(request), player_(player), settings_(std::move(settings))
 {
 }
 
@@ -66,6 +66,8 @@ ResponsePtr PlaylistsController::getPlaylistItems()
 
 ResponsePtr PlaylistsController::addPlaylist()
 {
+    checkPermissions();
+
     auto index = optionalParam<int32_t>("index", -1);
     auto title = optionalParam<std::string>("title", "New playlist");
     auto setCurrent = optionalParam<bool>("setCurrent", false);
@@ -77,16 +79,22 @@ ResponsePtr PlaylistsController::addPlaylist()
 
 void PlaylistsController::removePlaylist()
 {
+    checkPermissions();
+
     player_->removePlaylist(param<PlaylistRef>("plref"));
 }
 
 void PlaylistsController::movePlaylist()
 {
+    checkPermissions();
+
     player_->movePlaylist(param<PlaylistRef>("plref"), param<int32_t>("index"));
 }
 
 void PlaylistsController::updatePlaylist()
 {
+    checkPermissions();
+
     auto plref = param<PlaylistRef>("plref");
 
     if (auto title = optionalParam<std::string>("title"))
@@ -101,6 +109,8 @@ void PlaylistsController::updatePlaylists()
 
 void PlaylistsController::clearPlaylist()
 {
+    checkPermissions();
+
     player_->clearPlaylist(param<PlaylistRef>("plref"));
 }
 
@@ -131,6 +141,8 @@ std::string PlaylistsController::validateAndNormalizeItem(const std::string& ite
 
 ResponsePtr PlaylistsController::addItems()
 {
+    checkPermissions();
+
     auto plref = param<PlaylistRef>("plref");
     auto items = param<std::vector<std::string>>("items");
     std::vector<std::string> normalizedItems;
@@ -172,6 +184,8 @@ ResponsePtr PlaylistsController::addItems()
 
 void PlaylistsController::moveItemsInPlaylist()
 {
+    checkPermissions();
+
     auto plref = param<PlaylistRef>("plref");
 
     player_->movePlaylistItems(
@@ -183,6 +197,8 @@ void PlaylistsController::moveItemsInPlaylist()
 
 void PlaylistsController::copyItemsInPlaylist()
 {
+    checkPermissions();
+
     auto plref = param<PlaylistRef>("plref");
 
     player_->copyPlaylistItems(
@@ -194,6 +210,8 @@ void PlaylistsController::copyItemsInPlaylist()
 
 void PlaylistsController::moveItemsBetweenPlaylists()
 {
+    checkPermissions();
+
     player_->movePlaylistItems(
         param<PlaylistRef>("plref"),
         param<PlaylistRef>("targetPlref"),
@@ -203,6 +221,8 @@ void PlaylistsController::moveItemsBetweenPlaylists()
 
 void PlaylistsController::copyItemsBetweenPlaylists()
 {
+    checkPermissions();
+
     player_->copyPlaylistItems(
         param<PlaylistRef>("plref"),
         param<PlaylistRef>("targetPlref"),
@@ -212,6 +232,8 @@ void PlaylistsController::copyItemsBetweenPlaylists()
 
 void PlaylistsController::removeItems()
 {
+    checkPermissions();
+
     player_->removePlaylistItems(
         param<PlaylistRef>("plref"),
         param<std::vector<int32_t>>("items"));
@@ -219,6 +241,8 @@ void PlaylistsController::removeItems()
 
 void PlaylistsController::sortItems()
 {
+    checkPermissions();
+
     auto playlist = param<PlaylistRef>("plref");
 
     if (optionalParam<bool>("random", false))
@@ -237,12 +261,8 @@ void PlaylistsController::defineRoutes(Router* router, WorkQueue* workQueue, Pla
 {
     auto routes = router->defineRoutes<PlaylistsController>();
 
-    routes.createWith([=](Request* request) {
-        return new PlaylistsController(request, player, settings);
-    });
-
+    routes.createWith([=](Request* request) { return new PlaylistsController(request, player, settings); });
     routes.useWorkQueue(workQueue);
-
     routes.setPrefix("api/playlists");
 
     routes.get("", &PlaylistsController::getPlaylists);

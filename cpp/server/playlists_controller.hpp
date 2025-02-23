@@ -45,6 +45,11 @@ public:
 private:
     std::string validateAndNormalizeItem(const std::string& item);
 
+    void checkPermissions()
+    {
+        settings_->ensurePermission(ApiPermissions::CHANGE_PLAYLISTS);
+    }
+
     Player* player_;
     SettingsDataPtr settings_;
 
