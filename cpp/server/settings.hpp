@@ -59,7 +59,6 @@ public:
             throw OperationForbiddenException();
     }
 
-    void initialize();
     bool isAllowedPath(const Path& path) const;
 
     void loadFromJson(const Json& json);
@@ -67,6 +66,8 @@ public:
     void loadAll(const char* appName);
 
 private:
+    void initialize();
+
     void loadPermissions(const Json& jsonRoot);
     void loadPermission(const Json& json, const char* name, ApiPermissions value);
 };

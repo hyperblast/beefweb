@@ -132,8 +132,6 @@ class PlayerController
 
     async removeTempFiles()
     {
-        return;
-
         if (this.paths.profileDir)
             await rimraf(this.paths.profileDir);
     }
