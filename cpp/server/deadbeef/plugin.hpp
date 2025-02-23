@@ -34,6 +34,7 @@ private:
     void handlePluginsLoaded();
     bool refreshSettings();
     void reconfigure();
+    ApiPermissions readPermissions();
 
     PlayerImpl player_;
     ServerHost host_;
@@ -45,6 +46,7 @@ private:
     bool authRequired_ = false;
     std::string authUser_;
     std::string authPassword_;
+    ApiPermissions permissions_;
 
     MSRV_NO_COPY_AND_ASSIGN(Plugin);
 };

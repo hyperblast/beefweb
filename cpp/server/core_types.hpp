@@ -44,12 +44,28 @@ public:
     {
     }
 
-    InvalidRequestException(const std::string& str)
+    explicit InvalidRequestException(const std::string& str)
         : std::runtime_error(str)
     {
     }
 
     ~InvalidRequestException() = default;
+};
+
+class OperationForbiddenException : public std::runtime_error
+{
+public:
+    OperationForbiddenException()
+        : std::runtime_error("operation is forbidden")
+    {
+    }
+
+    explicit OperationForbiddenException(const std::string& str)
+        : std::runtime_error(str)
+    {
+    }
+
+    ~OperationForbiddenException() = default;
 };
 
 template<typename T>

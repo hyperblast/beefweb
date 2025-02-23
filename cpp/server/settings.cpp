@@ -1,7 +1,7 @@
 #include "settings.hpp"
-#include "project_info.hpp"
 #include "json.hpp"
 #include "log.hpp"
+#include "core_types.hpp"
 
 #include <stdexcept>
 
@@ -23,13 +23,18 @@ const Path& getBundledConfigFile()
     return path;
 }
 
+template<typename T>
+void loadValue(const Json& json, T* value, const char* name)
+{
+    auto it = json.find(name);
+    if (it != json.end())
+        *value = json.get<T>();
+}
+
 }
 
 SettingsData::SettingsData()
-    : port(MSRV_DEFAULT_PORT),
-      allowRemote(true),
-      webRoot(pathToUtf8(getDefaultWebRoot())),
-      authRequired(false)
+    : webRoot(pathToUtf8(getDefaultWebRoot()))
 {
 }
 
@@ -114,43 +119,41 @@ bool SettingsData::loadFromFile(const Path& path)
 void SettingsData::loadFromJson(const Json& json)
 {
     if (!json.is_object())
-        throw std::invalid_argument("Expected json object");
+        throw std::invalid_argument("Invalid config: expected json object");
 
-    auto it = json.find("port");
-    if (it != json.end())
-        port = it->get<int>();
+    loadValue(json, &port, "port");
+    loadValue(json, &allowRemote, "allowRemote");
+    loadValue(json, &musicDirs, "musicDirs");
+    loadValue(json, &webRoot, "webRoot");
+    loadValue(json, &authRequired, "authRequired");
+    loadValue(json, &authUser, "authUser");
+    loadValue(json, &authPassword, "authPassword");
+    loadValue(json, &responseHeaders, "responseHeaders");
+    loadValue(json, &urlMappings, "urlMappings");
+    loadPermissions(json);
+}
 
-    it = json.find("allowRemote");
-    if (it != json.end())
-        allowRemote = it->get<bool>();
+void SettingsData::loadPermissions(const Json& jsonRoot)
+{
+    auto it = jsonRoot.find("permissions");
+    if (it == jsonRoot.end())
+        return;
 
-    it = json.find("musicDirs");
-    if (it != json.end())
-        musicDirs = it->get<std::vector<std::string>>();
+    const Json& json = *it;
 
-    it = json.find("webRoot");
-    if (it != json.end())
-        webRoot = it->get<std::string>();
+    if (!json.is_object())
+        throw std::invalid_argument("permissions: expected object");
 
-    it = json.find("authRequired");
-    if (it != json.end())
-        authRequired = it->get<bool>();
+    loadPermission(json, "changePlaylists", ApiPermissions::CHANGE_PLAYLISTS);
+    loadPermission(json, "changeOutput", ApiPermissions::CHANGE_OUTPUT);
+    loadPermission(json, "changeClientConfig", ApiPermissions::CHANGE_CLIENT_CONFIG);
+}
 
-    it = json.find("authUser");
+void SettingsData::loadPermission(const Json& json, const char* name, ApiPermissions value)
+{
+    auto it = json.find(name);
     if (it != json.end())
-        authUser = it->get<std::string>();
-
-    it = json.find("authPassword");
-    if (it != json.end())
-        authPassword = it->get<std::string>();
-
-    it = json.find("responseHeaders");
-    if (it != json.end())
-        responseHeaders = it->get<std::unordered_map<std::string, std::string>>();
-
-    it = json.find("urlMappings");
-    if (it != json.end())
-        urlMappings = it->get<std::unordered_map<std::string, std::string>>();
+        permissions = setFlags(permissions, value, it->get<bool>());
 }
 
 }

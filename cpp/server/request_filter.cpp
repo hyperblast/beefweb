@@ -33,6 +33,14 @@ bool guardedCall(Request* request, Func&& func)
         request->setProcessed();
         return false;
     }
+    catch (OperationForbiddenException& ex)
+    {
+        if (!hasErrorResponse(request))
+            request->response = Response::error(HttpStatus::S_403_FORBIDDEN, ex.what());
+
+        request->setProcessed();
+        return false;
+    }
     catch (std::exception& ex)
     {
         logError("%s", ex.what());
