@@ -20,13 +20,6 @@ void from_json(const Json& json, SetOptionRequest& request)
     request.value = json["value"];
 }
 
-void to_json(Json& json, const ApiPermissions& value)
-{
-    json[permission_names::CHANGE_PLAYLISTS] = hasFlags(value, ApiPermissions::CHANGE_PLAYLISTS);
-    json[permission_names::CHANGE_OUTPUT] = hasFlags(value, ApiPermissions::CHANGE_OUTPUT);
-    json[permission_names::CHANGE_CLIENT_CONFIG] = hasFlags(value, ApiPermissions::CHANGE_CLIENT_CONFIG);
-}
-
 PlayerController::PlayerController(Request* request, Player* player, SettingsDataPtr settings)
     : ControllerBase(request), player_(player), settings_(std::move(settings))
 {

@@ -20,9 +20,9 @@ enum class Switch
 
 struct Range
 {
-    Range() = default;
+    Range() : offset(0), count(0) { }
 
-    Range(int32_t offsetVal, int32_t countVal = 1)
+    explicit Range(int32_t offsetVal, int32_t countVal = 1)
         : offset(offsetVal), count(countVal)
     {
     }

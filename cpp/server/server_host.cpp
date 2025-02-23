@@ -59,7 +59,7 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
     PlaylistsController::defineRoutes(router, playerQueue, player_, settings);
     PlayQueueController::defineRoutes(router, playerQueue, player_);
     OutputsController::defineRoutes(router, playerQueue, player_, settings);
-    QueryController::defineRoutes(router, playerQueue, player_, &dispatcher_);
+    QueryController::defineRoutes(router, playerQueue, player_, &dispatcher_, settings);
     ArtworkController::defineRoutes(router, playerQueue, player_, contentTypes_);
 
     BrowserController::defineRoutes(router, &utilityQueue_, settings);

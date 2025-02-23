@@ -1,13 +1,19 @@
 #include "settings.hpp"
 #include "json.hpp"
 #include "log.hpp"
-#include "core_types.hpp"
 
 #include <stdexcept>
 
 namespace msrv {
 
 namespace {
+
+namespace permission_names {
+constexpr char CHANGE_PLAYLISTS[] = "changePlaylists";
+constexpr char CHANGE_OUTPUT[] = "changeOutput";
+constexpr char CHANGE_CLIENT_CONFIG[] = "changeClientConfig";
+}
+
 
 int dummySymbol;
 
@@ -169,6 +175,13 @@ void SettingsData::loadPermission(const Json& json, const char* name, ApiPermiss
     {
         logError("failed to parse permission '%s': %s", name, ex.what());
     }
+}
+
+void to_json(Json& json, const ApiPermissions& value)
+{
+    json[permission_names::CHANGE_PLAYLISTS] = hasFlags(value, ApiPermissions::CHANGE_PLAYLISTS);
+    json[permission_names::CHANGE_OUTPUT] = hasFlags(value, ApiPermissions::CHANGE_OUTPUT);
+    json[permission_names::CHANGE_CLIENT_CONFIG] = hasFlags(value, ApiPermissions::CHANGE_CLIENT_CONFIG);
 }
 
 }

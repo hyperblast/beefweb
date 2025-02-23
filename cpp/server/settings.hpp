@@ -22,12 +22,6 @@ enum class ApiPermissions : uint32_t
     ALL = static_cast<uint32_t>(-1)
 };
 
-namespace permission_names {
-constexpr char CHANGE_PLAYLISTS[] = "changePlaylists";
-constexpr char CHANGE_OUTPUT[] = "changeOutput";
-constexpr char CHANGE_CLIENT_CONFIG[] = "changeClientConfig";
-}
-
 MSRV_ENUM_FLAGS(ApiPermissions, uint32_t)
 
 class SettingsData
@@ -73,5 +67,7 @@ private:
 };
 
 using SettingsDataPtr = std::shared_ptr<const SettingsData>;
+
+void to_json(Json& json, const ApiPermissions& permissions);
 
 }

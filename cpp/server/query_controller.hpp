@@ -3,6 +3,7 @@
 #include "defines.hpp"
 #include "controller.hpp"
 #include "player_events.hpp"
+#include "settings.hpp"
 
 #include <memory>
 
@@ -13,14 +14,15 @@ class Router;
 class QueryController : public ControllerBase
 {
 public:
-    QueryController(Request* request, Player* player, EventDispatcher* dispatcher);
+    QueryController(Request* request, Player* player, EventDispatcher* dispatcher, SettingsDataPtr settings);
     ~QueryController();
 
     ResponsePtr query();
     ResponsePtr getEvents();
     ResponsePtr getUpdates();
 
-    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, EventDispatcher* dispatcher);
+    static void defineRoutes(
+        Router* router, WorkQueue* workQueue, Player* player, EventDispatcher* dispatcher, SettingsDataPtr settings);
 
 private:
     PlayerEvents readEventMask();
@@ -32,6 +34,7 @@ private:
 
     Player* player_;
     EventDispatcher* dispatcher_;
+    SettingsDataPtr settings_;
 
     std::unique_ptr<EventListener> listener_;
     ColumnsQueryPtr activeItemQuery_;
