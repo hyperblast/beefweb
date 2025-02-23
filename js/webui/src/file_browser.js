@@ -48,6 +48,7 @@ class FileBrowser extends React.PureComponent
             offset = this.state.offset;
 
         const { entries } = this.context.fileBrowserModel;
+        const { permissions } = this.context.playerModel;
 
         const count = offset + pageSize > entries.length
             ? entries.length - offset
@@ -55,7 +56,12 @@ class FileBrowser extends React.PureComponent
 
         const data = mapRange(offset, count, i => getRowData(entries[i]));
 
-        return { offset, data, totalCount: entries.length };
+        return {
+            offset,
+            data,
+            totalCount: entries.length,
+            allowChangePlaylists: permissions.changePlaylists
+        };
     }
 
     handleLoadPage(offset)
@@ -108,24 +114,26 @@ class FileBrowser extends React.PureComponent
 
     render()
     {
+        const { data, offset, totalCount, allowChangePlaylists } = this.state;
+
         return (
             <DataTable
                 columnNames={columnNames}
                 columnSizes={columnSizes}
-                data={this.state.data}
-                offset={this.state.offset}
+                data={data}
+                offset={offset}
                 pageSize={pageSize}
-                totalCount={this.state.totalCount}
+                totalCount={totalCount}
                 globalKey='FileBrowser'
                 scrollManager={this.context.scrollManager}
-                onClick={this.handleClick}
+                onClick={allowChangePlaylists ? this.handleClick : null}
                 onLoadPage={this.handleLoadPage}
                 useIcons={true}
                 rowMenuTitle='Add...'
-                onRenderRowMenu={this.handleRenderRowMenu}
+                onRenderRowMenu={allowChangePlaylists ? this.handleRenderRowMenu : null}
                 className='panel panel-main file-browser' />
         )
     }
 }
 
-export default ModelBinding(FileBrowser, { fileBrowserModel: 'change' });
+export default ModelBinding(FileBrowser, { fileBrowserModel: 'change', playerModel: 'change' });

@@ -464,14 +464,12 @@ body {
 
 .dialog-button {
     .border();
-    .hover();
 
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
     background: var(--color-spacer);
     color: var(--color-text);
-    cursor: pointer;
     display: inline-block;
     height: 1.75rem;
     line-height: 1.25rem;
@@ -485,6 +483,15 @@ body {
     vertical-align: middle;
     white-space: nowrap;
     min-width: 5rem;
+
+    &:not([disabled]) {
+        .hover();
+        cursor: pointer;
+    }
+
+    &:disabled {
+        filter: contrast(50%);
+    }
 }
 
 .dialog-button:not(:last-child) {

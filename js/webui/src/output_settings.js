@@ -54,12 +54,20 @@ class OutputSettings extends React.PureComponent
             selectedOutputDevice,
         } = this.context.outputSettingsModel;
 
-        return { supportsMultipleOutputTypes, outputTypes, selectedOutputType, selectedOutputDevice };
+        const { permissions } = this.context.playerModel;
+
+        return {
+            supportsMultipleOutputTypes,
+            outputTypes,
+            selectedOutputType,
+            selectedOutputDevice,
+            allowChangeOutput: permissions.changeOutput,
+        };
     }
 
     render()
     {
-        const { supportsMultipleOutputTypes, selectedOutputType } = this.state;
+        const { supportsMultipleOutputTypes, selectedOutputType, allowChangeOutput } = this.state;
 
         if (!selectedOutputType)
             return null;
@@ -68,15 +76,15 @@ class OutputSettings extends React.PureComponent
             { supportsMultipleOutputTypes ? this.renderOutputTypeSelector() : null }
             { this.renderOutputDeviceSelector() }
             <div className='settings-buttons'>
-                <DialogButton type='apply' onClick={this.handleApply} />
-                <DialogButton type='revert' onClick={this.handleRevert} />
+                <DialogButton type='apply' onClick={this.handleApply} disabled={!allowChangeOutput} />
+                <DialogButton type='revert' onClick={this.handleRevert} disabled={!allowChangeOutput} />
             </div>
         </form>
     }
 
     renderOutputTypeSelector()
     {
-        const { outputTypes, selectedOutputType } = this.state;
+        const { outputTypes, selectedOutputType, allowChangeOutput } = this.state;
 
         return <>
             <label className='setting-editor-label' htmlFor='output-type-selector'>Output type:</label>
@@ -84,13 +92,14 @@ class OutputSettings extends React.PureComponent
                     selectedItemId={selectedOutputType.id}
                     items={outputTypes}
                     onChange={this.handleOutputTypeChange}
-                    className='setting-editor-enum-large'/>
+                    className='setting-editor-enum-large'
+                    disabled={!allowChangeOutput} />
         </>;
     }
 
     renderOutputDeviceSelector()
     {
-        const { selectedOutputType, selectedOutputDevice } = this.state;
+        const { selectedOutputType, selectedOutputDevice, allowChangeOutput } = this.state;
 
         return <>
             <label className='setting-editor-label' htmlFor='output-device-selector'>Output device:</label>
@@ -98,9 +107,13 @@ class OutputSettings extends React.PureComponent
                     selectedItemId={selectedOutputDevice}
                     items={selectedOutputType.devices}
                     onChange={this.handleOutputDeviceChange}
-                    className='setting-editor-enum-large'/>
+                    className='setting-editor-enum-large'
+                    disabled={!allowChangeOutput} />
         </>;
     }
 }
 
-export default ModelBinding(OutputSettings, { outputSettingsModel: 'change' });
+export default ModelBinding(OutputSettings, {
+    outputSettingsModel: 'change',
+    playerModel: 'change'
+});

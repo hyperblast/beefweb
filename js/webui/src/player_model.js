@@ -33,6 +33,11 @@ const initialPlayerInfo = Object.freeze({
         columns: [],
     },
     activeItemId: '',
+    permissions: {
+        changePlaylists: true,
+        changeOutput: true,
+        changeClientConfig: true
+    }
 });
 
 /**

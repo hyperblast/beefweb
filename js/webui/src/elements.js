@@ -164,7 +164,7 @@ PanelHeaderTab.propTypes = {
 
 export function Select(props)
 {
-    const { id, selectedItemId, items, onChange, className } = props;
+    const { id, selectedItemId, items, onChange, className, disabled } = props;
 
     if (!items || items.length === 0)
     {
@@ -173,7 +173,7 @@ export function Select(props)
         </select>
     }
 
-    return <select className={className} id={id} value={selectedItemId} onChange={onChange}>
+    return <select className={className} id={id} value={selectedItemId} onChange={onChange} disabled={disabled}>
         {items.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
     </select>;
 }
@@ -189,4 +189,5 @@ Select.propTypes = {
     ),
     onChange: PropTypes.func,
     className: PropTypes.string,
+    disabled: PropTypes.bool,
 };

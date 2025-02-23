@@ -23,8 +23,9 @@ class FileBrowserHeader extends React.PureComponent
 
     getStateFromModel()
     {
+        const { permissions } = this.context.playerModel;
         const { currentPath, parentPath, pathStack } = this.context.fileBrowserModel;
-        return { currentPath, parentPath, pathStack };
+        return { currentPath, parentPath, pathStack, allowChangePlaylists: permissions.changePlaylists };
     }
 
     addCurrent(action)
@@ -72,7 +73,7 @@ class FileBrowserHeader extends React.PureComponent
 
     renderButtons()
     {
-        const { parentPath, menuOpen } = this.state;
+        const { parentPath, menuOpen, allowChangePlaylists } = this.state;
 
         if (!parentPath)
             return null;
@@ -80,26 +81,33 @@ class FileBrowserHeader extends React.PureComponent
         return (
             <div className='header-block'>
                 <div className='button-bar'>
-                    <Button
-                        name='data-transfer-download'
-                        onClick={this.handleAddClick}
-                        title='Add current directory' />
+                    {
+                        allowChangePlaylists
+                            ? <Button name='data-transfer-download'
+                                      onClick={this.handleAddClick}
+                                      title='Add current directory' />
+                            : null
+                    }
                     <Button
                         name='arrow-thick-top'
                         href={urls.browsePath(parentPath)}
                         title='Navigate to parent directory' />
-                    <DropdownButton
-                        iconName='menu'
-                        title='Directory menu'
-                        direction='left'
-                        isOpen={menuOpen}
-                        onRequestOpen={this.handleRequestMenuOpen}>
-                        <Menu>
-                            <MenuItem title='Add' onClick={this.handleAddClick} />
-                            <MenuItem title='Add & Play' onClick={this.handleAddAndPlayClick} />
-                            <MenuItem title='Replace & Play' onClick={this.handleReplaceAndPlayClick} />
-                        </Menu>
-                    </DropdownButton>
+                    {
+                        allowChangePlaylists
+                            ? <DropdownButton
+                                    iconName='menu'
+                                    title='Directory menu'
+                                    direction='left'
+                                    isOpen={menuOpen}
+                                    onRequestOpen={this.handleRequestMenuOpen}>
+                                    <Menu>
+                                        <MenuItem title='Add' onClick={this.handleAddClick} />
+                                        <MenuItem title='Add & Play' onClick={this.handleAddAndPlayClick} />
+                                        <MenuItem title='Replace & Play' onClick={this.handleReplaceAndPlayClick} />
+                                    </Menu>
+                            </DropdownButton>
+                            : null
+                    }
                 </div>
             </div>
         );
@@ -118,4 +126,7 @@ class FileBrowserHeader extends React.PureComponent
     }
 }
 
-export default ModelBinding(FileBrowserHeader, { fileBrowserModel: 'change' });
+export default ModelBinding(FileBrowserHeader, {
+    fileBrowserModel: 'change',
+    playerModel: 'change'
+});

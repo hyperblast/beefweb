@@ -33,11 +33,13 @@ class PlaylistMenu extends React.PureComponent
 
     getStateFromModel()
     {
+        const { permissions } = this.context.playerModel;
         const { currentPlaylistId, currentPlaylist } = this.context.playlistModel;
 
         return {
             currentPlaylistId,
             currentPlaylist: currentPlaylist || {},
+            allowChangePlaylists: permissions.changePlaylists,
         };
     }
 
@@ -175,6 +177,9 @@ class PlaylistMenu extends React.PureComponent
 
     render()
     {
+        if (!this.state.allowChangePlaylists)
+            return null;
+
         const {
             currentPlaylist,
             menuOpen,
@@ -275,4 +280,7 @@ class PlaylistMenu extends React.PureComponent
     }
 }
 
-export default ModelBinding(PlaylistMenu, { playlistModel: 'playlistsChange' });
+export default ModelBinding(PlaylistMenu, {
+    playlistModel: 'playlistsChange',
+    playerModel: 'change'
+});

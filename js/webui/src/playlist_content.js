@@ -34,7 +34,7 @@ class PlaylistContent extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playbackState } = this.context.playerModel;
+        const { playbackState, permissions } = this.context.playerModel;
         const { queueMap } = this.context.playQueueModel;
         const { columns, playlistItems, currentPlaylistId } = this.context.playlistModel;
         const { offset, totalCount, items } = playlistItems;
@@ -48,6 +48,7 @@ class PlaylistContent extends React.PureComponent
             currentPlaylistId,
             queueMap,
             activeItemIndex: this.getActiveItemIndex(),
+            allowChangePlaylists: permissions.changePlaylists,
         };
     }
 
@@ -130,11 +131,17 @@ class PlaylistContent extends React.PureComponent
     handleRenderRowMenu(index)
     {
         const playlistId = this.state.currentPlaylistId;
+        const allowChangePlaylists = this.state.allowChangePlaylists;
         const inQueue = this.state.queueMap.hasItem(playlistId, index);
 
         const play = () => this.context.playlistModel.activateItem(index);
         const appendToQueue = () => this.context.playQueueModel.appendToQueue(playlistId, index);
-        const remove = () => this.context.playlistModel.removeItem(index);
+        let remove = null;
+
+        if (allowChangePlaylists)
+        {
+            remove = () => this.context.playlistModel.removeItem(index);
+        }
 
         let removeFromQueueItem = null;
         if (inQueue)
@@ -164,15 +171,21 @@ class PlaylistContent extends React.PureComponent
                 { prependToQueueItem }
                 { appendToQueueItem }
                 { removeFromQueueItem }
-                <MenuSeparator />
-                <MenuItem title='Remove' onClick={remove} />
+                {
+                    allowChangePlaylists
+                        ? <>
+                            <MenuSeparator />
+                            <MenuItem title='Remove' onClick={remove} />
+                        </>
+                        : null
+                }
             </Menu>
         );
     }
 
     render()
     {
-        const { columns } = this.state;
+        const { offset, totalCount, currentPlaylistId, columns, allowChangePlaylists } = this.state;
         const columnNames = columns.map(c => c.title);
         const columnSizes = columns.map(c => c.size);
 
@@ -182,15 +195,15 @@ class PlaylistContent extends React.PureComponent
                 columnNames={columnNames}
                 columnSizes={columnSizes}
                 data={this.getTableData()}
-                offset={this.state.offset}
-                totalCount={this.state.totalCount}
+                offset={offset}
+                totalCount={totalCount}
                 pageSize={pageSize}
-                globalKey={playlistTableKey(this.state.currentPlaylistId)}
+                globalKey={playlistTableKey(currentPlaylistId)}
                 scrollManager={this.context.scrollManager}
                 className='panel panel-main playlist-content'
                 onLoadPage={this.handleLoadPage}
                 onDoubleClick={this.handleDoubleClick}
-                onRenderColumnMenu={this.handleRenderColumnMenu}
+                onRenderColumnMenu={allowChangePlaylists ? this.handleRenderColumnMenu : null}
                 onRenderRowMenu={this.handleRenderRowMenu} />
         );
     }
