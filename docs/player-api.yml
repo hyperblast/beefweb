@@ -920,6 +920,19 @@ components:
           type: string
         pluginVersion:
           type: string
+    ApiPermissions:
+      type: object
+      description: Specifies which API requests are allowed by current configuration
+      properties:
+        changePlaylists:
+          type: boolean
+          description: If true changing playlists is allowed
+        changeOutput:
+          type: boolean
+          description: If true changing output device is allowed
+        changeClientConfig:
+          type: boolean
+          description: If true changing client configuration is allowed
     PlayerState:
       type: object
       properties:
@@ -939,6 +952,8 @@ components:
           deprecated: true
         volume:
           $ref: '#/components/schemas/VolumeInfo'
+        permissions:
+          $ref: '#/components/schemas/ApiPermissions'
     GetPlayerStateResponse:
       type: object
       properties:
