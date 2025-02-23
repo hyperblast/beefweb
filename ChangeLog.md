@@ -4,6 +4,7 @@
 - Allow specifying explicit null for optional request parameters
 - Limit client config id to 64 characters
 - Don't stop on first invalid config property
+- Allow to limit client operations (e.g. playlist modification)
 - Fix various issues in API documentation
 - Fix view height initialization on mobile browsers
 ### foobar2000
