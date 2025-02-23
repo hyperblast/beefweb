@@ -28,6 +28,8 @@ public:
     void pause();
     void togglePause();
     void playOrPause();
+    void volumeUp();
+    void volumeDown();
 
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player);
 

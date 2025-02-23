@@ -465,8 +465,10 @@ public:
     virtual void setMuted(Switch val) = 0;
     virtual void seekAbsolute(double offsetSeconds) = 0;
     virtual void seekRelative(double offsetSeconds) = 0;
-    virtual void setVolume(double val) = 0;
-    virtual void volumeStep(int direction) = 0;
+    virtual void setVolumeAbsolute(double val) = 0;
+    virtual void setVolumeRelative(double val) = 0;
+    virtual void volumeUp() = 0;
+    virtual void volumeDown() = 0;
 
     const std::vector<PlayerOption*>& options()
     {

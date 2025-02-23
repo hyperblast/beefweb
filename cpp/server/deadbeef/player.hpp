@@ -59,8 +59,10 @@ public:
     void setMuted(Switch val) override;
     void seekAbsolute(double offsetSeconds) override;
     void seekRelative(double offsetSeconds) override;
-    void setVolume(double val) override;
-    void volumeStep(int direction) override;
+    void setVolumeAbsolute(double val) override;
+    void setVolumeRelative(double val) override;
+    void volumeUp() override;
+    void volumeDown() override;
 
     ColumnsQueryPtr createColumnsQuery(const std::vector<std::string>& columns) override;
 

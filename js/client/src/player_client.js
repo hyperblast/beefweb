@@ -51,9 +51,14 @@ export default class PlayerClient
         return this.setPlayerState({ volume: value });
     }
 
-    volumeStep(direction)
+    volumeUp()
     {
-        return this.setPlayerState({ volumeStep: direction });
+        return this.post('api/player/volume/up');
+    }
+
+    volumeDown()
+    {
+        return this.post('api/player/volume/down');
     }
 
     setPlaybackPosition(value)
