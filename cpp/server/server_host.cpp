@@ -55,7 +55,7 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
 
     auto playerQueue = playerWorkQueue_.get();
 
-    PlayerController::defineRoutes(router, playerQueue, player_);
+    PlayerController::defineRoutes(router, playerQueue, player_, settings);
     PlaylistsController::defineRoutes(router, playerQueue, player_, settings);
     PlayQueueController::defineRoutes(router, playerQueue, player_);
     OutputsController::defineRoutes(router, playerQueue, player_, settings);

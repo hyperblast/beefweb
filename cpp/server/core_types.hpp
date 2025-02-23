@@ -56,7 +56,7 @@ class OperationForbiddenException : public std::runtime_error
 {
 public:
     OperationForbiddenException()
-        : std::runtime_error("operation is forbidden")
+        : std::runtime_error("operation is not allowed by current configuration")
     {
     }
 

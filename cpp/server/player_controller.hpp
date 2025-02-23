@@ -2,6 +2,7 @@
 
 #include "defines.hpp"
 #include "controller.hpp"
+#include "settings.hpp"
 
 namespace msrv {
 
@@ -14,7 +15,7 @@ struct SetOptionRequest;
 class PlayerController : public ControllerBase
 {
 public:
-    PlayerController(Request* request, Player* player);
+    PlayerController(Request* request, Player* player, SettingsDataPtr settings);
 
     ResponsePtr getState();
     void setState();
@@ -31,10 +32,11 @@ public:
     void volumeUp();
     void volumeDown();
 
-    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player, SettingsDataPtr settings);
 
 private:
     Player* player_;
+    SettingsDataPtr settings_;
 
     void setOption(const SetOptionRequest& request);
 
