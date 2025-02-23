@@ -51,6 +51,11 @@ export default class PlayerClient
         return this.setPlayerState({ volume: value });
     }
 
+    setVolumeRelative(value)
+    {
+        return this.setPlayerState({ relativeVolume: value });
+    }
+
     volumeUp()
     {
         return this.post('api/player/volume/up');
