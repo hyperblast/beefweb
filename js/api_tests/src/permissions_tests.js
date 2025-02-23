@@ -39,7 +39,7 @@ q.test('change playlist', async assert =>
 
 q.test('change output', async assert =>
 {
-    const response = await post('/api/output/active', outputConfigs.alternate[0]);
+    const response = await post('/api/outputs/active', outputConfigs.alternate[0]);
     assert.equal(response.status, 403);
 });
 

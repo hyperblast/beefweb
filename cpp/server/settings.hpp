@@ -62,7 +62,7 @@ public:
     bool isAllowedPath(const Path& path) const;
 
     void loadFromJson(const Json& json);
-    bool loadFromFile(const Path& path);
+    void loadFromFile(const Path& path);
     void loadAll(const char* appName);
 
 private:

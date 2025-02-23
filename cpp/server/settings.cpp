@@ -26,9 +26,16 @@ const Path& getBundledConfigFile()
 template<typename T>
 void loadValue(const Json& json, T* value, const char* name)
 {
-    auto it = json.find(name);
-    if (it != json.end())
-        *value = json.get<T>();
+    try
+    {
+        auto it = json.find(name);
+        if (it != json.end())
+            *value = it->get<T>();
+    }
+    catch (std::exception& ex)
+    {
+        logError("failed to parse property '%s': %s", name, ex.what());
+    }
 }
 
 }
@@ -98,10 +105,8 @@ void SettingsData::loadAll(const char* appName)
     initialize();
 }
 
-bool SettingsData::loadFromFile(const Path& path)
+void SettingsData::loadFromFile(const Path& path)
 {
-    auto result = false;
-
     tryCatchLog([&] {
         auto file = file_io::open(path);
         if (!file)
@@ -110,16 +115,16 @@ bool SettingsData::loadFromFile(const Path& path)
         logInfo("loading config file: %s", pathToUtf8(path).c_str());
         auto data = file_io::readToEnd(file.get());
         loadFromJson(Json::parse(data));
-        result = true;
     });
-
-    return result;
 }
 
 void SettingsData::loadFromJson(const Json& json)
 {
     if (!json.is_object())
-        throw std::invalid_argument("Invalid config: expected json object");
+    {
+        logError("invalid config: expected json object");
+        return;
+    }
 
     loadValue(json, &port, "port");
     loadValue(json, &allowRemote, "allowRemote");
@@ -142,7 +147,10 @@ void SettingsData::loadPermissions(const Json& jsonRoot)
     const Json& json = *it;
 
     if (!json.is_object())
-        throw std::invalid_argument("permissions: expected object");
+    {
+        logError("failed to parse property 'permissions': expected json object");
+        return;
+    }
 
     loadPermission(json, permission_names::CHANGE_PLAYLISTS, ApiPermissions::CHANGE_PLAYLISTS);
     loadPermission(json, permission_names::CHANGE_OUTPUT, ApiPermissions::CHANGE_OUTPUT);
@@ -151,9 +159,16 @@ void SettingsData::loadPermissions(const Json& jsonRoot)
 
 void SettingsData::loadPermission(const Json& json, const char* name, ApiPermissions value)
 {
-    auto it = json.find(name);
-    if (it != json.end())
-        permissions = setFlags(permissions, value, it->get<bool>());
+    try
+    {
+        auto it = json.find(name);
+        if (it != json.end())
+            permissions = setFlags(permissions, value, it->get<bool>());
+    }
+    catch (std::exception& ex)
+    {
+        logError("failed to parse permission '%s': %s", name, ex.what());
+    }
 }
 
 }
