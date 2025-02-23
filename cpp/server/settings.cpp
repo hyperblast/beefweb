@@ -144,9 +144,9 @@ void SettingsData::loadPermissions(const Json& jsonRoot)
     if (!json.is_object())
         throw std::invalid_argument("permissions: expected object");
 
-    loadPermission(json, "changePlaylists", ApiPermissions::CHANGE_PLAYLISTS);
-    loadPermission(json, "changeOutput", ApiPermissions::CHANGE_OUTPUT);
-    loadPermission(json, "changeClientConfig", ApiPermissions::CHANGE_CLIENT_CONFIG);
+    loadPermission(json, permission_names::CHANGE_PLAYLISTS, ApiPermissions::CHANGE_PLAYLISTS);
+    loadPermission(json, permission_names::CHANGE_OUTPUT, ApiPermissions::CHANGE_OUTPUT);
+    loadPermission(json, permission_names::CHANGE_CLIENT_CONFIG, ApiPermissions::CHANGE_CLIENT_CONFIG);
 }
 
 void SettingsData::loadPermission(const Json& json, const char* name, ApiPermissions value)

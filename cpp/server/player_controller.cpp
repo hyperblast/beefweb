@@ -22,9 +22,9 @@ void from_json(const Json& json, SetOptionRequest& request)
 
 void to_json(Json& json, const ApiPermissions& value)
 {
-    json["allowChangePlaylists"] = hasFlags(value, ApiPermissions::CHANGE_PLAYLISTS);
-    json["allowChangeOutput"] = hasFlags(value, ApiPermissions::CHANGE_OUTPUT);
-    json["allowChangeClientConfig"] = hasFlags(value, ApiPermissions::CHANGE_CLIENT_CONFIG);
+    json[permission_names::CHANGE_PLAYLISTS] = hasFlags(value, ApiPermissions::CHANGE_PLAYLISTS);
+    json[permission_names::CHANGE_OUTPUT] = hasFlags(value, ApiPermissions::CHANGE_OUTPUT);
+    json[permission_names::CHANGE_CLIENT_CONFIG] = hasFlags(value, ApiPermissions::CHANGE_CLIENT_CONFIG);
 }
 
 PlayerController::PlayerController(Request* request, Player* player, SettingsDataPtr settings)

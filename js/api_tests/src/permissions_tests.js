@@ -3,9 +3,9 @@ import { client, outputConfigs, usePlayer } from './test_env.js';
 
 const pluginSettings = {
     permissions: {
-        allowChangePlaylists: false,
-        allowChangeOutput: false,
-        allowChangeClientConfig: false,
+        changePlaylists: false,
+        changeOutput: false,
+        changeClientConfig: false,
     }
 };
 
@@ -20,10 +20,10 @@ const axiosConfig = {
 
 function post(path, data)
 {
-    return client.handler.axios.post(path, data);
+    return client.handler.axios.post(path, data, axiosConfig);
 }
 
-q.module('permissions', usePlayer({ pluginSettings, resetOptions, axiosConfig }));
+q.module('permissions', usePlayer({ pluginSettings, resetOptions }));
 
 q.test('get permissions', async assert =>
 {
