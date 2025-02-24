@@ -10,7 +10,27 @@
 namespace msrv::player_foobar2000 {
 
 namespace {
+
+struct ControlMapping
+{
+    int control;
+    cfg_bool* config;
+
+    operator bool() const
+    {
+        return config != nullptr;
+    }
+};
+
+const ControlMapping controlMappings[] = {
+    {IDC_ALLOW_CHANGE_PLAYLISTS, &settings_store::allowChangePlaylists},
+    {IDC_ALLOW_CHANGE_OUTPUT, &settings_store::allowChangeOutput},
+    {IDC_ALLOW_CHANGE_CLIENT_CONFIG, &settings_store::allowChangeClientConfig},
+    {0, nullptr},
+};
+
 preferences_page_factory_t<PermissionsPrefsPage> factory;
+
 }
 
 PermissionsPrefsPageInstance::PermissionsPrefsPageInstance(HWND parent, preferences_page_callback::ptr callback)
@@ -21,9 +41,8 @@ PermissionsPrefsPageInstance::PermissionsPrefsPageInstance(HWND parent, preferen
 
 void PermissionsPrefsPageInstance::apply()
 {
-    settings_store::allowChangePlaylists = uButton_GetCheck(window(), IDC_ALLOW_CHANGE_PLAYLISTS);
-    settings_store::allowChangeOutput = uButton_GetCheck(window(), IDC_ALLOW_CHANGE_OUTPUT);
-    settings_store::allowChangeClientConfig = uButton_GetCheck(window(), IDC_ALLOW_CHANGE_CLIENT_CONFIG);
+    for (int i = 0; controlMappings[i]; i++)
+        *controlMappings[i].config = uButton_GetCheck(window(), controlMappings[i].control);
 
     auto plugin = Plugin::current();
     if (plugin)
@@ -34,48 +53,33 @@ void PermissionsPrefsPageInstance::apply()
 
 void PermissionsPrefsPageInstance::reset()
 {
-    uButton_SetCheck(window(), IDC_ALLOW_CHANGE_PLAYLISTS, true);
-    uButton_SetCheck(window(), IDC_ALLOW_CHANGE_OUTPUT, true);
-    uButton_SetCheck(window(), IDC_ALLOW_CHANGE_CLIENT_CONFIG, true);
+    for (int i = 0; controlMappings[i]; i++)
+        uButton_SetCheck(window(), controlMappings[i].control, true);
 
     notifyChanged();
 }
 
 INT_PTR PermissionsPrefsPageInstance::handleCommand(int control, int message)
 {
-    switch (control)
-    {
-    case IDC_ALLOW_CHANGE_PLAYLISTS:
-    case IDC_ALLOW_CHANGE_OUTPUT:
-    case IDC_ALLOW_CHANGE_CLIENT_CONFIG:
-        if (message == BN_CLICKED)
-            notifyChanged();
-        return 1;
+    if (message == BN_CLICKED)
+        notifyChanged();
 
-    default:
-        return 0;
-    }
+    return 1;
 }
 
 bool PermissionsPrefsPageInstance::hasChanges()
 {
-    if (uButton_GetCheck(window(), IDC_ALLOW_CHANGE_PLAYLISTS) != settings_store::allowChangePlaylists)
-        return true;
-
-    if (uButton_GetCheck(window(), IDC_ALLOW_CHANGE_OUTPUT) != settings_store::allowChangeOutput)
-        return true;
-
-    if (uButton_GetCheck(window(), IDC_ALLOW_CHANGE_CLIENT_CONFIG) != settings_store::allowChangeClientConfig)
-        return true;
+    for (int i = 0; controlMappings[i]; i++)
+        if (uButton_GetCheck(window(), controlMappings[i].control) != *controlMappings[i].config)
+            return true;
 
     return false;
 }
 
 void PermissionsPrefsPageInstance::initialize()
 {
-    uButton_SetCheck(window(), IDC_ALLOW_CHANGE_PLAYLISTS, settings_store::allowChangePlaylists);
-    uButton_SetCheck(window(), IDC_ALLOW_CHANGE_OUTPUT, settings_store::allowChangeOutput);
-    uButton_SetCheck(window(), IDC_ALLOW_CHANGE_CLIENT_CONFIG, settings_store::allowChangeClientConfig);
+    for (int i = 0; controlMappings[i]; i++)
+        uButton_SetCheck(window(), controlMappings[i].control, *controlMappings[i].config);
 }
 
 }

@@ -12,6 +12,11 @@ struct PermissionDef
 {
     ApiPermissions value;
     const char* id;
+
+    operator bool() const
+    {
+        return id != nullptr;
+    }
 };
 
 const PermissionDef permissionDefs[] = {
@@ -164,7 +169,7 @@ void SettingsData::loadPermissions(const Json& jsonRoot)
         return;
     }
 
-    for (int i = 0; permissionDefs[i].id; i++)
+    for (int i = 0; permissionDefs[i]; i++)
         loadPermission(json, permissionDefs[i].id, permissionDefs[i].value);
 }
 
@@ -185,7 +190,7 @@ void SettingsData::loadPermission(const Json& json, const char* name, ApiPermiss
 
 void to_json(Json& json, const ApiPermissions& value)
 {
-    for (int i = 0; permissionDefs[i].id; i++)
+    for (int i = 0; permissionDefs[i]; i++)
         json[permissionDefs[i].id] = hasFlags(value, permissionDefs[i].value);
 }
 
