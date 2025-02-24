@@ -30,7 +30,7 @@ const char PluginWrapper::configDialog_[] =
     "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";"
     "property \"Allow changing playlists\" checkbox " CONF_PERM_ALLOW_CHANGE_PLAYLISTS " 1;"
     "property \"Allow changing output device\" checkbox " CONF_PERM_ALLOW_CHANGE_OUTPUT " 1;"
-    "property \"Allow changing default configuration\" checkbox " CONF_PERM_ALLOW_CHANGE_CLIENT_CONFIG " 1;";
+    "property \"Allow changing default web interface configuration\" checkbox " CONF_PERM_ALLOW_CHANGE_CLIENT_CONFIG " 1;";
 
 Plugin::Plugin()
     : player_(),
