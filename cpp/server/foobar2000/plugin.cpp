@@ -32,6 +32,7 @@ void Plugin::reconfigure()
     settings->authRequired = settings_store::authRequired;
     settings->authUser = settings_store::authUser;
     settings->authPassword = settings_store::authPassword;
+    settings->permissions = settings_store::getPermissions();
 
     settings->loadAll(MSRV_PLAYER_FOOBAR2000);
 

@@ -3,8 +3,7 @@
 #include "../string_utils.hpp"
 #include "../core_types_parsers.hpp"
 
-namespace msrv {
-namespace player_foobar2000 {
+namespace msrv::player_foobar2000::settings_store {
 
 namespace {
 
@@ -32,24 +31,55 @@ const GUID authUserGuid =
 const GUID authPasswordGuid =
     {0xd11784c8, 0xacf7, 0x4f1b, {0xa6, 0xe4, 0x40, 0x65, 0xf0, 0x15, 0xce, 0x6c}};
 
+// {C24EBB7B-F994-4860-871F-D215A0296C7E}
+static const GUID allowChangePlaylistsGuid =
+    {0xc24ebb7b, 0xf994, 0x4860, {0x87, 0x1f, 0xd2, 0x15, 0xa0, 0x29, 0x6c, 0x7e}};
+
+// {89BEF0B5-2381-45CA-BE85-800FD5F83B62}
+static const GUID allowChangeOutputGuid =
+    {0x89bef0b5, 0x2381, 0x45ca, {0xbe, 0x85, 0x80, 0xf, 0xd5, 0xf8, 0x3b, 0x62}};
+
+// {44DD6586-06D6-4E14-AC35-64EB0AFB43BA}
+static const GUID allowChangeClientConfigGuid =
+    {0x44dd6586, 0x6d6, 0x4e14, {0xac, 0x35, 0x64, 0xeb, 0xa, 0xfb, 0x43, 0xba}};
+
 constexpr char listSeparator = '\n';
 
 }
 
-cfg_int settings_store::port(portGuid, MSRV_DEFAULT_PORT);
-cfg_bool settings_store::allowRemote(allowRemoteGuid, true);
-cfg_string settings_store::musicDirs(musicDirsGuid, "");
-cfg_bool settings_store::authRequired(authRequiredGuid, false);
-cfg_string settings_store::authUser(authUserGuid, "");
-cfg_string settings_store::authPassword(authPasswordGuid, "");
+cfg_int port(portGuid, MSRV_DEFAULT_PORT);
+cfg_bool allowRemote(allowRemoteGuid, true);
+cfg_string musicDirs(musicDirsGuid, "");
+cfg_bool authRequired(authRequiredGuid, false);
+cfg_string authUser(authUserGuid, "");
+cfg_string authPassword(authPasswordGuid, "");
+cfg_bool allowChangePlaylists(allowChangePlaylistsGuid, true);
+cfg_bool allowChangeOutput(allowChangeOutputGuid, true);
+cfg_bool allowChangeClientConfig(allowChangeClientConfigGuid, true);
 
-std::vector<std::string> settings_store::getMusicDirs()
+ApiPermissions getPermissions()
+{
+    auto result = ApiPermissions::NONE;
+
+    if (allowChangePlaylists)
+        result |= ApiPermissions::CHANGE_PLAYLISTS;
+
+    if (allowChangeOutput)
+        result |= ApiPermissions::CHANGE_OUTPUT;
+
+    if (allowChangeClientConfig)
+        result |= ApiPermissions::CHANGE_CLIENT_CONFIG;
+
+    return result;
+}
+
+std::vector<std::string> getMusicDirs()
 {
     StringView dirs(musicDirs.get_ptr(), musicDirs.get_length());
     return parseValueList<std::string>(dirs, listSeparator);
 }
 
-void settings_store::setMusicDirs(const std::vector<std::string>& dirs)
+void setMusicDirs(const std::vector<std::string>& dirs)
 {
     std::string str;
 
@@ -65,5 +95,4 @@ void settings_store::setMusicDirs(const std::vector<std::string>& dirs)
     musicDirs.set_string(str.data(), str.length());
 }
 
-}
 }
