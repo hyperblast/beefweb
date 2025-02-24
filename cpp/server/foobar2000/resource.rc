@@ -92,8 +92,8 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "Specify which operations are allowed using web interface and HTTP API:",IDC_STATIC,8,8,232,8
-    CONTROL         "Changing playlists",IDC_ALLOW_CHANGE_PLAYLISTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,21,73,10
-    CONTROL         "Changing output device",IDC_ALLOW_CHANGE_OUTPUT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,33,92,10
+    CONTROL         "Changing playlists",IDC_ALLOW_CHANGE_PLAYLISTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,22,73,10
+    CONTROL         "Changing output device",IDC_ALLOW_CHANGE_OUTPUT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,34,92,10
     CONTROL         "Changing default web interface configuration",IDC_ALLOW_CHANGE_CLIENT_CONFIG,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,46,161,10
 END
