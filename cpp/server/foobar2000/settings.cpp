@@ -36,25 +36,20 @@ constexpr char listSeparator = '\n';
 
 }
 
-cfg_int SettingVars::port(portGuid, MSRV_DEFAULT_PORT);
+cfg_int settings_store::port(portGuid, MSRV_DEFAULT_PORT);
+cfg_bool settings_store::allowRemote(allowRemoteGuid, true);
+cfg_string settings_store::musicDirs(musicDirsGuid, "");
+cfg_bool settings_store::authRequired(authRequiredGuid, false);
+cfg_string settings_store::authUser(authUserGuid, "");
+cfg_string settings_store::authPassword(authPasswordGuid, "");
 
-cfg_bool SettingVars::allowRemote(allowRemoteGuid, true);
-
-cfg_string SettingVars::musicDirs(musicDirsGuid, "");
-
-cfg_bool SettingVars::authRequired(authRequiredGuid, false);
-
-cfg_string SettingVars::authUser(authUserGuid, "");
-
-cfg_string SettingVars::authPassword(authPasswordGuid, "");
-
-std::vector<std::string> SettingVars::getMusicDirs()
+std::vector<std::string> settings_store::getMusicDirs()
 {
     StringView dirs(musicDirs.get_ptr(), musicDirs.get_length());
     return parseValueList<std::string>(dirs, listSeparator);
 }
 
-void SettingVars::setMusicDirs(const std::vector<std::string>& dirs)
+void settings_store::setMusicDirs(const std::vector<std::string>& dirs)
 {
     std::string str;
 

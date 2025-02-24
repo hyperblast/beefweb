@@ -168,7 +168,7 @@ INT_PTR SettingsPageInstance::handleNotify(NMHDR* data)
     switch (data->idFrom)
     {
     case IDC_LINK_OPEN:
-        shellExecute((("http://localhost:" + toString(SettingVars::port)).c_str()));
+        shellExecute((("http://localhost:" + toString(settings_store::port)).c_str()));
         break;
 
     case IDC_LINK_DONATE:
@@ -193,17 +193,17 @@ INT_PTR SettingsPageInstance::handleNotify(NMHDR* data)
 
 void SettingsPageInstance::load()
 {
-    SetDlgItemInt(handle_, IDC_PORT, SettingVars::port, 0);
-    uButton_SetCheck(handle_, IDC_ALLOW_REMOTE, SettingVars::allowRemote);
+    SetDlgItemInt(handle_, IDC_PORT, settings_store::port, 0);
+    uButton_SetCheck(handle_, IDC_ALLOW_REMOTE, settings_store::allowRemote);
 
-    musicDirs_ = SettingVars::getMusicDirs();
+    musicDirs_ = settings_store::getMusicDirs();
 
     for (auto& dir : musicDirs_)
         uSendDlgItemMessageText(handle_, IDC_MUSIC_DIRS, LB_ADDSTRING, 0, dir.c_str());
 
-    uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, SettingVars::authRequired);
-    uSetDlgItemText(handle_, IDC_AUTH_USER, SettingVars::authUser.get_ptr());
-    uSetDlgItemText(handle_, IDC_AUTH_PASSWORD, SettingVars::authPassword.get_ptr());
+    uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, settings_store::authRequired);
+    uSetDlgItemText(handle_, IDC_AUTH_USER, settings_store::authUser.get_ptr());
+    uSetDlgItemText(handle_, IDC_AUTH_PASSWORD, settings_store::authPassword.get_ptr());
 
     updateAuthControls();
 }
@@ -226,14 +226,14 @@ void SettingsPageInstance::reset()
 
 void SettingsPageInstance::apply()
 {
-    SettingVars::port = GetDlgItemInt(handle_, IDC_PORT, nullptr, 0);
-    SettingVars::allowRemote = uButton_GetCheck(handle_, IDC_ALLOW_REMOTE);
+    settings_store::port = GetDlgItemInt(handle_, IDC_PORT, nullptr, 0);
+    settings_store::allowRemote = uButton_GetCheck(handle_, IDC_ALLOW_REMOTE);
 
-    SettingVars::setMusicDirs(musicDirs_);
+    settings_store::setMusicDirs(musicDirs_);
 
-    SettingVars::authRequired = uButton_GetCheck(handle_, IDC_AUTH_REQUIRED);
-    SettingVars::authUser.set_string(uGetDlgItemText(handle_, IDC_AUTH_USER).get_ptr());
-    SettingVars::authPassword.set_string(uGetDlgItemText(handle_, IDC_AUTH_PASSWORD).get_ptr());
+    settings_store::authRequired = uButton_GetCheck(handle_, IDC_AUTH_REQUIRED);
+    settings_store::authUser.set_string(uGetDlgItemText(handle_, IDC_AUTH_USER).get_ptr());
+    settings_store::authPassword.set_string(uGetDlgItemText(handle_, IDC_AUTH_PASSWORD).get_ptr());
 
     auto plugin = Plugin::current();
     if (plugin)
@@ -244,22 +244,22 @@ void SettingsPageInstance::apply()
 
 bool SettingsPageInstance::hasChanges()
 {
-    if (SettingVars::port != GetDlgItemInt(handle_, IDC_PORT, nullptr, 0))
+    if (settings_store::port != GetDlgItemInt(handle_, IDC_PORT, nullptr, 0))
         return true;
 
-    if (SettingVars::allowRemote != uButton_GetCheck(handle_, IDC_ALLOW_REMOTE))
+    if (settings_store::allowRemote != uButton_GetCheck(handle_, IDC_ALLOW_REMOTE))
         return true;
 
-    if (SettingVars::getMusicDirs() != musicDirs_)
+    if (settings_store::getMusicDirs() != musicDirs_)
         return true;
 
-    if (SettingVars::authRequired != uButton_GetCheck(handle_, IDC_AUTH_REQUIRED))
+    if (settings_store::authRequired != uButton_GetCheck(handle_, IDC_AUTH_REQUIRED))
         return true;
 
-    if (!SettingVars::authUser.equals(uGetDlgItemText(handle_, IDC_AUTH_USER).get_ptr()))
+    if (!settings_store::authUser.equals(uGetDlgItemText(handle_, IDC_AUTH_USER).get_ptr()))
         return true;
 
-    if (!SettingVars::authPassword.equals(uGetDlgItemText(handle_, IDC_AUTH_PASSWORD).get_ptr()))
+    if (!settings_store::authPassword.equals(uGetDlgItemText(handle_, IDC_AUTH_PASSWORD).get_ptr()))
         return true;
 
     return false;
