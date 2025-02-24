@@ -9,8 +9,12 @@
 
 namespace msrv::player_foobar2000 {
 
+namespace {
+preferences_page_factory_t<MainPrefsPage> factory;
+}
+
 MainPrefsPageInstance::MainPrefsPageInstance(HWND parent, preferences_page_callback::ptr callback)
-    : PrefsPageInstance(MAKEINTRESOURCEW(IDD_SETTINGS), parent, callback)
+    : PrefsPageInstance(MAKEINTRESOURCEW(IDD_MAIN_PREFS), parent, callback)
 {
     initialize();
 }
@@ -217,7 +221,5 @@ void MainPrefsPageInstance::updateAuthShowPassword()
     SetFocus(passwordEdit);
     SetFocus(showPasswordCheckBox);
 }
-
-namespace { preferences_page_factory_t<MainPrefsPage> factory; }
 
 }

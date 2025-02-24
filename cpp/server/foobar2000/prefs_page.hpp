@@ -37,11 +37,6 @@ protected:
         return parentWindow_;
     }
 
-    virtual bool hasChanges()
-    {
-        return false;
-    }
-
     void notifyChanged()
     {
         callback_->on_state_changed();
@@ -57,6 +52,11 @@ protected:
     virtual INT_PTR handleNotify(NMHDR* data)
     {
         return 0;
+    }
+
+    virtual bool hasChanges()
+    {
+        return false;
     }
 
 private:

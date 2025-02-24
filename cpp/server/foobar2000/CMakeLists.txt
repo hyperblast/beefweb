@@ -12,6 +12,7 @@ set(
     FOOBAR2000_PLUGIN_SOURCES
     common.hpp
     main_prefs_page.cpp main_prefs_page.hpp
+    permissions_prefs_page.cpp permissions_prefs_page.hpp
     player.hpp
     player_control.cpp
     player_misc.cpp
