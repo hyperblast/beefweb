@@ -8,12 +8,18 @@ namespace msrv {
 
 namespace {
 
-namespace permission_names {
-constexpr char CHANGE_PLAYLISTS[] = "changePlaylists";
-constexpr char CHANGE_OUTPUT[] = "changeOutput";
-constexpr char CHANGE_CLIENT_CONFIG[] = "changeClientConfig";
-}
+struct PermissionDef
+{
+    ApiPermissions value;
+    const char* id;
+};
 
+const PermissionDef permissionDefs[] = {
+    {ApiPermissions::CHANGE_PLAYLISTS, "changePlaylists"},
+    {ApiPermissions::CHANGE_OUTPUT, "changeOutput"},
+    {ApiPermissions::CHANGE_CLIENT_CONFIG, "changeClientConfig"},
+    {ApiPermissions::NONE, nullptr},
+};
 
 int dummySymbol;
 
@@ -158,30 +164,29 @@ void SettingsData::loadPermissions(const Json& jsonRoot)
         return;
     }
 
-    loadPermission(json, permission_names::CHANGE_PLAYLISTS, ApiPermissions::CHANGE_PLAYLISTS);
-    loadPermission(json, permission_names::CHANGE_OUTPUT, ApiPermissions::CHANGE_OUTPUT);
-    loadPermission(json, permission_names::CHANGE_CLIENT_CONFIG, ApiPermissions::CHANGE_CLIENT_CONFIG);
+    for (int i = 0; permissionDefs[i].id; i++)
+        loadPermission(json, permissionDefs[i].id, permissionDefs[i].value);
 }
 
 void SettingsData::loadPermission(const Json& json, const char* name, ApiPermissions value)
 {
-    try
+    auto it = json.find(name);
+    if (it == json.end())
+        return;
+
+    if (!it->is_boolean())
     {
-        auto it = json.find(name);
-        if (it != json.end())
-            permissions = setFlags(permissions, value, it->get<bool>());
+        logError("failed to parse permission '%s': expected boolean value", name);
+        return;
     }
-    catch (std::exception& ex)
-    {
-        logError("failed to parse permission '%s': %s", name, ex.what());
-    }
+
+    permissions = setFlags(permissions, value, it->get<bool>());
 }
 
 void to_json(Json& json, const ApiPermissions& value)
 {
-    json[permission_names::CHANGE_PLAYLISTS] = hasFlags(value, ApiPermissions::CHANGE_PLAYLISTS);
-    json[permission_names::CHANGE_OUTPUT] = hasFlags(value, ApiPermissions::CHANGE_OUTPUT);
-    json[permission_names::CHANGE_CLIENT_CONFIG] = hasFlags(value, ApiPermissions::CHANGE_CLIENT_CONFIG);
+    for (int i = 0; permissionDefs[i].id; i++)
+        json[permissionDefs[i].id] = hasFlags(value, permissionDefs[i].value);
 }
 
 }
