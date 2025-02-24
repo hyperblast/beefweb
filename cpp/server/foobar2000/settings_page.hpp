@@ -1,22 +1,21 @@
 #pragma once
 
 #include "common.hpp"
+#include "prefs_page.hpp"
+
 #include "../project_info.hpp"
 #include "../charset.hpp"
 
 #include <string>
 #include <vector>
 
-#include <foobar2000/SDK/coreDarkMode.h>
+namespace msrv::player_foobar2000 {
 
-namespace msrv {
-namespace player_foobar2000 {
-
-class SettingsPage : public preferences_page_v3
+class MainPrefsPage : public preferences_page_v3
 {
 public:
-    SettingsPage();
-    ~SettingsPage();
+    MainPrefsPage() = default;
+    ~MainPrefsPage() = default;
 
     virtual const char* get_name() override
     {
@@ -49,29 +48,21 @@ private:
     static const GUID guid_;
 };
 
-class SettingsPageInstance : public preferences_page_instance
+class MainPrefsPageInstance : public PrefsPageInstance
 {
 public:
-    SettingsPageInstance(HWND parent, preferences_page_callback::ptr callback);
-    ~SettingsPageInstance();
+    MainPrefsPageInstance(HWND parent, preferences_page_callback::ptr callback);
+    ~MainPrefsPageInstance() = default;
 
-    virtual t_uint32 get_state() override;
+    void apply() override;
+    void reset() override;
 
-    virtual HWND get_wnd()
-    {
-        return handle_;
-    }
-
-    virtual void apply() override;
-    virtual void reset() override;
+protected:
+    INT_PTR handleCommand(int control, int message) override;
+    INT_PTR handleNotify(NMHDR* data) override;
+    bool hasChanges() override;
 
 private:
-    static INT_PTR CALLBACK dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam);
-
-    INT_PTR dialogProc(UINT message, WPARAM wparam, LPARAM lparam);
-    INT_PTR handleCommand(int control, int message);
-    INT_PTR handleNotify(NMHDR* data);
-
     static void shellExecute(const char* fileOrUrl)
     {
         uShellExecute(core_api::get_main_window(), nullptr, fileOrUrl, nullptr, nullptr, SW_SHOWNORMAL);
@@ -83,24 +74,13 @@ private:
     }
 
     void initialize();
-    void load();
-    bool hasChanges();
     void addMusicDir();
     void removeMusicDir();
     void updateAuthControls();
     void updateAuthShowPassword();
 
-    void notifyChanged()
-    {
-        callback_->on_state_changed();
-    }
-
-    HWND parent_;
-    HWND handle_;
     std::vector<std::string> musicDirs_;
-    preferences_page_callback::ptr callback_;
     int passwordChar_ = 0;
-    fb2k::CCoreDarkModeHooks darkModeHooks_;
 };
-}
+
 }

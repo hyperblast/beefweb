@@ -18,6 +18,7 @@ set(
     player_playlists.cpp
     playlist_mapping.cpp playlist_mapping.hpp
     plugin.cpp plugin.hpp
+    prefs_page.cpp prefs_page.hpp
     resource.h resource.rc
     settings.cpp settings.hpp
     settings_page.cpp settings_page.hpp

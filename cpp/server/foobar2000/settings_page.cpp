@@ -7,113 +7,24 @@
 #include "../system.hpp"
 #include "../project_info.hpp"
 
-namespace msrv {
-namespace player_foobar2000 {
+namespace msrv::player_foobar2000 {
 
 // {69188A07-E885-462D-81B0-819768D56C06}
-const GUID SettingsPage::guid_ =
+const GUID MainPrefsPage::guid_ =
     {0x69188a07, 0xe885, 0x462d, {0x81, 0xb0, 0x81, 0x97, 0x68, 0xd5, 0x6c, 0x6}};
 
-SettingsPage::SettingsPage() = default;
-SettingsPage::~SettingsPage() = default;
-
-preferences_page_instance::ptr SettingsPage::instantiate(HWND parent, preferences_page_callback::ptr callback)
+preferences_page_instance::ptr MainPrefsPage::instantiate(HWND parent, preferences_page_callback::ptr callback)
 {
-    return preferences_page_instance::ptr(new service_impl_t<SettingsPageInstance>(parent, callback));
+    return preferences_page_instance::ptr(new service_impl_t<MainPrefsPageInstance>(parent, callback));
 }
 
-SettingsPageInstance::SettingsPageInstance(HWND parent, preferences_page_callback::ptr callback)
-    : parent_(parent),
-      handle_(nullptr),
-      callback_(callback)
+MainPrefsPageInstance::MainPrefsPageInstance(HWND parent, preferences_page_callback::ptr callback)
+    : PrefsPageInstance(MAKEINTRESOURCEW(IDD_SETTINGS), parent, callback)
 {
-    auto ret = CreateDialogParamW(
-        core_api::get_my_instance(),
-        MAKEINTRESOURCEW(IDD_SETTINGS),
-        parent,
-        dialogProcWrapper,
-        reinterpret_cast<LPARAM>(this));
-
-    throwIfFailed("CreateDialogParamW", ret != nullptr);
+    initialize();
 }
 
-SettingsPageInstance::~SettingsPageInstance()
-{
-    if (handle_)
-        DestroyWindow(handle_);
-}
-
-void SettingsPageInstance::initialize()
-{
-    darkModeHooks_.AddDialogWithControls(handle_);
-
-    passwordChar_ = static_cast<int>(SendDlgItemMessageW(handle_, IDC_AUTH_PASSWORD, EM_GETPASSWORDCHAR, 0, 0));
-
-    load();
-}
-
-t_uint32 SettingsPageInstance::get_state()
-{
-    return preferences_state::resettable
-        | preferences_state::dark_mode_supported
-        | (hasChanges() ? preferences_state::changed : 0);
-}
-
-INT_PTR CALLBACK SettingsPageInstance::dialogProcWrapper(HWND window, UINT message, WPARAM wparam, LPARAM lparam)
-{
-    SettingsPageInstance* instance;
-
-    if (message == WM_INITDIALOG)
-    {
-        instance = reinterpret_cast<SettingsPageInstance*>(lparam);
-        instance->handle_ = window;
-
-        SetWindowLongPtrW(window, DWLP_USER, lparam);
-    }
-    else
-    {
-        instance = reinterpret_cast<SettingsPageInstance*>(GetWindowLongPtrW(window, DWLP_USER));
-    }
-
-    if (instance)
-    {
-        INT_PTR result;
-
-        bool processed = tryCatchLog([&] {
-            result = instance->dialogProc(message, wparam, lparam);
-        });
-
-        if (processed)
-            return result;
-
-    }
-
-    return DefWindowProcW(window, message, wparam, lparam);
-}
-
-INT_PTR SettingsPageInstance::dialogProc(UINT message, WPARAM wparam, LPARAM lparam)
-{
-    switch (message)
-    {
-    case WM_INITDIALOG:
-        initialize();
-        return 0;
-
-    case WM_COMMAND:
-        return handleCommand(LOWORD(wparam), HIWORD(wparam));
-
-    case WM_NOTIFY:
-        return handleNotify(reinterpret_cast<NMHDR*>(lparam));
-
-    case WM_DESTROY:
-        handle_ = nullptr;
-        return 0;
-    }
-
-    return DefWindowProcW(handle_, message, wparam, lparam);
-}
-
-INT_PTR SettingsPageInstance::handleCommand(int control, int message)
+INT_PTR MainPrefsPageInstance::handleCommand(int control, int message)
 {
     switch (control)
     {
@@ -158,7 +69,7 @@ INT_PTR SettingsPageInstance::handleCommand(int control, int message)
     }
 }
 
-INT_PTR SettingsPageInstance::handleNotify(NMHDR* data)
+INT_PTR MainPrefsPageInstance::handleNotify(NMHDR* data)
 {
     if (data->code != NM_CLICK && data->code != NM_RETURN)
     {
@@ -191,49 +102,51 @@ INT_PTR SettingsPageInstance::handleNotify(NMHDR* data)
     return 0;
 }
 
-void SettingsPageInstance::load()
+void MainPrefsPageInstance::initialize()
 {
-    SetDlgItemInt(handle_, IDC_PORT, settings_store::port, 0);
-    uButton_SetCheck(handle_, IDC_ALLOW_REMOTE, settings_store::allowRemote);
+    passwordChar_ = static_cast<int>(SendDlgItemMessageW(window(), IDC_AUTH_PASSWORD, EM_GETPASSWORDCHAR, 0, 0));
+
+    SetDlgItemInt(window(), IDC_PORT, settings_store::port, 0);
+    uButton_SetCheck(window(), IDC_ALLOW_REMOTE, settings_store::allowRemote);
 
     musicDirs_ = settings_store::getMusicDirs();
 
     for (auto& dir : musicDirs_)
-        uSendDlgItemMessageText(handle_, IDC_MUSIC_DIRS, LB_ADDSTRING, 0, dir.c_str());
+        uSendDlgItemMessageText(window(), IDC_MUSIC_DIRS, LB_ADDSTRING, 0, dir.c_str());
 
-    uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, settings_store::authRequired);
-    uSetDlgItemText(handle_, IDC_AUTH_USER, settings_store::authUser.get_ptr());
-    uSetDlgItemText(handle_, IDC_AUTH_PASSWORD, settings_store::authPassword.get_ptr());
+    uButton_SetCheck(window(), IDC_AUTH_REQUIRED, settings_store::authRequired);
+    uSetDlgItemText(window(), IDC_AUTH_USER, settings_store::authUser.get_ptr());
+    uSetDlgItemText(window(), IDC_AUTH_PASSWORD, settings_store::authPassword.get_ptr());
 
     updateAuthControls();
 }
 
-void SettingsPageInstance::reset()
+void MainPrefsPageInstance::reset()
 {
-    SetDlgItemInt(handle_, IDC_PORT, MSRV_DEFAULT_PORT, 0);
-    uButton_SetCheck(handle_, IDC_ALLOW_REMOTE, true);
+    SetDlgItemInt(window(), IDC_PORT, MSRV_DEFAULT_PORT, 0);
+    uButton_SetCheck(window(), IDC_ALLOW_REMOTE, true);
 
     musicDirs_.clear();
-    SendDlgItemMessageW(handle_, IDC_MUSIC_DIRS, LB_RESETCONTENT, 0, 0);
+    SendDlgItemMessageW(window(), IDC_MUSIC_DIRS, LB_RESETCONTENT, 0, 0);
 
-    uButton_SetCheck(handle_, IDC_AUTH_REQUIRED, false);
-    uSetDlgItemText(handle_, IDC_AUTH_USER, "");
-    uSetDlgItemText(handle_, IDC_AUTH_PASSWORD, "");
+    uButton_SetCheck(window(), IDC_AUTH_REQUIRED, false);
+    uSetDlgItemText(window(), IDC_AUTH_USER, "");
+    uSetDlgItemText(window(), IDC_AUTH_PASSWORD, "");
 
     updateAuthControls();
     notifyChanged();
 }
 
-void SettingsPageInstance::apply()
+void MainPrefsPageInstance::apply()
 {
-    settings_store::port = GetDlgItemInt(handle_, IDC_PORT, nullptr, 0);
-    settings_store::allowRemote = uButton_GetCheck(handle_, IDC_ALLOW_REMOTE);
+    settings_store::port = GetDlgItemInt(window(), IDC_PORT, nullptr, 0);
+    settings_store::allowRemote = uButton_GetCheck(window(), IDC_ALLOW_REMOTE);
 
     settings_store::setMusicDirs(musicDirs_);
 
-    settings_store::authRequired = uButton_GetCheck(handle_, IDC_AUTH_REQUIRED);
-    settings_store::authUser.set_string(uGetDlgItemText(handle_, IDC_AUTH_USER).get_ptr());
-    settings_store::authPassword.set_string(uGetDlgItemText(handle_, IDC_AUTH_PASSWORD).get_ptr());
+    settings_store::authRequired = uButton_GetCheck(window(), IDC_AUTH_REQUIRED);
+    settings_store::authUser.set_string(uGetDlgItemText(window(), IDC_AUTH_USER).get_ptr());
+    settings_store::authPassword.set_string(uGetDlgItemText(window(), IDC_AUTH_PASSWORD).get_ptr());
 
     auto plugin = Plugin::current();
     if (plugin)
@@ -242,34 +155,34 @@ void SettingsPageInstance::apply()
     notifyChanged();
 }
 
-bool SettingsPageInstance::hasChanges()
+bool MainPrefsPageInstance::hasChanges()
 {
-    if (settings_store::port != GetDlgItemInt(handle_, IDC_PORT, nullptr, 0))
+    if (settings_store::port != GetDlgItemInt(window(), IDC_PORT, nullptr, 0))
         return true;
 
-    if (settings_store::allowRemote != uButton_GetCheck(handle_, IDC_ALLOW_REMOTE))
+    if (settings_store::allowRemote != uButton_GetCheck(window(), IDC_ALLOW_REMOTE))
         return true;
 
     if (settings_store::getMusicDirs() != musicDirs_)
         return true;
 
-    if (settings_store::authRequired != uButton_GetCheck(handle_, IDC_AUTH_REQUIRED))
+    if (settings_store::authRequired != uButton_GetCheck(window(), IDC_AUTH_REQUIRED))
         return true;
 
-    if (!settings_store::authUser.equals(uGetDlgItemText(handle_, IDC_AUTH_USER).get_ptr()))
+    if (!settings_store::authUser.equals(uGetDlgItemText(window(), IDC_AUTH_USER).get_ptr()))
         return true;
 
-    if (!settings_store::authPassword.equals(uGetDlgItemText(handle_, IDC_AUTH_PASSWORD).get_ptr()))
+    if (!settings_store::authPassword.equals(uGetDlgItemText(window(), IDC_AUTH_PASSWORD).get_ptr()))
         return true;
 
     return false;
 }
 
-void SettingsPageInstance::addMusicDir()
+void MainPrefsPageInstance::addMusicDir()
 {
     pfc::string8 path;
 
-    if (uBrowseForFolder(parent_, "Select music directory", path) == 0)
+    if (uBrowseForFolder(parentWindow(), "Select music directory", path) == 0)
         return;
 
     std::string dir(path.get_ptr(), path.get_length());
@@ -278,43 +191,42 @@ void SettingsPageInstance::addMusicDir()
         return;
 
     musicDirs_.emplace_back(std::move(dir));
-    uSendDlgItemMessageText(handle_, IDC_MUSIC_DIRS, LB_ADDSTRING, 0, path.get_ptr());
+    uSendDlgItemMessageText(window(), IDC_MUSIC_DIRS, LB_ADDSTRING, 0, path.get_ptr());
 
     notifyChanged();
 }
 
-void SettingsPageInstance::removeMusicDir()
+void MainPrefsPageInstance::removeMusicDir()
 {
-    auto index = SendDlgItemMessageW(handle_, IDC_MUSIC_DIRS, LB_GETCURSEL, 0, 0);
+    auto index = SendDlgItemMessageW(window(), IDC_MUSIC_DIRS, LB_GETCURSEL, 0, 0);
 
     if (index == LB_ERR)
         return;
 
     musicDirs_.erase(musicDirs_.begin() + index);
-    SendDlgItemMessageW(handle_, IDC_MUSIC_DIRS, LB_DELETESTRING, index, 0);
+    SendDlgItemMessageW(window(), IDC_MUSIC_DIRS, LB_DELETESTRING, index, 0);
 
     notifyChanged();
 }
 
-void SettingsPageInstance::updateAuthControls()
+void MainPrefsPageInstance::updateAuthControls()
 {
-    int enabled = uButton_GetCheck(handle_, IDC_AUTH_REQUIRED) ? 1 : 0;
-    EnableWindow(GetDlgItem(handle_, IDC_AUTH_USER), enabled);
-    EnableWindow(GetDlgItem(handle_, IDC_AUTH_PASSWORD), enabled);
-    EnableWindow(GetDlgItem(handle_, IDC_AUTH_SHOW_PASSWORD), enabled);
+    int enabled = uButton_GetCheck(window(), IDC_AUTH_REQUIRED) ? 1 : 0;
+    EnableWindow(GetDlgItem(window(), IDC_AUTH_USER), enabled);
+    EnableWindow(GetDlgItem(window(), IDC_AUTH_PASSWORD), enabled);
+    EnableWindow(GetDlgItem(window(), IDC_AUTH_SHOW_PASSWORD), enabled);
 }
 
-void SettingsPageInstance::updateAuthShowPassword()
+void MainPrefsPageInstance::updateAuthShowPassword()
 {
-    auto passwordEdit = GetDlgItem(handle_, IDC_AUTH_PASSWORD);
-    auto showPasswordCheckBox = GetDlgItem(handle_, IDC_AUTH_SHOW_PASSWORD);
+    auto passwordEdit = GetDlgItem(window(), IDC_AUTH_PASSWORD);
+    auto showPasswordCheckBox = GetDlgItem(window(), IDC_AUTH_SHOW_PASSWORD);
     auto passwordChar = SendMessageW(showPasswordCheckBox, BM_GETCHECK, 0, 0) == BST_CHECKED ? 0 : passwordChar_;
     SendMessageW(passwordEdit, EM_SETPASSWORDCHAR, passwordChar, 0);
     SetFocus(passwordEdit);
     SetFocus(showPasswordCheckBox);
 }
 
-namespace { preferences_page_factory_t<SettingsPage> factory; }
+namespace { preferences_page_factory_t<MainPrefsPage> factory; }
 
-}
 }
