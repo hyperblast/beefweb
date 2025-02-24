@@ -25,7 +25,7 @@ private:
 
     void checkPermissions()
     {
-        settings_->ensurePermission(ApiPermissions::CHANGE_CLIENT_CONFIG);
+        settings_->ensurePermissions(ApiPermissions::CHANGE_CLIENT_CONFIG);
     }
 
     SettingsDataPtr settings_;

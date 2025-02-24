@@ -47,7 +47,7 @@ private:
 
     void checkPermissions()
     {
-        settings_->ensurePermission(ApiPermissions::CHANGE_PLAYLISTS);
+        settings_->ensurePermissions(ApiPermissions::CHANGE_PLAYLISTS);
     }
 
     Player* player_;

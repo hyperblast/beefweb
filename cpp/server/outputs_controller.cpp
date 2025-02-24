@@ -18,7 +18,7 @@ ResponsePtr OutputsController::getOutputs()
 
 void OutputsController::setOutputDevice()
 {
-    settings_->ensurePermission(ApiPermissions::CHANGE_OUTPUT);
+    settings_->ensurePermissions(ApiPermissions::CHANGE_OUTPUT);
     auto typeId = optionalParam<std::string>("typeId", {});
     auto deviceId = param<std::string>("deviceId");
     player_->setOutputDevice(typeId, deviceId);
