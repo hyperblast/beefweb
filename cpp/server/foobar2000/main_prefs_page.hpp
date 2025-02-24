@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "prefs_page.hpp"
+#include "utils.hpp"
 
 #include "../project_info.hpp"
 #include "../charset.hpp"
@@ -10,43 +11,6 @@
 #include <vector>
 
 namespace msrv::player_foobar2000 {
-
-class MainPrefsPage : public preferences_page_v3
-{
-public:
-    MainPrefsPage() = default;
-    ~MainPrefsPage() = default;
-
-    virtual const char* get_name() override
-    {
-        return MSRV_PROJECT_NAME;
-    }
-
-    virtual GUID get_guid() override
-    {
-        return guid_;
-    }
-
-    virtual GUID get_parent_guid() override
-    {
-        return preferences_page::guid_tools;
-    }
-
-    virtual bool get_help_url(pfc::string_base& p_out) override
-    {
-        return false;
-    }
-
-    virtual double get_sort_priority() override
-    {
-        return 0;
-    }
-
-    virtual preferences_page_instance::ptr instantiate(HWND parent, preferences_page_callback::ptr callback) override;
-
-private:
-    static const GUID guid_;
-};
 
 class MainPrefsPageInstance : public PrefsPageInstance
 {
@@ -81,6 +45,43 @@ private:
 
     std::vector<std::string> musicDirs_;
     int passwordChar_ = 0;
+};
+
+class MainPrefsPage : public preferences_page_v3
+{
+public:
+    MainPrefsPage() = default;
+    ~MainPrefsPage() = default;
+
+    const char* get_name() override
+    {
+        return MSRV_PROJECT_NAME;
+    }
+
+    GUID get_guid() override
+    {
+        return prefs_pages::main;
+    }
+
+    GUID get_parent_guid() override
+    {
+        return preferences_page::guid_tools;
+    }
+
+    bool get_help_url(pfc::string_base& p_out) override
+    {
+        return false;
+    }
+
+    double get_sort_priority() override
+    {
+        return 0;
+    }
+
+    preferences_page_instance::ptr instantiate(HWND parent, preferences_page_callback::ptr callback) override
+    {
+        return preferences_page_instance::ptr(new service_impl_t<MainPrefsPageInstance>(parent, callback));
+    }
 };
 
 }

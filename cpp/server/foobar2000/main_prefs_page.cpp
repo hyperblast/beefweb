@@ -9,15 +9,6 @@
 
 namespace msrv::player_foobar2000 {
 
-// {69188A07-E885-462D-81B0-819768D56C06}
-const GUID MainPrefsPage::guid_ =
-    {0x69188a07, 0xe885, 0x462d, {0x81, 0xb0, 0x81, 0x97, 0x68, 0xd5, 0x6c, 0x6}};
-
-preferences_page_instance::ptr MainPrefsPage::instantiate(HWND parent, preferences_page_callback::ptr callback)
-{
-    return preferences_page_instance::ptr(new service_impl_t<MainPrefsPageInstance>(parent, callback));
-}
-
 MainPrefsPageInstance::MainPrefsPageInstance(HWND parent, preferences_page_callback::ptr callback)
     : PrefsPageInstance(MAKEINTRESOURCEW(IDD_SETTINGS), parent, callback)
 {

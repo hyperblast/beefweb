@@ -1,8 +1,17 @@
 #include "utils.hpp"
 #include "../project_info.hpp"
 
-namespace msrv {
-namespace player_foobar2000 {
+namespace msrv::player_foobar2000 {
+
+namespace prefs_pages {
+
+// {69188A07-E885-462D-81B0-819768D56C06}
+const GUID main = {0x69188a07, 0xe885, 0x462d, {0x81, 0xb0, 0x81, 0x97, 0x68, 0xd5, 0x6c, 0x6}};
+
+// {49B5E18A-5708-4C3B-ABEF-389D1A082E5D}
+const GUID permissions = {0x49b5e18a, 0x5708, 0x4c3b, {0xab, 0xef, 0x38, 0x9d, 0x1a, 0x8, 0x2e, 0x5d}};
+
+}
 
 boost::optional<GUID> tryParseGuid(const char* str)
 {
@@ -70,5 +79,4 @@ void Fb2kWorkQueue::schedule(WorkCallback callback)
     fb2k::inMainThread(std::move(callback));
 }
 
-}
 }
