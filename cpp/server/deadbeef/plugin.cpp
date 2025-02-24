@@ -81,7 +81,7 @@ bool Plugin::refreshSettings()
     auto authRequired = ddbApi->conf_get_int(CONF_AUTH_REQUIRED, 0) != 0;
     auto authUser = ddbApi->conf_get_str_fast(CONF_AUTH_USER, "");
     auto authPassword = ddbApi->conf_get_str_fast(CONF_AUTH_PASSWORD, "");
-    auto permissions = readPermissions();
+    auto permissions = getPermissionsFromConfig();
 
     if (port_ == port &&
         allowRemote_ == allowRemote &&
@@ -105,7 +105,7 @@ bool Plugin::refreshSettings()
     return true;
 }
 
-ApiPermissions Plugin::readPermissions()
+ApiPermissions Plugin::getPermissionsFromConfig()
 {
     auto result = ApiPermissions::NONE;
 
