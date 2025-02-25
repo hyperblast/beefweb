@@ -4,11 +4,11 @@ Advanced configuration is performed by editing configuration file.
 
 The following configuration sources are considered when loading configuration (in the order of increase of preference):
 
-- Settings in UI
-- `beefweb.config.json` in the directory where `foo_beefweb.dll`/`beefweb.so` is located
-- For foobar2000: `%APPDATA%\beefweb\foobar2000\beefweb.config.json`
-- For DeaDBeeF: `$XDG_CONFIG_HOME/beefweb/deadbeef/beefweb.config.json` or `$HOME/.config/beefweb/deadbeef/beefweb.config.json`
-- File specified by `BEEFWEB_CONFIG_FILE` environment variable
+* Settings in UI
+* `{player_profile_dir}/beefweb/config.json`
+  - For foobar2000: `%APPDATA%\foobar2000-v2\beefweb\config.json`
+  - For DeaDBeeF: `$XDG_CONFIG_HOME/deadbeef/beefweb/config.json` or `$HOME/.config/deadbeef/beefweb/config.json`
+* File specified by `BEEFWEB_CONFIG_FILE` environment variable (must be absolute)
 
 If setting is specified in more preferred source it overrides values defined in less preferred.
 
@@ -50,6 +50,8 @@ The following options are available:
 
 `webRoot: string` - Root directory where static web content is located. This path has to be absolute.
 
+Default value is the directory of beefweb binary (`foo_beefweb.dll` / `beefweb.so`) plus `beefweb.root`
+
 `urlMappings: {string: string}` - Alternative web directories defined by URL prefix
 
 The following configuration file uses `C:\MyWebPage` directory to serve requests starting with `/mywebpage`:
@@ -61,7 +63,6 @@ The following configuration file uses `C:\MyWebPage` directory to serve requests
     }
 }
 ```
-
 
 `responseHeaders: {string: string}` - Any response headers to send to client. Could be used to enable CORS.
 
@@ -76,3 +77,9 @@ The following configuration file allows to make requests from any origin:
 ```
 
 Please read [documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) to find out how to set up CORS headers properly.
+
+### Other settings
+
+`clientConfigDir: string` - Path to directory where client configuration is stored. Must be absolute.
+
+Default value is `{player_profile_dir}/beefweb/clientconfig`
