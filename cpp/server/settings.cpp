@@ -67,13 +67,16 @@ void tryCopyFile(const Path& from, const Path& to)
     }
 }
 
-void tryCopyDirectory(const Path& from, const Path& to)
+void tryCopyDirectory(const Path& from, const Path& to, const Path& ext)
 {
     boost::system::error_code ec;
 
-    if (fs::is_directory(from, ec))
+    if (!fs::is_directory(from, ec))
+        return;
+
+    for (auto& entry : fs::directory_iterator(from, ec))
     {
-        for (auto& entry : fs::directory_iterator(from, ec))
+        if (entry.path().extension() == ext)
         {
             tryCopyFile(entry.path(), to / entry.path().filename());
         }
@@ -104,7 +107,7 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
         {
             auto oldConfigDir = userConfigDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID) / pathFromUtf8(appName);
             tryCopyFile(oldConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
-            tryCopyDirectory(oldConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR), newClientConfigDir);
+            tryCopyDirectory(oldConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR), newClientConfigDir, MSRV_PATH_LITERAL(".json"));
         }
 
         tryCopyFile(getBundleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
