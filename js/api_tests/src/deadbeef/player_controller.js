@@ -111,10 +111,12 @@ class PlayerController
 
     async writePluginSettings(settings)
     {
-        await mkdirp(this.paths.libDir);
+        const pluginConfigDir = path.join(this.paths.configDir, 'beefweb');
+    
+        await mkdirp(path.join(pluginConfigDir, 'clientconfig'));
 
         await writeFile(
-            path.join(this.paths.libDir, 'beefweb.config.json'),
+            path.join(pluginConfigDir, 'config.json'),
             JSON.stringify(settings));
     }
 
