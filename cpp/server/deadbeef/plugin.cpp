@@ -7,18 +7,15 @@
 #define CONF_AUTH_USER      MSRV_PROJECT_ID ".auth_user"
 #define CONF_AUTH_PASSWORD  MSRV_PROJECT_ID ".auth_password"
 
-#define CONF_PERM_ALLOW_CHANGE_PLAYLISTS        MSRV_PROJECT_ID ".permissions.allow_change_playlists"
-#define CONF_PERM_ALLOW_CHANGE_OUTPUT           MSRV_PROJECT_ID ".permissions.allow_change_output"
-#define CONF_PERM_ALLOW_CHANGE_CLIENT_CONFIG    MSRV_PROJECT_ID ".permissions.allow_change_client_config"
+#define CONF_PERM_CHANGE_PLAYLISTS        MSRV_PROJECT_ID ".permissions.change_playlists"
+#define CONF_PERM_CHANGE_OUTPUT           MSRV_PROJECT_ID ".permissions.change_output"
+#define CONF_PERM_CHANGE_CLIENT_CONFIG    MSRV_PROJECT_ID ".permissions.change_client_config"
 
 namespace msrv::player_deadbeef {
 
 DB_misc_t PluginWrapper::definition_;
-
 DeadbeefLogger* PluginWrapper::logger_;
-
 Plugin* PluginWrapper::instance_;
-
 char PluginWrapper::licenseText_[] = MSRV_LICENSE_TEXT;
 
 const char PluginWrapper::configDialog_[] =
@@ -28,9 +25,9 @@ const char PluginWrapper::configDialog_[] =
     "property \"Require authentication\" checkbox " CONF_AUTH_REQUIRED " 0;"
     "property \"User\" entry " CONF_AUTH_USER " \"\";"
     "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";"
-    "property \"Allow changing playlists\" checkbox " CONF_PERM_ALLOW_CHANGE_PLAYLISTS " 1;"
-    "property \"Allow changing output device\" checkbox " CONF_PERM_ALLOW_CHANGE_OUTPUT " 1;"
-    "property \"Allow changing default web interface configuration\" checkbox " CONF_PERM_ALLOW_CHANGE_CLIENT_CONFIG " 1;";
+    "property \"Allow changing playlists\" checkbox " CONF_PERM_CHANGE_PLAYLISTS " 1;"
+    "property \"Allow changing output device\" checkbox " CONF_PERM_CHANGE_OUTPUT " 1;"
+    "property \"Allow changing default web interface configuration\" checkbox " CONF_PERM_CHANGE_CLIENT_CONFIG " 1;";
 
 Plugin::Plugin()
     : player_(),
@@ -109,13 +106,13 @@ ApiPermissions Plugin::getPermissionsFromConfig()
 {
     auto result = ApiPermissions::NONE;
 
-    if (ddbApi->conf_get_int(CONF_PERM_ALLOW_CHANGE_PLAYLISTS, 1))
+    if (ddbApi->conf_get_int(CONF_PERM_CHANGE_PLAYLISTS, 1))
         result |= ApiPermissions::CHANGE_PLAYLISTS;
 
-    if (ddbApi->conf_get_int(CONF_PERM_ALLOW_CHANGE_OUTPUT, 1))
+    if (ddbApi->conf_get_int(CONF_PERM_CHANGE_OUTPUT, 1))
         result |= ApiPermissions::CHANGE_OUTPUT;
 
-    if (ddbApi->conf_get_int(CONF_PERM_ALLOW_CHANGE_CLIENT_CONFIG, 1))
+    if (ddbApi->conf_get_int(CONF_PERM_CHANGE_CLIENT_CONFIG, 1))
         result |= ApiPermissions::CHANGE_CLIENT_CONFIG;
 
     return result;
