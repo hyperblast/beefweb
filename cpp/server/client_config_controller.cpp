@@ -5,8 +5,8 @@
 
 namespace msrv {
 
-ClientConfigController::ClientConfigController(Request* request, SettingsDataPtr settings, const char* appName)
-    : ControllerBase(request), settings_(std::move(settings)), appName_(appName)
+ClientConfigController::ClientConfigController(Request* request, SettingsDataPtr settings)
+    : ControllerBase(request), settings_(std::move(settings))
 {
 }
 
@@ -53,21 +53,14 @@ Path ClientConfigController::getFilePath()
         throw InvalidRequestException("invalid configuration id: " + id);
     }
 
-    auto configDir = SettingsData::getConfigDir(appName_);
-    if (configDir.empty())
-    {
-        throw std::runtime_error("No config dir is available");
-    }
-
-    return configDir / MSRV_PATH_LITERAL("clientconfig") / pathFromUtf8(id + ".json");
+    return settings_->clientConfigDirP / pathFromUtf8(id + ".json");
 }
 
-void ClientConfigController::defineRoutes(
-    Router* router, WorkQueue* workQueue, SettingsDataPtr settings, const char* appName)
+void ClientConfigController::defineRoutes(Router* router, WorkQueue* workQueue, SettingsDataPtr settings)
 {
     auto routes = router->defineRoutes<ClientConfigController>();
 
-    routes.createWith([=](Request* r) { return new ClientConfigController(r, settings, appName); });
+    routes.createWith([=](Request* r) { return new ClientConfigController(r, settings); });
     routes.useWorkQueue(workQueue);
     routes.setPrefix("api/clientconfig");
 

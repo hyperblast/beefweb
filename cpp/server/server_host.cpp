@@ -64,7 +64,7 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
 
     BrowserController::defineRoutes(router, &utilityQueue_, settings);
     StaticController::defineRoutes(router, &utilityQueue_, settings, contentTypes_);
-    ClientConfigController::defineRoutes(router, &utilityQueue_, settings, player_->name());
+    ClientConfigController::defineRoutes(router, &utilityQueue_, settings);
 
     serverThread_->restart(std::move(config));
 }

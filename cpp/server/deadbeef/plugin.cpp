@@ -46,6 +46,9 @@ void Plugin::handleConfigChanged()
 void Plugin::handlePluginsLoaded()
 {
     pluginsLoaded_ = true;
+
+    SettingsData::migrate(MSRV_PLAYER_DEADBEEF, getProfileDir());
+
     refreshSettings();
     reconfigure();
 }
@@ -62,7 +65,7 @@ void Plugin::reconfigure()
     settings->authPassword = authPassword_;
     settings->permissions = permissions_;
 
-    settings->loadAll(MSRV_PLAYER_DEADBEEF);
+    settings->initialize(getProfileDir());
 
     host_.reconfigure(std::move(settings));
 }

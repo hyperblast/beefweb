@@ -69,13 +69,12 @@ ResponsePtr BrowserController::getRoots()
 {
     std::vector<FileSystemEntry> roots;
 
-    for (auto& dir : settings_->musicDirs)
+    for (auto& dir : settings_->musicDirsP)
     {
-        auto path = pathFromUtf8(dir);
-        auto info = file_io::tryQueryInfo(path);
+        auto info = file_io::tryQueryInfo(dir);
 
         if (info && info->type == FileType::DIRECTORY)
-            roots.emplace_back(makeFsEntry(path, path, *info));
+            roots.emplace_back(makeFsEntry(dir, dir, *info));
     }
 
     return Response::json({ {"roots", roots}, {"pathSeparator", pathSeparator()} });
@@ -87,15 +86,13 @@ ResponsePtr BrowserController::getEntries()
     auto normalizedPath = pathFromUtf8(requestedPath).lexically_normal().make_preferred();
 
     if (!settings_->isAllowedPath(normalizedPath))
-        return Response::error(HttpStatus::S_403_FORBIDDEN);
+        return Response::error(HttpStatus::S_403_FORBIDDEN, "listing directory is not allowed");
 
     std::vector<FileSystemEntry> entries;
 
-    for (auto iter = fs::directory_iterator(normalizedPath);
-         iter != fs::directory_iterator();
-         ++iter)
+    for (auto& entry : fs::directory_iterator(normalizedPath))
     {
-        auto& path = iter->path();
+        auto& path = entry.path();
         auto info = file_io::tryQueryInfo(path);
 
         if (info && info->type != FileType::UNKNOWN)

@@ -32,6 +32,11 @@ public:
 private:
     static ApiPermissions getPermissionsFromConfig();
 
+    static Path getProfileDir()
+    {
+        return {ddbApi->get_system_dir(DDB_SYS_DIR_CONFIG)};
+    }
+
     void handleConfigChanged();
     void handlePluginsLoaded();
     bool refreshSettings();
