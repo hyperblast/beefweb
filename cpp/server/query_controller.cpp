@@ -10,19 +10,16 @@ namespace msrv {
 namespace {
 
 constexpr char PLAYER_KEY[] = "player";
-
 constexpr char PLAYLISTS_KEY[] = "playlists";
-
 constexpr char PLAYLIST_ITEMS_KEY[] = "playlistItems";
-
 constexpr char PLAY_QUEUE_KEY[] = "playQueue";
-
 constexpr char OUTPUTS_KEY[] = "outputs";
 
 }
 
-QueryController::QueryController(Request* request, Player* player, EventDispatcher* dispatcher)
-    : ControllerBase(request), player_(player), dispatcher_(dispatcher)
+QueryController::QueryController(
+    Request* request, Player* player, EventDispatcher* dispatcher, SettingsDataPtr settings)
+    : ControllerBase(request), player_(player), dispatcher_(dispatcher), settings_(std::move(settings))
 {
 }
 
@@ -137,7 +134,11 @@ Json QueryController::stateToJson(PlayerEvents events)
     Json obj = Json::object();
 
     if (hasFlags(events, PlayerEvents::PLAYER_CHANGED))
-        obj[PLAYER_KEY] = *player_->queryPlayerState(activeItemQuery_.get());
+    {
+        Json state(*player_->queryPlayerState(activeItemQuery_.get()));
+        state["permissions"] = settings_->permissions;
+        obj[PLAYER_KEY] = state;
+    }
 
     if (hasFlags(events, PlayerEvents::PLAYLIST_SET_CHANGED))
         obj[PLAYLISTS_KEY] = player_->getPlaylists();
@@ -154,11 +155,12 @@ Json QueryController::stateToJson(PlayerEvents events)
     return obj;
 }
 
-void QueryController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player, EventDispatcher* dispatcher)
+void QueryController::defineRoutes(
+    Router* router, WorkQueue* workQueue, Player* player, EventDispatcher* dispatcher, SettingsDataPtr settings)
 {
     auto routes = router->defineRoutes<QueryController>();
 
-    routes.createWith([=](Request* request) { return new QueryController(request, player, dispatcher); });
+    routes.createWith([=](Request* request) { return new QueryController(request, player, dispatcher, settings); });
     routes.useWorkQueue(workQueue);
     routes.setPrefix("api/query");
 

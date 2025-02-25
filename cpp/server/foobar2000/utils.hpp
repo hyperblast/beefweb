@@ -5,8 +5,12 @@
 #include "../work_queue.hpp"
 #include "../player_api.hpp"
 
-namespace msrv {
-namespace player_foobar2000 {
+namespace msrv::player_foobar2000 {
+
+namespace prefs_pages {
+extern const GUID main;
+extern const GUID permissions;
+}
 
 boost::optional<GUID> tryParseGuid(const char* str);
 boost::optional<std::pair<GUID, GUID>> tryParseDoubleGuid(const char* str);
@@ -345,5 +349,4 @@ private:
 
 extern service_factory_single_t<PlayQueueEventAdapter> playQueueEventAdapterFactory;
 
-}
 }

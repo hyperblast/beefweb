@@ -1,5 +1,4 @@
 #include "settings.hpp"
-#include "project_info.hpp"
 #include "json.hpp"
 #include "log.hpp"
 
@@ -8,6 +7,24 @@
 namespace msrv {
 
 namespace {
+
+struct PermissionDef
+{
+    ApiPermissions value;
+    const char* id;
+
+    operator bool() const
+    {
+        return id != nullptr;
+    }
+};
+
+const PermissionDef permissionDefs[] = {
+    {ApiPermissions::CHANGE_PLAYLISTS, "changePlaylists"},
+    {ApiPermissions::CHANGE_OUTPUT, "changeOutput"},
+    {ApiPermissions::CHANGE_CLIENT_CONFIG, "changeClientConfig"},
+    {ApiPermissions::NONE, nullptr},
+};
 
 int dummySymbol;
 
@@ -23,13 +40,25 @@ const Path& getBundledConfigFile()
     return path;
 }
 
+template<typename T>
+void loadValue(const Json& json, T* value, const char* name)
+{
+    try
+    {
+        auto it = json.find(name);
+        if (it != json.end())
+            *value = it->get<T>();
+    }
+    catch (std::exception& ex)
+    {
+        logError("failed to parse property '%s': %s", name, ex.what());
+    }
+}
+
 }
 
 SettingsData::SettingsData()
-    : port(MSRV_DEFAULT_PORT),
-      allowRemote(true),
-      webRoot(pathToUtf8(getDefaultWebRoot())),
-      authRequired(false)
+    : webRoot(pathToUtf8(getDefaultWebRoot()))
 {
 }
 
@@ -93,10 +122,8 @@ void SettingsData::loadAll(const char* appName)
     initialize();
 }
 
-bool SettingsData::loadFromFile(const Path& path)
+void SettingsData::loadFromFile(const Path& path)
 {
-    auto result = false;
-
     tryCatchLog([&] {
         auto file = file_io::open(path);
         if (!file)
@@ -105,52 +132,66 @@ bool SettingsData::loadFromFile(const Path& path)
         logInfo("loading config file: %s", pathToUtf8(path).c_str());
         auto data = file_io::readToEnd(file.get());
         loadFromJson(Json::parse(data));
-        result = true;
     });
-
-    return result;
 }
 
 void SettingsData::loadFromJson(const Json& json)
 {
     if (!json.is_object())
-        throw std::invalid_argument("Expected json object");
+    {
+        logError("invalid config: expected json object");
+        return;
+    }
 
-    auto it = json.find("port");
-    if (it != json.end())
-        port = it->get<int>();
+    loadValue(json, &port, "port");
+    loadValue(json, &allowRemote, "allowRemote");
+    loadValue(json, &musicDirs, "musicDirs");
+    loadValue(json, &webRoot, "webRoot");
+    loadValue(json, &authRequired, "authRequired");
+    loadValue(json, &authUser, "authUser");
+    loadValue(json, &authPassword, "authPassword");
+    loadValue(json, &responseHeaders, "responseHeaders");
+    loadValue(json, &urlMappings, "urlMappings");
+    loadPermissions(json);
+}
 
-    it = json.find("allowRemote");
-    if (it != json.end())
-        allowRemote = it->get<bool>();
+void SettingsData::loadPermissions(const Json& jsonRoot)
+{
+    auto it = jsonRoot.find("permissions");
+    if (it == jsonRoot.end())
+        return;
 
-    it = json.find("musicDirs");
-    if (it != json.end())
-        musicDirs = it->get<std::vector<std::string>>();
+    const Json& json = *it;
 
-    it = json.find("webRoot");
-    if (it != json.end())
-        webRoot = it->get<std::string>();
+    if (!json.is_object())
+    {
+        logError("failed to parse property 'permissions': expected json object");
+        return;
+    }
 
-    it = json.find("authRequired");
-    if (it != json.end())
-        authRequired = it->get<bool>();
+    for (int i = 0; permissionDefs[i]; i++)
+        loadPermission(json, permissionDefs[i].id, permissionDefs[i].value);
+}
 
-    it = json.find("authUser");
-    if (it != json.end())
-        authUser = it->get<std::string>();
+void SettingsData::loadPermission(const Json& json, const char* name, ApiPermissions value)
+{
+    auto it = json.find(name);
+    if (it == json.end())
+        return;
 
-    it = json.find("authPassword");
-    if (it != json.end())
-        authPassword = it->get<std::string>();
+    if (!it->is_boolean())
+    {
+        logError("failed to parse permission '%s': expected boolean value", name);
+        return;
+    }
 
-    it = json.find("responseHeaders");
-    if (it != json.end())
-        responseHeaders = it->get<std::unordered_map<std::string, std::string>>();
+    permissions = setFlags(permissions, value, it->get<bool>());
+}
 
-    it = json.find("urlMappings");
-    if (it != json.end())
-        urlMappings = it->get<std::unordered_map<std::string, std::string>>();
+void to_json(Json& json, const ApiPermissions& value)
+{
+    for (int i = 0; permissionDefs[i]; i++)
+        json[permissionDefs[i].id] = hasFlags(value, permissionDefs[i].value);
 }
 
 }

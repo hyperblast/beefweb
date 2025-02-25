@@ -1,8 +1,9 @@
 import React from 'react';
 import ServiceContext from './service_context.js';
 import { bindHandlers } from './utils.js';
+import ModelBinding from './model_binding.js';
 
-export default class DefaultsSettings extends React.PureComponent
+class DefaultsSettings extends React.PureComponent
 {
     static contextType = ServiceContext;
 
@@ -11,6 +12,14 @@ export default class DefaultsSettings extends React.PureComponent
         super(props, context);
 
         bindHandlers(this);
+
+        this.state = this.getStateFromModel();
+    }
+
+    getStateFromModel()
+    {
+        const { permissions } = this.context.playerModel;
+        return { allowChangeConfig: permissions.changeClientConfig };
     }
 
     handleSaveAsDefault()
@@ -30,9 +39,11 @@ export default class DefaultsSettings extends React.PureComponent
 
     render()
     {
+        const { allowChangeConfig } = this.state;
+
         return <div className='defaults-settings'>
             <div className='settings-section'>
-                <button className='dialog-button' onClick={this.handleSaveAsDefault}>
+                <button className='dialog-button' onClick={this.handleSaveAsDefault} disabled={!allowChangeConfig}>
                     Save current settings as default
                 </button>
                 <div className='setting-description'>
@@ -50,7 +61,9 @@ export default class DefaultsSettings extends React.PureComponent
             </div>
             <div className='settings-section-separator'/>
             <div className='settings-section'>
-                <button className='dialog-button' onClick={this.handleClearDefault}>Reset defaults</button>
+                <button className='dialog-button'
+                        onClick={this.handleClearDefault}
+                        disabled={!allowChangeConfig}>Reset defaults</button>
                 <div className='setting-description'>
                     Remove stored default settings.
                 </div>
@@ -58,3 +71,5 @@ export default class DefaultsSettings extends React.PureComponent
         </div>;
     }
 }
+
+export default ModelBinding(DefaultsSettings, { playerModel: 'change' });

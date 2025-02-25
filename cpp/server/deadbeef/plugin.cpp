@@ -7,14 +7,15 @@
 #define CONF_AUTH_USER      MSRV_PROJECT_ID ".auth_user"
 #define CONF_AUTH_PASSWORD  MSRV_PROJECT_ID ".auth_password"
 
+#define CONF_PERM_CHANGE_PLAYLISTS        MSRV_PROJECT_ID ".permissions.change_playlists"
+#define CONF_PERM_CHANGE_OUTPUT           MSRV_PROJECT_ID ".permissions.change_output"
+#define CONF_PERM_CHANGE_CLIENT_CONFIG    MSRV_PROJECT_ID ".permissions.change_client_config"
+
 namespace msrv::player_deadbeef {
 
 DB_misc_t PluginWrapper::definition_;
-
 DeadbeefLogger* PluginWrapper::logger_;
-
 Plugin* PluginWrapper::instance_;
-
 char PluginWrapper::licenseText_[] = MSRV_LICENSE_TEXT;
 
 const char PluginWrapper::configDialog_[] =
@@ -23,7 +24,10 @@ const char PluginWrapper::configDialog_[] =
     "property \"Music directories\" entry " CONF_MUSIC_DIRS " \"\";"
     "property \"Require authentication\" checkbox " CONF_AUTH_REQUIRED " 0;"
     "property \"User\" entry " CONF_AUTH_USER " \"\";"
-    "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";";
+    "property \"Password\" password " CONF_AUTH_PASSWORD " \"\";"
+    "property \"Allow changing playlists\" checkbox " CONF_PERM_CHANGE_PLAYLISTS " 1;"
+    "property \"Allow changing output device\" checkbox " CONF_PERM_CHANGE_OUTPUT " 1;"
+    "property \"Allow changing default web interface configuration\" checkbox " CONF_PERM_CHANGE_CLIENT_CONFIG " 1;";
 
 Plugin::Plugin()
     : player_(),
@@ -56,6 +60,7 @@ void Plugin::reconfigure()
     settings->authRequired = authRequired_;
     settings->authUser = authUser_;
     settings->authPassword = authPassword_;
+    settings->permissions = permissions_;
 
     settings->loadAll(MSRV_PLAYER_DEADBEEF);
 
@@ -73,13 +78,15 @@ bool Plugin::refreshSettings()
     auto authRequired = ddbApi->conf_get_int(CONF_AUTH_REQUIRED, 0) != 0;
     auto authUser = ddbApi->conf_get_str_fast(CONF_AUTH_USER, "");
     auto authPassword = ddbApi->conf_get_str_fast(CONF_AUTH_PASSWORD, "");
+    auto permissions = getPermissionsFromConfig();
 
     if (port_ == port &&
         allowRemote_ == allowRemote &&
         musicDirs_ == musicDirs &&
         authRequired_ == authRequired &&
         authUser_ == authUser &&
-        authPassword_ == authPassword)
+        authPassword_ == authPassword &&
+        permissions_ == permissions)
     {
         return false;
     }
@@ -90,8 +97,25 @@ bool Plugin::refreshSettings()
     authRequired_ = authRequired;
     authUser_ = authUser;
     authPassword_ = authPassword;
+    permissions_ = permissions;
 
     return true;
+}
+
+ApiPermissions Plugin::getPermissionsFromConfig()
+{
+    auto result = ApiPermissions::NONE;
+
+    if (ddbApi->conf_get_int(CONF_PERM_CHANGE_PLAYLISTS, 1))
+        result |= ApiPermissions::CHANGE_PLAYLISTS;
+
+    if (ddbApi->conf_get_int(CONF_PERM_CHANGE_OUTPUT, 1))
+        result |= ApiPermissions::CHANGE_OUTPUT;
+
+    if (ddbApi->conf_get_int(CONF_PERM_CHANGE_CLIENT_CONFIG, 1))
+        result |= ApiPermissions::CHANGE_CLIENT_CONFIG;
+
+    return result;
 }
 
 void Plugin::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32_t p2)

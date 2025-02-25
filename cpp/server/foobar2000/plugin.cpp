@@ -26,12 +26,13 @@ void Plugin::reconfigure()
 {
     auto settings = std::make_shared<SettingsData>();
 
-    settings->port = SettingVars::port;
-    settings->allowRemote = SettingVars::allowRemote;
-    settings->musicDirs = SettingVars::getMusicDirs();
-    settings->authRequired = SettingVars::authRequired;
-    settings->authUser = SettingVars::authUser;
-    settings->authPassword = SettingVars::authPassword;
+    settings->port = settings_store::port;
+    settings->allowRemote = settings_store::allowRemote;
+    settings->musicDirs = settings_store::getMusicDirs();
+    settings->authRequired = settings_store::authRequired;
+    settings->authUser = settings_store::authUser;
+    settings->authPassword = settings_store::authPassword;
+    settings->permissions = settings_store::getPermissions();
 
     settings->loadAll(MSRV_PLAYER_FOOBAR2000);
 

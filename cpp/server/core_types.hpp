@@ -20,9 +20,9 @@ enum class Switch
 
 struct Range
 {
-    Range() = default;
+    Range() : offset(0), count(0) { }
 
-    Range(int32_t offsetVal, int32_t countVal = 1)
+    explicit Range(int32_t offsetVal, int32_t countVal = 1)
         : offset(offsetVal), count(countVal)
     {
     }
@@ -44,12 +44,28 @@ public:
     {
     }
 
-    InvalidRequestException(const std::string& str)
+    explicit InvalidRequestException(const std::string& str)
         : std::runtime_error(str)
     {
     }
 
     ~InvalidRequestException() = default;
+};
+
+class OperationForbiddenException : public std::runtime_error
+{
+public:
+    OperationForbiddenException()
+        : std::runtime_error("operation is not allowed by current configuration")
+    {
+    }
+
+    explicit OperationForbiddenException(const std::string& str)
+        : std::runtime_error(str)
+    {
+    }
+
+    ~OperationForbiddenException() = default;
 };
 
 template<typename T>

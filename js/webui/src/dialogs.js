@@ -12,12 +12,13 @@ const dialogTitles = Object.freeze({
 
 export function DialogButton(props)
 {
-    const { type, onClick } = props;
+    const { type, onClick, disabled } = props;
 
     return (
         <button
             className={'dialog-button dialog-button-' + type}
-            onClick={onClick}>
+            onClick={onClick}
+            disabled={disabled}>
             { dialogTitles[type] }
         </button>
     );
@@ -26,6 +27,7 @@ export function DialogButton(props)
 DialogButton.propTypes = {
     type: PropTypes.oneOf(['ok', 'cancel', 'apply', 'revert']).isRequired,
     onClick: PropTypes.func,
+    disabled: PropTypes.bool,
 };
 
 export function ConfirmDialog(props)

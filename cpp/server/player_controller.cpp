@@ -20,8 +20,8 @@ void from_json(const Json& json, SetOptionRequest& request)
     request.value = json["value"];
 }
 
-PlayerController::PlayerController(Request* request, Player* player)
-    : ControllerBase(request), player_(player)
+PlayerController::PlayerController(Request* request, Player* player, SettingsDataPtr settings)
+    : ControllerBase(request), player_(player), settings_(std::move(settings))
 {
 }
 
@@ -34,7 +34,10 @@ ResponsePtr PlayerController::getState()
 
     auto state = player_->queryPlayerState(query.get());
 
-    return Response::json({{"player", *state}});
+    Json stateJson(*state);
+    stateJson["permissions"] = settings_->permissions;
+
+    return Response::json({{"player", stateJson}});
 }
 
 void PlayerController::setState()
@@ -152,11 +155,12 @@ void PlayerController::volumeDown()
     player_->volumeDown();
 }
 
-void PlayerController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player)
+void PlayerController::defineRoutes(
+    Router* router, WorkQueue* workQueue, Player* player, SettingsDataPtr settings)
 {
     auto routes = router->defineRoutes<PlayerController>();
 
-    routes.createWith([=](Request* request) { return new PlayerController(request, player); });
+    routes.createWith([=](Request* request) { return new PlayerController(request, player, settings); });
     routes.useWorkQueue(workQueue);
     routes.setPrefix("api/player");
 

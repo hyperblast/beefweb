@@ -4,6 +4,7 @@ import './browser_api_tests.js';
 import './client_config_api_tests.js'
 import './http_features_tests.js';
 import './outputs_api_tests.js';
+import './permissions_tests.js';
 import './player_api_tests.js';
 import './playlists_api_tests.js';
 import './play_queue_api_tests.js'

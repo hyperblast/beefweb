@@ -51,15 +51,22 @@ class TestPlayerClient extends PlayerClient
             });
         }
 
-        await this.clearPlayQueue();
+        if (options.playQueue)
+            await this.clearPlayQueue();
 
-        const playlists = await this.getPlaylists();
+        if (options.playlists)
+        {
+            const playlists = await this.getPlaylists();
 
-        for (let p of playlists)
-            await this.removePlaylist(p.id);
+            for (let p of playlists)
+                await this.removePlaylist(p.id);
+        }
 
-        const config = options.outputConfigs.default;
-        await this.setOutputDevice(config.typeId, config.deviceId);
+        if (options.output)
+        {
+            const config = options.outputConfigs.default;
+            await this.setOutputDevice(config.typeId, config.deviceId);
+        }
     }
 
     async waitUntilReady()
