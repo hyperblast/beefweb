@@ -3,6 +3,7 @@ import fs from 'fs';
 import childProcess from 'child_process';
 import { promisify } from 'util';
 import { waitForExit } from '../utils.js';
+import mkdirp from 'mkdirp';
 
 const copyFile = promisify(fs.copyFile);
 const writeFile = promisify(fs.writeFile);
@@ -14,9 +15,15 @@ class PlayerController
     {
         this.config = config;
         this.pluginInstalled = false;
+
+        const profileDir = config.playerVersion.startsWith('v1.')
+            ? config.playerDir
+            : path.join(config.playerDir, 'profile');
+
         this.paths = Object.freeze({
             exeFile: path.join(config.playerDir, 'foobar2000.exe'),
             componentsDir: path.join(config.playerDir, 'components'),
+            profileDir,
         });
     }
 
@@ -52,8 +59,12 @@ class PlayerController
 
     async writePluginSettings(settings)
     {
+        const pluginConfigDir = path.join(this.paths.profileDir);
+
+        await mkdirp(path.join(pluginConfigDir, 'clientconfig'));
+
         await writeFile(
-            path.join(this.paths.componentsDir, 'beefweb.config.json'),
+            path.join(pluginConfigDir, 'config.json'),
             JSON.stringify(settings));
     }
 
