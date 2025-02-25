@@ -136,8 +136,8 @@ class PlaylistContent extends React.PureComponent
 
         const play = () => this.context.playlistModel.activateItem(index);
         const appendToQueue = () => this.context.playQueueModel.appendToQueue(playlistId, index);
-        let remove = null;
 
+        let remove = null;
         if (allowChangePlaylists)
         {
             remove = () => this.context.playlistModel.removeItem(index);
