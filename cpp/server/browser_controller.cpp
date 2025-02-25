@@ -69,7 +69,7 @@ ResponsePtr BrowserController::getRoots()
 {
     std::vector<FileSystemEntry> roots;
 
-    for (auto& dir : settings_->musicDirsP)
+    for (auto& dir : settings_->musicDirs)
     {
         auto info = file_io::tryQueryInfo(dir);
 

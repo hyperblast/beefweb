@@ -32,11 +32,11 @@ public:
 
     int port = MSRV_DEFAULT_PORT;
     bool allowRemote = true;
-    std::vector<std::string> musicDirs;
-    std::vector<Path> musicDirsP;
+    std::vector<std::string> musicDirsStr;
+    std::vector<Path> musicDirs;
     std::string webRoot;
-    std::string clientConfigDir;
-    Path clientConfigDirP;
+    std::string clientConfigDirStr;
+    Path clientConfigDir;
     ApiPermissions permissions = ApiPermissions::ALL;
 
     bool authRequired = false;

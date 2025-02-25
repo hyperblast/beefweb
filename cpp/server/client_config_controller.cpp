@@ -53,7 +53,7 @@ Path ClientConfigController::getFilePath()
         throw InvalidRequestException("invalid configuration id: " + id);
     }
 
-    return settings_->clientConfigDirP / pathFromUtf8(id + ".json");
+    return settings_->clientConfigDir / pathFromUtf8(id + ".json");
 }
 
 void ClientConfigController::defineRoutes(Router* router, WorkQueue* workQueue, SettingsDataPtr settings)

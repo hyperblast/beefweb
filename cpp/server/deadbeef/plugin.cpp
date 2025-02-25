@@ -59,7 +59,7 @@ void Plugin::reconfigure()
 
     settings->port = port_;
     settings->allowRemote = allowRemote_;
-    settings->musicDirs = parseValueList<std::string>(musicDirs_, ';');
+    settings->musicDirsStr = parseValueList<std::string>(musicDirs_, ';');
     settings->authRequired = authRequired_;
     settings->authUser = authUser_;
     settings->authPassword = authPassword_;

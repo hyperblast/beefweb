@@ -119,7 +119,7 @@ const Path& SettingsData::getDefaultWebRoot()
 
 bool SettingsData::isAllowedPath(const Path& path) const
 {
-    for (const auto& root : musicDirsP)
+    for (const auto& root : musicDirs)
     {
         if (isSubpath(root, path))
             return true;
@@ -150,23 +150,23 @@ void SettingsData::initialize(const Path& profileDir)
         webRoot = pathToUtf8(getDefaultWebRoot());
     }
 
-    clientConfigDirP = pathFromUtf8(clientConfigDir).lexically_normal().make_preferred();
+    clientConfigDir = pathFromUtf8(clientConfigDirStr).lexically_normal().make_preferred();
 
-    if (!clientConfigDirP.empty() && !clientConfigDirP.is_absolute())
+    if (!clientConfigDir.empty() && !clientConfigDir.is_absolute())
     {
-        logError("ignoring non-absolute client config dir: %s", clientConfigDir.c_str());
-        clientConfigDirP.clear();
+        logError("ignoring non-absolute client config dir: %s", clientConfigDirStr.c_str());
+        clientConfigDir.clear();
     }
 
-    if (clientConfigDirP.empty())
+    if (clientConfigDir.empty())
     {
-        clientConfigDirP = defaultConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+        clientConfigDir = defaultConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
     }
 
-    musicDirsP.clear();
-    musicDirsP.reserve(musicDirs.size());
+    musicDirs.clear();
+    musicDirs.reserve(musicDirsStr.size());
 
-    for (const auto& dir : musicDirs)
+    for (const auto& dir : musicDirsStr)
     {
         auto path = pathFromUtf8(dir).lexically_normal().make_preferred();
 
@@ -176,7 +176,7 @@ void SettingsData::initialize(const Path& profileDir)
             continue;
         }
 
-        musicDirsP.emplace_back(std::move(path));
+        musicDirs.emplace_back(std::move(path));
     }
 }
 
@@ -203,7 +203,7 @@ void SettingsData::loadFromJson(const Json& json)
 
     loadValue(json, &port, "port");
     loadValue(json, &allowRemote, "allowRemote");
-    loadValue(json, &musicDirs, "musicDirs");
+    loadValue(json, &musicDirsStr, "musicDirs");
     loadValue(json, &webRoot, "webRoot");
     loadValue(json, &authRequired, "authRequired");
     loadValue(json, &authUser, "authUser");
