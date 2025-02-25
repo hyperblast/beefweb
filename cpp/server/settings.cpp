@@ -4,6 +4,9 @@
 
 #include <stdexcept>
 
+#define MSRV_CONFIG_FILE        "config.json"
+#define MSRV_CLIENT_CONFIG_DIR  "clientconfig"
+
 namespace msrv {
 
 namespace {
@@ -56,7 +59,11 @@ void tryCopyFile(const Path& from, const Path& to)
     if (fs::is_regular_file(from, ec) && !fs::exists(to, ec))
     {
         logInfo("migrating config file: %s -> %s", pathToUtf8(from).c_str(), pathToUtf8(to).c_str());
+
         fs::copy_file(from, to, ec);
+
+        if (ec.failed())
+            logError("copying failed: %s", ec.what().c_str());
     }
 }
 
@@ -66,7 +73,7 @@ void tryCopyDirectory(const Path& from, const Path& to)
 
     if (fs::is_directory(from, ec))
     {
-        for (auto& entry : fs::directory_iterator(from))
+        for (auto& entry : fs::directory_iterator(from, ec))
         {
             tryCopyFile(entry.path(), to / entry.path().filename());
         }
@@ -84,8 +91,8 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
         boost::system::error_code ec;
 
         auto newConfigDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
-        auto newConfigFile = newConfigDir / MSRV_PATH_LITERAL("config.json");
-        auto newClientConfigDir = newConfigDir / MSRV_PATH_LITERAL("clientconfig");
+        auto newConfigFile = newConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
+        auto newClientConfigDir = newConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
 
         if (fs::exists(newClientConfigDir, ec))
             return;
@@ -96,11 +103,11 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
         if (!userConfigDir.empty())
         {
             auto oldConfigDir = userConfigDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID) / pathFromUtf8(appName);
-            tryCopyFile(oldConfigDir / MSRV_PATH_LITERAL(MSRV_OLD_CONFIG_FILE), newConfigFile);
-            tryCopyDirectory(oldConfigDir / MSRV_PATH_LITERAL("clientconfig"), newClientConfigDir);
+            tryCopyFile(oldConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
+            tryCopyDirectory(oldConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR), newClientConfigDir);
         }
 
-        tryCopyFile(getBundleDir() / MSRV_PATH_LITERAL(MSRV_OLD_CONFIG_FILE), newConfigFile);
+        tryCopyFile(getBundleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
     });
 }
 
@@ -127,7 +134,7 @@ void SettingsData::initialize(const Path& profileDir)
 
     auto defaultConfigDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
 
-    loadFromFile(defaultConfigDir / MSRV_PATH_LITERAL("config.json"));
+    loadFromFile(defaultConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE));
 
     auto envConfigFile = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
     if (!envConfigFile.empty())
@@ -153,7 +160,7 @@ void SettingsData::initialize(const Path& profileDir)
 
     if (clientConfigDirP.empty())
     {
-        clientConfigDirP = defaultConfigDir / MSRV_PATH_LITERAL("clientconfig");
+        clientConfigDirP = defaultConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
     }
 
     musicDirsP.clear();

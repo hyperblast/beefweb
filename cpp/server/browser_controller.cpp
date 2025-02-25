@@ -89,8 +89,9 @@ ResponsePtr BrowserController::getEntries()
         return Response::error(HttpStatus::S_403_FORBIDDEN, "listing directory is not allowed");
 
     std::vector<FileSystemEntry> entries;
+    boost::system::error_code ec;
 
-    for (auto& entry : fs::directory_iterator(normalizedPath))
+    for (auto& entry : fs::directory_iterator(normalizedPath, ec))
     {
         auto& path = entry.path();
         auto info = file_io::tryQueryInfo(path);
