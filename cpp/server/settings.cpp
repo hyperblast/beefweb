@@ -4,9 +4,6 @@
 
 #include <stdexcept>
 
-#define MSRV_CONFIG_FILE        "config.json"
-#define MSRV_CLIENT_CONFIG_DIR  "clientconfig"
-
 namespace msrv {
 
 namespace {
@@ -106,8 +103,11 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
         if (!userConfigDir.empty())
         {
             auto oldConfigDir = userConfigDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID) / pathFromUtf8(appName);
-            tryCopyFile(oldConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
-            tryCopyDirectory(oldConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR), newClientConfigDir, MSRV_PATH_LITERAL(".json"));
+            auto oldConfigFile = oldConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD);
+            auto oldClientConfigDir = oldConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+
+            tryCopyFile(oldConfigFile, newConfigFile);
+            tryCopyDirectory(oldClientConfigDir, newClientConfigDir, MSRV_PATH_LITERAL(".json"));
         }
 
         tryCopyFile(getBundleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
@@ -135,9 +135,9 @@ void SettingsData::initialize(const Path& profileDir)
 {
     assert(!profileDir.empty());
 
-    auto defaultConfigDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
+    auto configDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
 
-    loadFromFile(defaultConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE));
+    loadFromFile(configDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE));
 
     auto envConfigFile = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
     if (!envConfigFile.empty())
@@ -163,7 +163,7 @@ void SettingsData::initialize(const Path& profileDir)
 
     if (clientConfigDir.empty())
     {
-        clientConfigDir = defaultConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+        clientConfigDir = configDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
     }
 
     musicDirs.clear();

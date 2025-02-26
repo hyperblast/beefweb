@@ -49,9 +49,10 @@ Path ClientConfigController::getFilePath()
     auto id = param<std::string>("id");
 
     if (!std::regex_match(id, idPattern))
-    {
         throw InvalidRequestException("invalid configuration id: " + id);
-    }
+
+    if (settings_->clientConfigDir.empty())
+        throw OperationForbiddenException();
 
     return settings_->clientConfigDir / pathFromUtf8(id + ".json");
 }
