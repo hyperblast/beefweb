@@ -22,9 +22,10 @@ The following options are available:
     "authRequired": false,
     "authUser": "",
     "authPassword": "",
-    "webRoot": "{directory of beefweb binary}/beefweb.root",
+    "webRoot": "{directory of beefweb .dll or .so}/beefweb.root",
     "urlMappings": {},
-    "responseHeaders": {}
+    "responseHeaders": {},
+    "clientConfigDir": "{player profile directory}/beefweb/clientconfig"
 }
 ```
 
@@ -49,8 +50,6 @@ The following options are available:
 ### Web server settings
 
 `webRoot: string` - Root directory where static web content is located. This path has to be absolute.
-
-Default value is the directory of beefweb binary (`foo_beefweb.dll` / `beefweb.so`) plus `beefweb.root`
 
 `urlMappings: {string: string}` - Alternative web directories defined by URL prefix
 
@@ -81,5 +80,3 @@ Please read [documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CO
 ### Other settings
 
 `clientConfigDir: string` - Path to directory where client configuration is stored. Must be absolute.
-
-Default value is `{player_profile_dir}/beefweb/clientconfig`
