@@ -22,7 +22,7 @@ public:
 
     void reconfigure();
 
-    static Path getProfilePath();
+    static Path getProfileDir();
 
 private:
     static Plugin* current_;

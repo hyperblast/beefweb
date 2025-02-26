@@ -21,7 +21,7 @@ Plugin::~Plugin()
     current_ = nullptr;
 }
 
-Path Plugin::getProfilePath()
+Path Plugin::getProfileDir()
 {
     const char* path = core_api::get_profile_path();
 
@@ -43,7 +43,7 @@ void Plugin::reconfigure()
     settings->authPassword = settings_store::authPassword;
     settings->permissions = settings_store::getPermissions();
 
-    settings->initialize(getProfilePath());
+    settings->initialize(getProfileDir());
 
     host_.reconfigure(std::move(settings));
 }
@@ -58,7 +58,7 @@ public:
     void on_init() override
     {
         Logger::setCurrent(&logger_);
-        SettingsData::migrate(MSRV_PLAYER_FOOBAR2000, Plugin::getProfilePath());
+        SettingsData::migrate(MSRV_PLAYER_FOOBAR2000, Plugin::getProfileDir());
         tryCatchLog([this] { plugin_ = std::make_unique<Plugin>(); });
     }
 
