@@ -46,6 +46,9 @@ void Plugin::handleConfigChanged()
 void Plugin::handlePluginsLoaded()
 {
     pluginsLoaded_ = true;
+
+    SettingsData::migrate(MSRV_PLAYER_DEADBEEF, getProfileDir());
+
     refreshSettings();
     reconfigure();
 }
@@ -56,13 +59,13 @@ void Plugin::reconfigure()
 
     settings->port = port_;
     settings->allowRemote = allowRemote_;
-    settings->musicDirs = parseValueList<std::string>(musicDirs_, ';');
+    settings->musicDirsStr = parseValueList<std::string>(musicDirs_, ';');
     settings->authRequired = authRequired_;
     settings->authUser = authUser_;
     settings->authPassword = authPassword_;
     settings->permissions = permissions_;
 
-    settings->loadAll(MSRV_PLAYER_DEADBEEF);
+    settings->initialize(getProfileDir());
 
     host_.reconfigure(std::move(settings));
 }

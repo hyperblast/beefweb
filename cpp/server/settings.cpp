@@ -34,12 +34,6 @@ const Path& getBundleDir()
     return path;
 }
 
-const Path& getBundledConfigFile()
-{
-    static Path path = getBundleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
-    return path;
-}
-
 template<typename T>
 void loadValue(const Json& json, T* value, const char* name)
 {
@@ -55,14 +49,70 @@ void loadValue(const Json& json, T* value, const char* name)
     }
 }
 
-}
-
-SettingsData::SettingsData()
-    : webRoot(pathToUtf8(getDefaultWebRoot()))
+void tryCopyFile(const Path& from, const Path& to)
 {
+    boost::system::error_code ec;
+
+    if (fs::is_regular_file(from, ec) && !fs::exists(to, ec))
+    {
+        logInfo("migrating config file: %s -> %s", pathToUtf8(from).c_str(), pathToUtf8(to).c_str());
+
+        fs::copy_file(from, to, ec);
+
+        if (ec.failed())
+            logError("copying failed: %s", ec.what().c_str());
+    }
 }
 
+void tryCopyDirectory(const Path& from, const Path& to, const Path& ext)
+{
+    boost::system::error_code ec;
+
+    if (!fs::is_directory(from, ec))
+        return;
+
+    for (auto& entry : fs::directory_iterator(from, ec))
+    {
+        if (entry.path().extension() == ext)
+        {
+            tryCopyFile(entry.path(), to / entry.path().filename());
+        }
+    }
+}
+
+}
+
+SettingsData::SettingsData() = default;
 SettingsData::~SettingsData() = default;
+
+void SettingsData::migrate(const char* appName, const Path& profileDir)
+{
+    tryCatchLog([&] {
+        boost::system::error_code ec;
+
+        auto newConfigDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
+        auto newConfigFile = newConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
+        auto newClientConfigDir = newConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+
+        if (fs::exists(newClientConfigDir, ec))
+            return;
+
+        fs::create_directories(newClientConfigDir, ec);
+
+        auto userConfigDir = getUserConfigDir();
+        if (!userConfigDir.empty())
+        {
+            auto oldConfigDir = userConfigDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID) / pathFromUtf8(appName);
+            auto oldConfigFile = oldConfigDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD);
+            auto oldClientConfigDir = oldConfigDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+
+            tryCopyFile(oldConfigFile, newConfigFile);
+            tryCopyDirectory(oldClientConfigDir, newClientConfigDir, MSRV_PATH_LITERAL(".json"));
+        }
+
+        tryCopyFile(getBundleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
+    });
+}
 
 const Path& SettingsData::getDefaultWebRoot()
 {
@@ -70,35 +120,9 @@ const Path& SettingsData::getDefaultWebRoot()
     return path;
 }
 
-Path SettingsData::getConfigDir(const char* appName)
-{
-    auto baseDir = getUserConfigDir();
-    return baseDir.empty() ? Path() : baseDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID) / pathFromUtf8(appName);
-}
-
-Path SettingsData::getConfigFile(const char* appName)
-{
-    auto baseDir = getConfigDir(appName);
-    return baseDir.empty() ? Path() : baseDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE);
-}
-
-void SettingsData::initialize()
-{
-    musicPaths.clear();
-    musicPaths.reserve(musicDirs.size());
-
-    for (const auto& dir : musicDirs)
-        musicPaths.emplace_back(pathFromUtf8(dir).lexically_normal().make_preferred());
-
-    musicDirs.clear();
-
-    for (const auto& path : musicPaths)
-        musicDirs.emplace_back(pathToUtf8(path));
-}
-
 bool SettingsData::isAllowedPath(const Path& path) const
 {
-    for (const auto& root : musicPaths)
+    for (const auto& root : musicDirs)
     {
         if (isSubpath(root, path))
             return true;
@@ -107,19 +131,56 @@ bool SettingsData::isAllowedPath(const Path& path) const
     return false;
 }
 
-void SettingsData::loadAll(const char* appName)
+void SettingsData::initialize(const Path& profileDir)
 {
-    loadFromFile(getBundledConfigFile());
+    assert(!profileDir.empty());
 
-    auto configPath = getConfigFile(appName);
-    if (!configPath.empty())
-        loadFromFile(configPath);
+    auto configDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
 
-    configPath = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
-    if (!configPath.empty())
-        loadFromFile(configPath);
+    loadFromFile(configDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE));
 
-    initialize();
+    auto envConfigFile = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
+    if (!envConfigFile.empty())
+    {
+        if (envConfigFile.is_absolute())
+            loadFromFile(envConfigFile);
+        else
+            logError("ignoring non-absolute config file path: %s", envConfigFile.c_str());
+    }
+
+    if (webRoot.empty())
+    {
+        webRoot = pathToUtf8(getDefaultWebRoot());
+    }
+
+    clientConfigDir = pathFromUtf8(clientConfigDirStr).lexically_normal().make_preferred();
+
+    if (!clientConfigDir.empty() && !clientConfigDir.is_absolute())
+    {
+        logError("ignoring non-absolute client config dir: %s", clientConfigDirStr.c_str());
+        clientConfigDir.clear();
+    }
+
+    if (clientConfigDir.empty())
+    {
+        clientConfigDir = configDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+    }
+
+    musicDirs.clear();
+    musicDirs.reserve(musicDirsStr.size());
+
+    for (const auto& dir : musicDirsStr)
+    {
+        auto path = pathFromUtf8(dir).lexically_normal().make_preferred();
+
+        if (!path.is_absolute())
+        {
+            logError("ignoring non-absolute music dir: %s", dir.c_str());
+            continue;
+        }
+
+        musicDirs.emplace_back(std::move(path));
+    }
 }
 
 void SettingsData::loadFromFile(const Path& path)
@@ -145,7 +206,7 @@ void SettingsData::loadFromJson(const Json& json)
 
     loadValue(json, &port, "port");
     loadValue(json, &allowRemote, "allowRemote");
-    loadValue(json, &musicDirs, "musicDirs");
+    loadValue(json, &musicDirsStr, "musicDirs");
     loadValue(json, &webRoot, "webRoot");
     loadValue(json, &authRequired, "authRequired");
     loadValue(json, &authUser, "authUser");

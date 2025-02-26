@@ -81,16 +81,14 @@ class PlayerController
 
     async initProfile()
     {
-        const profileDir = await tmpdir({ prefix: 'beefweb-api-tests-' });
-        const configDir = path.join(profileDir, '.config/deadbeef');
-        const libDir = path.join(profileDir, '.local/lib/deadbeef');
-        const configFile = path.join(configDir, 'config');
-        const logFile = path.join(profileDir, 'run.log');
+        const userProfileDir = await tmpdir({ prefix: 'beefweb-api-tests-' });
+        const profileDir = path.join(userProfileDir, '.config/deadbeef');
+        const libDir = path.join(userProfileDir, '.local/lib/deadbeef');
+        const logFile = path.join(userProfileDir, 'run.log');
 
         Object.assign(this.paths, {
+            userProfileDir,
             profileDir,
-            configDir,
-            configFile,
             libDir,
             logFile,
         });
@@ -105,16 +103,18 @@ class PlayerController
             .map(key => `${key} ${settings[key]}\n`)
             .join('');
 
-        await mkdirp(this.paths.configDir);
-        await writeFile(this.paths.configFile, data);
+        await mkdirp(this.paths.profileDir);
+        await writeFile(path.join(this.paths.profileDir, 'config'), data);
     }
 
     async writePluginSettings(settings)
     {
-        await mkdirp(this.paths.libDir);
+        const pluginConfigDir = path.join(this.paths.profileDir, 'beefweb');
+    
+        await mkdirp(path.join(pluginConfigDir, 'clientconfig'));
 
         await writeFile(
-            path.join(this.paths.libDir, 'beefweb.config.json'),
+            path.join(pluginConfigDir, 'config.json'),
             JSON.stringify(settings));
     }
 
@@ -132,8 +132,8 @@ class PlayerController
 
     async removeTempFiles()
     {
-        if (this.paths.profileDir)
-            await rimraf(this.paths.profileDir);
+        if (this.paths.userProfileDir)
+            await rimraf(this.paths.userProfileDir);
     }
 
     async startProcess(environment)
@@ -142,15 +142,15 @@ class PlayerController
             {},
             process.env,
             {
-                HOME: this.paths.profileDir,
-                XDG_CONFIG_HOME: path.join(this.paths.profileDir, '.config')
+                HOME: this.paths.userProfileDir,
+                XDG_CONFIG_HOME: path.join(this.paths.userProfileDir, '.config')
             },
             environment);
 
         const logFile = await open(this.paths.logFile, 'w');
 
         this.process = childProcess.spawn(this.paths.playerBinary, [], {
-            cwd: this.paths.profileDir,
+            cwd: this.paths.userProfileDir,
             env,
             stdio: ['ignore', logFile, logFile],
             detached: true,

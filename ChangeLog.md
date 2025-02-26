@@ -7,6 +7,8 @@
 - Allow to limit client operations (e.g. playlist modification)
 - Fix various issues in API documentation
 - Fix view height initialization on mobile browsers
+- BREAKING CHANGE: no longer use .dll/.so directory or "beefweb" directory in user profile for configuration files,
+use "beefweb" directory in player profile instead. Existing config files will be copied to new location.
 ### foobar2000
 - Add support for custom volume controls (e.g. for foo_out_upnp)
 

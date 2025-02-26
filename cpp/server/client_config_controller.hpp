@@ -11,14 +11,14 @@ class Router;
 class ClientConfigController : public ControllerBase
 {
 public:
-    ClientConfigController(Request* request, SettingsDataPtr settings, const char* appName);
+    ClientConfigController(Request* request, SettingsDataPtr settings);
     ~ClientConfigController() = default;
 
     ResponsePtr getConfig();
     void setConfig();
     void removeConfig();
 
-    static void defineRoutes(Router* router, WorkQueue* workQueue, SettingsDataPtr settings, const char* appName);
+    static void defineRoutes(Router* router, WorkQueue* workQueue, SettingsDataPtr settings);
 
 private:
     Path getFilePath();
@@ -29,7 +29,6 @@ private:
     }
 
     SettingsDataPtr settings_;
-    const char* appName_;
 };
 
 }

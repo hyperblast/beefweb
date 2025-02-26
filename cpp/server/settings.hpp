@@ -32,9 +32,11 @@ public:
 
     int port = MSRV_DEFAULT_PORT;
     bool allowRemote = true;
-    std::vector<std::string> musicDirs;
-    std::vector<Path> musicPaths;
+    std::vector<std::string> musicDirsStr;
+    std::vector<Path> musicDirs;
     std::string webRoot;
+    std::string clientConfigDirStr;
+    Path clientConfigDir;
     ApiPermissions permissions = ApiPermissions::ALL;
 
     bool authRequired = false;
@@ -43,9 +45,8 @@ public:
     std::unordered_map<std::string, std::string> responseHeaders;
     std::unordered_map<std::string, std::string> urlMappings;
 
+    static void migrate(const char* appName, const Path& profileDir);
     static const Path& getDefaultWebRoot();
-    static Path getConfigDir(const char* appName);
-    static Path getConfigFile(const char* appName);
 
     void ensurePermissions(ApiPermissions p) const
     {
@@ -54,13 +55,11 @@ public:
     }
 
     bool isAllowedPath(const Path& path) const;
-
-    void loadFromJson(const Json& json);
-    void loadFromFile(const Path& path);
-    void loadAll(const char* appName);
+    void initialize(const Path& profileDir);
 
 private:
-    void initialize();
+    void loadFromJson(const Json& json);
+    void loadFromFile(const Path& path);
 
     void loadPermissions(const Json& jsonRoot);
     void loadPermission(const Json& json, const char* name, ApiPermissions value);
