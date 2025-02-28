@@ -21,6 +21,10 @@ function readFirstLine(filePath)
 
 export function getBinaryDir(buildType)
 {
-    return process.env.BEEFWEB_BINARY_DIR ||
-        path.join(path.dirname(__dirname), 'build', buildType);
+    const binaryDir = process.env.BEEFWEB_BINARY_DIR;
+
+    if (!binaryDir)
+        return path.join(path.dirname(__dirname), 'build', buildType);
+
+    return path.isAbsolute(binaryDir) ? binaryDir : path.join(path.dirname(__dirname), binaryDir);
 }
