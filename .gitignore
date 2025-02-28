@@ -1,6 +1,7 @@
 .idea
 apps
 build
+ci_build
 cmake-build*
 
 js/.idea
@@ -12,7 +13,7 @@ js/api_tests/tmp
 js/client/dist
 js/client/node_modules
 
-js/webui/build
+js/webui/build_config
 js/webui/node_modules
 
 cpp/.idea
