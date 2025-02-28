@@ -22,6 +22,6 @@ function readFirstLine(filePath)
 export function getBinaryDir(buildType)
 {
     return process.env.BEEFWEB_BINARY_DIR ||
-        readFirstLine(path.join(__dirname, 'cmake_binary_dir.txt')) ||
+        readFirstLine(path.join(__dirname, 'binary_dir.txt')) ||
         path.join(path.dirname(__dirname), 'build', buildType);
 }
