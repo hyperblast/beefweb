@@ -19,7 +19,7 @@
 #define MSRV_PLAYER_FOOBAR2000  "foobar2000"
 #define MSRV_VERSION_MAJOR      0
 #define MSRV_VERSION_MINOR      10
-#define MSRV_VERSION_FINAL      0
+#define MSRV_VERSION_FINAL      1
 
 #define MSRV_DEFAULT_PORT       8880
 #define MSRV_DEFAULT_TEST_PORT  8882
