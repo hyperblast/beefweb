@@ -125,7 +125,7 @@ add_custom_target(
 
 set(
     LICENSES_FILE
-    ${WEBUI_OUTPUT_DIR}/third-party-licenses.txt
+    ${WEBUI_OUTPUT_DIR}/${WEBUI_LICENSES_FILE}
 )
 
 add_custom_command(

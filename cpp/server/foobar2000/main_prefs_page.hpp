@@ -4,7 +4,7 @@
 #include "prefs_page.hpp"
 #include "utils.hpp"
 
-#include "../project_info.hpp"
+#include "project_info.hpp"
 #include "../charset.hpp"
 
 #include <string>

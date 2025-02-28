@@ -1,3 +1,4 @@
+include(ProjectInfo)
 include(Utils)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -43,16 +44,15 @@ if(OS_WINDOWS)
     )
 endif()
 
-if(ENABLE_GIT_REV)
-    add_definitions(-DMSRV_GIT_REV=${GIT_REV})
-endif()
-
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Nljson REQUIRED)
 find_package(StringEncoders REQUIRED)
 find_package(ZLIB REQUIRED)
 
+configure_file(project_info.hpp.in project_info.hpp)
+
 include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${Boost_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
     ${STRINGENCODERS_INCLUDE_DIRS}
@@ -99,7 +99,6 @@ set(
     player_controller.cpp player_controller.hpp
     player_events.cpp player_events.hpp
     playlists_controller.cpp playlists_controller.hpp
-    project_info.hpp
     query_controller.cpp query_controller.hpp
     request.cpp request.hpp
     request_filter.cpp request_filter.hpp

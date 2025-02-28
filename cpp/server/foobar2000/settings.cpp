@@ -1,5 +1,5 @@
 #include "settings.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 #include "../string_utils.hpp"
 #include "../core_types_parsers.hpp"
 

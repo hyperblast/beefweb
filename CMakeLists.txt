@@ -7,6 +7,8 @@ project(
     HOMEPAGE_URL "http://github.com/hyperblast/beefweb"
 )
 
+set(PROJECT_VERSION_FINAL 0)
+
 set(CMAKE_MODULE_PATH       "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 set(EXTLIB_SOURCE_DIR       "${CMAKE_CURRENT_SOURCE_DIR}/cpp/extlibs")
 set(EXTLIB_INSTALL_DIR      "${CMAKE_CURRENT_BINARY_DIR}/cpp/extlibs-root")
@@ -45,7 +47,9 @@ if(OS_WINDOWS)
 endif()
 
 if(ENABLE_GIT_REV)
-    detect_git_revision(GIT_REV)
+    detect_git_revision(PROJECT_GIT_REV)
+else()
+    set(PROJECT_GIT_REV unknown)
 endif()
 
 add_subdirectory(cpp)

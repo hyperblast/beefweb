@@ -9,7 +9,7 @@
 #endif
 
 #include "../log.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 
 namespace msrv { int testMain(int argc, char** argv); }
 

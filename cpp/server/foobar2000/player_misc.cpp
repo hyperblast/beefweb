@@ -1,4 +1,4 @@
-#include "../project_info.hpp"
+#include "project_info.hpp"
 #include "player.hpp"
 
 namespace msrv {

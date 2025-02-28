@@ -4,7 +4,7 @@
 #include "../settings.hpp"
 #include "../server_host.hpp"
 #include "../file_system.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 
 #include "player.hpp"
 

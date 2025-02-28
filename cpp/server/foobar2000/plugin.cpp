@@ -1,6 +1,6 @@
 #include "plugin.hpp"
 #include "settings.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 #include "utils.hpp"
 
 #include <memory>
@@ -83,7 +83,7 @@ DECLARE_COMPONENT_VERSION(
     MSRV_LICENSE_TEXT
 );
 
-VALIDATE_COMPONENT_FILENAME(MSRV_FOOBAR2000_FILE);
+VALIDATE_COMPONENT_FILENAME(MSRV_FOOBAR2000_PLUGIN_FILE);
 
 }
 

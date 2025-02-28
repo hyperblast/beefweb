@@ -1,0 +1,4 @@
+{
+    global: @DEADBEEF_ENTRY_POINT@;
+    local: *;
+};
