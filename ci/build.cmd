@@ -47,6 +47,12 @@ cpack -C %BUILD_TYPE%
 
 @if errorlevel 1 goto :end
 
-ren *.zip *.fb2k-component
+if [%BUILD_ARCH%] == [Win32] (
+    set SUFFIX=x86
+) else (
+    set SUFFIX=x64
+)
+
+ren *.zip *.%SUFFIX%.fb2k-component
 
 :end
