@@ -103,8 +103,9 @@ set(
 set(
     WEBUI_BUILD_ARGS
     --env "outputDir=${WEBUI_OUTPUT_DIR}"
-    --env "$<IF:$<CONFIG:Debug>,no_release,release>"
-    --env "$<IF:$<BOOL:${ENABLE_TESTS}>,tests,no_tests>"
+    --env "buildType=$<CONFIG>"
+    --env "$<IF:$<BOOL:${ENABLE_TESTS}>,tests,noTests>"
+    --env saveConfig
 )
 
 add_custom_command(

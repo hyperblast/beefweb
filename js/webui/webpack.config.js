@@ -1,4 +1,5 @@
 import path from 'path'
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 import webpack from 'webpack'
 import HtmlPlugin from 'html-webpack-plugin'
@@ -9,6 +10,13 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const buildTypes = {
+    Debug: true,
+    Release: true,
+    MinSizeRel: true,
+    RelWithDebInfo: true
+};
 
 function configCommon(config, params)
 {
@@ -131,22 +139,72 @@ function configRelease(config)
     });
 }
 
-function getDefaultOutputDir(buildType)
+function readFirstLine(filePath)
 {
-    const rootDir = path.dirname(path.dirname(__dirname));
-    const outputDirName = process.platform === 'win32' ? buildType : 'output';
-
-    return path.join(rootDir, 'build', buildType, 'js', 'webui', outputDirName);
+    try
+    {
+        const data = fs.readFileSync(filePath, { encoding: 'utf-8' });
+        const match = data.match(/.+/);
+        return match ? match[0] : null;
+    }
+    catch (err)
+    {
+        return null;
+    }
 }
 
 function makeBuildParams(env)
 {
-    const buildType = env.release ? 'Release' : 'Debug';
+    let { outputDir, buildType } = env;
+
+    if (!buildType)
+    {
+        buildType = 'Debug';
+    }
+    else if (!buildTypes[buildType])
+    {
+        console.log(`Unknown build type '${buildType}' was specfied, defaulting to 'Debug'`);
+        buildType = 'Debug';
+    }
+
+    const buildConfigDir = path.join(__dirname, 'build_config');
+    const outputDirConfigFile = path.join(buildConfigDir, 'output_dir.' + buildType + '.txt');
+
+    if (env.saveConfig)
+    {
+        if (!outputDir)
+            throw Error('saveConfig was specified, but no outputDir is provided');
+
+        const prevDir = readFirstLine(outputDirConfigFile);
+
+        if (prevDir !== outputDir)
+        {
+            if (prevDir)
+                console.log(`overwriting previous outputDir: ${prevDir}`);
+
+            try
+            {
+                fs.mkdirSync(buildConfigDir);
+            }
+            catch (err)
+            {
+            }
+
+            fs.writeFileSync(outputDirConfigFile, outputDir + '\n');
+        }
+    }
+    else if (!outputDir)
+    {
+        outputDir = readFirstLine(outputDirConfigFile);
+
+        if (!outputDir)
+            throw Error('No outputDir was specified and output dir configuration is not saved previously');
+    }
+
     const enableTests = !!env.tests;
     const analyze = !!env.analyze;
 
     const sourceDir = path.join(__dirname, 'src');
-    const outputDir = env.outputDir || getDefaultOutputDir(buildType);
 
     return {
         buildType,
@@ -175,7 +233,7 @@ function makeTarget(configTarget, params)
     configCommon(config, params);
     configTarget(config, params);
 
-    (params.buildType === 'Release' ? configRelease : configDebug)(config, params);
+    (params.buildType === 'Debug' ? configDebug : configRelease)(config, params);
 
     return config;
 }
