@@ -33,8 +33,6 @@ add_custom_command(
 
 add_custom_target(js_packages DEPENDS ${YARN_INTEGRITY})
 
-configure_file(binary_dir.txt.in ${CMAKE_CURRENT_SOURCE_DIR}/binary_dir.txt)
-
 if(ENABLE_TESTS)
     add_subdirectory(api_tests)
 endif()

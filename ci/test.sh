@@ -19,8 +19,11 @@ function run_api_tests
 {
     (
         banner "Running API tests on deadbeef $1"
+
+        export BEEFWEB_BINARY_DIR=$(pwd)/ci_build/$BUILD_TYPE
         export BEEFWEB_TEST_DEADBEEF_VERSION=$1
         export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
+
         apps/deadbeef/$1/deadbeef --version
         cd js/api_tests
         yarn test
