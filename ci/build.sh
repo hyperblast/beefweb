@@ -2,12 +2,21 @@
 
 set -e
 
+function banner
+{
+    echo
+    echo "=== $1 ==="
+    echo
+}
+
 function main
 {
+    banner 'Cleaning build directory'
     rm -rf ci_build/$BUILD_TYPE
     mkdir -p ci_build/$BUILD_TYPE
     cd ci_build/$BUILD_TYPE
 
+    banner 'Configuring'
     cmake ../.. \
         -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
         -DENABLE_TESTS=ON \
@@ -15,8 +24,10 @@ function main
         -DENABLE_STATIC_STDLIB=ON \
         -DENABLE_GIT_REV=ON
 
+    banner 'Building'
     cmake --build . --parallel
 
+    banner 'Creating packages'
     cpack
 }
 

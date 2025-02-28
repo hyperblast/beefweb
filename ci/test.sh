@@ -5,14 +5,14 @@ set -e
 function banner
 {
     echo
-    echo ">> $1 <<"
+    echo "=== $1 ==="
     echo
 }
 
 function run_server_tests
 {
     banner 'Running server tests'
-    build/$BUILD_TYPE/cpp/server/tests/core_tests
+    ci_build/$BUILD_TYPE/cpp/server/tests/core_tests
 }
 
 function run_api_tests
