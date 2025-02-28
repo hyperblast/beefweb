@@ -7,6 +7,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import { getBinaryDir } from '../config.mjs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -139,23 +140,16 @@ function configRelease(config)
     });
 }
 
-function readFirstLine(filePath)
+function getDefaultOutputDir(buildType)
 {
-    try
-    {
-        const data = fs.readFileSync(filePath, { encoding: 'utf-8' });
-        const match = data.match(/.+/);
-        return match ? match[0] : null;
-    }
-    catch (err)
-    {
-        return null;
-    }
+    const binaryDir = getBinaryDir(buildType);
+    const outputDirName = process.platform === 'win32' ? buildType : 'output';
+    return path.join(binaryDir, 'js', 'webui', outputDirName);
 }
 
 function makeBuildParams(env)
 {
-    let { outputDir, buildType } = env;
+    let { buildType, outputDir, analyze, tests } = env;
 
     if (!buildType)
     {
@@ -166,49 +160,15 @@ function makeBuildParams(env)
         console.log(`Unknown build type '${buildType}' was specfied, defaulting to 'Debug'`);
         buildType = 'Debug';
     }
-
-    const buildConfigDir = path.join(__dirname, 'build_config');
-    const outputDirConfigFile = path.join(buildConfigDir, 'output_dir.' + buildType + '.txt');
-
-    if (env.saveConfig)
-    {
-        if (!outputDir)
-            throw Error('saveConfig was specified, but no outputDir is provided');
-
-        const prevDir = readFirstLine(outputDirConfigFile);
-
-        if (prevDir !== outputDir)
-        {
-            if (prevDir)
-                console.log(`overwriting previous outputDir: ${prevDir}`);
-
-            try
-            {
-                fs.mkdirSync(buildConfigDir);
-            }
-            catch (err)
-            {
-            }
-
-            fs.writeFileSync(outputDirConfigFile, outputDir + '\n');
-        }
-    }
-    else if (!outputDir)
-    {
-        outputDir = readFirstLine(outputDirConfigFile);
-
-        if (!outputDir)
-            throw Error('No outputDir was specified and output dir configuration is not saved previously');
-    }
-
-    const enableTests = !!env.tests;
-    const analyze = !!env.analyze;
+    
+    if (!outputDir)
+        outputDir = getDefaultOutputDir(buildType);
 
     const sourceDir = path.join(__dirname, 'src');
 
     return {
         buildType,
-        enableTests,
+        enableTests: tests,
         analyze,
         sourceDir,
         outputDir,

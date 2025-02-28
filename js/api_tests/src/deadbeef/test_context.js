@@ -1,4 +1,5 @@
 import path from 'path';
+import { getBinaryDir } from '../../../config.mjs';
 import { TestContextFactory } from '../test_context.js';
 import PlayerController from './player_controller.js';
 
@@ -16,9 +17,7 @@ export class DeadbeefTestContextFactory extends TestContextFactory
         config.playerDirBase = path.join(config.appsDir, 'deadbeef', version);
 
         config.pluginBuildDir = path.join(
-            config.rootDir,
-            'build',
-            config.buildType,
+            getBinaryDir(config.buildType),
             'cpp',
             'server',
             'deadbeef');
