@@ -142,19 +142,20 @@ add_custom_target(
     DEPENDS ${LICENSES_FILE}
 )
 
-function(install_webui DIR)
+function(install_webui COMP DIR)
     install(
         DIRECTORY "${WEBUI_OUTPUT_DIR}/"
         DESTINATION "${DIR}/${WEBUI_ROOT}"
+        COMPONENT ${COMP}
         PATTERN tests EXCLUDE
         PATTERN sandbox EXCLUDE
     )
 endfunction()
 
 if(ENABLE_DEADBEEF)
-    install_webui(${DEADBEEF_LIB_DIR})
+    install_webui(deadbeef_plugin ${DEADBEEF_LIB_DIR})
 endif()
 
 if(ENABLE_FOOBAR2000)
-    install_webui(.)
+    install_webui(foobar2000_plugin .)
 endif()

@@ -31,7 +31,7 @@ if(OS_POSIX)
     option(ENABLE_DEADBEEF              "Build plugin for deadbeef player" ON)
     option(ENABLE_DEADBEEF_SINGLE_DIR   "Install into single directory (no 'lib/deadbeef' prefix in paths)" ON)
 
-    local_library_option(deadbeef ENABLE_LOCAL_DEADBEEF "ENABLE_PLAYER_DEADBEEF")
+    local_library_option(deadbeef ENABLE_LOCAL_DEADBEEF "ENABLE_DEADBEEF")
 endif()
 
 if(OS_WINDOWS)
@@ -53,6 +53,8 @@ add_subdirectory(cpp)
 if(ENABLE_JS)
     add_subdirectory(js)
 endif()
+
+install(FILES LICENSE DESTINATION . COMPONENT license)
 
 include(ProjectInfo)
 include(CPack)

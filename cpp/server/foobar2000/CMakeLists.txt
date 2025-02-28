@@ -55,4 +55,5 @@ set_target_properties(
 install(
     TARGETS foobar2000_plugin
     RUTNIME DESTINATION .
+    COMPONENT foobar2000_plugin
 )

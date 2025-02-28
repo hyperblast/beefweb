@@ -44,6 +44,7 @@ add_dependencies(deadbeef_plugin ext_all)
 install(
     TARGETS deadbeef_plugin
     LIBRARY DESTINATION ${DEADBEEF_LIB_DIR}
+    COMPONENT deadbeef_plugin
 )
 
 if(ENABLE_TESTS)
