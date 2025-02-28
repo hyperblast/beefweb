@@ -10,6 +10,7 @@
 rmdir /S /Q ci_build\%BUILD_TYPE%
 mkdir ci_build\%BUILD_TYPE%
 cd ci_build\%BUILD_TYPE%
+@if errorlevel 1 goto :end
 
 cmake ../.. -DENABLE_TESTS=ON -DENABLE_GIT_REV=ON
 @if errorlevel 1 goto :end
