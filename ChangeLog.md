@@ -1,3 +1,6 @@
+# Changes in v0.11 (not released)
+
+
 # Changes in v0.10 (released 2025-02-28)
 - Add ability to configure output device
 - Add ability to combine Play and Pause buttons
