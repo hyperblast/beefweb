@@ -21,3 +21,14 @@ if(OS_WINDOWS)
 else()
     set(CPACK_GENERATOR TXZ)
 endif()
+
+# If there is only one component CPack insists on making "all components" package
+# Provide archive file name for such case
+
+if(ENABLE_DEADBEEF)
+    set(CPACK_PACKAGE_FILE_NAME ${CPACK_ARCHIVE_DEADBEEF_PLUGIN_FILE_NAME})
+endif()
+
+if(ENABLE_FOOBAR2000)
+    set(CPACK_PACKAGE_FILE_NAME ${CPACK_ARCHIVE_FOOBAR2000_PLUGIN_FILE_NAME})
+endif()

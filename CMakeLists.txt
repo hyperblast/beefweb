@@ -54,8 +54,6 @@ if(ENABLE_JS)
     add_subdirectory(js)
 endif()
 
-install(FILES LICENSE DESTINATION . COMPONENT license)
-
 include(ProjectInfo)
 include(CPack)
 
