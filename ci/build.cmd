@@ -7,6 +7,12 @@
     goto :end
 )
 
+@if [%BUILD_ARCH%] == [] (
+    @echo BUILD_ARCH is not set, aborting
+    @cmd /c "exit 1"
+    goto :end
+)
+
 @echo.
 @echo === Cleaning build directory ===
 @echo.
@@ -21,7 +27,7 @@ cd ci_build\%BUILD_TYPE%
 @echo === Configuring ===
 @echo.
 
-cmake ../.. -DENABLE_TESTS=ON -DENABLE_GIT_REV=ON
+cmake ../.. -A %BUILD_ARCH% -DENABLE_TESTS=ON -DENABLE_GIT_REV=ON
 
 @if errorlevel 1 goto :end
 
