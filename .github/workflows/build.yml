@@ -41,7 +41,7 @@ jobs:
       with:
         name: beefweb_deadbeef
         if-no-files-found: error
-        path: build/${{ env.BUILD_TYPE }}/*.tar.xz
+        path: 'build/${{ env.BUILD_TYPE }}/*.tar.xz'
 
   build_foobar2000:
 
@@ -89,9 +89,7 @@ jobs:
       with:
         name: 'beefweb_foobar2000_${{ matrix.arch }}'
         if-no-files-found: error
-        path: |
-          build\${{ env.BUILD_TYPE }}.pkg\*.fb2k-component
-          build\${{ env.BUILD_TYPE }}.pkg\*.zip
+        path: 'build\${{ env.BUILD_TYPE }}\*.fb2k-component'
 
   merge_foobar2000_packages:
 
