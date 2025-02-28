@@ -7,6 +7,7 @@ set(CPACK_PACKAGE_VENDOR "Hyperblast")
 set(CPACK_ARCHIVE_DEADBEEF_PLUGIN_FILE_NAME      "ddb_beefweb-${CMAKE_PROJECT_VERSION}")
 set(CPACK_ARCHIVE_FOOBAR2000_PLUGIN_FILE_NAME    "foo_beefweb-${CMAKE_PROJECT_VERSION}")
 
+set(CPACK_STRIP_FILES ON)
 set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
 
@@ -22,7 +23,7 @@ else()
     set(CPACK_GENERATOR TXZ)
 endif()
 
-# If there is only one component CPack insists on making "all components" package
+# If there is only one component CPack ignores CPACK_ARCHIVE_COMPONENT_INSTALL
 # Provide archive file name for such case
 
 if(ENABLE_DEADBEEF)
