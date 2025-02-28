@@ -152,11 +152,11 @@ set(
 add_library(core OBJECT ${CORE_SOURCES})
 add_dependencies(core ext_all)
 
-if(ENABLE_PLAYER_DEADBEEF)
+if(ENABLE_DEADBEEF)
     add_subdirectory(deadbeef)
 endif()
 
-if(ENABLE_PLAYER_FOOBAR2000)
+if(ENABLE_FOOBAR2000)
     add_subdirectory(foobar2000)
 endif()
 

@@ -1,3 +1,5 @@
+include(ProjectInfo)
+
 set(
     WEBUI_SOURCES
     .babelrc
@@ -139,3 +141,20 @@ add_custom_target(
     licenses_file ALL
     DEPENDS ${LICENSES_FILE}
 )
+
+function(install_webui DIR)
+    install(
+        DIRECTORY "${WEBUI_OUTPUT_DIR}/"
+        DESTINATION "${DIR}/${WEBUI_ROOT}"
+        PATTERN tests EXCLUDE
+        PATTERN sandbox EXCLUDE
+    )
+endfunction()
+
+if(ENABLE_DEADBEEF)
+    install_webui(${DEADBEEF_LIB_DIR})
+endif()
+
+if(ENABLE_FOOBAR2000)
+    install_webui(.)
+endif()

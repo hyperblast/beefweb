@@ -51,3 +51,8 @@ set_target_properties(
     foobar2000_plugin PROPERTIES
     OUTPUT_NAME "${FOOBAR2000_PLUGIN_FILE}"
 )
+
+install(
+    TARGETS foobar2000_plugin
+    RUTNIME DESTINATION .
+)

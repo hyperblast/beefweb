@@ -41,6 +41,11 @@ set_target_properties(
 
 add_dependencies(deadbeef_plugin ext_all)
 
+install(
+    TARGETS deadbeef_plugin
+    LIBRARY DESTINATION ${DEADBEEF_LIB_DIR}
+)
+
 if(ENABLE_TESTS)
     add_library(
         deadbeef_plugin_dummy_gui MODULE
