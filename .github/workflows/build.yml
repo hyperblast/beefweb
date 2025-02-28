@@ -41,7 +41,7 @@ jobs:
       with:
         name: beefweb_deadbeef
         if-no-files-found: error
-        path: build/${{ env.BUILD_TYPE }}.pkg/*.tar.gz
+        path: build/${{ env.BUILD_TYPE }}/*.tar.xz
 
   build_foobar2000:
 
