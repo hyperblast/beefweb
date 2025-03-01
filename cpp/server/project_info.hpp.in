@@ -4,7 +4,6 @@
 #define MSRV_STRINGIFY(v)   MSRV_STRINGIFY_(v)
 
 #define MSRV_PROJECT_ID             "@PROJECT_NAME@"
-#define MSRV_PROJECT_NAME           "@PROJECT_DESCRIPTION@"
 #define MSRV_PROJECT_URL            "@PROJECT_HOMEPAGE_URL@"
 #define MSRV_WEBUI_ROOT             "@WEBUI_ROOT@"
 #define MSRV_WEBUI_LICENSES_FILE    "@WEBUI_LICENSES_FILE@"
@@ -16,6 +15,7 @@
 #define MSRV_DEADBEEF_ENTRY_POINT   @DEADBEEF_ENTRY_POINT@
 #define MSRV_FOOBAR2000_PLUGIN_FILE "@FOOBAR2000_PLUGIN_FILE@.dll"
 
+#define MSRV_PROJECT_NAME           "Beefweb Remote Control"
 #define MSRV_PROJECT_DESC           "Provides web UI and HTTP API for controlling player remotely"
 #define MSRV_DEFAULT_PORT           8880
 #define MSRV_DEFAULT_TEST_PORT      8882
