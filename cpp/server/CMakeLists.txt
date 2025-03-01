@@ -1,5 +1,3 @@
-include(Utils)
-
 set(CMAKE_CXX_STANDARD 17)
 
 if(CXX_GCC OR CXX_CLANG)
