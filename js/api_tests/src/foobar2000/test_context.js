@@ -1,5 +1,4 @@
 import path from 'path';
-import { getBinaryDir } from '../../../config.mjs';
 import { TestContextFactory } from '../test_context.js';
 import PlayerController from './player_controller.js';
 
@@ -16,7 +15,7 @@ export class Foobar2000TestContextFactory extends TestContextFactory
         config.playerDir = path.join(config.appsDir, 'foobar2000', config.playerVersion);
 
         config.pluginBuildDir = path.join(
-            getBinaryDir(config.buildType),
+            config.binaryDir,
             'cpp',
             'server',
             'foobar2000',

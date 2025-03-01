@@ -1,5 +1,6 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { getBinaryDir } from '../../config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
 
@@ -94,6 +95,7 @@ export class TestContextFactory
         const testsRootDir = path.dirname(__dirname);
         const rootDir = path.dirname(path.dirname(testsRootDir));
         const buildType = BEEFWEB_TEST_BUILD_TYPE || 'Debug';
+        const binaryDir = getBinaryDir(buildType);
         const port = parseInt(BEEFWEB_TEST_PORT) || 8879;
         const serverUrl = `http://127.0.0.1:${port}`;
 
@@ -113,6 +115,7 @@ export class TestContextFactory
             port,
             serverUrl,
             rootDir,
+            binaryDir,
             testsRootDir,
             appsDir,
             webRootDir,
