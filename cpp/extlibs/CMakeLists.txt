@@ -1,5 +1,3 @@
-include(Utils)
-
 set(EXTLIB_CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cache)
 set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply-patches${SCRIPT_SUFFIX})
 
