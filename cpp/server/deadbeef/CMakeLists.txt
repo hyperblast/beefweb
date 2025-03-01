@@ -1,5 +1,3 @@
-include(ProjectInfo)
-
 find_package(Deadbeef REQUIRED)
 
 include_directories(

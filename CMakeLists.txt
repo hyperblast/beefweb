@@ -15,6 +15,7 @@ set(EXTLIB_INSTALL_DIR      "${CMAKE_CURRENT_BINARY_DIR}/cpp/extlibs-root")
 set(EXTLIB_LICENSES_FILE    "${EXTLIB_SOURCE_DIR}/licenses.txt")
 
 include(EnvInfo)
+include(ProjectInfo)
 include(Utils)
 
 option(ENABLE_TESTS             "Build tests" OFF)
@@ -52,13 +53,19 @@ else()
     set(PROJECT_GIT_REV unknown)
 endif()
 
+if(ENABLE_DEADBEEF_SINGLE_DIR)
+    set(DEADBEEF_LIB_DIR ".")
+else()
+    set(DEADBEEF_LIB_DIR "lib/deadbeef")
+endif()
+
 add_subdirectory(cpp)
 
 if(ENABLE_JS)
     add_subdirectory(js)
 endif()
 
-include(ProjectInfo)
+include(Packages)
 include(CPack)
 
 print_status()

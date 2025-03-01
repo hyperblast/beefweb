@@ -1,4 +1,3 @@
-include(ProjectInfo)
 include(Utils)
 
 set(CMAKE_CXX_STANDARD 17)

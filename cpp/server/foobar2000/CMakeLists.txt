@@ -1,5 +1,3 @@
-include(ProjectInfo)
-
 find_package(foosdk REQUIRED)
 
 include_directories(

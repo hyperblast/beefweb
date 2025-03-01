@@ -1,5 +1,3 @@
-include(ProjectInfo)
-
 set(
     WEBUI_SOURCES
     .babelrc

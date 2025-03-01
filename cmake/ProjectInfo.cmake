@@ -1,56 +1,11 @@
-set(DEADBEEF_PLUGIN_FILE    "beefweb")
 set(DEADBEEF_ENTRY_POINT    "beefweb_load")
+set(DEADBEEF_PLUGIN_FILE    "beefweb")
+set(DEADBEEF_PACKAGE_NAME   "ddb_beefweb")
 
 set(FOOBAR2000_PLUGIN_FILE  "foo_beefweb")
+set(FOOBAR2000_PACKAGE_NAME "foo_beefweb")
 
 set(WEBUI_ROOT              "beefweb.root")
 set(WEBUI_LICENSES_FILE     "third-party-licenses.txt")
 
-set(CPACK_PACKAGE_VENDOR "Hyperblast")
-
-if(${CMAKE_SIZEOF_VOID_P} STREQUAL 4)
-    set(ARCH_SUFFIX "-x86")
-elseif(${CMAKE_SIZEOF_VOID_P} STREQUAL 8)
-    set(ARCH_SUFFIX "-x86_64")
-else()
-    set(ARCH_SUFFIX "")
-endif()
-
-if(PROJECT_VERSION_FINAL)
-    set(VERSION_SUFFIX "")
-else()
-    set(VERSION_SUFFIX "_${PROJECT_GIT_REV}")
-endif()
-
-set(CPACK_ARCHIVE_DEADBEEF_PLUGIN_FILE_NAME      "ddb_beefweb-${CMAKE_PROJECT_VERSION}${VERSION_SUFFIX}${ARCH_SUFFIX}")
-set(CPACK_ARCHIVE_FOOBAR2000_PLUGIN_FILE_NAME    "foo_beefweb-${CMAKE_PROJECT_VERSION}${VERSION_SUFFIX}${ARCH_SUFFIX}")
-
-unset(VERSION_SUFFIX)
-unset(ARCH_SUFFIX)
-
-set(CPACK_STRIP_FILES ON)
-set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
-set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
-
-if(ENABLE_DEADBEEF_SINGLE_DIR)
-    set(DEADBEEF_LIB_DIR ".")
-else()
-    set(DEADBEEF_LIB_DIR "lib/deadbeef")
-endif()
-
-if(OS_WINDOWS)
-    set(CPACK_GENERATOR ZIP)
-else()
-    set(CPACK_GENERATOR TXZ)
-endif()
-
-# If there is only one component CPack ignores CPACK_ARCHIVE_COMPONENT_INSTALL
-# Provide archive file name for such case
-
-if(ENABLE_DEADBEEF)
-    set(CPACK_PACKAGE_FILE_NAME ${CPACK_ARCHIVE_DEADBEEF_PLUGIN_FILE_NAME})
-endif()
-
-if(ENABLE_FOOBAR2000)
-    set(CPACK_PACKAGE_FILE_NAME ${CPACK_ARCHIVE_FOOBAR2000_PLUGIN_FILE_NAME})
-endif()
+set(CPACK_PACKAGE_VENDOR    "Hyperblast")
