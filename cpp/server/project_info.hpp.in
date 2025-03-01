@@ -34,10 +34,6 @@
 #define MSRV_VERSION_SUFFIX " alpha"
 #endif
 
-#ifndef MSRV_GIT_REV
-#define MSRV_GIT_REV "unknown"
-#endif
-
 #define MSRV_VERSION_STRING_DETAILED \
     "v" MSRV_VERSION_STRING MSRV_VERSION_SUFFIX " [git:" MSRV_GIT_REV "]"
 
