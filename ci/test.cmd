@@ -1,7 +1,7 @@
 setlocal
 cd "%~dp0.."
 
-set BEEFWEB_BINARY_DIR=ci_build\%BUILD_TYPE%
+set BEEFWEB_BINARY_DIR_BASE=ci_build
 set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 
 @echo.

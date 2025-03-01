@@ -19,12 +19,19 @@ function readFirstLine(filePath)
     }
 }
 
+function toAbsolutePath(p)
+{
+    return path.isAbsolute(p) ? p : path.join(path.dirname(__dirname), p);
+}
+
 export function getBinaryDir(buildType)
 {
     const binaryDir = process.env.BEEFWEB_BINARY_DIR;
 
-    if (!binaryDir)
-        return path.join(path.dirname(__dirname), 'build', buildType);
+    if (binaryDir)
+        return toAbsolutePath(binaryDir);
 
-    return path.isAbsolute(binaryDir) ? binaryDir : path.join(path.dirname(__dirname), binaryDir);
+    const binaryDirBase = process.env.BEEFWEB_BINARY_DIR_BASE || 'build';
+
+    return path.join(toAbsolutePath(binaryDirBase), buildType);
 }
