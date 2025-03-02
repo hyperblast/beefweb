@@ -2,6 +2,8 @@
 set(
 WEBUI_SOURCES
 package.json
+.babelrc
+webpack.config.js
 src/about_box.js
 src/album_art_viewer.js
 src/app.js

@@ -6,6 +6,13 @@ set -e
 
 root_dir=`readlink -f "$(dirname $0)"`
 
+function echo_if_exists
+{
+    if [ -f "$1" ]; then
+        echo "$1"
+    fi
+}
+
 function update
 {
     cd "$root_dir/$1"
@@ -19,6 +26,8 @@ function update
         echo "set("
         echo "${name}_SOURCES"
         echo "package.json"
+        echo_if_exists .babelrc
+        echo_if_exists webpack.config.js
         find src -type f | sort
         echo ")"
     ) > $output

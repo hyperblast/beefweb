@@ -2,6 +2,7 @@
 set(
 CLIENT_SOURCES
 package.json
+webpack.config.js
 src/enums.js
 src/index.js
 src/player_client.js

@@ -1,12 +1,4 @@
 include(sources.cmake)
-
-set(
-    WEBUI_SOURCES
-    ${WEBUI_SOURCES}
-    .babelrc
-    webpack.config.js
-)
-
 include(../client/sources.cmake)
 
 list(TRANSFORM JS_CLIENT_SOURCES PREPEND "../client/src/")
