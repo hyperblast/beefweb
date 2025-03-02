@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Regenerate sources.cmake for each project
+# Regenerate sources.cmake for each JS project
 
 set -e
 
