@@ -3,18 +3,10 @@ apps
 build
 ci_build
 cmake-build*
+node_modules
 
 js/.idea
-js/node_modules
-js/binary_dir.txt
-
-js/api_tests/node_modules
-js/api_tests/tmp
-
 js/client/dist
-js/client/node_modules
-
-js/webui/node_modules
 
 cpp/.idea
 cpp/build

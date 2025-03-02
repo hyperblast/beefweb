@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build docker image
-      run: ci/docker/build-image.sh
+      run: ci/docker/build_image.sh
 
     - name: Install apps
       run: ci/install.sh

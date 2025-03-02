@@ -37,4 +37,4 @@ function main
     run_api_tests v1.9
 }
 
-source "$(dirname $0)/run-in-docker.sh"
+source "$(dirname $0)/run_in_docker.sh"

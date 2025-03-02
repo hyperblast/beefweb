@@ -31,4 +31,4 @@ function main
     cpack
 }
 
-source "$(dirname $0)/run-in-docker.sh"
+source "$(dirname $0)/run_in_docker.sh"
