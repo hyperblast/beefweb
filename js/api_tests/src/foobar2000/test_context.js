@@ -15,9 +15,7 @@ export class Foobar2000TestContextFactory extends TestContextFactory
         config.playerDir = path.join(config.appsDir, 'foobar2000', config.playerVersion);
 
         config.pluginBuildDir = path.join(
-            config.rootDir,
-            'build',
-            config.buildType,
+            config.binaryDir,
             'cpp',
             'server',
             'foobar2000',

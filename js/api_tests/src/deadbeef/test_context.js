@@ -16,9 +16,7 @@ export class DeadbeefTestContextFactory extends TestContextFactory
         config.playerDirBase = path.join(config.appsDir, 'deadbeef', version);
 
         config.pluginBuildDir = path.join(
-            config.rootDir,
-            'build',
-            config.buildType,
+            config.binaryDir,
             'cpp',
             'server',
             'deadbeef');

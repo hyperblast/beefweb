@@ -1,5 +1,5 @@
 #include "player.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 #include "../string_utils.hpp"
 
 namespace msrv {

@@ -2,7 +2,7 @@
 
 #include "../log.hpp"
 #include "common.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 
 #include <memory>
 #include <mutex>

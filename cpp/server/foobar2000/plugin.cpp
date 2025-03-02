@@ -1,6 +1,6 @@
 #include "plugin.hpp"
 #include "settings.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 #include "utils.hpp"
 
 #include <memory>
@@ -77,13 +77,13 @@ initquit_factory_t<InitQuit> InitQuitFactory;
 
 DECLARE_COMPONENT_VERSION(
     MSRV_PROJECT_NAME,
-    MSRV_VERSION_STRING MSRV_VERSION_TYPE,
+    MSRV_VERSION_STRING MSRV_VERSION_SUFFIX,
     MSRV_PROJECT_DESC "\n\n"
     MSRV_VERSION_STRING_DETAILED "\n\n"
     MSRV_LICENSE_TEXT
 );
 
-VALIDATE_COMPONENT_FILENAME(MSRV_FOOBAR2000_FILE);
+VALIDATE_COMPONENT_FILENAME(MSRV_FOOBAR2000_PLUGIN_FILE);
 
 }
 

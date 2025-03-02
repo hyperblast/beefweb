@@ -4,7 +4,7 @@
 #include "settings.hpp"
 
 #include "../log.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 #include "../system.hpp"
 
 namespace msrv::player_foobar2000 {

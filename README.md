@@ -58,38 +58,8 @@ as well as client library for .NET.
 ![Configuration screen for foobar2000](https://user-images.githubusercontent.com/19171756/44335583-9c015380-a47d-11e8-9934-639503538f8e.png)
 
 ### How to build
-#### DeaDBeeF
-Beefweb has two distinctive parts: server plugin and web user interface.
-To build server you'll need a descent C++ compiler such as `gcc` or `clang` and a recent version of `cmake`.
-To build web UI you'll need `node` runtime and `yarn` package manager.
 
-The following command will build server, ui and `.tar.gz` package:
-
-    $ scripts/build.sh --all --release
-
-Get `ddb_beefweb-*.tar.gz` from `build/release` directory.
-
-You could also build debug version by switching `--release` to `--debug`.
-
-#### foobar2000
-You'll need to install Visual Studio (currently tested with VS2022 Community).
-
-The following programs should be installed in addition:
-- `git` version control system
-- `node` runtime
-- `yarn` package manager (`npm i -g yarn`)
-- `cmake` build system (could be installed with Visual Studio or separately)
-- `7z` archiver
-
-These programs should be available in `PATH`.
-
-Open Visual Studio command prompt, navigate to project directory, run the following command:
-
-    > msbuild scripts\build.proj /p:Configuration=Release
-
-Get `foo_beefweb-*.fb2k-component` from `build\release` directory.
-
-You could also build debug version by switching `/p:Configuration=Release` to `/p:Configuration=Debug`
+See [building instructions](docs/building.md).
 
 ### HTTP API
 Swagger API definition is [available](https://hyperblast.org/beefweb/api).

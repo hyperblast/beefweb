@@ -3,7 +3,7 @@
 #include "../request_filter.hpp"
 #include "../work_queue.hpp"
 #include "../settings.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 
 #include <catch.hpp>
 #include <boost/thread/future.hpp>

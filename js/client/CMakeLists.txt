@@ -1,12 +1,4 @@
-set(
-    JS_CLIENT_SOURCES
-    package.json
-    webpack.config.js
-    src/index.js
-    src/enums.js
-    src/utils.js
-    src/player_client.js
-)
+include(sources.cmake)
 
 add_custom_target(
     js_client

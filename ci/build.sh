@@ -2,10 +2,33 @@
 
 set -e
 
-function main
+function banner
 {
-    scripts/build.sh --all --$BUILD_TYPE --tests --verbose \
-        -DENABLE_WERROR=ON -DENABLE_STATIC_STDLIB=ON -DENABLE_GIT_REV=ON
+    echo
+    echo "=== $1 ==="
+    echo
 }
 
-source "$(dirname $0)/run-in-docker.sh"
+function main
+{
+    banner 'Cleaning build directory'
+    rm -rf ci_build/$BUILD_TYPE
+    mkdir -p ci_build/$BUILD_TYPE
+    cd ci_build/$BUILD_TYPE
+
+    banner 'Configuring'
+    cmake ../.. \
+        -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+        -DENABLE_TESTS=ON \
+        -DENABLE_WERROR=ON \
+        -DENABLE_STATIC_STDLIB=ON \
+        -DENABLE_GIT_REV=ON
+
+    banner 'Building'
+    cmake --build . --parallel
+
+    banner 'Creating packages'
+    cpack
+}
+
+source "$(dirname $0)/run_in_docker.sh"

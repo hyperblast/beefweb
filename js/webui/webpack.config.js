@@ -1,4 +1,5 @@
 import path from 'path'
+import fs from 'fs'
 import { fileURLToPath } from 'url'
 import webpack from 'webpack'
 import HtmlPlugin from 'html-webpack-plugin'
@@ -6,9 +7,17 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import { getBinaryDir } from '../config.mjs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const buildTypes = {
+    Debug: true,
+    Release: true,
+    MinSizeRel: true,
+    RelWithDebInfo: true
+};
 
 function configCommon(config, params)
 {
@@ -133,24 +142,33 @@ function configRelease(config)
 
 function getDefaultOutputDir(buildType)
 {
-    const rootDir = path.dirname(path.dirname(__dirname));
+    const binaryDir = getBinaryDir(buildType);
     const outputDirName = process.platform === 'win32' ? buildType : 'output';
-
-    return path.join(rootDir, 'build', buildType, 'js', 'webui', outputDirName);
+    return path.join(binaryDir, 'js', 'webui', outputDirName);
 }
 
 function makeBuildParams(env)
 {
-    const buildType = env.release ? 'Release' : 'Debug';
-    const enableTests = !!env.tests;
-    const analyze = !!env.analyze;
+    let { buildType, outputDir, analyze, tests } = env;
+
+    if (!buildType)
+    {
+        buildType = 'Debug';
+    }
+    else if (!buildTypes[buildType])
+    {
+        console.log(`Unknown build type '${buildType}' was specfied, defaulting to 'Debug'`);
+        buildType = 'Debug';
+    }
+    
+    if (!outputDir)
+        outputDir = getDefaultOutputDir(buildType);
 
     const sourceDir = path.join(__dirname, 'src');
-    const outputDir = env.outputDir || getDefaultOutputDir(buildType);
 
     return {
         buildType,
-        enableTests,
+        enableTests: tests,
         analyze,
         sourceDir,
         outputDir,
@@ -175,7 +193,7 @@ function makeTarget(configTarget, params)
     configCommon(config, params);
     configTarget(config, params);
 
-    (params.buildType === 'Release' ? configRelease : configDebug)(config, params);
+    (params.buildType === 'Debug' ? configDebug : configRelease)(config, params);
 
     return config;
 }

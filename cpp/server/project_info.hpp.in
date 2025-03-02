@@ -1,0 +1,62 @@
+#pragma once
+
+#define MSRV_STRINGIFY_(v)  #v
+#define MSRV_STRINGIFY(v)   MSRV_STRINGIFY_(v)
+
+#define MSRV_WEBUI_ROOT             "@WEBUI_ROOT@"
+#define MSRV_WEBUI_LICENSES_FILE    "@WEBUI_LICENSES_FILE@"
+#define MSRV_VERSION_MAJOR          @PROJECT_VERSION_MAJOR@
+#define MSRV_VERSION_MINOR          @PROJECT_VERSION_MINOR@
+#define MSRV_VERSION_STRING         "@PROJECT_VERSION@"
+#define MSRV_VERSION_FINAL          @PROJECT_VERSION_FINAL@
+#define MSRV_GIT_REV                "@PROJECT_GIT_REV@"
+#define MSRV_DEADBEEF_ENTRY_POINT   @DEADBEEF_ENTRY_POINT@
+#define MSRV_FOOBAR2000_PLUGIN_FILE "@FOOBAR2000_PLUGIN_FILE@.dll"
+
+#define MSRV_PROJECT_ID             "beefweb"
+#define MSRV_PROJECT_NAME           "Beefweb Remote Control"
+#define MSRV_PROJECT_DESC           "Provides web UI and HTTP API for controlling player remotely"
+#define MSRV_DEFAULT_PORT           8880
+#define MSRV_DEFAULT_TEST_PORT      8882
+#define MSRV_CONFIG_FILE            "config.json"
+#define MSRV_CONFIG_FILE_OLD        "beefweb.config.json"
+#define MSRV_CONFIG_FILE_ENV        "BEEFWEB_CONFIG_FILE"
+#define MSRV_CLIENT_CONFIG_DIR      "clientconfig"
+#define MSRV_PROJECT_URL            "http://github.com/hyperblast/beefweb/"
+#define MSRV_DONATE_URL             "https://hyperblast.org/donate/"
+#define MSRV_API_DOCS_URL           "https://hyperblast.org/beefweb/api/"
+#define MSRV_PLAYER_DEADBEEF        "deadbeef"
+#define MSRV_PLAYER_FOOBAR2000      "foobar2000"
+
+#if MSRV_VERSION_FINAL
+#define MSRV_VERSION_SUFFIX ""
+#else
+#define MSRV_VERSION_SUFFIX " alpha"
+#endif
+
+#define MSRV_VERSION_STRING_DETAILED \
+    "v" MSRV_VERSION_STRING MSRV_VERSION_SUFFIX " [git:" MSRV_GIT_REV "]"
+
+#define MSRV_LICENSE_TEXT \
+    "Copyright 2015-2025 Hyperblast\n" \
+    "\n" \
+    "Permission is hereby granted, free of charge, to any person obtaining a copy " \
+    "of this software and associated documentation files (the \"Software\"), to deal " \
+    "in the Software without restriction, including without limitation the rights " \
+    "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell " \
+    "copies of the Software, and to permit persons to whom the Software is " \
+    "furnished to do so, subject to the following conditions:\n" \
+    "\n" \
+    "The above copyright notice and this permission notice shall be included in " \
+    "all copies or substantial portions of the Software.\n" \
+    "\n" \
+    "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR " \
+    "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, " \
+    "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE " \
+    "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER " \
+    "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, " \
+    "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN " \
+    "THE SOFTWARE.\n" \
+    "\n" \
+    "See provided file " MSRV_WEBUI_LICENSES_FILE " " \
+    "for details about third-party libraries used and their licensing conditions.\n"

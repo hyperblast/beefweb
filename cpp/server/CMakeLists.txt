@@ -1,5 +1,3 @@
-include(Utils)
-
 set(CMAKE_CXX_STANDARD 17)
 
 if(CXX_GCC OR CXX_CLANG)
@@ -43,16 +41,15 @@ if(OS_WINDOWS)
     )
 endif()
 
-if(ENABLE_GIT_REV)
-    add_definitions(-DMSRV_GIT_REV=${GIT_REV})
-endif()
-
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Nljson REQUIRED)
 find_package(StringEncoders REQUIRED)
 find_package(ZLIB REQUIRED)
 
+configure_file(project_info.hpp.in project_info.hpp)
+
 include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${Boost_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
     ${STRINGENCODERS_INCLUDE_DIRS}
@@ -99,7 +96,6 @@ set(
     player_controller.cpp player_controller.hpp
     player_events.cpp player_events.hpp
     playlists_controller.cpp playlists_controller.hpp
-    project_info.hpp
     query_controller.cpp query_controller.hpp
     request.cpp request.hpp
     request_filter.cpp request_filter.hpp
@@ -152,14 +148,29 @@ set(
 add_library(core OBJECT ${CORE_SOURCES})
 add_dependencies(core ext_all)
 
-if(ENABLE_PLAYER_DEADBEEF)
+if(ENABLE_DEADBEEF)
     add_subdirectory(deadbeef)
 endif()
 
-if(ENABLE_PLAYER_FOOBAR2000)
+if(ENABLE_FOOBAR2000)
     add_subdirectory(foobar2000)
 endif()
 
 if(ENABLE_TESTS)
     add_subdirectory(tests)
+
+    if(IS_MULTI_CONFIG)
+        set(CONFIG_JSON ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/config.json)
+    else()
+        set(CONFIG_JSON ${CMAKE_CURRENT_BINARY_DIR}/config.json)
+    endif()
+
+    add_custom_command(
+        OUTPUT ${CONFIG_JSON}
+        COMMAND ${CMAKE_COMMAND} -E echo "{\"webRoot\":\"${WEBUI_OUTPUT_DIR}\"}" > ${CONFIG_JSON}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        VERBATIM
+    )
+
+    add_custom_target(dev_config ALL DEPENDS ${CONFIG_JSON})
 endif()

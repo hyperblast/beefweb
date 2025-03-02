@@ -25,7 +25,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build docker image
-      run: ci/docker/build-image.sh
+      run: ci/docker/build_image.sh
 
     - name: Install apps
       run: ci/install.sh
@@ -41,7 +41,7 @@ jobs:
       with:
         name: beefweb_deadbeef
         if-no-files-found: error
-        path: build/${{ env.BUILD_TYPE }}.pkg/*.tar.gz
+        path: 'ci_build/${{ env.BUILD_TYPE }}/*.tar.xz'
 
   build_foobar2000:
 
@@ -89,9 +89,7 @@ jobs:
       with:
         name: 'beefweb_foobar2000_${{ matrix.arch }}'
         if-no-files-found: error
-        path: |
-          build\${{ env.BUILD_TYPE }}.pkg\*.fb2k-component
-          build\${{ env.BUILD_TYPE }}.pkg\*.zip
+        path: 'ci_build\${{ env.BUILD_TYPE }}\*.fb2k-component'
 
   merge_foobar2000_packages:
 
@@ -111,7 +109,7 @@ jobs:
       run: |
         pkg_ext=fb2k-component
         pkg_32=$(pwd)/input/*-x86.$pkg_ext
-        pkg_64=$(pwd)/input/*-x64.$pkg_ext
+        pkg_64=$(pwd)/input/*-x86_64.$pkg_ext
         pkg_unified=$(pwd)/output/$(basename $pkg_32 -x86.$pkg_ext).$pkg_ext
         mkdir -p work/x64 output
         (cd work/x64 && unzip $pkg_64 '*.dll')

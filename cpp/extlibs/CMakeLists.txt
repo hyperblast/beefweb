@@ -1,7 +1,5 @@
-include(Utils)
-
 set(EXTLIB_CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cache)
-set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply-patches${SCRIPT_SUFFIX})
+set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply_patches${SCRIPT_SUFFIX})
 
 set(
     EXTLIB_CMAKE_ARGS
@@ -62,6 +60,6 @@ if(ENABLE_LOCAL_ZLIB)
     add_subdirectory(zlib)
 endif()
 
-if(ENABLE_PLAYER_FOOBAR2000)
+if(ENABLE_FOOBAR2000)
     add_subdirectory(foosdk)
 endif()

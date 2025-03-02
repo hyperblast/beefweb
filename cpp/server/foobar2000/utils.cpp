@@ -1,5 +1,5 @@
 #include "utils.hpp"
-#include "../project_info.hpp"
+#include "project_info.hpp"
 
 namespace msrv::player_foobar2000 {
 

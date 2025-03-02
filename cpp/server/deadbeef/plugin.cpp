@@ -221,7 +221,7 @@ int PluginWrapper::handleMessage(uint32_t id, uintptr_t ctx, uint32_t p1, uint32
     return tryCatchLog([&] { instance_->handleMessage(id, ctx, p1, p2); }) ? 0 : -1;
 }
 
-extern "C" DB_plugin_t* MSRV_DEADBEEF_ENTRY(DB_functions_t* api)
+extern "C" DB_plugin_t* MSRV_DEADBEEF_ENTRY_POINT(DB_functions_t* api)
 {
     return PluginWrapper::load(api);
 }

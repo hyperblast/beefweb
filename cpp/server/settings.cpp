@@ -116,7 +116,7 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
 
 const Path& SettingsData::getDefaultWebRoot()
 {
-    static Path path = getBundleDir() / MSRV_PATH_LITERAL(MSRV_WEB_ROOT);
+    static Path path = getBundleDir() / MSRV_PATH_LITERAL(MSRV_WEBUI_ROOT);
     return path;
 }
 
