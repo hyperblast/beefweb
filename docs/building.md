@@ -37,16 +37,20 @@ $ cpack
 If you want to debug backend change `Release` to `Debug` in the commands above.
 
 ### foobar2000
-You'll need to install Visual Studio (currently tested with VS2022 Community).
+Visual Studio is used to build backend. Currently tested with VS2022 Community.
 
-Additionally `patch` tool needs to be available in `PATH`.
+During installation make sure to choose _Desktop development with C++_ workload.
+
+Recent versions of VS include CMake, there is no need to install it separately.
+
+`patch` program should be available in `PATH`.
 
 Alternatively you can install it locally:
 ```
 > scripts\install\patch.cmd
 ```
 
-The command above will unpack `patch.exe` to `apps\patch`.
+The command above will download and unpack `patch.exe` to `apps\patch`.
 
 Open Visual Studio command prompt, navigate to project directory, run the following commands:
 
@@ -55,10 +59,11 @@ Configure:
 ```
 > mkdir build\Release
 > cd build\Release
-> cmake ..\..
+> cmake -A x64 ..\..
 ```
 
-The command above creates Visual Studio solution `beefweb.sln`, which could be built in VS in usual way.
+This command creates Visual Studio solution `beefweb.sln`, which could be built in VS in usual way.
+If you want to build 32-bit version replace `x64` with `Win32` in `cmake` command above.
 
 Alternatively you can build from console:
 ```
