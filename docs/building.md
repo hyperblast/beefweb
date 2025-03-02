@@ -39,6 +39,15 @@ If you want to debug backend change `Release` to `Debug` in the commands above.
 ### foobar2000
 You'll need to install Visual Studio (currently tested with VS2022 Community).
 
+Additionally `patch` tool needs to be available in `PATH`.
+
+Alternatively you can install it locally:
+```
+> scripts\install\patch.cmd
+```
+
+The command above will unpack `patch.exe` to `apps\patch`.
+
 Open Visual Studio command prompt, navigate to project directory, run the following commands:
 
 Configure:
@@ -68,6 +77,13 @@ If you want to debug backend change `Release` to `Debug` in the commands above.
 
 Note: due to build system limitations you need to have separate build directories
 for each build type (Debug, Release, etc).
+
+### Investigating build issues
+
+If one of the `ext_xxx` projects fails to build
+usually this means issues with external project (downloading or building).
+
+See `build/<BUILD_TYPE>/cpp/extlibs-root/src/ext_xxx-stamp` directory for various `.log` files.
 
 ### Building backend only
 
