@@ -57,6 +57,12 @@ else()
     set(DEADBEEF_LIB_DIR "lib/deadbeef")
 endif()
 
+if(IS_MULTI_CONFIG)
+    set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/js/webui/$<CONFIG>)
+else()
+    set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/js/webui/output)
+endif()
+
 add_subdirectory(cpp)
 
 if(ENABLE_JS)

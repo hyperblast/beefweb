@@ -3,14 +3,6 @@ include(../client/sources.cmake)
 
 list(TRANSFORM JS_CLIENT_SOURCES PREPEND "../client/src/")
 
-get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
-if(IS_MULTI_CONFIG)
-    set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>)
-else()
-    set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/output)
-endif()
-
 set(
     WEBUI_OUTPUT_FILES
     ${WEBUI_OUTPUT_DIR}/bundle.js
