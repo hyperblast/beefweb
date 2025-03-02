@@ -4,11 +4,11 @@
 
 set -e
 
-js_dir=`readlink -f "$(dirname $0)/../js"`
+root_dir=`readlink -f "$(dirname $0)"`
 
 function update
 {
-    cd "$js_dir/$1"
+    cd "$root_dir/$1"
 
     name=`echo $1 | tr a-z A-Z`
 
