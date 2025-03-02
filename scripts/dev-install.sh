@@ -35,7 +35,7 @@ function install
     relink "$plugin_dir/$webui_root" "$webui_build_dir"
 }
 
-usage="Adds symlinks from ~/.local/lib/deadbeef to binaries in current build directory
+usage="Add symlinks from ~/.local/lib/deadbeef to binaries in current build directory
 
 Usage:
     $(basename $0) <build_type>

@@ -15,7 +15,7 @@ mkdir "%CONFIG_DIR%"
 cd "%~dp0..\build\%BUILD_TYPE%\cpp\server"
 
 @if errorlevel 1 (
-    @echo Build dir does not exist, aborting
+    @echo Build directory does not exist, aborting
     @goto :end
 )
 
@@ -25,7 +25,7 @@ copy /Y %BUILD_TYPE%\config.json    "%CONFIG_DIR%"
 @goto :end
 
 :usage
-@echo Copy binaries and config file from current build dir to foobar2000 profile 
+@echo Copy binaries and config file from current build directory to foobar2000 profile 
 @echo.
 @echo Usage:
 @echo     %~nx0 ^<build_type^>
