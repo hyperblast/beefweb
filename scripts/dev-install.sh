@@ -2,9 +2,10 @@
 
 set -e
 
-source "$(dirname $0)/config.sh"
-
 cd "$(dirname $0)/.."
+
+plugin_file=beefweb.so
+webui_root=beefweb.root
 
 function relink
 {
@@ -34,33 +35,27 @@ function install
     relink "$plugin_dir/$webui_root" "$webui_build_dir"
 }
 
-usage="Usage: $(basename $0) --debug|--release|--help
-Options:
-  --debug           install debug version
-  --release         install release version
-  --help            display this message
+usage="Adds symlinks in ~/.local/lib/deadbeef to binaries in current build directory
+
+Usage:
+    $(basename $0) <build_type>
+
+Build types:
+    Debug, Release, MinSizeRel, RelWithDebInfo
 "
 
 case "$1" in
-    --debug)
-        install Debug
+    Debug|Release|MinSizeRel|RelWithDebInfo)
+        install "$1"
         ;;
 
-    --release)
-        install Release
-        ;;
 
-    --help)
+    ""|-?|--help)
         echo "$usage"
-        ;;
-
-    "")
-        echo "$usage"
-        exit 1
         ;;
 
     *)
-        echo "invalid option: $1"
+        echo "invalid build type: $1, try --help"
         exit 1
         ;;
 esac
