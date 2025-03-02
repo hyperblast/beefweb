@@ -15,9 +15,9 @@ src/http_features_tests.js
 src/main.js
 src/outputs_api_tests.js
 src/permissions_tests.js
+src/play_queue_api_tests.js
 src/player_api_tests.js
 src/playlists_api_tests.js
-src/play_queue_api_tests.js
 src/query_api_tests.js
 src/request_handler.js
 src/static_files_tests.js

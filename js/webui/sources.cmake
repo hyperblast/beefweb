@@ -21,8 +21,8 @@ src/dialogs.js
 src/dom_utils.js
 src/dropdown.js
 src/elements.js
-src/file_browser_header.js
 src/file_browser.js
+src/file_browser_header.js
 src/file_browser_model.js
 src/general_settings.js
 src/index.html
@@ -36,6 +36,7 @@ src/notification_group.js
 src/notification_model.js
 src/output_settings.js
 src/output_settings_model.js
+src/play_queue_model.js
 src/playback_control.js
 src/playback_info_bar.js
 src/player_features.js
@@ -44,7 +45,6 @@ src/playlist_content.js
 src/playlist_menu.js
 src/playlist_model.js
 src/playlist_switcher.js
-src/play_queue_model.js
 src/position_control.js
 src/request_handler.js
 src/sandbox/index.js
@@ -53,8 +53,8 @@ src/service_context.js
 src/setting_editor.js
 src/settings_content.js
 src/settings_header.js
-src/settings_model_base.js
 src/settings_model.js
+src/settings_model_base.js
 src/settings_store.js
 src/status_bar.js
 src/style.less
