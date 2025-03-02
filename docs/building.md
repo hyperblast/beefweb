@@ -1,9 +1,10 @@
 ## Building instruction
 
 Beefweb has two distinctive parts: server plugin (backend) and web user interface (frontend).
+
 Server plugin is built using `cmake` and web interface is built using `webpack`.
 
-`webpack` is fully integrated into `cmake` build process,
+`webpack` is fully integrated into CMake build process,
 but could be run manually if only want to work frontend only.
 
 Additionally building frontend requires `node` runtime and `yarn` package manager.
