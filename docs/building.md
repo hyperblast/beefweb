@@ -1,11 +1,11 @@
-## Building instruction
+## Building instructions
 
 Beefweb has two distinctive parts: server plugin (backend) and web user interface (frontend).
 
 Server plugin is built using `cmake` and web interface is built using `webpack`.
 
 `webpack` is fully integrated into CMake build process,
-but could be run manually if only want to work frontend only.
+but could be run manually if only want to work on frontend only.
 
 Additionally building frontend requires `node` runtime and `yarn` package manager.
 Those should be available in `PATH`.
@@ -19,7 +19,7 @@ Configure:
 ```
 $ mkdir -p build/Release
 $ cd build/Release
-$ cmake -DCMAKE_BUILD_TYPE=Release ../..
+$ cmake ../.. -DCMAKE_BUILD_TYPE=Release
 ```
 
 Build:
@@ -59,7 +59,7 @@ Configure:
 ```
 > mkdir build\Release
 > cd build\Release
-> cmake -A x64 ..\..
+> cmake ..\.. -A x64
 ```
 
 This command creates Visual Studio solution `beefweb.sln`, which could be built in VS in usual way.
