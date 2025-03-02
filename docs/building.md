@@ -1,4 +1,4 @@
-## Building instructions
+# Building instructions
 
 Beefweb has two distinctive parts: server plugin (backend) and web user interface (frontend).
 
