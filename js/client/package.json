@@ -1,6 +1,6 @@
 {
   "name": "beefweb-client",
-  "version": "0.2.0",
+  "version": "0.11.0",
   "description": "Beefweb client library for browser and node",
   "main": "src/index.js",
   "type": "module",

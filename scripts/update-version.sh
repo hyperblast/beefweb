@@ -2,18 +2,18 @@
 
 set -e
 
-scripts_dir=$(readlink -f $(dirname $0))
-root_dir=$(readlink -f $scripts_dir/..)
+main_repo_dir=`readlink -f "$(dirname $0)/.."`
+dotnet_repo_dir=`readlink -f "$main_repo_dir/../beefweb_dotnet"`
 
 function usage
 {
-    usage_text="Usage: $(basename $0) target update_type
+    usage_text="Usage: $(basename $0) <repo> <update_type>
 
 Change current version and patch related files
 
-Targets:
-    app         patch server and web UI files
-    jslib       patch JS client library files
+Repositories:
+    main        main repo (server, webui, etc)
+    dotnet      dotnet repo (client, command line tool, etc)
 
 Update types:
     major       increment major version, minor is reset to 0, final is reset to 0
@@ -27,60 +27,54 @@ Update types:
     exit 1
 }
 
-function parse_version
+function init_version
 {
-    major=$(echo $1 | (IFS=.; read a b c; echo $a))
-    minor=$(echo $1 | (IFS=.; read a b c; echo $b))
+    cd "$root_dir"
+
+    source "version.sh"
+
+    major=$(echo $version | (IFS=.; read a b; echo $a))
+    minor=$(echo $version | (IFS=.; read a b; echo $b))
 }
 
-function init_app
+function update_version_sh
 {
-    source "$(dirname $0)/config.sh"
-    parse_version "$pkg_version"
-    final=$pkg_version_final
-}
-
-function init_jslib
-{
-    parse_version "$(jq -r .version $root_dir/js/client/package.json)"
-    final=0
+    sed -i "s|version=.*|version=$version|" version.sh
+    sed -i "s|final=.*|final=$final|" version.sh
 }
 
 function update_package_json
 {
-    sed -i "s|\"version\".*|\"version\": \"$version.0\",|" "$1/package.json"
+    sed -i "s|\"version\":.*|\"version\": \"${version3}\",|" "$1/package.json"
 }
 
-function update_app
+function update_main
 {
-    if [ "$final" -ne 0 ]; then
-        final_bool=True
-    else
-        final_bool=False
-    fi
+    cd "$main_repo_dir"
 
-    cd "$scripts_dir"
-    sed -i "s|pkg_version=.*|pkg_version=$version|" config.sh
-    sed -i "s|pkg_version_final=.*|pkg_version_final=$final|" config.sh
-    sed -i "s|<PackageVersion>.*|<PackageVersion>$version</PackageVersion>|" config.props
-    sed -i "s|<PackageVersionFinal>.*|<PackageVersionFinal>$final_bool</PackageVersionFinal>|" config.props
+    update_version_sh
 
-    cd "$root_dir/cpp/server"
-    sed -i "s|#define MSRV_VERSION_MAJOR.*|#define MSRV_VERSION_MAJOR      $major|" project_info.hpp
-    sed -i "s|#define MSRV_VERSION_MINOR.*|#define MSRV_VERSION_MINOR      $minor|" project_info.hpp
-    sed -i "s|#define MSRV_VERSION_FINAL.*|#define MSRV_VERSION_FINAL      $final|" project_info.hpp
+    sed -Ei "s|    VERSION [0-9.]+|    VERSION $version|" CMakeLists.txt
+    sed -Ei "s|set\(PROJECT_VERSION_FINAL .\)|set(PROJECT_VERSION_FINAL $final)|" CMakeLists.txt
 
-    cd "$root_dir/js"
+    cd "$main_repo_dir/js"
+
     update_package_json api_tests
+    update_package_json client
     update_package_json webui
 
-    cd "$root_dir/docs"
-    sed -i "s|version: '.*'|version: '$major.$minor'|" player-api.yml
+    cd "$main_repo_dir/docs"
+
+    sed -i "s|version: '.*'|version: '$version'|" player-api.yml
 }
 
-function update_jslib
+function update_dotnet
 {
-    update_package_json "$root_dir/js/client"
+    cd "$dotnet_repo_dir"
+
+    update_version_sh
+
+    sed -i "s|<Version>.*</Version>|<Version>${version3}${version_suffix}</Version>|" Directory.Build.props
 }
 
 function add_change_log_entry
@@ -111,14 +105,14 @@ function unmark_change_log_entry_as_released
 update_change_log=""
 
 case "$1" in
-    app)
-        init_app
-        update_version=update_app
+    main)
+        root_dir="$main_repo_dir"
+        update_version=update_main
         ;;
 
-    jslib)
-        init_jslib
-        update_version=update_jslib
+    dotnet)
+        root_dir="$dotnet_repo_dir"
+        update_version=update_dotnet
         ;;
 
     *)
@@ -126,6 +120,7 @@ case "$1" in
         ;;
 esac
 
+init_version
 
 case "$2" in
     major)
@@ -164,10 +159,14 @@ case "$2" in
         ;;
 esac
 
-version=$major.$minor
+version="$major.$minor"
+version3="$version.0"
+
+if [ $final -eq 0 ]; then
+    version_suffix='-dev'
+else
+    version_suffix=''
+fi
 
 $update_version
-
-if [ $update_version = update_app ]; then
-    $update_change_log
-fi
+$update_change_log
