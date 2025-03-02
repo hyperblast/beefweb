@@ -165,12 +165,5 @@ if(ENABLE_TESTS)
         set(CONFIG_JSON ${CMAKE_CURRENT_BINARY_DIR}/config.json)
     endif()
 
-    add_custom_command(
-        OUTPUT ${CONFIG_JSON}
-        COMMAND ${CMAKE_COMMAND} -E echo "{\"webRoot\":\"${WEBUI_OUTPUT_DIR}\"}" > ${CONFIG_JSON}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        VERBATIM
-    )
-
-    add_custom_target(dev_config ALL DEPENDS ${CONFIG_JSON})
+    file(GENERATE OUTPUT ${CONFIG_JSON} CONTENT "{\"webRoot\":\"${WEBUI_OUTPUT_DIR}\"}")
 endif()
