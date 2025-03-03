@@ -45,7 +45,8 @@ $ cpack -G DEB
 `ENABLE_DEADBEEF_SINGLE_DIR` option affects directory layout inside package,
 make sure it is ON when creating .tar.xz and OFF when creating .deb
 
-If you want to debug backend change `Release` to `Debug` in the commands above.
+If you want to develop backend change `Release` to `Debug` in the commands above
+and add `-DENABLE_TESTS=ON` to cmake parameters.
 
 ### foobar2000
 Visual Studio is used to build backend. Currently tested with VS2022 Community.
@@ -89,7 +90,8 @@ And create package:
 `foo_beefweb-*.zip` will be created in `build\Release` directory.
 Change extension to `.fb2k-component` to install into foobar2000.
 
-If you want to debug backend change `Release` to `Debug` in the commands above.
+If you want to develop backend change `Release` to `Debug` in the commands above
+and add `-DENABLE_TESTS=ON` to cmake parameters.
 
 Note: due to build system limitations you need to have separate build directories
 for each build type (Debug, Release, etc).
