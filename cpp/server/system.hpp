@@ -4,13 +4,19 @@
 
 #include <stdint.h>
 
+#if MSRV_OS_POSIX
+#include "env_info.hpp"
+#include <pthread.h>
+#endif
+
 #include <stdexcept>
 #include <type_traits>
 #include <vector>
 #include <string>
 #include <utility>
 
-namespace msrv {
+namespace msrv
+{
 
 template<typename Traits>
 class Handle
@@ -86,6 +92,21 @@ private:
 
 #if MSRV_OS_POSIX
 
+#define MSRV_THREAD_NAME(s) MSRV_PROJECT_ID "-" s
+
+typedef const char* ThreadName;
+
+inline void setThreadName(ThreadName name)
+{
+#if defined(HAVE_PTHREAD_SETNAME_NP)
+    (void) pthread_setname_np(pthread_self(), name);
+#elif defined(HAVE_PTHREAD_SET_NAME_NP)
+    (void) pthread_set_name_np(pthread_self(), name);
+#else
+    (void)name;
+#endif
+}
+
 struct PosixHandleTraits
 {
     using Type = int;
@@ -112,6 +133,14 @@ inline ErrorCode lastSystemError() noexcept
 #endif
 
 #if MSRV_OS_WINDOWS
+
+#define MSRV_THREAD_NAME__(s) L ## s
+#define MSRV_THREAD_NAME_(s) MSRV_THREAD_NAME__(s)
+#define MSRV_THREAD_NAME(s) MSRV_THREAD_NAME_(MSRV_PROJECT_ID "-" s)
+
+typedef const wchar_t* ThreadName;
+
+void setThreadName(ThreadName name);
 
 struct WindowsHandleTraits
 {

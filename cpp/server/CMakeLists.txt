@@ -1,5 +1,7 @@
 set(CMAKE_CXX_STANDARD 17)
 
+include(CheckSymbolExists)
+
 if(CXX_GCC OR CXX_CLANG)
     add_cxx_compiler_flag(-Wall)
     add_cxx_compiler_flag(-Wextra)
@@ -27,6 +29,12 @@ if(OS_POSIX)
 
     add_linker_flag(-Wl,--no-undefined)
     add_linker_flag(-Wl,--as-needed)
+
+    check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
+
+    if(NOT HAVE_PTHREAD_SETNAME_NP)
+        check_symbol_exists(pthread_set_name_np "pthread.h" HAVE_PTHREAD_SET_NAME_NP)
+    endif()
 endif()
 
 if(OS_WINDOWS)
@@ -51,6 +59,7 @@ find_package(Nljson REQUIRED)
 find_package(StringEncoders REQUIRED)
 find_package(ZLIB REQUIRED)
 
+configure_file(env_info.hpp.in env_info.hpp)
 configure_file(project_info.hpp.in project_info.hpp)
 
 include_directories(

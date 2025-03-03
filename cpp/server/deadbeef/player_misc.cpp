@@ -68,7 +68,7 @@ ColumnsQueryPtr PlayerImpl::createColumnsQuery(const std::vector<std::string>& c
 
 std::unique_ptr<WorkQueue> PlayerImpl::createWorkQueue()
 {
-    return std::make_unique<ThreadWorkQueue>();
+    return std::make_unique<ThreadWorkQueue>(MSRV_THREAD_NAME("control"));
 }
 
 void PlayerImpl::connect()
