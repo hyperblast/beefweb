@@ -41,6 +41,11 @@ if(OS_WINDOWS)
     )
 endif()
 
+add_definitions(
+    -DBOOST_ALL_NO_LIB=1
+    -DBOOST_THREAD_PROVIDES_FUTURE_CONTINUATION=1
+)
+
 find_package(Boost REQUIRED COMPONENTS system filesystem thread)
 find_package(Nljson REQUIRED)
 find_package(StringEncoders REQUIRED)

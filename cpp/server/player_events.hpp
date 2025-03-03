@@ -3,6 +3,7 @@
 #include "defines.hpp"
 #include "player_api.hpp"
 
+#include <atomic>
 #include <unordered_set>
 #include <bitset>
 #include <mutex>
