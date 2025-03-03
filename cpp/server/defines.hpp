@@ -7,6 +7,9 @@
 #define MSRV_FORMAT_FUNC(fmt, args)
 #endif
 
+#define MSRV_STRINGIFY_(v)  #v
+#define MSRV_STRINGIFY(v)   MSRV_STRINGIFY_(v)
+
 #define MSRV_NO_COPY_AND_ASSIGN(type) \
     type(const type&) = delete; \
     type& operator=(const type&) = delete
