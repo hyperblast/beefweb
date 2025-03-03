@@ -28,7 +28,7 @@ function main
     cmake --build . --parallel
 
     banner 'Creating packages'
-    cpack -G ZIP
+    cpack -G TXZ
     cmake . -DENABLE_DEADBEEF_SINGLE_DIR=OFF
     cpack -G DEB
 }
