@@ -28,7 +28,9 @@ function main
     cmake --build . --parallel
 
     banner 'Creating packages'
-    cpack
+    cpack -G TXZ
+    cmake . -DENABLE_DEADBEEF_SINGLE_DIR=OFF
+    cpack -G DEB
 }
 
 source "$(dirname $0)/run_in_docker.sh"

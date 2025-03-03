@@ -23,7 +23,14 @@ Check out [releases section](https://github.com/hyperblast/beefweb/releases).
 
 ### How to install
 #### DeaDBeeF
-Unpack `ddb_beefweb-*.tar.gz` to `$HOME/.local/lib/deadbeef`.
+Unpack `ddb_beefweb-*.tar.xz` to `$HOME/.local/lib/deadbeef`.
+
+Alternatively if you use universal `deadbeef-static_*.deb` package you can install matching universal deb of beefweb:
+
+```
+$ sudo dpkg -i deadbeef-beefweb_*.deb
+```
+
 #### foobar2000
 Open `foo_beefweb-*.fb2k-component` with foobar2000, you will be asked to install the plugin.
 
