@@ -11,7 +11,7 @@ set(WEBUI_LICENSES_FILE     "third-party-licenses.txt")
 set(CPACK_PACKAGE_VENDOR    "Hyperblast")
 set(CPACK_PACKAGE_CONTACT   "Hyperblast <dev@bitflow.org>")
 
-set(CPACK_DEBIAN_DEADBEEF_PLUGIN_PACKAGE_NAME       "deadbeef-beefweb-static")
+set(CPACK_DEBIAN_DEADBEEF_PLUGIN_PACKAGE_NAME       "deadbeef-beefweb")
 set(CPACK_DEBIAN_DEADBEEF_PLUGIN_PACKAGE_DEPENDS    "deadbeef-static (>=1.8.0)")
 
 set(

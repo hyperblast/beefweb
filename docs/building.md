@@ -27,12 +27,23 @@ Build:
 $ cmake --build . --parallel
 ```
 
-Create package:
+Create .tar.xz package:
 ```
 $ cpack
 ```
 
-`ddb_beefweb-*.tar.xz` will be created inside `build/Release`.
+`ddb_beefweb-*.tar.xz` will be created in `build/Release`.
+
+Create .deb package:
+```
+$ cmake . -DENABLE_DEADBEEF_SINGLE_DIR=OFF
+$ cpack -G DEB
+```
+
+`deadbeef-beefweb_*.deb` will be created.
+
+`ENABLE_DEADBEEF_SINGLE_DIR` option affects directory layout inside package,
+make sure it is ON when creating .tar.xz and OFF when creating .deb
 
 If you want to debug backend change `Release` to `Debug` in the commands above.
 

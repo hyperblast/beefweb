@@ -32,7 +32,7 @@ set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 
 # If there is only one component CPack ignores CPACK_XXX_COMPONENT_INSTALL
-# Provide archive file name for such case
+# Provide packaging parameters for such case
 
 if(ENABLE_DEADBEEF)
     set(CPACK_PACKAGE_FILE_NAME             "${CPACK_ARCHIVE_DEADBEEF_PLUGIN_FILE_NAME}")
