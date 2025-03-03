@@ -130,10 +130,12 @@ build/<BUILD_TYPE>/js/webui/output
 
 Windows:
 ```
-build/<BUILD_TYPE>/js/webui/<BUILD_TYPE>
+build\<BUILD_TYPE>\js\webui\<BUILD_TYPE>
 ```
 
-You can override this directory using `--env outputDir=path/to/dir` parameter.
+Currently all non-Debug build types produce the same output, the only difference is the output directory.
+
+To override output directory use `--env outputDir=path/to/dir` parameter.
 
 It is possible to run `webpack` in watch mode, where any changes are continuously rebuilt:
 ```
