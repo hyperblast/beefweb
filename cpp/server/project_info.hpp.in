@@ -3,6 +3,7 @@
 #define MSRV_STRINGIFY_(v)  #v
 #define MSRV_STRINGIFY(v)   MSRV_STRINGIFY_(v)
 
+#define MSRV_PROJECT_URL            "@CMAKE_PROJECT_HOMEPAGE_URL@"
 #define MSRV_WEBUI_ROOT             "@WEBUI_ROOT@"
 #define MSRV_WEBUI_LICENSES_FILE    "@WEBUI_LICENSES_FILE@"
 #define MSRV_VERSION_MAJOR          @PROJECT_VERSION_MAJOR@
@@ -22,7 +23,6 @@
 #define MSRV_CONFIG_FILE_OLD        "beefweb.config.json"
 #define MSRV_CONFIG_FILE_ENV        "BEEFWEB_CONFIG_FILE"
 #define MSRV_CLIENT_CONFIG_DIR      "clientconfig"
-#define MSRV_PROJECT_URL            "http://github.com/hyperblast/beefweb/"
 #define MSRV_DONATE_URL             "https://hyperblast.org/donate/"
 #define MSRV_API_DOCS_URL           "https://hyperblast.org/beefweb/api/"
 #define MSRV_PLAYER_DEADBEEF        "deadbeef"

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 project(
     beefweb
     VERSION 0.11
+    HOMEPAGE_URL "https://github.com/hyperblast/beefweb"
 )
 
 set(PROJECT_VERSION_FINAL 0)
