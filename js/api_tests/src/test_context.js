@@ -17,9 +17,10 @@ export class TestContext
         this.tracks = tracks;
         this.outputConfigs = outputConfigs;
         this.options = null;
+        this.wantRestart = false;
     }
 
-    async beginSuite(options = {})
+    initOptions(options)
     {
         const pluginSettings = Object.assign({}, this.config.pluginSettings, options.pluginSettings);
 
@@ -33,22 +34,29 @@ export class TestContext
             },
             options.resetOptions);
 
-        const axiosConfig = options.axiosConfig || null;
-        const environment = options.environment || null;
+        const { axiosConfig, environment } = options;
 
-        this.options = options = {
+        this.options = {
             pluginSettings,
             resetOptions,
             axiosConfig,
             environment
         };
+    }
 
-        await this.player.start(options);
+    initClient()
+    {
+        this.client.handler.init(this.options.axiosConfig);
+    }
 
-        this.client.handler.init(axiosConfig);
+    async startPlayer()
+    {
+        await this.player.start(this.options);
 
         if (await this.client.waitUntilReady())
+        {
             return;
+        }
 
         const logData = await this.player.getLog();
 
@@ -57,17 +65,50 @@ export class TestContext
 
         throw Error('Failed to reach API endpoint');
     }
+    
+    async stopPlayer()
+    {
+        await this.player.stop();
+    }
+
+    async beginSuite(options = {}, reuseOptions = false)
+    {
+        this.wantRestart = false;
+        this.initOptions(options);
+        this.initClient();
+        await this.startPlayer();
+    }
 
     async endSuite()
     {
         this.options = null;
-        await this.player.stop();
+        await this.stopPlayer();
     }
 
     async beginTest()
     {
-        this.client.handler.init(this.options.axiosConfig);
-        await this.client.resetState(this.options.resetOptions);
+        if (this.wantRestart)
+        {
+            await this.stopPlayer();
+            this.initClient();
+            await this.startPlayer();
+            this.wantRestart = false;
+        }
+        else
+        {
+            this.initClient();
+        }
+
+        try
+        {
+            await this.client.resetState(this.options.resetOptions);
+        }
+        catch (err)
+        {
+            console.log('failed to reset player state, next test will restart player');
+            this.wantRestart = true;
+            throw err;
+        }
     }
 
     endTest()
