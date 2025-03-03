@@ -60,7 +60,7 @@ void tryCopyFile(const Path& from, const Path& to)
         fs::copy_file(from, to, ec);
 
         if (ec.failed())
-            logError("copying failed: %s", ec.what().c_str());
+            logError("copying failed: %s", ec.message().c_str());
     }
 }
 
