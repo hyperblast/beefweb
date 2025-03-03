@@ -126,7 +126,7 @@ private:
     using PlaylistItemSelector = DB_playItem_t* (*)(DB_playItem_t*, int);
 
     PlaybackState getPlaybackState(ddb_playItem_t* activeItem);
-    void queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, ColumnsQuery* query);
+    void queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, float activeItemPos, ColumnsQuery* query);
     void queryVolume(VolumeInfo* info);
     void queryInfo(PlayerInfo* info);
     bool checkOutputChanged();

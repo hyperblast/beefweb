@@ -1,6 +1,7 @@
 # Changes in v0.11 (not released)
 ### DeaDBeeF
 - Provide universal .deb package to match `deadbeef-static_*.deb`
+- Fix deadlock with streamer
 
 # Changes in v0.10 (released 2025-02-28)
 - Add ability to configure output device
