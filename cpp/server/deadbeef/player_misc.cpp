@@ -205,11 +205,11 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
         return boost::make_future(ArtworkResult());
     }
 
-    PlaylistLockGuard lock(playlistMutex_);
-
     PlaylistItemPtr item(ddbApi->streamer_get_playing_track());
     if (!item)
         return boost::make_future(ArtworkResult());
+
+    PlaylistLockGuard lock(playlistMutex_);
 
     PlaylistPtr playlist;
     int playlistIndex = ddbApi->streamer_get_current_playlist();
