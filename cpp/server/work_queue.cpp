@@ -1,5 +1,6 @@
 #include "work_queue.hpp"
 #include "log.hpp"
+#include "system.hpp"
 
 #include <algorithm>
 
@@ -7,9 +8,14 @@ namespace msrv {
 
 WorkQueue::~WorkQueue() = default;
 
-ThreadWorkQueue::ThreadWorkQueue()
+ThreadWorkQueue::ThreadWorkQueue(ThreadName name)
 {
-    thread_ = std::thread([this] { run(); });
+    thread_ = std::thread([this, name] {
+        if (name)
+            setThreadName(name);
+
+        run();
+    });
 }
 
 ThreadWorkQueue::~ThreadWorkQueue()
@@ -56,7 +62,7 @@ void ThreadWorkQueue::run()
     }
 }
 
-ThreadPoolWorkQueue::ThreadPoolWorkQueue(size_t workers)
+ThreadPoolWorkQueue::ThreadPoolWorkQueue(size_t workers, ThreadName name)
 {
     assert(workers > 0);
 
@@ -64,7 +70,13 @@ ThreadPoolWorkQueue::ThreadPoolWorkQueue(size_t workers)
 
     for (size_t i = 0; i < workers; i++)
     {
-        threads_.emplace_back([this] { run(); });
+        threads_.emplace_back([this, name]
+        {
+            if (name)
+                setThreadName(name);
+
+            run();
+        });
     }
 }
 

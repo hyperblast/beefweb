@@ -1,6 +1,7 @@
 #pragma once
 
 #include "defines.hpp"
+#include "system.hpp"
 
 #include <thread>
 #include <mutex>
@@ -29,7 +30,7 @@ protected:
 class ThreadWorkQueue : public WorkQueue
 {
 public:
-    ThreadWorkQueue();
+    explicit ThreadWorkQueue(ThreadName name = nullptr);
     ~ThreadWorkQueue();
 
     void enqueue(WorkCallback callback) override;
@@ -48,7 +49,7 @@ private:
 class ThreadPoolWorkQueue : public WorkQueue
 {
 public:
-    explicit ThreadPoolWorkQueue(size_t workers);
+    explicit ThreadPoolWorkQueue(size_t workers, ThreadName name = nullptr);
     ~ThreadPoolWorkQueue();
 
     void enqueue(WorkCallback callback) override;

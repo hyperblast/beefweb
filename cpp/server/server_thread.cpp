@@ -1,5 +1,6 @@
 #include "server_thread.hpp"
 #include "log.hpp"
+#include "project_info.hpp"
 
 #include <boost/thread/reverse_lock.hpp>
 
@@ -9,7 +10,10 @@ ServerThread::ServerThread(ServerReadyCallback readyCallback)
     : command_(Command::NONE),
       readyCallback_(std::move(readyCallback))
 {
-    thread_ = std::thread([this] { run(); });
+    thread_ = std::thread([this] {
+        setThreadName(MSRV_THREAD_NAME("server"));
+        run();
+    });
 }
 
 ServerThread::~ServerThread()

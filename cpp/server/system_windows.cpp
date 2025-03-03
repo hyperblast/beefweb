@@ -4,6 +4,17 @@
 
 namespace msrv {
 
+typedef HRESULT (WINAPI *SetThreadDescriptionFunc)(HANDLE thread, LPCWSTR name);
+
+void setThreadName(ThreadName name)
+{
+    static auto setName = reinterpret_cast<SetThreadDescriptionFunc>(
+        GetProcAddress(LoadLibraryA("kernelbase.dll"), "SetThreadDescription"));
+
+    if (setName)
+        setName(GetCurrentThread(), name);
+}
+
 const char* formatError(ErrorCode errorCode, char* buffer, size_t size) noexcept
 {
     auto ret = ::FormatMessageA(
