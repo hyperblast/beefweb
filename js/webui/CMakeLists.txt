@@ -1,7 +1,7 @@
 include(sources.cmake)
 include(../client/sources.cmake)
 
-list(TRANSFORM JS_CLIENT_SOURCES PREPEND "../client/src/")
+list(TRANSFORM JS_CLIENT_SOURCES PREPEND "../client/")
 
 set(
     WEBUI_OUTPUT_FILES
