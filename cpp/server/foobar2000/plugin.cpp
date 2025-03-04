@@ -12,8 +12,9 @@ Plugin::Plugin()
       host_(&player_)
 {
     assert(!current_);
-    reconfigure();
     current_ = this;
+
+    reconfigure();
 }
 
 Plugin::~Plugin()
@@ -33,19 +34,21 @@ Path Plugin::getProfileDir()
 
 void Plugin::reconfigure()
 {
-    auto settings = std::make_shared<SettingsData>();
+    tryCatchLog([&] {
+        auto settings = std::make_shared<SettingsData>();
 
-    settings->port = settings_store::port;
-    settings->allowRemote = settings_store::allowRemote;
-    settings->musicDirsOrig = settings_store::getMusicDirs();
-    settings->authRequired = settings_store::authRequired;
-    settings->authUser = settings_store::authUser;
-    settings->authPassword = settings_store::authPassword;
-    settings->permissions = settings_store::getPermissions();
+        settings->port = settings_store::port;
+        settings->allowRemote = settings_store::allowRemote;
+        settings->musicDirsOrig = settings_store::getMusicDirs();
+        settings->authRequired = settings_store::authRequired;
+        settings->authUser = settings_store::authUser;
+        settings->authPassword = settings_store::authPassword;
+        settings->permissions = settings_store::getPermissions();
 
-    settings->initialize(getProfileDir());
+        settings->initialize(getProfileDir());
 
-    host_.reconfigure(std::move(settings));
+        host_.reconfigure(std::move(settings));
+    });
 }
 
 Plugin* Plugin::current_ = nullptr;
