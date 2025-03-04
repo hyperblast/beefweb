@@ -83,7 +83,7 @@ ResponsePtr BrowserController::getRoots()
 ResponsePtr BrowserController::getEntries()
 {
     auto requestedPath = param<std::string>("path");
-    auto normalizedPath = pathFromUtf8(requestedPath).lexically_normal().make_preferred();
+    auto normalizedPath = pathFromUtf8(requestedPath).lexically_normal();
 
     if (!settings_->isAllowedPath(normalizedPath))
         return Response::error(HttpStatus::S_403_FORBIDDEN, "listing directory is not allowed");

@@ -128,7 +128,7 @@ std::string PlaylistsController::validateAndNormalizeItem(const std::string& ite
     else
         path = pathFromUtf8(item);
 
-    path = path.lexically_normal().make_preferred();
+    path = path.lexically_normal();
 
     if (settings_->isAllowedPath(path))
         return pathToUtf8(path);
