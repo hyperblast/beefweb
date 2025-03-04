@@ -165,17 +165,18 @@ void SettingsData::initialize(const Path& profileDir)
     musicDirs.clear();
     musicDirs.reserve(musicDirsOrig.size());
 
+    auto index = 0;
     for (const auto& dir : musicDirsOrig)
     {
-        auto path = resolvePath(pathFromUtf8(dir)).lexically_normal();
-
-        if (!path.is_absolute())
+        if (dir.empty())
         {
-            logError("ignoring non-absolute music dir: %s", dir.c_str());
+            logError("skipping empty music directory at index %d", index);
             continue;
         }
 
+        auto path = resolvePath(pathFromUtf8(dir)).lexically_normal();
         musicDirs.emplace_back(std::move(path));
+        index++;
     }
 
     urlMappings.clear();
