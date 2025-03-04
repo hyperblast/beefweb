@@ -128,15 +128,12 @@ std::string PlaylistsController::validateAndNormalizeItem(const std::string& ite
     else
         path = pathFromUtf8(item);
 
-    path = path.lexically_normal().make_preferred();
+    path = path.lexically_normal();
 
     if (settings_->isAllowedPath(path))
         return pathToUtf8(path);
 
-    request()->response = Response::error(HttpStatus::S_403_FORBIDDEN, "item is not under allowed path: " + item);
-    request()->setProcessed();
-
-    throw InvalidRequestException();
+    throw OperationForbiddenException("item is not under allowed path: " + item);
 }
 
 ResponsePtr PlaylistsController::addItems()

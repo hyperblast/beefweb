@@ -32,7 +32,7 @@ public:
         Router* router,
         WorkQueue* workQueue,
         const std::string& urlPrefix,
-        const std::string& targetDir,
+        const Path& targetDir,
         const ContentTypeMap& contentTypes);
 
 private:

@@ -30,12 +30,14 @@ public:
     SettingsData();
     ~SettingsData();
 
+    Path baseDir;
     int port = MSRV_DEFAULT_PORT;
     bool allowRemote = true;
-    std::vector<std::string> musicDirsStr;
+    std::vector<std::string> musicDirsOrig;
     std::vector<Path> musicDirs;
-    std::string webRoot;
-    std::string clientConfigDirStr;
+    Path webRoot;
+    std::string webRootOrig;
+    std::string clientConfigDirOrig;
     Path clientConfigDir;
     ApiPermissions permissions = ApiPermissions::ALL;
 
@@ -43,7 +45,8 @@ public:
     std::string authUser;
     std::string authPassword;
     std::unordered_map<std::string, std::string> responseHeaders;
-    std::unordered_map<std::string, std::string> urlMappings;
+    std::unordered_map<std::string, Path> urlMappings;
+    std::unordered_map<std::string, std::string> urlMappingsOrig;
 
     static void migrate(const char* appName, const Path& profileDir);
     static const Path& getDefaultWebRoot();
@@ -56,6 +59,11 @@ public:
 
     bool isAllowedPath(const Path& path) const;
     void initialize(const Path& profileDir);
+
+    Path resolvePath(const Path& path)
+    {
+        return path.empty() || path.is_absolute() ? path : baseDir / path;
+    }
 
 private:
     void loadFromJson(const Json& json);
