@@ -37,7 +37,7 @@ void Plugin::reconfigure()
 
     settings->port = settings_store::port;
     settings->allowRemote = settings_store::allowRemote;
-    settings->musicDirsStr = settings_store::getMusicDirs();
+    settings->musicDirsOrig = settings_store::getMusicDirs();
     settings->authRequired = settings_store::authRequired;
     settings->authUser = settings_store::authUser;
     settings->authPassword = settings_store::authPassword;

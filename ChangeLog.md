@@ -1,4 +1,6 @@
 # Changes in v0.11 (not released)
+- Allow non-absolute paths in config (resolved relative to {player profile directory}/beefweb/)
+- Fix ignoring of "clientConfigDir" setting
 ### DeaDBeeF
 - Provide universal .deb package to match `deadbeef-static_*.deb`
 - Fix deadlock with streamer

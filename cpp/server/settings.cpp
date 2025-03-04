@@ -135,9 +135,9 @@ void SettingsData::initialize(const Path& profileDir)
 {
     assert(!profileDir.empty());
 
-    auto configDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
+    baseDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
 
-    loadFromFile(configDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE));
+    loadFromFile(baseDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE));
 
     auto envConfigFile = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
     if (!envConfigFile.empty())
@@ -148,30 +148,26 @@ void SettingsData::initialize(const Path& profileDir)
             logError("ignoring non-absolute config file path: %s", envConfigFile.c_str());
     }
 
+    webRoot = resolvePath(pathFromUtf8(webRootOrig)).lexically_normal();
+
     if (webRoot.empty())
     {
-        webRoot = pathToUtf8(getDefaultWebRoot());
+        webRoot = getDefaultWebRoot();
     }
 
-    clientConfigDir = pathFromUtf8(clientConfigDirStr).lexically_normal().make_preferred();
-
-    if (!clientConfigDir.empty() && !clientConfigDir.is_absolute())
-    {
-        logError("ignoring non-absolute client config dir: %s", clientConfigDirStr.c_str());
-        clientConfigDir.clear();
-    }
+    clientConfigDir = resolvePath(pathFromUtf8(clientConfigDirOrig)).lexically_normal();
 
     if (clientConfigDir.empty())
     {
-        clientConfigDir = configDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+        clientConfigDir = baseDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
     }
 
     musicDirs.clear();
-    musicDirs.reserve(musicDirsStr.size());
+    musicDirs.reserve(musicDirsOrig.size());
 
-    for (const auto& dir : musicDirsStr)
+    for (const auto& dir : musicDirsOrig)
     {
-        auto path = pathFromUtf8(dir).lexically_normal().make_preferred();
+        auto path = resolvePath(pathFromUtf8(dir)).lexically_normal();
 
         if (!path.is_absolute())
         {
@@ -180,6 +176,44 @@ void SettingsData::initialize(const Path& profileDir)
         }
 
         musicDirs.emplace_back(std::move(path));
+    }
+
+    urlMappings.clear();
+    urlMappings.reserve(urlMappingsOrig.size());
+
+    for (const auto& kv : urlMappingsOrig)
+    {
+        if (kv.first.find(':') != std::string::npos)
+        {
+            logError("url mapping '%s' contains reserved character ':'", kv.first.c_str());
+            continue;
+        }
+
+        if (kv.first.empty() || kv.first == "/")
+        {
+            logError("root url mapping is not allowed, use 'webRoot' instead");
+            continue;
+        }
+
+        if (kv.second.empty())
+        {
+            logError("url mapping '%s' has empty target", kv.first.c_str());
+            continue;
+        }
+
+        std::string prefix(kv.first);
+
+        if (prefix.front() != '/')
+            prefix.insert(0, 1, '/');
+
+        if (prefix.back() != '/')
+            prefix.push_back('/');
+
+        auto path = resolvePath(pathFromUtf8(kv.second)).lexically_normal();
+
+        logInfo("using url mapping '%s' -> '%s'", kv.first.c_str(), kv.second.c_str());
+
+        urlMappings[std::move(prefix)] = std::move(path);
     }
 }
 
@@ -206,13 +240,14 @@ void SettingsData::loadFromJson(const Json& json)
 
     loadValue(json, &port, "port");
     loadValue(json, &allowRemote, "allowRemote");
-    loadValue(json, &musicDirsStr, "musicDirs");
-    loadValue(json, &webRoot, "webRoot");
+    loadValue(json, &musicDirsOrig, "musicDirs");
+    loadValue(json, &webRootOrig, "webRoot");
     loadValue(json, &authRequired, "authRequired");
     loadValue(json, &authUser, "authUser");
     loadValue(json, &authPassword, "authPassword");
     loadValue(json, &responseHeaders, "responseHeaders");
-    loadValue(json, &urlMappings, "urlMappings");
+    loadValue(json, &urlMappingsOrig, "urlMappings");
+    loadValue(json, &clientConfigDirOrig, "clientConfigDir");
     loadPermissions(json);
 }
 

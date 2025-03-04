@@ -29,6 +29,12 @@ The following options are available:
 }
 ```
 
+### Non-absolute paths
+
+Unless specified otherwise any path in configuration could be non-absolute.
+
+Such paths are resolved relative to `{player_profile_dir}/beefweb` directory.
+
 ### Network settings
 
 `port: number` - Network port to use (same as in UI)
@@ -49,7 +55,7 @@ The following options are available:
 
 ### Web server settings
 
-`webRoot: string` - Root directory where static web content is located. This path has to be absolute.
+`webRoot: string` - Root directory where static web content is located.
 
 `urlMappings: {string: string}` - Alternative web directories defined by URL prefix
 
@@ -79,4 +85,4 @@ Please read [documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CO
 
 ### Other settings
 
-`clientConfigDir: string` - Path to directory where client configuration is stored. Must be absolute.
+`clientConfigDir: string` - Path to directory where client configuration is stored.

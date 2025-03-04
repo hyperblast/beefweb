@@ -52,7 +52,7 @@ ResponsePtr StaticController::getFile()
     if (requestPath.empty())
         return redirectToDirectory();
 
-    auto filePath = (targetDir_ / pathFromUtf8(requestPath)).lexically_normal().make_preferred();
+    auto filePath = (targetDir_ / pathFromUtf8(requestPath)).lexically_normal();
 
     if (!isSubpath(targetDir_, filePath))
         return Response::notFound();
@@ -89,19 +89,6 @@ void StaticController::defineRoutes(
 {
     for (auto& kv : settings->urlMappings)
     {
-        if (kv.first.empty() || kv.first == "/")
-        {
-            logError("root url mapping is not allowed, use 'webRoot' instead");
-            continue;
-        }
-
-        if (kv.second.empty())
-        {
-            logError("url mapping '%s' has empty target", kv.first.c_str());
-            continue;
-        }
-
-        logInfo("using url mapping '%s' -> '%s'", kv.first.c_str(), kv.second.c_str());
         defineRoutes(router, workQueue, kv.first, kv.second, contentTypes);
     }
 
@@ -113,43 +100,16 @@ void StaticController::defineRoutes(
     Router* router,
     WorkQueue* workQueue,
     const std::string& urlPrefix,
-    const std::string& targetDir,
+    const Path& targetDir,
     const ContentTypeMap& contentTypes)
 {
-    if (urlPrefix.find(':') != std::string::npos)
-    {
-        logError("url mapping '%s' contains reserved character ':'", urlPrefix.c_str());
-        return;
-    }
-
-    std::string prefix;
-
-    if (urlPrefix.empty() || urlPrefix.front() != '/')
-        prefix = "/" + urlPrefix;
-    else
-        prefix = urlPrefix;
-
-    if (prefix.back() != '/')
-        prefix.push_back('/');
-
-    auto target = pathFromUtf8(targetDir).lexically_normal().make_preferred();
-
-    if (!target.is_absolute())
-    {
-        logError("url mapping '%s' target should be absolute, got '%s'", urlPrefix.c_str(), targetDir.c_str());
-        return;
-    }
-
     auto routes = router->defineRoutes<StaticController>();
 
-    routes.createWith([=](Request* request) {
-        return new StaticController(request, target, contentTypes);
-    });
-
+    routes.createWith([=](Request* request) { return new StaticController(request, targetDir, contentTypes); });
     routes.useWorkQueue(workQueue);
 
-    routes.get(prefix, &StaticController::getFile);
-    routes.get(prefix + ":path*", &StaticController::getFile);
+    routes.get(urlPrefix, &StaticController::getFile);
+    routes.get(urlPrefix + ":path*", &StaticController::getFile);
 }
 
 }
