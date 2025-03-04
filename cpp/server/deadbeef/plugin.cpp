@@ -55,19 +55,21 @@ void Plugin::handlePluginsLoaded()
 
 void Plugin::reconfigure()
 {
-    auto settings = std::make_shared<SettingsData>();
+    tryCatchLog([&] {
+        auto settings = std::make_shared<SettingsData>();
 
-    settings->port = port_;
-    settings->allowRemote = allowRemote_;
-    settings->musicDirsOrig = parseValueList<std::string>(musicDirs_, ';');
-    settings->authRequired = authRequired_;
-    settings->authUser = authUser_;
-    settings->authPassword = authPassword_;
-    settings->permissions = permissions_;
+        settings->port = port_;
+        settings->allowRemote = allowRemote_;
+        settings->musicDirsOrig = parseValueList<std::string>(musicDirs_, ';');
+        settings->authRequired = authRequired_;
+        settings->authUser = authUser_;
+        settings->authPassword = authPassword_;
+        settings->permissions = permissions_;
 
-    settings->initialize(getProfileDir());
+        settings->initialize(getProfileDir());
 
-    host_.reconfigure(std::move(settings));
+        host_.reconfigure(std::move(settings));
+    });
 }
 
 bool Plugin::refreshSettings()
