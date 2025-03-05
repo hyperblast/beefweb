@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button } from './elements.js'
+import { Button, RepeatingButton } from './elements.js';
 import { bindHandlers, dbToLinear, linearToDb } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
@@ -54,7 +54,7 @@ class VolumeControl_ extends React.PureComponent
         this.context.playerModel.volumeUp();
     }
 
-    handleVolumeDown(e)
+    handleVolumeDown()
     {
         this.context.playerModel.volumeDown();
     }
@@ -84,8 +84,8 @@ class VolumeControl_ extends React.PureComponent
                 {
                     isUpDown
                         ? <>
-                            <Button name='minus' title='Decrease volume' onClick={this.handleVolumeDown}/>
-                            <Button name='plus' title='Increase volume' onClick={this.handleVolumeUp}/>
+                            <RepeatingButton name='minus' title='Decrease volume' onClick={this.handleVolumeDown}/>
+                            <RepeatingButton name='plus' title='Increase volume' onClick={this.handleVolumeUp}/>
                             <div className='volume-text-block'><span className='volume-text'>{valueText}</span></div>
                         </>
                         : <input type='range'
