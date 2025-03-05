@@ -1,3 +1,4 @@
+set(CMAKE_FOLDER cpp)
 set(CMAKE_CXX_STANDARD 17)
 
 include(CheckSymbolExists)

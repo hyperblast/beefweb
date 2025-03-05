@@ -109,4 +109,4 @@ if(OS_WINDOWS)
     )
 endif()
 
-add_dependencies(ext_all ext_boost)
+extlib_target(ext_boost)

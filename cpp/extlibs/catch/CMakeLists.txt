@@ -18,4 +18,4 @@ ExternalProject_Add(
     LOG_DOWNLOAD 0 LOG_UPDATE 0 LOG_CONFIGURE 0 LOG_BUILD 0 LOG_INSTALL 1
 )
 
-add_dependencies(ext_all ext_catch)
+extlib_target(ext_catch)

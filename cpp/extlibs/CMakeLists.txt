@@ -1,3 +1,4 @@
+set(CMAKE_FOLDER cpp_libs)
 set(EXTLIB_CACHE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/.cache)
 set(EXTLIB_PATCHER ${CMAKE_CURRENT_SOURCE_DIR}/apply_patches${SCRIPT_SUFFIX})
 
@@ -33,6 +34,11 @@ foreach(BUILD_TYPE DEBUG RELEASE MINSIZEREL RELWITHDEBINFO)
 endforeach()
 
 option_dependency_check(ENABLE_STATIC_STDLIB ENABLE_LOCAL_BOOST)
+
+function(extlib_target TARGET_NAME)
+    set_property(TARGET ${TARGET_NAME} PROPERTY FOLDER cpp_libs)
+    add_dependencies(ext_all ${TARGET_NAME})
+endfunction()
 
 add_custom_target(ext_all)
 

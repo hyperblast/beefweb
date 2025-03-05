@@ -42,4 +42,4 @@ if(CXX_MSVC)
     )
 endif()
 
-add_dependencies(ext_all ext_zlib)
+extlib_target(ext_zlib)
