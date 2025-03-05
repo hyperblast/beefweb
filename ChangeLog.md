@@ -3,7 +3,8 @@
 - Fix ignoring of "clientConfigDir" setting
 ### DeaDBeeF
 - Provide universal .deb package to match `deadbeef-static_*.deb`
-- Fix deadlock with streamer
+- Fix deadlock with streamer code
+- Fix playOrPause command behavior under v1.10
 
 # Changes in v0.10 (released 2025-02-28)
 - Add ability to configure output device

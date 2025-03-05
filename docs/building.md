@@ -84,7 +84,7 @@ Alternatively you can build from console:
 
 And create package:
 ```
-> cpack
+> cpack -C Release
 ```
 
 `foo_beefweb-*.zip` will be created in `build\Release` directory.
@@ -150,7 +150,9 @@ This command supports `--env buildType` and `--env outputDir` with the same defa
 
 Full build needs to be performed before running API tests.
 
-Additionally player binaries have to be installed:
+`curl` should be available in `PATH`.
+
+Additionally player binaries should be installed:
 
 ```
 > scripts\install\foobar2000.cmd v2.24-x64
