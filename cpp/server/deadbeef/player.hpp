@@ -134,6 +134,17 @@ private:
     bool playNextBy(const std::string& expression, PlaylistItemSelector selector);
     PlaylistInfo getPlaylistInfo(ddb_playlist_t* playlist, int index, bool isCurrent);
 
+    bool isStopped()
+    {
+        if (ddbApi->get_output()->state() == OUTPUT_STATE_STOPPED)
+        {
+            PlaylistItemPtr activeItem(ddbApi->streamer_get_playing_track());
+            return !activeItem;
+        }
+
+        return false;
+    }
+
     PlaylistMutex playlistMutex_;
     ConfigMutex configMutex_;
     PlaylistMapping playlists_;
