@@ -211,22 +211,23 @@ void PlayerImpl::pause()
     ddbApi->sendmessage(DB_EV_PAUSE, 0, 0, 0);
 }
 
+// DeaDBeeF behavior:
+// < v1.10: DB_EV_TOGGLE_PAUSE acts like playOrPause
+// >= v1.10: DB_EV_TOGGLE_PAUSE acts like togglePause
+// Check playback state manually to support all versions
+
 void PlayerImpl::togglePause()
 {
-    if (ddbApi->get_output()->state() == OUTPUT_STATE_STOPPED)
-    {
-        PlaylistItemPtr activeItem(ddbApi->streamer_get_playing_track());
-
-        if (!activeItem)
-            return;
-    }
-
-    ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+    if (!isStopped())
+        ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
 }
 
 void PlayerImpl::playOrPause()
 {
-    ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
+    if (isStopped())
+        ddbApi->sendmessage(DB_EV_PLAY_CURRENT, 0, 0, 0);
+    else
+        ddbApi->sendmessage(DB_EV_TOGGLE_PAUSE, 0, 0, 0);
 }
 
 void PlayerImpl::setMuted(Switch value)

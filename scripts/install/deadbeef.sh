@@ -15,6 +15,11 @@ case "$version" in
         hash='aa17741053f63a7fceace003bf269bd4c4c9e55e42ee14286d9fbf34fbc8e014'
         ;;
 
+    'v1.10')
+        url='https://sourceforge.net/projects/deadbeef/files/travis/linux/1.10/deadbeef-static_1.10.0-rc1-1_x86_64.tar.bz2'
+        hash='3226f09f4ee4e4fb3e3db79971402e55d9ae38dee0ca9e4761ba007e85f62764'
+        ;;
+
     *)
         echo "usage: $(basename $0) <version>"
         exit 1
