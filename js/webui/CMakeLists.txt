@@ -15,6 +15,10 @@ set(
     --env "$<IF:$<BOOL:${ENABLE_TESTS}>,tests,noTests>"
 )
 
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    set(WEBUI_BUILD_ARGS ${WEBUI_BUILD_ARGS} --no-color)
+endif()
+
 add_custom_command(
     OUTPUT ${WEBUI_OUTPUT_FILES}
     DEPENDS ${WEBUI_SOURCES} ${JS_CLIENT_SOURCES} ${YARN_INTEGRITY} js_packages
