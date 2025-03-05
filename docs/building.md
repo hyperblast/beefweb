@@ -153,7 +153,7 @@ Full build needs to be performed before running API tests.
 Additionally player binaries have to be installed:
 
 ```
-> scripts\install\foobar2000.cmd v2.1-x64
+> scripts\install\foobar2000.cmd v2.24-x64
 ```
 
 or
@@ -173,7 +173,7 @@ This command supports various parameters via environment variables:
 
 `BEEFWEB_TEST_BUILD_TYPE` - which build type to use (defaults to `Debug`)
 
-`BEEFWEB_TEST_FOOBAR2000_VERSION` - foobar2000 version to use (defaults to `v2.1-x64`)
+`BEEFWEB_TEST_FOOBAR2000_VERSION` - foobar2000 version to use (defaults to `v2.24-x64`)
 
 `BEEFWEB_TEST_DEADBEEF_VERSION` - DeaDBeeF version to use (defaults to `v1.9`)
 

@@ -11,7 +11,7 @@ export class Foobar2000TestContextFactory extends TestContextFactory
         config.playerId = 'foobar2000';
 
         const { BEEFWEB_TEST_FOOBAR2000_VERSION } = process.env;
-        config.playerVersion = BEEFWEB_TEST_FOOBAR2000_VERSION || 'v2.1-x64';
+        config.playerVersion = BEEFWEB_TEST_FOOBAR2000_VERSION || 'v2.24-x64';
         config.playerDir = path.join(config.appsDir, 'foobar2000', config.playerVersion);
 
         config.pluginBuildDir = path.join(

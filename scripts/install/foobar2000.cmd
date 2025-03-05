@@ -1,7 +1,7 @@
 @setlocal
 
 @if "%1" == "v1.6" (
-    @set pkg_file=foobar2000_v1.6.14.exe
+    @set pkg_file=foobar2000_v1.6.17.exe
     @goto :install
 )
 
@@ -16,17 +16,27 @@
 )
 
 @if "%1" == "v2.1" (
-    @set pkg_file=foobar2000_v2.1.5.exe
+    @set pkg_file=foobar2000_v2.1.6.exe
     @goto :install
 )
 
 @if "%1" == "v2.1-x64" (
-    @set pkg_file=foobar2000-x64_v2.1.5.exe
+    @set pkg_file=foobar2000-x64_v2.1.6.exe
+    @goto :install
+)
+
+@if "%1" == "v2.24" (
+    @set pkg_file=foobar2000_v2.24.2.exe
+    @goto :install
+)
+
+@if "%1" == "v2.24-x64" (
+    @set pkg_file=foobar2000-x64_v2.24.2.exe
     @goto :install
 )
 
 @echo Usage: %~nx0 version
-@echo Supported versions: v1.6 v2.0 v2.0-x64 v2.1 v2.1-x64
+@echo Supported versions: v1.6 v2.0 v2.0-x64 v2.1 v2.1-x64 v2.24 v2.24-x64
 @cmd /c exit 1
 @goto :end
 
