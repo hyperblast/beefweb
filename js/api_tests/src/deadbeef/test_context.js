@@ -11,7 +11,7 @@ export class DeadbeefTestContextFactory extends TestContextFactory
         config.playerId = 'deadbeef';
 
         const { BEEFWEB_TEST_DEADBEEF_VERSION } = process.env;
-        const version = BEEFWEB_TEST_DEADBEEF_VERSION || 'v1.9';
+        const version = BEEFWEB_TEST_DEADBEEF_VERSION || 'v1.10';
 
         config.playerDirBase = path.join(config.appsDir, 'deadbeef', version);
 

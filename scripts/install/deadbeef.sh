@@ -16,8 +16,8 @@ case "$version" in
         ;;
 
     'v1.10')
-        url='https://sourceforge.net/projects/deadbeef/files/travis/linux/1.10/deadbeef-static_1.10.0-rc1-1_x86_64.tar.bz2'
-        hash='3226f09f4ee4e4fb3e3db79971402e55d9ae38dee0ca9e4761ba007e85f62764'
+        url='https://sourceforge.net/projects/deadbeef/files/travis/linux/1.10.0/deadbeef-static_1.10.0-1_x86_64.tar.bz2'
+        hash='e6d89edfaa17a2634bffdb9050ab096f14e39ac71ea6183cd48cae136a5f1a97'
         ;;
 
     *)
