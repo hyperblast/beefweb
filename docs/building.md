@@ -161,7 +161,7 @@ Additionally player binaries should be installed:
 or
 
 ```
-$ scripts/install/deadbeef.sh v1.9
+$ scripts/install/deadbeef.sh v1.10
 ```
 
 These commands download player distribution package and unpack it to `apps/<PLAYER>/<VERSION>`.
@@ -177,7 +177,7 @@ This command supports various parameters via environment variables:
 
 `BEEFWEB_TEST_FOOBAR2000_VERSION` - foobar2000 version to use (defaults to `v2.24-x64`)
 
-`BEEFWEB_TEST_DEADBEEF_VERSION` - DeaDBeeF version to use (defaults to `v1.9`)
+`BEEFWEB_TEST_DEADBEEF_VERSION` - DeaDBeeF version to use (defaults to `v1.10`)
 
 These two variables could be useful if you don't want to use default directory layout `build/<BUILD_TYPE>`:
 
