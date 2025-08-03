@@ -46,6 +46,8 @@ const char ContentType::IMAGE_GIF[] = "image/gif";
 
 const char ContentType::IMAGE_BMP[] = "image/bmp";
 
+const char ContentType::IMAGE_WEBP[] = "image/webp";
+
 std::string toString(HttpMethod method)
 {
     switch (method)

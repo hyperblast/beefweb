@@ -153,6 +153,7 @@ q.test('provide content type', async assert =>
         'file.png': 'image/png',
         'file.jpeg': 'image/jpeg',
         'file.jpg': 'image/jpeg',
+        'file.webp': 'image/webp',
         'file.txt': 'text/plain; charset=utf-8',
     };
 

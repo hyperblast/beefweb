@@ -25,6 +25,7 @@ private:
     std::string pngType_;
     std::string gifType_;
     std::string bmpType_;
+    std::string webpType_;
 };
 
 }

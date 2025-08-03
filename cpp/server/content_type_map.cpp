@@ -23,6 +23,12 @@ inline bool matchHeader(
         && memcmp(fileData.data(), header, size) == 0;
 }
 
+inline bool matchWebPHeader(
+    const std::vector<uint8_t>& fileData)
+{
+    return fileData.size() >= 12
+        && memcmp(fileData.data(), {0x52, 0x49, 0x46, 0x46}, 4) == 0;
+        && memcmp(fileData.data() + 8, {0x57, 0x45, 0x42, 0x50}, 4) == 0;
 }
 
 ContentTypeMap::ContentTypeMap()
@@ -30,7 +36,8 @@ ContentTypeMap::ContentTypeMap()
       jpegType_(ContentType::IMAGE_JPEG),
       pngType_(ContentType::IMAGE_PNG),
       gifType_(ContentType::IMAGE_GIF),
-      bmpType_(ContentType::IMAGE_BMP)
+      bmpType_(ContentType::IMAGE_BMP),
+      webpType_(ContentType::IMAGE_WEBP)
 {
     add(ContentType::TEXT_HTML_UTF8, "htm", "html");
     add(ContentType::TEXT_PLAIN_UTF8, "txt");
@@ -42,6 +49,7 @@ ContentTypeMap::ContentTypeMap()
     add(ContentType::IMAGE_GIF, "gif");
     add(ContentType::IMAGE_BMP, "bmp");
     add(ContentType::IMAGE_SVG, "svg");
+    add(ContentType::IMAGE_WEBP, "webp");
 }
 
 ContentTypeMap::~ContentTypeMap() = default;
@@ -65,6 +73,9 @@ const std::string& ContentTypeMap::byHeader(const std::vector<uint8_t>& header) 
 
     if (matchHeader(header, BMP_HEADER, sizeof(BMP_HEADER)))
         return bmpType_;
+
+    if (matchWebPHeader(header))
+        return webpType_;
 
     return defaultType_;
 }
