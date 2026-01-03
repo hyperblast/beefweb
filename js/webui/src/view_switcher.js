@@ -6,7 +6,6 @@ import { View } from './navigation_model.js';
 import ServiceContext from "./service_context.js";
 import { DropdownButton } from "./dropdown.js";
 import { bindHandlers } from "./utils.js";
-import { MediaSize } from './settings_model.js';
 
 class ViewSwitcher_ extends React.PureComponent
 {
@@ -15,15 +14,13 @@ class ViewSwitcher_ extends React.PureComponent
     constructor(props, context)
     {
         super(props, context);
-
         this.state = this.getStateFromModel();
     }
 
     getStateFromModel()
     {
-        return {
-            view: this.context.navigationModel.view,
-        };
+        const { view } = this.context.navigationModel;
+        return { view };
     }
 
     render()
@@ -75,20 +72,19 @@ class ViewSwitcherButton_ extends React.PureComponent
 
     handleMenuRequestOpen(value)
     {
-        this.setState({menuOpen: value});
+        this.setState({ menuOpen: value });
     }
 
     getStateFromModel()
     {
-        return {
-            view: this.context.navigationModel.view,
-            up: this.context.settingsModel.mediaSize === MediaSize.small,
-        };
+        const { view } = this.context.navigationModel;
+        return { view };
     }
 
     render()
     {
-        const { view, menuOpen, up } = this.state;
+        const { menuUp } = this.props;
+        const { view, menuOpen } = this.state;
 
         return (
             <DropdownButton
@@ -97,7 +93,7 @@ class ViewSwitcherButton_ extends React.PureComponent
                 buttonClassName='control-bar-button'
                 hideOnContentClick={true}
                 direction='left'
-                up={up}
+                up={menuUp}
                 isOpen={menuOpen}
                 onRequestOpen={this.handleMenuRequestOpen}>
                 <Menu>
@@ -123,8 +119,6 @@ class ViewSwitcherButton_ extends React.PureComponent
     }
 }
 
-export const ViewSwitcherButton = ModelBinding(
-    ViewSwitcherButton_, {
-        navigationModel: 'viewChange',
-        settingsModel: 'mediaSizeChange'
-    });
+export const ViewSwitcherButton = ModelBinding(ViewSwitcherButton_, {
+    navigationModel: 'viewChange'
+});

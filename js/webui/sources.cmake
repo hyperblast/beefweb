@@ -37,7 +37,7 @@ src/notification_model.js
 src/output_settings.js
 src/output_settings_model.js
 src/play_queue_model.js
-src/playback_control.js
+        src/playback_controls.js
 src/playback_info_bar.js
 src/player_features.js
 src/player_model.js

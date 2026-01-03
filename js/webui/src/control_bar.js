@@ -1,5 +1,16 @@
 import React from 'react'
-import PlaybackControl from './playback_control.js'
+
+import {
+    PauseButton,
+    PlaybackNavigationButton,
+    PlaybackOptionsButton,
+    PlayButton,
+    PlayNextButton,
+    PlayOrPauseButton,
+    PlayPreviousButton,
+    StopButton,
+} from './playback_controls.js';
+
 import PositionControl from './position_control.js'
 import { VolumeControl, VolumeControlButton } from './volume_control.js'
 import { ViewSwitcher, ViewSwitcherButton } from './view_switcher.js'
@@ -14,42 +25,65 @@ class ControlBar_ extends React.PureComponent
     constructor(props, context)
     {
         super(props, context);
-
         this.state = this.getStateFromModel();
     }
 
     getStateFromModel()
     {
-        return {
-            inlineMode: this.context.settingsModel.mediaSizeUp(MediaSize.medium)
-        };
+        const { mediaSize, combinePlayPause } = this.context.settingsModel;
+        return { mediaSize, combinePlayPause };
+    }
+
+    renderSmall()
+    {
+        return <div key='control-bar' className='panel control-bar'>
+            <div className='button-bar'>
+                <StopButton/>
+                <PlayPreviousButton/>
+                <PlayOrPauseButton/>
+                <PlayNextButton/>
+                <PlaybackOptionsButton menuUp={true}/>
+                <PlaybackNavigationButton menuUp={true}/>
+                <VolumeControlButton menuUp={true}/>
+                <ViewSwitcherButton menuUp={true}/>
+            </div>
+            <PositionControl/>
+        </div>;
+    }
+
+    renderMediumUp()
+    {
+        const playPauseButtons =
+            this.state.combinePlayPause
+            ? <PlayOrPauseButton/>
+            : <>
+                <PlayButton/>
+                <PauseButton/>
+            </>
+
+        return <div key='control-bar' className='panel control-bar'>
+            <div className='button-bar'>
+                <StopButton/>
+                {playPauseButtons}
+                <PlayPreviousButton/>
+                <PlayNextButton/>
+                <PlaybackOptionsButton/>
+                <PlaybackNavigationButton/>
+            </div>
+            <PositionControl/>
+            <VolumeControl/>
+            <ViewSwitcher/>
+        </div>;
     }
 
     render()
     {
-        const { inlineMode } = this.state;
-
-        return (
-            <div key='control-bar' className='panel control-bar'>
-                <PlaybackControl />
-                <PositionControl />
-                {
-                    inlineMode
-                        ? (
-                            <>
-                                <VolumeControl/>
-                                <ViewSwitcher/>
-                            </>)
-                        : (
-                            <div className='button-bar'>
-                                <VolumeControlButton/>
-                                <ViewSwitcherButton/>
-                            </div>
-                        )
-                }
-            </div>
-        );
+        return this.state.mediaSize === MediaSize.small
+               ? this.renderSmall()
+               : this.renderMediumUp();
     }
 }
 
-export const ControlBar = ModelBinding(ControlBar_, { settingsModel: 'mediaSizeChange' });
+export const ControlBar = ModelBinding(ControlBar_, {
+    settingsModel: ['mediaSizeChange', 'combinePlayPause']
+});

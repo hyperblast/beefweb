@@ -124,10 +124,8 @@ class VolumeControlButton_ extends React.PureComponent
 
     getStateFromModel()
     {
-        return {
-            isMuted: this.context.playerModel.volume.isMuted,
-            up: this.context.settingsModel.mediaSize === MediaSize.small,
-        };
+        const { isMuted } = this.context.playerModel.volume;
+        return { isMuted };
     }
 
     handlePanelRequestOpen(value)
@@ -142,7 +140,8 @@ class VolumeControlButton_ extends React.PureComponent
 
     render()
     {
-        const { isMuted, panelOpen, up } = this.state;
+        const { menuUp } = this.props;
+        const { isMuted, panelOpen } = this.state;
 
         return (
             <DropdownButton
@@ -151,7 +150,7 @@ class VolumeControlButton_ extends React.PureComponent
                 buttonClassName='control-bar-button'
                 hideOnContentClick={false}
                 direction='left'
-                up={up}
+                up={menuUp}
                 isOpen={panelOpen}
                 onRequestOpen={this.handlePanelRequestOpen}>
                 <VolumeControl onAfterMuteClick={this.handleMuteClick} />
@@ -160,8 +159,6 @@ class VolumeControlButton_ extends React.PureComponent
     }
 }
 
-export const VolumeControlButton = ModelBinding(
-    VolumeControlButton_, {
-        playerModel: 'change',
-        settingsModel: 'mediaSizeChange'
-    });
+export const VolumeControlButton = ModelBinding(VolumeControlButton_, {
+    playerModel: 'change'
+});
