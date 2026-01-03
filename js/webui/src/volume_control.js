@@ -5,6 +5,7 @@ import { bindHandlers, dbToLinear, linearToDb } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
 import ServiceContext from "./service_context.js";
+import { MediaSize } from './settings_model.js';
 
 function volumeIcon(isMuted)
 {
@@ -125,6 +126,7 @@ class VolumeControlButton_ extends React.PureComponent
     {
         return {
             isMuted: this.context.playerModel.volume.isMuted,
+            up: this.context.settingsModel.mediaSize === MediaSize.small,
         };
     }
 
@@ -140,14 +142,16 @@ class VolumeControlButton_ extends React.PureComponent
 
     render()
     {
-        const { isMuted, panelOpen } = this.state;
+        const { isMuted, panelOpen, up } = this.state;
 
         return (
             <DropdownButton
                 title='Show volume control'
                 iconName={volumeIcon(isMuted)}
+                buttonClassName='control-bar-button'
                 hideOnContentClick={false}
                 direction='left'
+                up={up}
                 isOpen={panelOpen}
                 onRequestOpen={this.handlePanelRequestOpen}>
                 <VolumeControl onAfterMuteClick={this.handleMuteClick} />
@@ -156,4 +160,8 @@ class VolumeControlButton_ extends React.PureComponent
     }
 }
 
-export const VolumeControlButton = ModelBinding(VolumeControlButton_, { playerModel: 'change' });
+export const VolumeControlButton = ModelBinding(
+    VolumeControlButton_, {
+        playerModel: 'change',
+        settingsModel: 'mediaSizeChange'
+    });

@@ -12,12 +12,14 @@ const basePropTypes = Object.freeze({
     isOpen: PropTypes.bool.isRequired,
     onRequestOpen: PropTypes.func.isRequired,
     hideOnContentClick: PropTypes.bool,
-    direction: PropTypes.oneOf(['left', 'center', 'right']),
+    direction: PropTypes.oneOf(['left', 'center', 'right', 'top-right']),
+    up: PropTypes.bool,
 });
 
 const baseDefaultProps = Object.freeze({
     hideOnContentClick: true,
-    direction: 'right'
+    direction: 'right',
+    up: false,
 });
 
 export class Dropdown extends React.PureComponent
@@ -98,11 +100,15 @@ export class Dropdown extends React.PureComponent
 
     render()
     {
-        const { isOpen, children, direction, onRenderElement, className } = this.props;
+        const { isOpen, children, direction, onRenderElement, className, up } = this.props;
 
         const dropdownClass = makeClassName([ 'dropdown', className ]);
-        const contentClass = makeClassName(
-            ['dropdown-content', 'dropdown-' + direction, isOpen ? ' active' : '']);
+        const contentClass = makeClassName([
+            'dropdown-content',
+            'dropdown-' + direction,
+            up ? 'dropdown-up' : null,
+            isOpen ? 'active' : ''
+        ]);
 
         const element = onRenderElement(this.setToggleRef, isOpen);
 

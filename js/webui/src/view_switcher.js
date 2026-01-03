@@ -6,6 +6,7 @@ import { View } from './navigation_model.js';
 import ServiceContext from "./service_context.js";
 import { DropdownButton } from "./dropdown.js";
 import { bindHandlers } from "./utils.js";
+import { MediaSize } from './settings_model.js';
 
 class ViewSwitcher_ extends React.PureComponent
 {
@@ -81,19 +82,22 @@ class ViewSwitcherButton_ extends React.PureComponent
     {
         return {
             view: this.context.navigationModel.view,
+            up: this.context.settingsModel.mediaSize === MediaSize.small,
         };
     }
 
     render()
     {
-        const { view, menuOpen } = this.state;
+        const { view, menuOpen, up } = this.state;
 
         return (
             <DropdownButton
                 title='Switch view'
                 iconName='grid-three-up'
+                buttonClassName='control-bar-button'
                 hideOnContentClick={true}
                 direction='left'
+                up={up}
                 isOpen={menuOpen}
                 onRequestOpen={this.handleMenuRequestOpen}>
                 <Menu>
@@ -119,4 +123,8 @@ class ViewSwitcherButton_ extends React.PureComponent
     }
 }
 
-export const ViewSwitcherButton = ModelBinding(ViewSwitcherButton_, { navigationModel: 'viewChange' });
+export const ViewSwitcherButton = ModelBinding(
+    ViewSwitcherButton_, {
+        navigationModel: 'viewChange',
+        settingsModel: 'mediaSizeChange'
+    });

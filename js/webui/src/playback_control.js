@@ -40,7 +40,8 @@ class PlaybackControl extends React.PureComponent
             options,
             cursorFollowsPlayback,
             combinePlayPause,
-            menuDirection
+            menuDirection,
+            up: settingsModel.mediaSize === MediaSize.small,
         };
     }
 
@@ -120,6 +121,7 @@ class PlaybackControl extends React.PureComponent
             options,
             optionsOpen,
             navigationOpen,
+            up,
         } = this.state;
 
         const nextByMenuItems = navigationMenuColumns.map((column, index) => (
@@ -140,24 +142,42 @@ class PlaybackControl extends React.PureComponent
 
         return (
             <div className='playback-control button-bar'>
-                <Button name='media-stop' title='Stop' onClick={this.handleStop} />
+                <Button name='media-stop'
+                        title='Stop'
+                        onClick={this.handleStop}
+                        className='control-bar-button' />
                 {
                     combinePlayPause
                         ? <Button
                             name={playbackState === PlaybackState.playing ? 'media-pause' : 'media-play'}
+                            className='control-bar-button'
                             title='Play'
                             onClick={this.handlePlayOrPause} />
                         : <>
-                            <Button name='media-play' title='Play' onClick={this.handlePlay} />
-                            <Button name='media-pause' title='Pause' onClick={this.handlePause} />
+                            <Button name='media-play'
+                                    title='Play'
+                                    onClick={this.handlePlay}
+                                    className='control-bar-button'/>
+                            <Button name='media-pause'
+                                    title='Pause'
+                                    onClick={this.handlePause}
+                                    className='control-bar-button'/>
                         </>
                 }
-                <Button name='media-step-backward' title='Previous' onClick={this.handlePrevious} />
-                <Button name='media-step-forward' title='Next' onClick={this.handleNext} />
+                <Button name='media-step-backward'
+                        title='Previous'
+                        onClick={this.handlePrevious}
+                        className='control-bar-button'/>
+                <Button name='media-step-forward'
+                        title='Next'
+                        onClick={this.handleNext}
+                        className='control-bar-button'/>
                 <DropdownButton
                     iconName='audio'
                     title='Options'
+                    buttonClassName='control-bar-button'
                     direction={menuDirection}
+                    up={up}
                     isOpen={optionsOpen}
                     onRequestOpen={this.handleOptionsRequestOpen}>
                     <Menu>
@@ -167,7 +187,9 @@ class PlaybackControl extends React.PureComponent
                 <DropdownButton
                     iconName='share'
                     title='Navigation'
+                    buttonClassName='control-bar-button'
                     direction={menuDirection}
+                    up={up}
                     isOpen={navigationOpen}
                     onRequestOpen={this.handleNavigationRequestOpen}>
                     <Menu>

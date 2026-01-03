@@ -59,13 +59,12 @@ export default class CssSettingsController
 
     addMediaSizeClasses(classNames)
     {
-        for (let size of Object.keys(MediaSize))
-        {
-            if (this.settingsModel.mediaSizeUp(size))
-                classNames.push(`${settingClassPrefix}mediasize-${size}-up`);
+        const size = MediaSize.medium;
 
-            if (this.settingsModel.mediaSizeDown(size))
-                classNames.push(`${settingClassPrefix}mediasize-${size}-down`);
-        }
+        if (this.settingsModel.mediaSizeUp(size))
+            classNames.push(`${settingClassPrefix}mediasize-${size}-up`);
+
+        if (this.settingsModel.mediaSizeDown(size))
+            classNames.push(`${settingClassPrefix}mediasize-${size}-down`);
     }
 }
