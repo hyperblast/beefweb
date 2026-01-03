@@ -670,16 +670,20 @@ body {
         order: 4;
         display: grid;
         grid-template-columns: auto 1fr auto;
-        grid-template-rows: auto auto;
+        grid-template-rows: 1fr auto;
         align-items: center;
+        height: 10rem;
 
-        & > .button-bar {
+        & > .button-bar-primary {
             display: flex;
             justify-content: space-evenly;
         }
 
         & > .button-bar-secondary {
+            display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
         }
     }
 
@@ -742,6 +746,10 @@ body {
     order: 5;
 
     .no-text-overflow();
+}
+
+.st-mediasize-small .status-bar {
+    text-align: center;
 }
 
 .status-bar-link {
