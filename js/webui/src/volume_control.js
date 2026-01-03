@@ -140,7 +140,7 @@ class VolumeControlButton_ extends React.PureComponent
 
     render()
     {
-        const { menuUp } = this.props;
+        const { menuDirection, menuUp } = this.props;
         const { isMuted, panelOpen } = this.state;
 
         return (
@@ -149,7 +149,7 @@ class VolumeControlButton_ extends React.PureComponent
                 iconName={volumeIcon(isMuted)}
                 buttonClassName='control-bar-button'
                 hideOnContentClick={false}
-                direction='left'
+                direction={menuDirection}
                 up={menuUp}
                 isOpen={panelOpen}
                 onRequestOpen={this.handlePanelRequestOpen}>

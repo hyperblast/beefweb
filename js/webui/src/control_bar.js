@@ -37,15 +37,18 @@ class ControlBar_ extends React.PureComponent
     renderSmall()
     {
         return <div key='control-bar' className='panel control-bar'>
-            <div className='button-bar'>
-                <StopButton/>
+            <div className='button-bar button-bar-secondary'>
+                <PlaybackOptionsButton menuUp={true} menuDirection='right'/>
+                <PlaybackNavigationButton menuUp={true} menuDirection='right'/>
+            </div>
+            <div className='button-bar button-bar-primary'>
                 <PlayPreviousButton/>
                 <PlayOrPauseButton/>
                 <PlayNextButton/>
-                <PlaybackOptionsButton menuUp={true}/>
-                <PlaybackNavigationButton menuUp={true}/>
-                <VolumeControlButton menuUp={true}/>
-                <ViewSwitcherButton menuUp={true}/>
+            </div>
+            <div className='button-bar button-bar-secondary'>
+                <VolumeControlButton menuUp={true} menuDirection='left'/>
+                <ViewSwitcherButton menuUp={true} menuDirection='left'/>
             </div>
             <PositionControl/>
         </div>;

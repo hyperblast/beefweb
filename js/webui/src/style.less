@@ -132,10 +132,10 @@ body {
     width: 1.75rem;
     height: 1.75rem;
     padding: 0.25rem;
-}
 
-.icon > use {
-    fill: var(--color-text);
+    & > use {
+        fill: var(--color-text);
+    }
 }
 
 .header-block {
@@ -336,7 +336,7 @@ body {
 
 .progress-bar-text {
     position: absolute;
-    top: 0;
+    top: 0.125rem;
     height: 100%;
     width: 100%;
     text-align: center;
@@ -665,44 +665,75 @@ body {
     order: 2;
 }
 
-.control-bar > * {
-    margin-right: 2rem;
-
-    &:last-child {
-        margin-right: 0;
-    }
-}
-
 .st-mediasize-small {
     .control-bar {
         order: 4;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        grid-template-rows: auto auto;
+        align-items: center;
+
+        & > .button-bar {
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        & > .button-bar-secondary {
+            flex-direction: column;
+        }
+    }
+
+    .position-control {
+        width: 100%;
+        grid-column: 1 / 4;
     }
 
     .control-bar-button {
         width: 2.25rem;
         height: 2.25rem;
-        margin-right: 0.25rem;
 
         & > .icon {
             width: 2.25rem;
             height: 2.25rem;
         }
     }
+
+    .button-bar-primary .control-bar-button  {
+        width: 3rem;
+        height: 3rem;
+
+        & > .icon {
+            width: 3rem;
+            height: 3rem;
+        }
+    }
 }
 
-.st-mediasize-medium-down {
+.st-mediasize-medium {
     .control-bar {
         flex-wrap: wrap;
         justify-content: space-between;
-    }
-
-    .control-bar > * {
-        margin-right: 0;
+        align-items: center;
     }
 
     .position-control {
-        order: 10;
+        flex: 1;
+        order: 5;
         min-width: 100%;
+    }
+}
+
+.st-mediasize-large {
+    .position-control {
+        flex: 1;
+    }
+
+    .control-bar > * {
+        margin-right: 2rem;
+
+        &:last-child {
+            margin-right: 0;
+        }
     }
 }
 
@@ -728,9 +759,8 @@ body {
 }
 
 .position-control {
-    flex: 1;
     padding: 0.25rem;
-    height: 1.75rem;
+    height: 2rem;
 }
 
 .volume-control {
