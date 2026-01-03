@@ -13,44 +13,17 @@ class BoolSettingEditor extends React.PureComponent
     {
         super(props, context);
 
-        this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleInput = this.handleInput.bind(this);
-    }
-
-    componentDidMount()
-    {
-        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    getStateFromModel()
-    {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        return {
-            value: settingsModel[settingKey],
-            metadata: settingsModel.metadata[settingKey]
-        };
     }
 
     handleInput(e)
     {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        settingsModel[settingKey] = e.target.checked;
+        this.context.settingsModel[this.props.settingKey] = e.target.checked;
     }
 
     render()
     {
-        const { value, metadata } = this.state;
-        const { disabled } = this.props;
+        const { value, metadata, disabled } = this.props;
 
         return (
             <label className='setting-editor-bool'>
@@ -63,7 +36,10 @@ class BoolSettingEditor extends React.PureComponent
 
 BoolSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    value: PropTypes.bool.isRequired,
+    metadata: PropTypes.object.isRequired,
+    elementId: PropTypes.string.isRequired,
 };
 
 class EnumSettingEditor extends React.PureComponent
@@ -74,44 +50,17 @@ class EnumSettingEditor extends React.PureComponent
     {
         super(props, context);
 
-        this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleInput = this.handleInput.bind(this);
-    }
-
-    componentDidMount()
-    {
-        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    getStateFromModel()
-    {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        return {
-            value: settingsModel[settingKey],
-            metadata: settingsModel.metadata[settingKey]
-        };
     }
 
     handleInput(e)
     {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        settingsModel[settingKey] = e.target.value;
+        this.context.settingsModel[this.props.settingKey] = e.target.value;
     }
 
     render()
     {
-        const { value, metadata } = this.state;
-        const { disabled } = this.props;
+        const { value, metadata, elementId, disabled } = this.props;
 
         const options = objectValues(metadata.enumKeys).map(value => {
             return (
@@ -121,13 +70,11 @@ class EnumSettingEditor extends React.PureComponent
             );
         });
 
-        const id = this.props.settingKey.toLowerCase() + '-cfg';
-
         return (
             <React.Fragment>
-                <label className='setting-editor-label' htmlFor={id}>{metadata.title + ':'}</label>
+                <label className='setting-editor-label' htmlFor={elementId}>{metadata.title + ':'}</label>
                 <select
-                    id={id}
+                    id={elementId}
                     className='setting-editor-enum'
                     value={value}
                     onChange={this.handleInput} disabled={disabled}>{ options }</select>
@@ -138,7 +85,10 @@ class EnumSettingEditor extends React.PureComponent
 
 EnumSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    value: PropTypes.string.isRequired,
+    metadata: PropTypes.object.isRequired,
+    elementId: PropTypes.string.isRequired,
 };
 
 class TextSettingEditor extends React.PureComponent
@@ -149,51 +99,29 @@ class TextSettingEditor extends React.PureComponent
     {
         super(props, context);
 
-        this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleInput = this.handleInput.bind(this);
-    }
-
-    componentDidMount()
-    {
-        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    getStateFromModel()
-    {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        return {
-            value: settingsModel[settingKey],
-            metadata: settingsModel.metadata[settingKey]
-        };
     }
 
     handleInput(e)
     {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        settingsModel[settingKey] = e.target.value;
+        this.context.settingsModel[this.props.settingKey] = e.target.value;
     }
 
     render()
     {
-        const { value, metadata } = this.state;
-        const { disabled } = this.props;
-
-        const id = this.props.settingKey.toLowerCase() + '-cfg';
+        const { value, metadata, elementId, disabled } = this.props;
 
         return (
             <React.Fragment>
-                <label htmlFor={id} className='setting-editor-label'>{metadata.title + ':'}</label>
-                <input id={id} className='setting-editor-text' value={value} onChange={this.handleInput} disabled={disabled} />
+                <label
+                    htmlFor={elementId}
+                    className='setting-editor-label'>{metadata.title + ':'}</label>
+                <input
+                    id={elementId}
+                    className='setting-editor-text'
+                    value={value}
+                    onChange={this.handleInput}
+                    disabled={disabled} />
             </React.Fragment>
         );
     }
@@ -201,7 +129,10 @@ class TextSettingEditor extends React.PureComponent
 
 TextSettingEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    value: PropTypes.string.isRequired,
+    metadata: PropTypes.object.isRequired,
+    elementId: PropTypes.string.isRequired,
 };
 
 class PercentTextEditor extends React.PureComponent
@@ -212,64 +143,32 @@ class PercentTextEditor extends React.PureComponent
     {
         super(props, context);
 
-        this.state = this.getStateFromModel();
-        this.handleUpdate = () => this.setState(this.getStateFromModel());
         this.handleInput = this.handleInput.bind(this);
         this.handleReset = this.handleReset.bind(this);
-    }
-
-    componentDidMount()
-    {
-        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    componentWillUnmount()
-    {
-        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
-    }
-
-    getStateFromModel()
-    {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        return {
-            value: settingsModel[settingKey],
-            metadata: settingsModel.metadata[settingKey]
-        };
     }
 
     handleInput(e)
     {
         e.preventDefault();
 
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        settingsModel[settingKey] = Number(e.target.value);
+        this.context.settingsModel[this.props.settingKey] = Number(e.target.value);
     }
 
     handleReset()
     {
-        const { settingKey } = this.props;
-        const { settingsModel } = this.context;
-
-        settingsModel.resetValueToDefault(settingKey);
+        this.context.settingsModel.resetValueToDefault(this.props.settingKey);
     }
 
     render()
     {
-        const { value, metadata } = this.state;
-        const { disabled } = this.props;
-
-        const id = this.props.settingKey.toLowerCase() + '-cfg';
+        const { value, metadata, elementId, disabled } = this.props;
 
         return (
             <React.Fragment>
-                <label className='setting-editor-label' htmlFor={id}>{metadata.title + ':'}</label>
+                <label className='setting-editor-label' htmlFor={elementId}>{metadata.title + ':'}</label>
                 <div className='setting-editor-range-block'>
                     <input type='range'
-                           id={id}
+                           id={elementId}
                            className='setting-editor-range'
                            value={value}
                            min={metadata.minValue}
@@ -282,6 +181,7 @@ class PercentTextEditor extends React.PureComponent
                     </div>
                     <DialogButton
                         type='reset'
+                        disabled={disabled}
                         onClick={this.handleReset} />
                 </div>
             </React.Fragment>
@@ -291,7 +191,10 @@ class PercentTextEditor extends React.PureComponent
 
 PercentTextEditor.propTypes = {
     settingKey: PropTypes.string.isRequired,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    value: PropTypes.number.isRequired,
+    metadata: PropTypes.object.isRequired,
+    elementId: PropTypes.string.isRequired,
 };
 
 const editorComponents = Object.freeze({
@@ -301,21 +204,57 @@ const editorComponents = Object.freeze({
     [SettingType.percent]: PercentTextEditor,
 });
 
+function EmptyEditor(props)
+{
+    return <div>Unknown setting type: {props.metadata.type}</div>
+}
+
 export default class SettingEditor extends React.PureComponent
 {
     static contextType = ServiceContext;
 
+    constructor(props, context)
+    {
+        super(props, context);
+
+        this.state = this.getStateFromModel();
+        this.handleUpdate = () => this.setState(this.getStateFromModel());
+    }
+
+    getStateFromModel()
+    {
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
+
+        return {
+            value: settingsModel[settingKey],
+            metadata: settingsModel.metadata[settingKey],
+            elementId: settingKey.toLowerCase() + '-setting',
+        };
+    }
+
+    componentDidMount()
+    {
+        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
+    componentWillUnmount()
+    {
+        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
     render()
     {
         const { settingKey, disabled } = this.props;
-        const { settingsModel } = this.context;
-        const { type } = settingsModel.metadata[settingKey];
-        const Editor = editorComponents[type];
+        const { value, metadata, elementId } = this.state;
+        const Editor = editorComponents[metadata.type] ?? EmptyEditor;
 
-        if (!Editor)
-            throw new Error(`Setting property '${settingKey}' has unsupported type '${type}'.`);
-
-        return <Editor settingKey={settingKey} disabled={disabled} />;
+        return <Editor
+            settingKey={settingKey}
+            disabled={disabled}
+            value={value}
+            metadata={metadata}
+            elementId={elementId} />;
     }
 }
 
