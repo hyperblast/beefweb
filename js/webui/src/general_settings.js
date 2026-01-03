@@ -32,12 +32,12 @@ class GeneralSettings extends React.PureComponent
         return (
             <form className='settings-form'>
                 <SettingEditor settingKey='uiThemePreference' />
+                <SettingEditor settingKey='uiScale' />
                 <SettingEditor settingKey='compactMode' />
                 <SettingEditor settingKey='windowTitleExpression' />
                 {
                     showFullWidth ? <SettingEditor settingKey='fullWidth' /> : null
                 }
-                <SettingEditor settingKey='fontSize' />
                 <SettingEditor settingKey='inputMode' />
                 <SettingEditor settingKey='defaultAddAction' />
                 <SettingEditor settingKey='combinePlayPause' />

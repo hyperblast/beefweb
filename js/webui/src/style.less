@@ -86,18 +86,6 @@ body {
     box-sizing: inherit;
 }
 
-.st-fontsize-small {
-    font-size: percentage(@scale-small);
-}
-
-.st-fontsize-medium {
-    font-size: percentage(@scale-medium);
-}
-
-.st-fontsize-large {
-    font-size: percentage(@scale-large);
-}
-
 .st-uitheme-light {
     --color-text: #212121;
     --color-hover: #E0E0E0;
@@ -806,37 +794,53 @@ body {
     font-size: 110%;
 }
 
+.setting-editor-range-block {
+    display: flex;
+    align-items: center;
+
+    & > *:not(:last-child) {
+        margin-right: 0.5rem;
+    }
+}
+
+.setting-editor-range {
+    display: inline-block;
+    flex: 1;
+}
+
+.setting-editor-range-hint {
+    width: 2.5rem;
+    display: inline-block;
+}
+
 .st-mediasize-medium-up {
     .settings-form {
         display: grid;
-        grid-gap: 0.5rem;
-        grid-template-columns: 13rem 1fr;
-    }
-
-    .settings-buttons {
-        grid-column: 2;
+        column-gap: 0.5rem;
+        row-gap: 1rem;
+        grid-template-columns: 15rem 1fr;
+        max-width: 45rem;
     }
 
     .setting-editor-label {
         text-align: right;
-        padding-top: 0.5rem;
+        margin-top: 0.5rem;
+        grid-column: 1;
+    }
+
+    .setting-editor-enum,
+    .setting-editor-enum-large,
+    .setting-editor-bool,
+    .setting-editor-text,
+    .setting-editor-range-block,
+    .settings-buttons {
+        grid-column: 2;
     }
 
     .setting-editor-enum {
         max-width: 15rem;
     }
 
-    .setting-editor-enum-large {
-        max-width: 30rem;
-    }
-
-    .setting-editor-text {
-        max-width: 30rem;
-    }
-
-    .setting-editor-bool {
-        grid-column: 2;
-    }
 }
 
 .st-mediasize-small-down {
@@ -844,24 +848,23 @@ body {
         float: right;
     }
 
-    .setting-editor-label,
+    .setting-editor-label {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
     .setting-editor-bool,
     .setting-editor-enum,
     .setting-editor-enum-large,
     .setting-editor-text {
         display: block;
         width: 100%;
+        margin-bottom: 1.5rem;
     }
 
-    .setting-editor-label {
-        margin-bottom: 0.5rem;
-    }
-
-    .setting-editor-bool,
-    .setting-editor-enum,
-    .setting-editor-enum-large,
-    .setting-editor-text {
-        margin-bottom: 1rem;
+    .setting-editor-range-block {
+        width: 100%;
+        margin-bottom: 1.5rem;
     }
 }
 

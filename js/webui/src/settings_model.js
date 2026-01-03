@@ -5,13 +5,8 @@ export const SettingType = Object.freeze({
     bool: 'bool',
     enum: 'enum',
     string: 'string',
+    percent: 'percent',
     custom: 'custom',
-});
-
-export const FontSize = Object.freeze({
-    small: 'small',
-    medium: 'medium',
-    large: 'large',
 });
 
 export const InputMode = Object.freeze({
@@ -51,7 +46,6 @@ export const AddAction = Object.freeze({
  * @property {boolean} cursorFollowsPlayback
  * @property {string} customSortBy
  * @property {string} inputMode
- * @property {string} fontSize
  * @property {string} defaultAddAction
  * @property {string} windowTitleExpression
  * @property {string} playbackInfoExpression
@@ -61,6 +55,7 @@ export const AddAction = Object.freeze({
  * @property {boolean} combinePlayPause
  * @property {boolean} showPlaybackInfo
  * @property {boolean} showStatusBar
+ * @property {number} uiScale
  * @property {string} uiTheme
  * @property {string} uiThemePreference
  */
@@ -161,19 +156,14 @@ export default class SettingsModel extends SettingsModelBase
         });
 
         this.define({
-            key: 'fontSize',
-            type: SettingType.enum,
-            version: 2,
-            defaultValue: FontSize.medium,
-            title: 'UI elements size',
+            key: 'uiScale',
+            type: SettingType.percent,
+            defaultValue: 1.0,
+            title: 'UI scale',
+            minValue: 0.5,
+            maxValue: 1.5,
+            step: 0.05,
             persistent: true,
-            cssVisible: true,
-            enumKeys: FontSize,
-            enumNames: {
-                [FontSize.small]: 'Small',
-                [FontSize.medium]: 'Medium',
-                [FontSize.large]: 'Large'
-            },
         });
 
         this.define({

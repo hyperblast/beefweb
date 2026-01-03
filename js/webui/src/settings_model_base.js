@@ -83,7 +83,12 @@ export default class SettingsModelBase extends EventEmitter
     getDefaultValue(key)
     {
         return this.client.getClientConfig(clientConfigKey)
-        .then(r => r && r[key] !== undefined ? r[key] : this.metadata[key].defaultValue);
+            .then(r => r && r[key] !== undefined ? r[key] : this.metadata[key].defaultValue);
+    }
+
+    resetValueToDefault(key)
+    {
+        this.getDefaultValue(key).then(value => this.setValue(key, value));
     }
 
     getDefaultValuesFromCode()

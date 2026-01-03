@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { values as objectValues } from 'lodash'
 import { SettingType } from './settings_model.js'
 import ServiceContext from './service_context.js';
+import { DialogButton } from './dialogs.js';
 
 class BoolSettingEditor extends React.PureComponent
 {
@@ -203,10 +204,101 @@ TextSettingEditor.propTypes = {
     disabled: PropTypes.bool
 };
 
+class PercentTextEditor extends React.PureComponent
+{
+    static contextType = ServiceContext;
+
+    constructor(props, context)
+    {
+        super(props, context);
+
+        this.state = this.getStateFromModel();
+        this.handleUpdate = () => this.setState(this.getStateFromModel());
+        this.handleInput = this.handleInput.bind(this);
+        this.handleReset = this.handleReset.bind(this);
+    }
+
+    componentDidMount()
+    {
+        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
+    componentWillUnmount()
+    {
+        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+    }
+
+    getStateFromModel()
+    {
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
+
+        return {
+            value: settingsModel[settingKey],
+            metadata: settingsModel.metadata[settingKey]
+        };
+    }
+
+    handleInput(e)
+    {
+        e.preventDefault();
+
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
+
+        settingsModel[settingKey] = Number(e.target.value);
+    }
+
+    handleReset()
+    {
+        const { settingKey } = this.props;
+        const { settingsModel } = this.context;
+
+        settingsModel.resetValueToDefault(settingKey);
+    }
+
+    render()
+    {
+        const { value, metadata } = this.state;
+        const { disabled } = this.props;
+
+        const id = this.props.settingKey.toLowerCase() + '-cfg';
+
+        return (
+            <React.Fragment>
+                <label className='setting-editor-label' htmlFor={id}>{metadata.title + ':'}</label>
+                <div className='setting-editor-range-block'>
+                    <input type='range'
+                           id={id}
+                           className='setting-editor-range'
+                           value={value}
+                           min={metadata.minValue}
+                           max={metadata.maxValue}
+                           step={metadata.step}
+                           onChange={this.handleInput}
+                           disabled={disabled} />
+                    <div className='setting-editor-range-hint'>
+                        {(value * 100).toFixed()}%
+                    </div>
+                    <DialogButton
+                        type='reset'
+                        onClick={this.handleReset} />
+                </div>
+            </React.Fragment>
+        );
+    }
+}
+
+PercentTextEditor.propTypes = {
+    settingKey: PropTypes.string.isRequired,
+    disabled: PropTypes.bool
+};
+
 const editorComponents = Object.freeze({
     [SettingType.bool]: BoolSettingEditor,
     [SettingType.enum]: EnumSettingEditor,
     [SettingType.string]: TextSettingEditor,
+    [SettingType.percent]: PercentTextEditor,
 });
 
 export default class SettingEditor extends React.PureComponent

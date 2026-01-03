@@ -1,17 +1,9 @@
-import { mapValues } from 'lodash'
-import { values as objectValues } from 'lodash'
-import { MediaSize, MediaSizeIndex } from './settings_model.js'
+import { MediaSize } from './settings_model.js'
+import { debounce } from 'lodash';
 
-const MediaSizes = Object.freeze({
-    small: 0,
-    medium: 40, // 640px
-    large: 60, // 960px
-});
-
-const FontScale = Object.freeze({
-    small: 0.875,
-    medium: 1.0,
-    large: 1.125,
+const Breakpoints = Object.freeze({
+    large: 60, // 60 * 16 = 960px
+    medium: 40, // 40 * 16 = 640px
 });
 
 function queryMinWidth(em)
@@ -23,39 +15,32 @@ class MediaSizeQuery
 {
     constructor(scale)
     {
-        this.entries = [];
-
-        for (let size of Object.keys(MediaSize))
-        {
-            const query = queryMinWidth(MediaSizes[size] * scale);
-
-            this.entries[MediaSizeIndex[size]] = { size, query };
-        }
-
-        this.entries.reverse();
+        // Media queries does not take 'font-size' on <html> into account, we need to scale manually
+        this.largeQuery = queryMinWidth(Breakpoints.large * scale);
+        this.mediumQuery = queryMinWidth(Breakpoints.medium * scale);
     }
 
     getMediaSize()
     {
-        for (let entry of this.entries)
-        {
-            if (entry.query.matches)
-                return entry.size;
-        }
+        if (this.largeQuery.matches)
+            return MediaSize.large;
 
-        throw Error("Internal error: unable to select any media size");
+        if (this.mediumQuery.matches)
+            return MediaSize.medium;
+
+        return MediaSize.small;
     }
 
     addListener(callback)
     {
-        for (let entry of this.entries)
-            entry.query.addListener(callback);
+        this.largeQuery.addEventListener('change', callback);
+        this.mediumQuery.addEventListener('change', callback);
     }
 
     removeListener(callback)
     {
-        for (let entry of this.entries)
-            entry.query.removeListener(callback);
+        this.largeQuery.removeEventListener('change', callback);
+        this.mediumQuery.removeEventListener('change', callback);
     }
 }
 
@@ -64,25 +49,30 @@ export default class MediaSizeController
     constructor(settingsModel)
     {
         this.settingsModel = settingsModel;
-
-        this.mediaQueries = mapValues(FontScale, scale => new MediaSizeQuery(scale));
-        this.update = this.update.bind(this);
+        this.updateMediaSize = this.updateMediaSize.bind(this);
     }
 
     start()
     {
-        this.settingsModel.on('fontSizeChange', this.update);
-
-        for (let query of objectValues(this.mediaQueries))
-            query.addListener(this.update);
-
-        this.update();
+        this.settingsModel.on('uiScaleChange', debounce(this.updateScale.bind(this), 500));
+        this.updateScale();
     }
 
-    update()
+    updateScale()
     {
-        const query = this.mediaQueries[this.settingsModel.fontSize];
+        const scale = this.settingsModel.uiScale;
 
-        this.settingsModel.mediaSize = query.getMediaSize();
+        document.documentElement.style.fontSize = `${scale * 100}%`;
+
+        this.mediaSizeQuery?.removeListener(this.updateMediaSize);
+        this.mediaSizeQuery = new MediaSizeQuery(scale);
+        this.mediaSizeQuery.addListener(this.updateMediaSize);
+
+        this.updateMediaSize();
+    }
+
+    updateMediaSize()
+    {
+        this.settingsModel.mediaSize = this.mediaSizeQuery.getMediaSize();
     }
 }

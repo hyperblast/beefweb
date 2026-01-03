@@ -8,6 +8,7 @@ const dialogTitles = Object.freeze({
     cancel: 'Cancel',
     apply: 'Apply',
     revert: 'Revert',
+    reset: 'Reset',
 });
 
 export function DialogButton(props)
@@ -25,7 +26,7 @@ export function DialogButton(props)
 }
 
 DialogButton.propTypes = {
-    type: PropTypes.oneOf(['ok', 'cancel', 'apply', 'revert']).isRequired,
+    type: PropTypes.oneOf(['ok', 'cancel', 'apply', 'revert', 'reset']).isRequired,
     onClick: PropTypes.func,
     disabled: PropTypes.bool,
 };
