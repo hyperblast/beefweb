@@ -37,6 +37,7 @@ class ControlBar_ extends React.PureComponent
     renderSmall()
     {
         return <div key='control-bar' className='panel control-bar'>
+            <PositionControl/>
             <div className='button-bar button-bar-secondary'>
                 <PlaybackOptionsButton menuUp={true} menuDirection='right'/>
                 <PlaybackNavigationButton menuUp={true} menuDirection='right'/>
@@ -50,7 +51,6 @@ class ControlBar_ extends React.PureComponent
                 <VolumeControlButton menuUp={true} menuDirection='left'/>
                 <ViewSwitcherButton menuUp={true} menuDirection='left'/>
             </div>
-            <PositionControl/>
         </div>;
     }
 
