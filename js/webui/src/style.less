@@ -708,7 +708,10 @@ body {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            height: 100%;
+
+            & > *:not(:last-child) {
+                margin-bottom: 1rem;
+            }
         }
     }
 
