@@ -1,6 +1,5 @@
 import { primaryInput } from 'detect-it'
-import EventEmitter from 'wolfy87-eventemitter'
-import SettingsModel, { InputMode } from './settings_model.js'
+import { InputMode } from './settings_model.js'
 
 export default class TouchModeController
 {

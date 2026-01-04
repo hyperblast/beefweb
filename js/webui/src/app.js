@@ -115,5 +115,5 @@ class App extends React.PureComponent
 
 export default ModelBinding(App, {
     navigationModel: 'viewChange',
-    settingsModel: 'change'
+    settingsModel: ['showPlaybackInfoChange', 'showStatusBar']
 });

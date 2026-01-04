@@ -1,4 +1,5 @@
 import { defaultPlaylistColumns } from './columns.js';
+import { primaryInput } from 'detect-it'
 import SettingsModelBase from './settings_model_base.js';
 
 export const SettingType = Object.freeze({
@@ -112,7 +113,7 @@ export default class SettingsModel extends SettingsModelBase
             persistent: true,
             enumKeys: InputMode,
             enumNames: {
-                [InputMode.auto]: 'Auto',
+                [InputMode.auto]: `Auto (currently ${primaryInput})`,
                 [InputMode.forceMouse]: 'Force mouse',
                 [InputMode.forceTouch]: 'Force touch'
             }
