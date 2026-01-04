@@ -8,6 +8,13 @@ export const View = Object.freeze({
     notFound: 'notFound'
 });
 
+const viewOrder = [
+    View.playlist,
+    View.albumArt,
+    View.fileBrowser,
+    View.settings,
+];
+
 export const SettingsView = Object.freeze({
     general: 'general',
     columns: 'columns',
@@ -36,6 +43,20 @@ export default class NavigationModel extends EventEmitter
 
         this.view = view;
         this.emit('viewChange');
+    }
+
+    navigateToNext()
+    {
+        const currentIndex = viewOrder.indexOf(this.view);
+        const nextIndex = currentIndex >= 0 ? (currentIndex + 1) % viewOrder.length : 0;
+        this.setView(viewOrder[nextIndex]);
+    }
+
+    navigateToPrevious()
+    {
+        const currentIndex = viewOrder.indexOf(this.view);
+        const prevIndex = currentIndex >= 0 ? (currentIndex + viewOrder.length - 1) % viewOrder.length : 0;
+        this.setView(viewOrder[prevIndex]);
     }
 
     setSettingsView(view)

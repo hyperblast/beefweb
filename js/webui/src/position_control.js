@@ -20,7 +20,7 @@ class PositionControl extends React.PureComponent
     {
         const { position, duration } = this.context.playerModel.activeItem;
 
-        return { duration, position };
+        return { duration, startX: position };
     }
 
     handleClick(e)

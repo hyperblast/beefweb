@@ -211,7 +211,7 @@ export default class PlayerModel extends EventEmitter
 
         const newPosition = clamp(position + delta / 1000, 0, duration);
 
-        this.updateState('activeItem', { position: newPosition });
+        this.updateState('activeItem', { startX: newPosition });
     }
 
     notifyTrackSwitch(wasPlaying)

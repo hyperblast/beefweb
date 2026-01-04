@@ -61,6 +61,7 @@ src/style.less
 src/tests/index.html
 src/tests/index.js
 src/timer.js
+src/touch_controller.js
 src/touch_mode_controller.js
 src/urls.js
 src/utils.js

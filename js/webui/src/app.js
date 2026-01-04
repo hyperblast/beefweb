@@ -42,6 +42,21 @@ class App extends React.PureComponent
         return { view, showPlaybackInfo, showStatusBar };
     }
 
+    componentDidMount()
+    {
+        this.context.touchController.update();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot)
+    {
+        this.context.touchController.update();
+    }
+
+    componentWillUnmount()
+    {
+        this.context.touchController.update();
+    }
+
     renderPlaylistView()
     {
         return {
@@ -73,7 +88,7 @@ class App extends React.PureComponent
     {
         return {
             header: null,
-            main: <AlbumArtViewer />
+            main: <AlbumArtViewer/>
         };
     }
 
@@ -81,7 +96,7 @@ class App extends React.PureComponent
     {
         return {
             header: <SettingsHeader />,
-            main: <SettingsContent />
+            main: <SettingsContent/>
         };
     }
 
@@ -96,7 +111,7 @@ class App extends React.PureComponent
     render()
     {
         const { view, showPlaybackInfo, showStatusBar } = this.state;
-        const main = this.renderView[view].call(this);
+        const { header, main } = this.renderView[view].call(this);
 
         const playbackInfoBar = showPlaybackInfo ? <PlaybackInfoBar /> : null;
         const statusBar = showStatusBar ? <StatusBar /> : null;
@@ -105,8 +120,8 @@ class App extends React.PureComponent
             <div className='app'>
                 { playbackInfoBar }
                 <ControlBar />
-                { main.header }
-                { main.main }
+                { header }
+                { main }
                 { statusBar }
             </div>
         );

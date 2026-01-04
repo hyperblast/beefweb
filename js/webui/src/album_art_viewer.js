@@ -52,7 +52,7 @@ class AlbumArtViewer_ extends React.PureComponent
 
         return (
             <div className='panel panel-main album-art-panel'>
-                <img className='album-art' src={url} alt='Loading album art...' onError={this.handleImageError} />
+                <img className='album-art' src={url} alt='' onError={this.handleImageError} />
             </div>
         );
     }

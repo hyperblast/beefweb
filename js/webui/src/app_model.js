@@ -9,6 +9,7 @@ import NavigationModel from './navigation_model.js';
 import ColumnsSettingsModel from './columns_settings_model.js';
 import PlayQueueModel from './play_queue_model.js';
 import OutputSettingsModel from './output_settings_model.js';
+import TouchController from './touch_controller.js';
 
 export default class AppModel
 {
@@ -26,6 +27,7 @@ export default class AppModel
         this.notificationModel = new NotificationModel();
         this.navigationModel = new NavigationModel();
         this.scrollManager = new ScrollManager();
+        this.touchController = new TouchController(this.navigationModel);
 
         Object.freeze(this);
     }
