@@ -117,13 +117,16 @@ body {
     background: var(--color-background);
 }
 
+.button-bar > .button:not(:last-child) {
+    margin-right: 0.25rem;
+}
+
 .button {
     .hover();
 
     display: inline-block;
     width: 1.75rem;
     height: 1.75rem;
-    margin: 0 0.125rem;
     border-radius: 0.125rem;
 }
 
@@ -146,8 +149,6 @@ body {
 
 .header-block-primary {
     flex: 1;
-    overflow-x: auto;
-    overflow-y: hidden;
 }
 
 .header-block > .button-bar {
@@ -416,12 +417,8 @@ body {
 .dialog-body {
 }
 
-.dialog-row {
+.dialog-row:not(:last-child) {
     margin-bottom: 0.5rem;
-}
-
-.dialog-row:last-child {
-    margin-bottom: 0;
 }
 
 .dialog-label {
@@ -512,7 +509,15 @@ body {
 
 .dtable-head {
     height: 1.75rem;
-    position: relative;
+    margin-right: var(--dtable-scroll-bar-width);
+}
+
+.dtable-has-row-icons .dtable-head {
+    margin-left: 3rem;
+}
+
+.dtable-has-row-menu .dtable-head {
+    margin-right: calc(1.75rem + var(--dtable-scroll-bar-width));
 }
 
 .dtable-body {
@@ -521,35 +526,52 @@ body {
     overscroll-behavior-y: none;
 }
 
-.dtable-row {
-    .hover();
-
+.dtable-cell {
+    padding: 0.25rem;
     height: 1.75rem;
+    display: inline-block;
+}
+
+.dtable-row {
+    display: flex;
+    align-items: center;
+}
+
+.dtable-row-content {
+    display: block;
+    flex: 1;
     border-radius: 0.125rem;
-    position: relative;
+
+    .action-link();
+    .hover();
 }
 
-.dtable-has-row-icons {
-    .dtable-head, .dtable-row {
-        padding-left: 3rem;
+.dtable-row-horizontal .dtable-row-content {
+    height: 1.75rem;
+}
+
+.dtable-row-vertical .dtable-row-content {
+    display: flex;
+    flex-direction: column;
+
+    .dtable-cell {
+        margin-left: 1rem;
     }
-}
 
-.dtable-has-row-menu {
-    .dtable-head, .dtable-body {
-        padding-right: 2rem;
+    .dtable-cell0 {
+        margin-left: 0;
+        font-weight: bold;
     }
 }
 
 .dtable-row-icon {
-    position: absolute;
-    left: 0.5rem;
+    height: 1.75rem;
+    width: 3rem;
 }
 
 .dtable-row-icon-text {
-    position: absolute;
-    left: 0;
     padding: 0.25rem;
+    height: 1.75rem;
     width: 3rem;
     text-align: center;
     font-size: 80%;
@@ -558,8 +580,8 @@ body {
 }
 
 .dtable-row-menu {
-    position: absolute;
-    right: -2rem;
+    width: 1.75rem;
+    height: 1.75rem;
 }
 
 .dtable-column-header, .dtable-cell {
@@ -582,12 +604,6 @@ body {
 
 .dtable-column-header {
     padding: 0 0.25rem;
-}
-
-.dtable-cell {
-    padding: 0.25rem;
-
-    .action-link();
 }
 
 .panel {
@@ -742,12 +758,8 @@ body {
         flex: 1;
     }
 
-    .control-bar > * {
+    .control-bar > *:not(:last-child) {
         margin-right: 2rem;
-
-        &:last-child {
-            margin-right: 0;
-        }
     }
 }
 

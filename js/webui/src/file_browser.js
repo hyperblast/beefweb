@@ -118,6 +118,7 @@ class FileBrowser extends React.PureComponent
 
         return (
             <DataTable
+                columnCount={columnNames.length}
                 columnNames={columnNames}
                 columnSizes={columnSizes}
                 data={data}

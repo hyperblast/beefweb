@@ -192,6 +192,7 @@ class PlaylistContent extends React.PureComponent
         return (
             <DataTable
                 useIcons={true}
+                columnCount={columns.length}
                 columnNames={columnNames}
                 columnSizes={columnSizes}
                 data={this.getTableData()}

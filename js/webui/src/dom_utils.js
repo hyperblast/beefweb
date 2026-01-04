@@ -1,6 +1,6 @@
 import { once } from './utils.js'
 
-export const getScrollBarSize = once(() =>
+export const getScrollBarWidth = once(() =>
 {
     // Based on https://github.com/sonicdoe/measure-scrollbar/blob/master/index.js
 
@@ -13,10 +13,10 @@ export const getScrollBarSize = once(() =>
     div.style.top = '-9999px';
 
     document.body.appendChild(div);
-    const size = div.offsetWidth - div.clientWidth;
+    const width = div.offsetWidth - div.clientWidth;
     document.body.removeChild(div);
 
-    return size;
+    return width;
 });
 
 let nextElementId = 0;
