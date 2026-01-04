@@ -1,4 +1,4 @@
-const minTouchDistance = 100;
+const minTouchDistance = 50;
 
 export default class TouchController
 {
