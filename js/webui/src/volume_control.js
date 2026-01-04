@@ -80,6 +80,7 @@ class VolumeControl_ extends React.PureComponent
             <div className='volume-control button-bar'>
                 <Button
                     name={volumeIcon(isMuted)}
+                    className='control-bar-button'
                     onClick={this.handleMuteClick}
                     title='Toggle mute'/>
                 {

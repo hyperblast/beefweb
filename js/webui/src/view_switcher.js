@@ -31,21 +31,25 @@ class ViewSwitcher_ extends React.PureComponent
             <div className='view-switcher button-bar'>
                 <Button
                     name='list'
+                    className='control-bar-button'
                     href={urls.viewCurrentPlaylist}
                     active={view === View.playlist}
                     title='Playlists'/>
                 <Button
                     name='image'
+                    className='control-bar-button'
                     href={urls.viewAlbumArt}
                     active={view === View.albumArt}
                     title='Album art' />
                 <Button
                     name='folder'
+                    className='control-bar-button'
                     href={urls.browseCurrentPath}
                     active={view === View.fileBrowser}
                     title='Files'/>
                 <Button
                     name='cog'
+                    className='control-bar-button'
                     href={urls.viewCurrentSettings}
                     active={view === View.settings}
                     title='Settings'/>
