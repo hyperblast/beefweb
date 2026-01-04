@@ -72,6 +72,7 @@ export default class ColumnsSettingsMenu extends React.PureComponent
                         isOpen={settingsMenuOpen}
                         onRequestOpen={this.handleSettingsMenuRequestOpen}>
                         <MenuItem title='Revert changes' onClick={this.handleRevertChanges} />
+                        <MenuSeparator />
                         <MenuItem title='Reset to default' onClick={this.handleResetToDefault} />
                     </DropdownButton>
                 </div>
