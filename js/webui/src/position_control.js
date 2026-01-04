@@ -19,8 +19,7 @@ class PositionControl extends React.PureComponent
     getStateFromModel()
     {
         const { position, duration } = this.context.playerModel.activeItem;
-
-        return { duration, startX: position };
+        return { duration, position };
     }
 
     handleClick(e)
@@ -39,6 +38,7 @@ class PositionControl extends React.PureComponent
     render()
     {
         const { position, duration } = this.state;
+
         let positionPercent = '0%';
         let timeInfo = '';
 

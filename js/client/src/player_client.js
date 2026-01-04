@@ -68,7 +68,7 @@ export default class PlayerClient
 
     setPlaybackPosition(value)
     {
-        return this.setPlayerState({ startX: value });
+        return this.setPlayerState({ position: value });
     }
 
     movePlaybackPosition(value)
