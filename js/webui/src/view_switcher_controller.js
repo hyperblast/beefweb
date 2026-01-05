@@ -1,4 +1,4 @@
-const minTouchDistance = 50;
+const minTouchDistance = 100;
 
 export default class ViewSwitcherController
 {
@@ -7,6 +7,7 @@ export default class ViewSwitcherController
         this.navigationModel = navigationModel;
         this.element = null;
         this.startX = null;
+        this.startY = null;
         this.handleTouchStart = this.handleTouchStart.bind(this);
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
     }
@@ -21,6 +22,7 @@ export default class ViewSwitcherController
         this.element?.removeEventListener('touchend', this.handleTouchEnd);
 
         this.startX = null;
+        this.startY = null;
         this.element = element;
 
         this.element?.addEventListener('touchstart', this.handleTouchStart);
@@ -29,24 +31,31 @@ export default class ViewSwitcherController
 
     handleTouchStart(event)
     {
-        this.startX = event.changedTouches[0].screenX;
+        const { screenX, screenY } = event.changedTouches[0];
+
+        this.startX = screenX;
+        this.startY = screenY;
     }
 
     handleTouchEnd(event)
     {
-        if (!this.startX)
+        if (!this.startX || !this.startY)
             return;
 
-        const offset = event.changedTouches[0].screenX - this.startX;
-        this.startX = null;
+        const { screenX, screenY } = event.changedTouches[0];
 
-        if (offset >= minTouchDistance)
-        {
+        const distanceX = screenX - this.startX;
+        const distanceY = screenY - this.startY;
+
+        this.startX = null;
+        this.startY = null;
+
+        if (Math.abs(distanceX) <= Math.abs(distanceY) || Math.abs(distanceX) < minTouchDistance)
+            return;
+
+        if (distanceY > 0)
             this.navigationModel.navigateToPrevious();
-        }
-        else if (offset <= -minTouchDistance)
-        {
+        else
             this.navigationModel.navigateToNext();
-        }
     }
 }
