@@ -76,7 +76,7 @@ class PlayerController
             }
         }
 
-        throw Error(`Unable to find deadbeef executable`);
+        throw new Error(`Unable to find deadbeef executable`);
     }
 
     async initProfile()

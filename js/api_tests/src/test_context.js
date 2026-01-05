@@ -63,7 +63,7 @@ export class TestContext
         if (logData)
             console.error('Player run log:\n%s', logData);
 
-        throw Error('Failed to reach API endpoint');
+        throw new Error('Failed to reach API endpoint');
     }
     
     async stopPlayer()

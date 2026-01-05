@@ -5,7 +5,7 @@ function getCallbacks(model, eventName)
     const callbacks = model[events].get(eventName);
 
     if (!callbacks)
-        throw Error('Unknown event name: ' + eventName);
+        throw new Error('Unknown event name: ' + eventName);
 
     return callbacks;
 }

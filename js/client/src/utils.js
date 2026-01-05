@@ -121,7 +121,7 @@ export function isTransferBetweenPlaylists(options)
     const hasFromTo = typeof from !== 'undefined' && typeof to !== 'undefined';
 
     if (hasPlaylist === hasFromTo)
-        throw Error("Either 'playlist' or 'from' and 'to' options are required");
+        throw new Error("Either 'playlist' or 'from' and 'to' options are required");
 
     return hasFromTo;
 }

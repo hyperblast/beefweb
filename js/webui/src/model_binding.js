@@ -17,7 +17,7 @@ function makeBindingList(bindings)
         else if (typeof event === 'string')
             result.push({ model, event });
         else
-            throw Error(`Invalid event name or event list for model '${model}': '${event}'`);
+            throw new Error(`Invalid event name or event list for model '${model}': '${event}'`);
     }
 
     return result;
