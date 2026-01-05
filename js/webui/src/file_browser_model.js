@@ -39,54 +39,49 @@ export default class FileBrowserModel extends ModelBase
 
         this.client = client;
         this.currentPath = rootPath;
+        this.roots = null;
         this.entries = [];
         this.parentPath = null;
-        this.roots = [];
-        this.pathSeparator = '/';
+        this.pathSeparator = null;
         this.pathStack = [];
         this.defineEvent('change');
     }
 
-    browse(path)
+    async browse(path)
     {
         if (path === rootPath)
         {
-            this.client
-                .getFileSystemRoots()
-                .then(r => this.endBrowse(path, r.roots, r.pathSeparator));
-        }
-        else
-        {
-            this.client
-                .getFileSystemEntries(path)
-                .then(r => this.endBrowse(path, r.entries, r.pathSeparator));
-        }
-    }
+            const result = await this.client.getFileSystemRoots();
+            result.roots.sort(compareEntry);
 
-    reload()
-    {
-        this.browse(this.currentPath);
-    }
+            this.pathSeparator ??= result.pathSeparator;
+            this.roots = this.entries = result.roots;
 
-    endBrowse(path, entries, separator)
-    {
-        this.pathSeparator = separator;
-        this.currentPath = path;
-        this.entries = entries.sort(compareEntry);
-
-        if (path === rootPath)
-        {
-            this.roots = this.entries;
             this.pathStack = [rootEntry];
+            this.currentPath = rootPath;
             this.parentPath = null;
         }
         else
         {
+            this.roots ??= (await this.client.getFileSystemRoots()).roots;
+
+            const result = await this.client.getFileSystemEntries(path);
+            result.entries.sort(compareEntry);
+
+            this.pathSeparator ??= result.pathSeparator;
+            this.entries = result.entries;
+
             this.pathStack = this.buildPathStack(path);
+            this.currentPath = path;
             this.parentPath = this.pathStack[this.pathStack.length - 2].path;
         }
 
         this.emit('change');
+    }
+
+    reload()
+    {
+        return this.browse(this.currentPath);
     }
 
     buildPathStack(path)
