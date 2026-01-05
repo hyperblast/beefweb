@@ -271,7 +271,7 @@ export default class DataTable extends React.PureComponent
 
         return (
             <div id={elementId} className={fullClassName} style={style}>
-                <style>{ this.renderColumnStyles() }</style>
+                <style>{ this.renderCellStyles() }</style>
                 <div className="dtable-head">{ this.renderColumnHeaders() }</div>
                 <div
                     className='dtable-body'
@@ -437,15 +437,13 @@ export default class DataTable extends React.PureComponent
         );
     }
 
-    renderColumnStyle(index, column, size)
+    renderCellStyle(index, column, size)
     {
         const rules = [
             `width: ${size * 100}%;`
         ];
 
-        console.log(index, column.align)
-
-        if (column.align)
+        if (column.align === 'right' || column.align === 'center')
         {
             rules.push(`text-align: ${column.align};`)
         }
@@ -458,7 +456,7 @@ export default class DataTable extends React.PureComponent
         return `#${this.state.elementId} .dtable-cell${index} { ${rules.join(' ')} }`;
     }
 
-    renderColumnStyles()
+    renderCellStyles()
     {
         const { columns } = this.props;
         const styles = [];
@@ -477,7 +475,7 @@ export default class DataTable extends React.PureComponent
 
             for (let j = subrowStart; j < i; j++)
             {
-                styles.push(this.renderColumnStyle(j, columns[j], columns[j].size / subrowSize));
+                styles.push(this.renderCellStyle(j, columns[j], columns[j].size / subrowSize));
             }
 
             subrowStart = i + 1;
@@ -486,7 +484,7 @@ export default class DataTable extends React.PureComponent
 
         for (let j = subrowStart; j < columns.length; j++)
         {
-            styles.push(this.renderColumnStyle(j, columns[j], columns[j].size / subrowSize));
+            styles.push(this.renderCellStyle(j, columns[j], columns[j].size / subrowSize));
         }
 
         return styles.join('\n');
