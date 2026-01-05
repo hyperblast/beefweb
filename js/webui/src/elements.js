@@ -173,21 +173,25 @@ export function Select(props)
         </select>
     }
 
+    const idProperty = props.idProperty || 'id';
+    const nameProperty = props.nameProperty || 'name';
+
     return <select className={className} id={id} value={selectedItemId} onChange={onChange} disabled={disabled}>
-        {items.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+        {items.map(t => {
+            const id = t[idProperty];
+            const name = t[nameProperty];
+            return <option key={id} value={id}>{name}</option>;
+        })}
     </select>;
 }
 
 Select.propTypes = {
     id: PropTypes.string.isRequired,
     selectedItemId: PropTypes.string,
-    items: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-        })
-    ),
+    items: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func,
     className: PropTypes.string,
     disabled: PropTypes.bool,
+    idProperty: PropTypes.string,
+    nameProperty: PropTypes.string,
 };

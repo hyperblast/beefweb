@@ -3,9 +3,12 @@ import ModelBase from './model_base.js';
 
 export const rootPath = 'roots';
 
+const rootName = 'Music directories';
+
 const rootEntry = Object.freeze({
-    title: 'Music directories',
     path: rootPath,
+    shortName: rootName,
+    longName: rootName
 });
 
 const fileTypeOrder = Object.freeze({
@@ -92,13 +95,18 @@ export default class FileBrowserModel extends ModelBase
 
         do
         {
-            items.push({ title: getBaseName(path, this.pathSeparator), path });
+            items.push({
+                shortName: getBaseName(path, this.pathSeparator),
+                longName: path,
+                path
+            });
+
             path = getParentDir(path, this.pathSeparator);
         }
         while (path.length > 0 && this.isUnderRootPath(path));
 
         const lastItem = items[items.length - 1];
-        lastItem.title = lastItem.path;
+        lastItem.longName = lastItem.path;
 
         items.push(rootEntry);
         return items.reverse();

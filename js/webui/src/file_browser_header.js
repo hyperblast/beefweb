@@ -1,11 +1,11 @@
 import React from 'react'
 import { rootPath } from './file_browser_model.js'
-import { Button, Menu, MenuItem } from './elements.js'
+import { Button, Menu, MenuItem, Select } from './elements.js';
 import urls from './urls.js'
 import ModelBinding from './model_binding.js'
 import { DropdownButton } from './dropdown.js'
 import { bindHandlers } from './utils.js'
-import { AddAction } from './settings_model.js'
+import { AddAction, MediaSize } from './settings_model.js';
 import ServiceContext from "./service_context.js";
 
 class FileBrowserHeader extends React.PureComponent
@@ -25,7 +25,15 @@ class FileBrowserHeader extends React.PureComponent
     {
         const { permissions } = this.context.playerModel;
         const { currentPath, parentPath, pathStack } = this.context.fileBrowserModel;
-        return { currentPath, parentPath, pathStack, allowChangePlaylists: permissions.changePlaylists };
+        const { mediaSize } = this.context.settingsModel;
+
+        return {
+            currentPath,
+            parentPath,
+            pathStack,
+            mediaSize,
+            allowChangePlaylists: permissions.changePlaylists
+        };
     }
 
     addCurrent(action)
@@ -60,15 +68,40 @@ class FileBrowserHeader extends React.PureComponent
         this.setState({ menuOpen: value });
     }
 
+    handleSelectPath(e)
+    {
+        this.context.fileBrowserModel.browse(e.target.value);
+    }
+
+    renderSelector()
+    {
+        const items = this.state.pathStack;
+        const selectedPath = items.length > 0 ? items[items.length - 1].path : null;
+
+        return <div className='header-block header-block-primary'>
+            <Select id='browser-path-selector'
+                    className='header-selector'
+                    items={items}
+                    selectedItemId={selectedPath}
+                    idProperty='path'
+                    nameProperty='longName'
+                    onChange={this.handleSelectPath}/>
+        </div>
+    }
+
     renderBreadcrumbs()
     {
-       return this.state.pathStack.map((item, index) => (
+       const items = this.state.pathStack.map((item, index) => (
             <li key={index} className='header-tab header-tab-active'>
                 <a href={urls.browsePath(item.path)} title={item.path}>
-                    {item.title}
+                    {item.shortName}
                 </a>
             </li>
        ));
+
+        return <ul className='header-block header-block-primary'>
+            { items }
+        </ul>
     }
 
     renderButtons()
@@ -78,36 +111,38 @@ class FileBrowserHeader extends React.PureComponent
         if (!parentPath)
             return null;
 
+        const addCurrentDirectoryButton =
+            allowChangePlaylists
+            ? <Button name='data-transfer-download'
+                      onClick={this.handleAddClick}
+                      title='Add current directory'/>
+            : null;
+
+        const directoryMenu =
+            allowChangePlaylists
+            ? <DropdownButton
+                iconName='menu'
+                title='Directory menu'
+                direction='left'
+                isOpen={menuOpen}
+                onRequestOpen={this.handleRequestMenuOpen}>
+                <Menu>
+                    <MenuItem title='Add' onClick={this.handleAddClick}/>
+                    <MenuItem title='Add & Play' onClick={this.handleAddAndPlayClick}/>
+                    <MenuItem title='Replace & Play' onClick={this.handleReplaceAndPlayClick}/>
+                </Menu>
+            </DropdownButton>
+            : null;
+
         return (
             <div className='header-block'>
                 <div className='button-bar'>
-                    {
-                        allowChangePlaylists
-                            ? <Button name='data-transfer-download'
-                                      onClick={this.handleAddClick}
-                                      title='Add current directory' />
-                            : null
-                    }
+                    { addCurrentDirectoryButton }
                     <Button
                         name='arrow-thick-top'
                         href={urls.browsePath(parentPath)}
-                        title='Navigate to parent directory' />
-                    {
-                        allowChangePlaylists
-                            ? <DropdownButton
-                                    iconName='menu'
-                                    title='Directory menu'
-                                    direction='left'
-                                    isOpen={menuOpen}
-                                    onRequestOpen={this.handleRequestMenuOpen}>
-                                    <Menu>
-                                        <MenuItem title='Add' onClick={this.handleAddClick} />
-                                        <MenuItem title='Add & Play' onClick={this.handleAddAndPlayClick} />
-                                        <MenuItem title='Replace & Play' onClick={this.handleReplaceAndPlayClick} />
-                                    </Menu>
-                            </DropdownButton>
-                            : null
-                    }
+                        title='Navigate to parent directory'/>
+                    { directoryMenu }
                 </div>
             </div>
         );
@@ -115,11 +150,11 @@ class FileBrowserHeader extends React.PureComponent
 
     render()
     {
+        const { mediaSize } = this.state;
+
         return (
             <div className='panel panel-header'>
-                <ul className='header-block header-block-primary'>
-                    { this.renderBreadcrumbs() }
-                </ul>
+                { mediaSize === MediaSize.small ? this.renderSelector() : this.renderBreadcrumbs() }
                 { this.renderButtons() }
             </div>
         );
@@ -128,5 +163,6 @@ class FileBrowserHeader extends React.PureComponent
 
 export default ModelBinding(FileBrowserHeader, {
     fileBrowserModel: 'change',
-    playerModel: 'change'
+    playerModel: 'change',
+    settingsModel: 'mediaSize'
 });

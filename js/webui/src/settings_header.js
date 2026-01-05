@@ -1,31 +1,32 @@
 import React from 'react';
-import { PanelHeaderTab } from './elements.js';
+import { PanelHeaderTab, Select } from './elements.js';
 import { SettingsView } from './navigation_model.js';
 import ModelBinding from './model_binding.js';
 import urls from './urls.js';
 import ColumnsSettingsMenu from './columns_settings_menu.js';
 import ServiceContext from './service_context.js';
+import { MediaSize } from './settings_model.js';
 
-const settingsTabs = [
+const settingsViews = [
     {
-        key: SettingsView.general,
-        title: 'General',
+        id: SettingsView.general,
+        name: 'General',
     },
     {
-        key: SettingsView.columns,
-        title: 'Columns',
+        id: SettingsView.columns,
+        name: 'Columns',
     },
     {
-        key: SettingsView.output,
-        title: 'Output',
+        id: SettingsView.output,
+        name: 'Output',
     },
     {
-        key: SettingsView.defaults,
-        title: 'Defaults',
+        id: SettingsView.defaults,
+        name: 'Defaults',
     },
     {
-        key: SettingsView.about,
-        title: 'About'
+        id: SettingsView.about,
+        name: 'About'
     }
 ];
 
@@ -42,33 +43,62 @@ class SettingsHeader extends React.PureComponent
         super(props, context);
 
         this.state = this.getStateFromModel();
+        this.handleSelectView = this.handleSelectView.bind(this);
     }
 
     getStateFromModel()
     {
         const { settingsView } = this.context.navigationModel;
-        return { settingsView };
+        const { mediaSize } = this.context.settingsModel;
+        return { settingsView, mediaSize };
     }
+
+    handleSelectView(e)
+    {
+        this.context.navigationModel.setSettingsView(e.target.value);
+    }
+
+    renderSelector(settingsView)
+    {
+        return <div className='header-block header-block-primary'>
+            <Select id='settings-page-selector'
+                    className='header-selector'
+                    items={settingsViews}
+                    selectedItemId={settingsView}
+                    onChange={this.handleSelectView}></Select>
+        </div>;
+    }
+
+    renderTabs(settingsView)
+    {
+        const tabs = settingsViews.map(value => (
+            <PanelHeaderTab
+                key={value.id}
+                active={settingsView === value.id}
+                href={urls.viewSettings(value.id)}
+                title={value.name} />
+        ));
+
+        return <ul className='header-block header-block-primary'>
+            { tabs }
+        </ul>;
+    }
+
     render()
     {
-        const { settingsView } = this.state;
-
-        const tabs = settingsTabs.map(value => (
-            <PanelHeaderTab
-                key={value.key}
-                active={settingsView === value.key}
-                href={urls.viewSettings(value.key)}
-                title={value.title} />
-        ));
+        const { settingsView, mediaSize } = this.state;
 
         const Menu = settingsMenus[settingsView];
         const menu = Menu ? <Menu/> : null;
 
+        const mainBlock =
+            mediaSize === MediaSize.small
+                ? this.renderSelector(settingsView)
+                : this.renderTabs(settingsView)
+
         return (
             <div className='panel panel-header'>
-                <ul className='header-block header-block-primary'>
-                    { tabs }
-                </ul>
+                { mainBlock }
                 { menu }
             </div>
         );
@@ -76,5 +106,6 @@ class SettingsHeader extends React.PureComponent
 }
 
 export default ModelBinding(SettingsHeader, {
-    navigationModel: 'settingsViewChange'
+    navigationModel: 'settingsViewChange',
+    settingsModel: 'mediaSize'
 });

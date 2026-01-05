@@ -1,12 +1,13 @@
 import React from 'react'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { PlaybackState } from 'beefweb-client'
-import { Icon } from './elements.js'
+import { Icon, Select } from './elements.js';
 import urls from './urls.js'
 import { bindHandlers } from './utils.js'
 import { makeClassName } from './dom_utils.js'
 import ModelBinding from './model_binding.js';
 import ServiceContext from "./service_context.js";
+import { MediaSize } from './settings_model.js';
 
 function PlaylistTabHandle_()
 {
@@ -105,20 +106,23 @@ class PlaylistSwitcher extends React.PureComponent
     getStateFromModel()
     {
         const { playbackState, activeItem, permissions } = this.context.playerModel;
-        const activePlaylistId = activeItem.playlistId;
-
+        let { touchMode, mediaSize } = this.context.settingsModel;
         const { currentPlaylistId, playlists } = this.context.playlistModel;
 
-        // If playlist changing is not allowed
-        // disable rendering of touch friendly elements since playlist tabs are not draggable anyway
-        const touchMode = this.context.settingsModel.touchMode && permissions.changePlaylists;
+        if (touchMode && !permissions.changePlaylists)
+        {
+            // If playlist changing is not allowed
+            // disable rendering of touch friendly elements since playlist tabs are not draggable anyway
+            touchMode = false;
+        }
 
         return {
             playbackState,
-            activePlaylistId,
+            activePlaylistId: activeItem.playlistId,
             currentPlaylistId,
             playlists,
             touchMode,
+            mediaSize,
             allowChangePlaylists: permissions.changePlaylists,
         };
     }
@@ -126,6 +130,11 @@ class PlaylistSwitcher extends React.PureComponent
     handleSortEnd(e)
     {
         this.context.playlistModel.movePlaylist(e.oldIndex, e.newIndex);
+    }
+
+    handleSelectPlaylist(e)
+    {
+        this.context.playlistModel.setCurrentPlaylistId(e.target.value);
     }
 
     render()
@@ -137,7 +146,20 @@ class PlaylistSwitcher extends React.PureComponent
             playlists,
             touchMode,
             allowChangePlaylists,
+            mediaSize,
         } = this.state;
+
+        if (mediaSize === MediaSize.small)
+        {
+            return <div className='header-block header-block-primary'>
+                <Select id='playlist-selector'
+                        className='header-selector'
+                        items={playlists}
+                        selectedItemId={currentPlaylistId}
+                        nameProperty='title'
+                        onChange={this.handleSelectPlaylist}></Select>
+            </div>;
+        }
 
         return (
             <PlaylistTabList
@@ -160,5 +182,5 @@ class PlaylistSwitcher extends React.PureComponent
 export default ModelBinding(PlaylistSwitcher, {
     playerModel: 'change',
     playlistModel: 'playlistsChange',
-    settingsModel: 'touchMode',
+    settingsModel: ['touchMode', 'mediaSize'],
 });
