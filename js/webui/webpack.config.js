@@ -157,7 +157,7 @@ function getBuildType(value)
     if (buildType)
         return buildType;
 
-    console.log(`Unknown build type '${value}' was specified, defaulting to 'Debug'`);
+    console.log(`Unknown build type '${value}' was specified, defaulting to '${buildTypes.debug}'`);
     return buildTypes.debug;
 }
 
@@ -199,7 +199,7 @@ function makeTarget(configTarget, params)
     configCommon(config, params);
     configTarget(config, params);
 
-    (params.buildType === 'Debug' ? configDebug : configRelease)(config, params);
+    (params.buildType === buildTypes.debug ? configDebug : configRelease)(config, params);
 
     return config;
 }
