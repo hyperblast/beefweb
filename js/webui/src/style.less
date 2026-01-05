@@ -112,33 +112,33 @@ body {
 
 /* Elements */
 
-.button-bar {
-    display: inline-block;
-    background: var(--color-background);
-}
-
-.button-bar > .button:not(:last-child) {
-    margin-right: 0.25rem;
-}
-
-.icon-button {
-    display: inline-block;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 0.125rem;
-
-    .hover();
-}
-
 .icon {
     display: inline-block;
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 2rem;
+    height: 2rem;
     padding: 0.25rem;
 
     & > use {
         fill: var(--color-text);
     }
+}
+
+.icon-button {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.125rem;
+
+    .hover();
+}
+
+.button-bar {
+    display: inline-block;
+    background: var(--color-background);
+}
+
+.button-bar > .icon-button:not(:last-child) {
+    margin-right: 0.25rem;
 }
 
 .header-block {
@@ -594,6 +594,12 @@ body {
 .dtable-row-menu {
     width: 1.75rem;
     height: 1.75rem;
+
+    .icon,
+    .icon-button {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
 }
 
 .dtable-column-header, .dtable-cell {
@@ -693,16 +699,6 @@ body {
     order: 2;
 }
 
-.control-bar-button {
-    width: 2rem;
-    height: 2rem;
-
-    & > .icon {
-        width: 2rem;
-        height: 2rem;
-    }
-}
-
 .st-mediasize-small {
     .control-bar {
         order: 4;
@@ -737,6 +733,10 @@ body {
         width: 100%;
         grid-column: 1 / 4;
         margin-bottom: 1rem;
+    }
+
+    .volume-slider {
+        height: 2.5rem;
     }
 
     .control-bar-button {
@@ -810,20 +810,21 @@ body {
 }
 
 .position-control {
-    padding: 0.25rem 0;
-    height: 2.25rem;
+    padding: 0.125rem 0;
+    height: 2rem;
     font-size: 1.2rem;
 }
 
 .volume-control {
     display: inline-block;
-    width: 9rem;
+    width: 12rem;
 }
 
 .volume-slider {
-    width: 6rem;
+    display: inline-block;
     margin-left: 0.25rem;
-    height: 1.75rem;
+    width: 9rem;
+    height: 2rem;
 }
 
 .volume-text-block {
