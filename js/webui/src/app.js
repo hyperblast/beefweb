@@ -45,17 +45,17 @@ class App extends React.PureComponent
 
     componentDidMount()
     {
-        this.context.touchController.update();
+        this.context.viewSwitcherController.update();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot)
     {
-        this.context.touchController.update();
+        this.context.viewSwitcherController.update();
     }
 
     componentWillUnmount()
     {
-        this.context.touchController.update();
+        this.context.viewSwitcherController.update();
     }
 
     renderPlaylistView()

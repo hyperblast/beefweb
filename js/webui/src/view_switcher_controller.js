@@ -1,6 +1,6 @@
 const minTouchDistance = 50;
 
-export default class TouchController
+export default class ViewSwitcherController
 {
     constructor(navigationModel)
     {
