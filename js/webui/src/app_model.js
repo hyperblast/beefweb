@@ -47,7 +47,6 @@ export default class AppModel
         this.playQueueModel.start();
         this.outputSettingsModel.start();
         this.dataSource.start();
-        this.fileBrowserModel.reload();
         this.notificationModel.start();
     }
 }

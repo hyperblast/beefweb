@@ -165,6 +165,11 @@ function main()
         windowController.start();
         router.resolve();
 
+        if (navigationModel.view !== View.fileBrowser)
+        {
+            fileBrowserModel.reload();
+        }
+
         settingsModel.on('touchMode', updateViewHeight);
         window.addEventListener('resize', debounce(updateViewHeight, 50));
 
