@@ -249,14 +249,15 @@ export default class DataTable extends React.PureComponent
     {
         setScrollBarWidthVariable();
 
-        const { className, style, useIcons, onRenderRowMenu } = this.props;
+        const { className, style, useIcons, onRenderRowMenu, verticalColumns } = this.props;
         const { elementId } = this.state;
 
         const fullClassName = makeClassName([
             'dtable',
             useIcons ? 'dtable-has-row-icons' : null,
             onRenderRowMenu ? 'dtable-has-row-menu' : null,
-            className
+            verticalColumns ? 'dtable-vertical' : 'dtable-horizontal',
+            className,
         ]);
 
         let columnStyles = null;
@@ -301,7 +302,7 @@ export default class DataTable extends React.PureComponent
         );
     }
 
-    renderRow(rowIndex, rowData, rowClassName)
+    renderRow(rowIndex, rowData)
     {
         let icon = null;
 
@@ -354,7 +355,7 @@ export default class DataTable extends React.PureComponent
         }
 
         return (
-            <div key={rowIndex} className={rowClassName}>
+            <div key={rowIndex} className='dtable-row'>
                 { icon }
                 { rowContent }
                 { rowMenuButton }
@@ -372,14 +373,11 @@ export default class DataTable extends React.PureComponent
             endOffset = totalCount;
 
         const rows = [];
-        const rowClassName = makeClassName([
-            'dtable-row',
-            this.props.verticalColumns ? 'dtable-row-vertical' : 'dtable-row-horizontal']);
 
         rows.push(this.renderSpacer('header', offset));
 
         for (let i = offset; i < endOffset; i++)
-            rows.push(this.renderRow(i, data[i - offset], rowClassName));
+            rows.push(this.renderRow(i, data[i - offset]));
 
         rows.push(this.renderSpacer('footer', totalCount - endOffset));
 

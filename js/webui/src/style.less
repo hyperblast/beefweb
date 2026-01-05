@@ -548,21 +548,20 @@ body {
     .hover();
 }
 
-.dtable-row-horizontal .dtable-row-content {
+.dtable-horizontal .dtable-row-content {
     height: 1.75rem;
 }
 
-.dtable-row-vertical .dtable-row-content {
+.dtable-vertical .dtable-row-content {
     display: flex;
     flex-direction: column;
 
-    .dtable-cell {
-        margin-left: 1rem;
+    .dtable-cell:first-child {
+        font-weight: bold;
     }
 
-    .dtable-cell0 {
-        margin-left: 0;
-        font-weight: bold;
+    .dtable-cell:not(:first-child) {
+        margin-left: 1rem;
     }
 }
 
