@@ -15,6 +15,12 @@ set(
 )
 
 set(
+    JS_PACKAGES
+    js_packages
+    ${YARN_INTEGRITY}
+)
+
+set(
     PACKAGE_JSON_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/package.json
     ${CMAKE_CURRENT_SOURCE_DIR}/api_tests/package.json
