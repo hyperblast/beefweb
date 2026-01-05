@@ -165,7 +165,7 @@ function main()
         windowController.start();
         router.resolve();
 
-        settingsModel.on('touchModeChange', updateViewHeight);
+        settingsModel.on('touchMode', updateViewHeight);
         window.addEventListener('resize', debounce(updateViewHeight, 50));
 
         const appComponent = (

@@ -75,8 +75,8 @@ export default class PlayerModel extends EventEmitter
     {
         this.dataSource.on('player', this.update.bind(this));
 
-        this.settingsModel.on('windowTitleExpressionChange', this.reloadWithDelay);
-        this.settingsModel.on('playbackInfoExpressionChange', this.reloadWithDelay);
+        this.settingsModel.on('windowTitleExpression', this.reloadWithDelay);
+        this.settingsModel.on('playbackInfoExpression', this.reloadWithDelay);
 
         this.reload();
     }

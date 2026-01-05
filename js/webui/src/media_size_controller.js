@@ -54,7 +54,7 @@ export default class MediaSizeController
 
     start()
     {
-        this.settingsModel.on('uiScaleChange', debounce(this.updateScale.bind(this), 500));
+        this.settingsModel.on('uiScale', debounce(this.updateScale.bind(this), 500));
         this.updateScale();
     }
 

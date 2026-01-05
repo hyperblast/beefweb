@@ -34,8 +34,7 @@ class PlaybackInfoBar_ extends React.PureComponent
 }
 
 const PlaybackInfoBar = ModelBinding(PlaybackInfoBar_, {
-    playerModel: 'change',
-    settingsModel: 'change'
+    playerModel: 'change'
 });
 
 export default PlaybackInfoBar;

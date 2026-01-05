@@ -235,12 +235,12 @@ export default class SettingEditor extends React.PureComponent
 
     componentDidMount()
     {
-        this.context.settingsModel.on(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.on(this.props.settingKey, this.handleUpdate);
     }
 
     componentWillUnmount()
     {
-        this.context.settingsModel.off(this.props.settingKey + 'Change', this.handleUpdate);
+        this.context.settingsModel.off(this.props.settingKey, this.handleUpdate);
     }
 
     render()

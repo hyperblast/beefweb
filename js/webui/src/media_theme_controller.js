@@ -11,7 +11,7 @@ export default class MediaThemeController
 
     start()
     {
-        this.settingsModel.on('uiThemePreferenceChange', this.update);
+        this.settingsModel.on('uiThemePreference', this.update);
         this.darkThemeQuery.addEventListener('change', this.update);
         this.update();
     }

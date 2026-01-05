@@ -178,6 +178,7 @@ export default class SettingsModel extends SettingsModelBase
             title: 'Combine Play and Pause buttons',
             type: SettingType.bool,
             defaultValue: false,
+            persistent: true,
         });
 
         this.define({

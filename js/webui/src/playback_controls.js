@@ -318,5 +318,5 @@ class PlaybackNavigationButton_ extends React.PureComponent
 }
 
 export const PlaybackNavigationButton = ModelBinding(PlaybackNavigationButton_, {
-    settingsModel: 'cursorFollowsPlaybackChange'
+    settingsModel: 'cursorFollowsPlayback'
 });

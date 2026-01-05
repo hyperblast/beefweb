@@ -50,5 +50,5 @@ class GeneralSettings extends React.PureComponent
 }
 
 export default ModelBinding(GeneralSettings, {
-    settingsModel: ['showPlaybackInfoChange', 'mediaSizeChange'],
+    settingsModel: ['showPlaybackInfo', 'mediaSize'],
 });

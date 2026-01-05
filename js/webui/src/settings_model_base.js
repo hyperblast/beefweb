@@ -32,7 +32,8 @@ export default class SettingsModelBase extends EventEmitter
         const { key, type } = props;
         const metadata = Object.assign({}, defaultSettingProps, props);
 
-        metadata.eventName = key + 'Change';
+        metadata.getter = () => this.getValue(key);
+        metadata.setter = value => this.setValue(key, value);
 
         if (metadata.persistent)
         {
@@ -49,11 +50,11 @@ export default class SettingsModelBase extends EventEmitter
 
         Object.defineProperty(this, key, {
             enumerable: true,
-            get: function() { return this.getValue(key); },
-            set: function(value) { this.setValue(key, value); }
+            get: metadata.getter,
+            set: metadata.setter,
         });
 
-        this.defineEvent(metadata.eventName);
+        this.defineEvent(key);
     }
 
     setValue(key, value)
@@ -71,7 +72,7 @@ export default class SettingsModelBase extends EventEmitter
         if (metadata.persistent)
             this.save();
 
-        this.emit(metadata.eventName);
+        this.emit(key);
         this.emit('change');
     }
 
@@ -138,7 +139,7 @@ export default class SettingsModelBase extends EventEmitter
                 continue;
 
             this.values[key] = value;
-            pendingEvents.push(metadata.eventName);
+            pendingEvents.push(key);
         }
 
         for (let event of pendingEvents)

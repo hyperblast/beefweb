@@ -15,7 +15,7 @@ export default class ColumnsSettingsModel extends EventEmitter
         this.columns = [];
         this.updating = false;
 
-        settingsModel.on('columnsChange', this.handleColumnsChange.bind(this));
+        settingsModel.on('columns', this.handleColumnsChange.bind(this));
     }
 
     handleColumnsChange()

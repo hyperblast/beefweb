@@ -160,5 +160,5 @@ class PlaylistSwitcher extends React.PureComponent
 export default ModelBinding(PlaylistSwitcher, {
     playerModel: 'change',
     playlistModel: 'playlistsChange',
-    settingsModel: 'touchModeChange',
+    settingsModel: 'touchMode',
 });

@@ -36,12 +36,12 @@ export default class PlaylistModel extends EventEmitter
     {
         this.updateLayout();
 
-        this.settingsModel.on('mediaSizeChange', () => {
+        this.settingsModel.on('mediaSize', () => {
             if (this.updateLayout())
                 this.watchPlaylistItems();
         });
 
-        this.settingsModel.on('columnsChange', () => {
+        this.settingsModel.on('columns', () => {
             this.updateLayout(true);
             this.watchPlaylistItems();
         });

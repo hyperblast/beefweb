@@ -88,5 +88,5 @@ class ControlBar_ extends React.PureComponent
 }
 
 export const ControlBar = ModelBinding(ControlBar_, {
-    settingsModel: ['mediaSizeChange', 'combinePlayPause']
+    settingsModel: ['mediaSize', 'combinePlayPause']
 });

@@ -10,7 +10,7 @@ export default class TouchModeController
 
     start()
     {
-        this.settingsModel.on('inputModeChange', this.update.bind(this));
+        this.settingsModel.on('inputMode', this.update.bind(this));
         this.update();
     }
 
