@@ -14,7 +14,6 @@ import SettingsContent from './settings_content.js';
 import ServiceContext from './service_context.js';
 import PlaybackInfoBar from './playback_info_bar.js';
 import AlbumArtViewer from "./album_art_viewer.js";
-import { MediaSize } from './settings_model.js';
 
 class App extends React.PureComponent
 {
@@ -39,8 +38,8 @@ class App extends React.PureComponent
     {
         const { navigationModel, settingsModel } = this.context;
         const { view } = navigationModel;
-        const { showPlaybackInfo, showStatusBar, mediaSize } = settingsModel;
-        return { view, showPlaybackInfo, showStatusBar, mediaSize };
+        const { showPlaybackInfo, showStatusBar } = settingsModel;
+        return { view, showPlaybackInfo, showStatusBar };
     }
 
     componentDidMount()
@@ -111,19 +110,16 @@ class App extends React.PureComponent
 
     render()
     {
-        const { view, showPlaybackInfo, showStatusBar, mediaSize } = this.state;
+        const { view, showPlaybackInfo, showStatusBar } = this.state;
         const { header, main } = this.renderView[view].call(this);
 
         const playbackInfoBar = showPlaybackInfo ? <PlaybackInfoBar /> : null;
         const statusBar = showStatusBar ? <StatusBar /> : null;
-        const controlBar = mediaSize !== MediaSize.small || view === View.playlist || view === View.albumArt
-            ? <ControlBar />
-            : null;
 
         return (
             <div className='app'>
                 { playbackInfoBar }
-                { controlBar }
+                <ControlBar />
                 { header }
                 { main }
                 { statusBar }
@@ -134,5 +130,5 @@ class App extends React.PureComponent
 
 export default ModelBinding(App, {
     navigationModel: 'viewChange',
-    settingsModel: ['showPlaybackInfo', 'showStatusBar', 'mediaSize']
+    settingsModel: ['showPlaybackInfo', 'showStatusBar']
 });

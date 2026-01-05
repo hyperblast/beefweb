@@ -17,6 +17,7 @@ import { ViewSwitcher, ViewSwitcherButton } from './view_switcher.js'
 import ServiceContext from "./service_context.js";
 import ModelBinding from "./model_binding.js";
 import { MediaSize } from "./settings_model.js";
+import { View } from './navigation_model.js';
 
 class ControlBar_ extends React.PureComponent
 {
@@ -30,17 +31,33 @@ class ControlBar_ extends React.PureComponent
 
     getStateFromModel()
     {
+        const { view } = this.context.navigationModel;
         const { mediaSize, combinePlayPause } = this.context.settingsModel;
-        return { mediaSize, combinePlayPause };
+        return { view, mediaSize, combinePlayPause };
     }
 
-    renderSmall()
+    renderNarrowCompact()
+    {
+        return <div key='control-bar' className='panel control-bar'>
+            <div className='button-bar button-bar-single'>
+                <PlaybackOptionsButton menuUp={true} menuDirection='right'/>
+                <PlaybackNavigationButton menuUp={true} menuDirection='right'/>
+                <PlayPreviousButton/>
+                <PlayOrPauseButton/>
+                <PlayNextButton/>
+                <VolumeControlButton menuUp={true} menuDirection='left'/>
+                <ViewSwitcherButton menuUp={true} menuDirection='left'/>
+            </div>
+        </div>;
+    }
+
+    renderNarrowFull()
     {
         return <div key='control-bar' className='panel control-bar'>
             <PositionControl/>
             <div className='button-bar button-bar-secondary'>
-                <PlaybackOptionsButton menuUp={true} menuDirection='right'/>
                 <PlaybackNavigationButton menuUp={true} menuDirection='right'/>
+                <PlaybackOptionsButton menuUp={true} menuDirection='right'/>
             </div>
             <div className='button-bar button-bar-primary'>
                 <PlayPreviousButton/>
@@ -54,7 +71,7 @@ class ControlBar_ extends React.PureComponent
         </div>;
     }
 
-    renderMediumUp()
+    renderWide()
     {
         const playPauseButtons =
             this.state.combinePlayPause
@@ -81,12 +98,17 @@ class ControlBar_ extends React.PureComponent
 
     render()
     {
-        return this.state.mediaSize === MediaSize.small
-               ? this.renderSmall()
-               : this.renderMediumUp();
+        const { view, mediaSize } = this.state;
+
+        return mediaSize === MediaSize.small
+               ? view === View.playlist || view === View.albumArt
+                    ? this.renderNarrowFull()
+                    : this.renderNarrowCompact()
+               : this.renderWide();
     }
 }
 
 export const ControlBar = ModelBinding(ControlBar_, {
+    navigationModel: 'viewChange',
     settingsModel: ['mediaSize', 'combinePlayPause']
 });

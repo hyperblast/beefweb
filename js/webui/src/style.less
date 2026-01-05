@@ -700,6 +700,12 @@ body {
         grid-template-rows: auto 1fr;
         align-items: center;
 
+        & > .button-bar-single {
+            display: flex;
+            justify-content: space-between;
+            grid-column: 1 / 4;
+        }
+
         & > .button-bar-primary {
             display: flex;
             justify-content: space-evenly;
@@ -711,7 +717,7 @@ body {
             justify-content: space-between;
 
             & > *:not(:last-child) {
-                margin-bottom: 1rem;
+                margin-bottom: 3rem;
             }
         }
     }
