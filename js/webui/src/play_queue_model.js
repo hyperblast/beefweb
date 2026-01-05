@@ -1,4 +1,4 @@
-import EventEmitter from 'wolfy87-eventemitter';
+import ModelBase from './model_base.js';
 
 class PlayQueueMap
 {
@@ -48,7 +48,7 @@ class PlayQueueMap
     }
 }
 
-export default class PlayQueueModel extends EventEmitter
+export default class PlayQueueModel extends ModelBase
 {
     constructor(client, dataSource)
     {

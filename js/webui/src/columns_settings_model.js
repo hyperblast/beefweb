@@ -1,9 +1,9 @@
-import EventEmitter from 'wolfy87-eventemitter'
 import { cloneDeep } from 'lodash'
 import { arrayMove } from 'react-sortable-hoc';
 import { arrayRemove } from './utils.js';
+import ModelBase from './model_base.js';
 
-export default class ColumnsSettingsModel extends EventEmitter
+export default class ColumnsSettingsModel extends ModelBase
 {
     constructor(settingsModel)
     {

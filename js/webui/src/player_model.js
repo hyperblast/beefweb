@@ -1,9 +1,9 @@
-import EventEmitter from 'wolfy87-eventemitter'
 import { debounce } from 'lodash'
 import { clamp } from 'lodash'
 import Timer from './timer.js'
 import { PlaybackState } from 'beefweb-client'
 import { defaultPlayerFeatures, getPlayerFeatures } from './player_features.js';
+import ModelBase from './model_base.js';
 
 const initialPlayerInfo = Object.freeze({
     features: defaultPlayerFeatures,
@@ -50,7 +50,7 @@ const initialPlayerInfo = Object.freeze({
  * @property {object} activeItem
  * @property {string} activeItemId
  */
-export default class PlayerModel extends EventEmitter
+export default class PlayerModel extends ModelBase
 {
     constructor(client, dataSource, settingsModel)
     {

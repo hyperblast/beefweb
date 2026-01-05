@@ -1,10 +1,10 @@
-import EventEmitter from 'wolfy87-eventemitter'
 import Timer from './timer.js'
 import { looseDeepEqual } from './utils.js'
+import ModelBase from './model_base.js';
 
 const eventNames = ['player', 'playlists', 'playlistItems', 'playQueue', 'outputs'];
 
-export default class DataSource extends EventEmitter
+export default class DataSource extends ModelBase
 {
     constructor(client)
     {

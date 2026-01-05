@@ -1,5 +1,5 @@
-import EventEmitter from 'wolfy87-eventemitter'
 import { getBaseName, getParentDir, isSubpath } from './utils.js'
+import ModelBase from './model_base.js';
 
 export const rootPath = 'roots';
 
@@ -28,7 +28,7 @@ function compareEntry(x, y)
     return x.name.localeCompare(y.name);
 }
 
-export default class FileBrowserModel extends EventEmitter
+export default class FileBrowserModel extends ModelBase
 {
     constructor(client)
     {

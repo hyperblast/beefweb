@@ -1,6 +1,6 @@
-import EventEmitter from 'wolfy87-eventemitter'
 import { arrayMove } from 'react-sortable-hoc'
 import { AddAction } from "./settings_model.js";
+import ModelBase from './model_base.js';
 
 const addOptions = {
     [AddAction.add]: {},
@@ -8,7 +8,7 @@ const addOptions = {
     [AddAction.replaceAndPlay]: { replace: true, play: true }
 };
 
-export default class PlaylistModel extends EventEmitter
+export default class PlaylistModel extends ModelBase
 {
     constructor(client, dataSource, settingsModel)
     {

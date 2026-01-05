@@ -1,4 +1,4 @@
-import EventEmitter from 'wolfy87-eventemitter'
+import ModelBase from './model_base.js';
 
 export const View = Object.freeze({
     playlist: 'playlist',
@@ -23,7 +23,7 @@ export const SettingsView = Object.freeze({
     about: 'about',
 });
 
-export default class NavigationModel extends EventEmitter
+export default class NavigationModel extends ModelBase
 {
     constructor()
     {

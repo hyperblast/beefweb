@@ -1,6 +1,6 @@
-import EventEmitter from 'wolfy87-eventemitter';
+import ModelBase from './model_base.js';
 
-export default class OutputSettingsModel extends EventEmitter
+export default class OutputSettingsModel extends ModelBase
 {
     constructor(client, dataSource)
     {

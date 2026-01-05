@@ -1,6 +1,6 @@
 import { cloneDeep, isEqual } from 'lodash';
 import { SettingType } from './settings_model.js';
-import EventEmitter from 'wolfy87-eventemitter';
+import ModelBase from './model_base.js';
 
 const storageKey = 'player_settings';
 const clientConfigKey = 'webui_default_settings';
@@ -11,7 +11,7 @@ const defaultSettingProps = Object.freeze({
     version: 1,
 });
 
-export default class SettingsModelBase extends EventEmitter
+export default class SettingsModelBase extends ModelBase
 {
     constructor(store, client)
     {
