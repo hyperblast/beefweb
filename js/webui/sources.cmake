@@ -30,6 +30,7 @@ src/index.js
 src/loader.gif
 src/media_size_controller.js
 src/media_theme_controller.js
+src/model_base.js
 src/model_binding.js
 src/navigation_model.js
 src/notification_group.js

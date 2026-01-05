@@ -13,10 +13,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const buildTypes = {
-    Debug: true,
-    Release: true,
-    MinSizeRel: true,
-    RelWithDebInfo: true
+    debug: 'Debug',
+    release: 'Release',
+    minsizerel: 'MinSizeRel',
+    relwithdebinfo: 'RelWithDebInfo'
 };
 
 function configCommon(config, params)
@@ -147,19 +147,25 @@ function getDefaultOutputDir(buildType)
     return path.join(binaryDir, 'js', 'webui', outputDirName);
 }
 
+function getBuildType(value)
+{
+    if (!value)
+        return buildTypes.debug;
+
+    const buildType = buildTypes[value.toLowerCase()];
+
+    if (buildType)
+        return buildType;
+
+    console.log(`Unknown build type '${value}' was specified, defaulting to 'Debug'`);
+    return buildTypes.debug;
+}
+
 function makeBuildParams(env)
 {
     let { buildType, outputDir, analyze, tests } = env;
 
-    if (!buildType)
-    {
-        buildType = 'Debug';
-    }
-    else if (!buildTypes[buildType])
-    {
-        console.log(`Unknown build type '${buildType}' was specfied, defaulting to 'Debug'`);
-        buildType = 'Debug';
-    }
+    buildType = getBuildType(buildType);
     
     if (!outputDir)
         outputDir = getDefaultOutputDir(buildType);
