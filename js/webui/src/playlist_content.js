@@ -16,7 +16,7 @@ const playbackStateIcons = {
 
 export function playlistTableKey(id)
 {
-    return `Playlists.${id}`;
+    return `Playlist.${id}`;
 }
 
 class PlaylistContent extends React.PureComponent

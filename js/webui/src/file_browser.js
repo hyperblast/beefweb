@@ -47,7 +47,7 @@ class FileBrowser extends React.PureComponent
         if (offset === undefined)
             offset = this.state.offset;
 
-        const { entries } = this.context.fileBrowserModel;
+        const { entries, currentPath } = this.context.fileBrowserModel;
         const { permissions } = this.context.playerModel;
 
         const count = offset + pageSize > entries.length
@@ -59,6 +59,7 @@ class FileBrowser extends React.PureComponent
         return {
             offset,
             data,
+            currentPath,
             totalCount: entries.length,
             allowChangePlaylists: permissions.changePlaylists
         };
@@ -114,7 +115,7 @@ class FileBrowser extends React.PureComponent
 
     render()
     {
-        const { data, offset, totalCount, allowChangePlaylists } = this.state;
+        const { data, offset, totalCount, allowChangePlaylists, currentPath } = this.state;
 
         return (
             <DataTable
@@ -125,7 +126,7 @@ class FileBrowser extends React.PureComponent
                 offset={offset}
                 pageSize={pageSize}
                 totalCount={totalCount}
-                globalKey='FileBrowser'
+                globalKey={'FileBrowser.' + currentPath}
                 scrollManager={this.context.scrollManager}
                 onClick={allowChangePlaylists ? this.handleClick : null}
                 onLoadPage={this.handleLoadPage}
