@@ -12,6 +12,7 @@ function createRow(index)
         columns: [
             'Artist ' + index,
             'Album ' + index,
+            null,
             '' + ((index % 10) + 1),
             'Title ' + index
         ]
@@ -27,8 +28,13 @@ function renderMenu()
 
 const pageSize = 100;
 const tableStyle = { marginTop: '0.5rem', marginBottom: '0.5rem' };
-const columnNames = ['Artist', 'Album', 'Track', 'Title'];
-const columnSizes = [3, 3, 1, 3];
+const columns = [
+    { title: 'Artist', size: 3, bold: true },
+    { title: 'Album', size: 3 },
+    { size: -1 },
+    { title: 'Track', size: 1 },
+    { title: 'Title', size: 3, align: 'right' },
+];
 
 class Sandbox extends React.PureComponent
 {
@@ -41,10 +47,6 @@ class Sandbox extends React.PureComponent
         this.handleLoadPage = this.handleLoadPage.bind(this);
         this.handleClick = index => console.log('click', index);
         this.handleDoubleClick = index => console.log('doubleClick', index);
-
-        this.toggleMode = () => this.setState(state => ({
-            verticalColumns: !state.verticalColumns
-        }));
     }
 
     handleLoadPage(offset)
@@ -64,22 +66,14 @@ class Sandbox extends React.PureComponent
     {
         return (
             <div className='app st-uitheme-light'>
-                <DialogButton
-                    type='reset'
-                    onClick={this.toggleMode}>
-                    Toggle vertical columns
-                </DialogButton>
                 <DataTable
                     useIcons={true}
+                    columns={columns}
                     data={this.state.data}
-                    verticalColumns={this.state.verticalColumns}
                     onRenderColumnMenu={renderMenu}
                     onRenderRowMenu={renderMenu}
                     className='panel panel-main'
                     style={tableStyle}
-                    columnCount={columnNames.length}
-                    columnNames={columnNames}
-                    columnSizes={columnSizes}
                     offset={this.state.offset}
                     pageSize={pageSize}
                     totalCount={5000}

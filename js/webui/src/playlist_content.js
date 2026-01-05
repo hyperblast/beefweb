@@ -186,15 +186,11 @@ class PlaylistContent extends React.PureComponent
     render()
     {
         const { offset, totalCount, currentPlaylistId, columns, allowChangePlaylists } = this.state;
-        const columnNames = columns.map(c => c.title);
-        const columnSizes = columns.map(c => c.size);
 
         return (
             <DataTable
                 useIcons={true}
-                columnCount={columns.length}
-                columnNames={columnNames}
-                columnSizes={columnSizes}
+                columns={columns}
                 data={this.getTableData()}
                 offset={offset}
                 totalCount={totalCount}

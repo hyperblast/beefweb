@@ -4,7 +4,7 @@ import { getDisplaySize, getDisplayDate, mapRange, bindHandlers } from './utils.
 import DataTable from './data_table.js'
 import ModelBinding from './model_binding.js';
 import { Menu, MenuItem } from './elements.js';
-import { AddAction } from './settings_model.js';
+import { AddAction, MediaSize } from './settings_model.js';
 import ServiceContext from "./service_context.js";
 
 const iconNames = Object.freeze({
@@ -12,20 +12,35 @@ const iconNames = Object.freeze({
     F: 'file',
 });
 
-const columnNames = ['Name', 'Size', 'Date'];
-const columnSizes = [5, 1, 2];
+const columnsNarrow = [
+    { title: 'Name', size: 5, bold: true },
+    { size: -1 },
+    { title: 'Size', size: 1 },
+    { title: 'Date', size: 1 },
+];
+
+const columnWide = [
+    { title: 'Name', size: 5 },
+    { title: 'Size', size: 1 },
+    { title: 'Date', size: 2 },
+];
+
 const pageSize = 100;
 
-function getRowData(item)
+function getRowData(item, wide)
 {
+    const size = getDisplaySize(item.size);
+    const date = getDisplayDate(item.timestamp);
+
+    const columns =
+        wide
+            ? [ item.name, size, date ]
+            : [ item.name, null, size, date ];
+
     return {
         icon: iconNames[item.type],
         url: item.type === 'D' ? urls.browsePath(item.path) : null,
-        columns: [
-            item.name,
-            getDisplaySize(item.size),
-            getDisplayDate(item.timestamp),
-        ]
+        columns,
     };
 }
 
@@ -49,17 +64,19 @@ class FileBrowser extends React.PureComponent
 
         const { entries, currentPath } = this.context.fileBrowserModel;
         const { permissions } = this.context.playerModel;
+        const { mediaSize } = this.context.settingsModel;
 
         const count = offset + pageSize > entries.length
             ? entries.length - offset
             : pageSize;
 
-        const data = mapRange(offset, count, i => getRowData(entries[i]));
+        const data = mapRange(offset, count, i => getRowData(entries[i], mediaSize !== MediaSize.small));
 
         return {
             offset,
             data,
             currentPath,
+            mediaSize,
             totalCount: entries.length,
             allowChangePlaylists: permissions.changePlaylists
         };
@@ -115,13 +132,11 @@ class FileBrowser extends React.PureComponent
 
     render()
     {
-        const { data, offset, totalCount, allowChangePlaylists, currentPath } = this.state;
+        const { data, offset, totalCount, allowChangePlaylists, currentPath, mediaSize } = this.state;
 
         return (
             <DataTable
-                columnCount={columnNames.length}
-                columnNames={columnNames}
-                columnSizes={columnSizes}
+                columns={mediaSize === MediaSize.small ? columnsNarrow : columnWide}
                 data={data}
                 offset={offset}
                 pageSize={pageSize}
@@ -138,4 +153,8 @@ class FileBrowser extends React.PureComponent
     }
 }
 
-export default ModelBinding(FileBrowser, { fileBrowserModel: 'change', playerModel: 'change' });
+export default ModelBinding(FileBrowser, {
+    fileBrowserModel: 'change',
+    playerModel: 'change',
+    settingsModel: 'mediaSize'
+});

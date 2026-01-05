@@ -543,6 +543,8 @@ body {
     padding: 0.25rem;
     height: 1.75rem;
     display: inline-block;
+
+    .no-text-overflow();
 }
 
 .dtable-row {
@@ -557,23 +559,6 @@ body {
 
     .action-link();
     .hover();
-}
-
-.dtable-horizontal .dtable-row-content {
-    height: 1.75rem;
-}
-
-.dtable-vertical .dtable-row-content {
-    display: flex;
-    flex-direction: column;
-
-    .dtable-cell:first-child {
-        font-weight: bold;
-    }
-
-    .dtable-cell:not(:first-child) {
-        margin-left: 1rem;
-    }
 }
 
 .dtable-row-icon {
@@ -602,26 +587,21 @@ body {
     }
 }
 
-.dtable-column-header, .dtable-cell {
+.dtable-column-header {
     display: inline-block;
-}
-
-.dtable-column-header-text, .dtable-cell {
-    .no-text-overflow();
+    padding: 0 0.25rem;
 }
 
 .dtable-column-header-text {
     font-weight: bold;
+
+    .no-text-overflow();
 }
 
 .dtable-column-header-link {
     text-decoration: none;
 
     .action-link();
-}
-
-.dtable-column-header {
-    padding: 0 0.25rem;
 }
 
 .panel {
