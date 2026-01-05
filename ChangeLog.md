@@ -1,6 +1,14 @@
 # Changes in v0.11 (not released)
 - Allow non-absolute paths in config (resolved relative to {player profile directory}/beefweb/)
 - Fix ignoring of "clientConfigDir" setting
+- Rework mobile layout
+- Allow setting arbitrary UI scale
+- Preserve scroll position in file browser
+- Rename 'UI Theme' to 'Color scheme'
+- Enable compact mode by default
+- Increase icon sizes in all layouts
+- Display current input mode in settings
+- Column settings: add separator between dangerous menu items
 ### DeaDBeeF
 - Provide universal .deb package to match `deadbeef-static_*.deb`
 - Fix deadlock with streamer code
