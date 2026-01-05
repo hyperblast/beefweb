@@ -1,5 +1,5 @@
 import React from 'react'
 
-const ServiceContext = React.createContext(Object.freeze({}));
+const ServiceContext = React.createContext(null);
 
 export default ServiceContext;

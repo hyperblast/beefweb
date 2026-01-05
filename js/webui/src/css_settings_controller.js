@@ -1,4 +1,8 @@
 import { MediaSize } from './settings_model.js'
+import ServiceContext from './service_context.js';
+import App from './app.js';
+import React from 'react';
+import { debounce } from 'lodash';
 
 const settingClassPrefix = 'st-';
 
@@ -27,7 +31,14 @@ export default class CssSettingsController
     start()
     {
         this.settingsModel.on('change', this.update.bind(this));
+        window.addEventListener('resize', debounce(this.updateViewHeight.bind(this), 50));
+        this.updateViewHeight();
         this.update();
+    }
+
+    updateViewHeight()
+    {
+        document.documentElement.style.setProperty('--view-height', `${window.innerHeight}px`);
     }
 
     update()

@@ -1,26 +1,15 @@
 import React from 'react'
 import ReactDom from 'react-dom'
 import Navigo from 'navigo'
-import { PlayerClient } from 'beefweb-client'
 import ServiceContext from './service_context.js'
 import App from './app.js'
-import RequestHandler from './request_handler.js'
-import SettingsStore from './settings_store.js'
 import AppModel from './app_model.js'
-import MediaSizeController from './media_size_controller.js'
-import TouchModeController from './touch_mode_controller.js'
-import WindowController from './window_controller.js'
-import CssSettingsController from './css_settings_controller.js'
 import urls, { getPathFromUrl } from './urls.js'
 import { playlistTableKey } from './playlist_content.js';
 import { PlaybackState } from 'beefweb-client';
 import { SettingsView, View } from './navigation_model.js';
-import MediaThemeController from "./media_theme_controller.js";
-import { debounce } from "lodash";
 
-const client = new PlayerClient(new RequestHandler());
-const settingsStore = new SettingsStore();
-const appModel = new AppModel(client, settingsStore);
+const appModel = new AppModel();
 
 const {
     playerModel,
@@ -31,11 +20,7 @@ const {
     navigationModel,
 } = appModel;
 
-const mediaSizeController = new MediaSizeController(settingsModel);
-const mediaThemeController = new MediaThemeController(settingsModel);
-const touchModeController = new TouchModeController(settingsModel);
-const cssSettingsController = new CssSettingsController(settingsModel);
-const windowController = new WindowController(playerModel);
+
 const router = new Navigo(null, true);
 
 router.on({
@@ -136,54 +121,24 @@ playlistModel.on('playlistsChange', () => {
         router.navigate(urls.viewCurrentPlaylist);
 });
 
-const appContainer = document.getElementById('app-container');
-
-function updateViewHeight()
+async function main()
 {
-    // Adjust view height to exclude area occupied by the browser controls
+    await appModel.start();
 
-    if (settingsModel.touchMode)
+    router.resolve();
+
+    if (navigationModel.view !== View.fileBrowser)
     {
-        appContainer.className = 'app-view-height-hack';
-        appContainer.style.setProperty('--view-height', `${window.innerHeight}px`);
+        fileBrowserModel.reload();
     }
-    else if (appContainer.className !== '')
-    {
-        appContainer.className = '';
-        appContainer.style.removeProperty('--view-height');
-    }
-}
 
-function main()
-{
-    appModel.load().then(() => {
-        mediaSizeController.start();
-        mediaThemeController.start();
-        touchModeController.start();
-        cssSettingsController.start();
-        appModel.start();
-        windowController.start();
-        router.resolve();
+    const appComponent = (
+        <ServiceContext.Provider value={appModel}>
+            <App />
+        </ServiceContext.Provider>
+    );
 
-        if (navigationModel.view !== View.fileBrowser)
-        {
-            fileBrowserModel.reload();
-        }
-
-        settingsModel.on('touchMode', updateViewHeight);
-        window.addEventListener('resize', debounce(updateViewHeight, 50));
-
-        const appComponent = (
-            <ServiceContext.Provider value={appModel}>
-                <App />
-            </ServiceContext.Provider>
-        );
-
-        ReactDom.render(appComponent, appContainer);
-
-        updateViewHeight();
-    });
+    ReactDom.render(appComponent, document.getElementById('app-container'));
 }
 
 main();
-
