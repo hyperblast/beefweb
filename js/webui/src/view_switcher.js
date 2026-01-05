@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Menu, MenuItem } from './elements.js'
+import { IconButton, Menu, MenuItem } from './elements.js'
 import urls from './urls.js'
 import ModelBinding from './model_binding.js';
 import { View } from './navigation_model.js';
@@ -29,25 +29,25 @@ class ViewSwitcher_ extends React.PureComponent
 
         return (
             <div className='view-switcher button-bar'>
-                <Button
+                <IconButton
                     name='list'
                     className='control-bar-button'
                     href={urls.viewCurrentPlaylist}
                     active={view === View.playlist}
                     title='Playlists'/>
-                <Button
+                <IconButton
                     name='image'
                     className='control-bar-button'
                     href={urls.viewAlbumArt}
                     active={view === View.albumArt}
                     title='Album art' />
-                <Button
+                <IconButton
                     name='folder'
                     className='control-bar-button'
                     href={urls.browseCurrentPath}
                     active={view === View.fileBrowser}
                     title='Files'/>
-                <Button
+                <IconButton
                     name='cog'
                     className='control-bar-button'
                     href={urls.viewCurrentSettings}

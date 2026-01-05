@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { bindHandlers } from './utils.js';
-import { Button, Icon } from './elements.js';
+import { IconButton, Icon } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
 import { cloneDeep } from 'lodash'
@@ -218,8 +218,8 @@ class ColumnEditor_ extends React.PureComponent
                 </div>
                 <div className='column-editor-side'>
                     <div className='button-bar'>
-                        <Button name='cog' onClick={this.handleEdit} title='Edit' />
-                        <Button name='minus' onClick={this.handleDelete} title='Delete' />
+                        <IconButton name='cog' onClick={this.handleEdit} title='Edit' />
+                        <IconButton name='minus' onClick={this.handleDelete} title='Delete' />
                     </div>
                 </div>
                 <ColumnEditorDialog

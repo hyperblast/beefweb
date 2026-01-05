@@ -1,7 +1,7 @@
 import React from 'react';
 import { bindHandlers } from './utils.js';
 import PropTypes from 'prop-types';
-import { Button } from './elements.js';
+import { IconButton } from './elements.js';
 import { makeClassName } from './dom_utils.js';
 import { pick } from 'lodash';
 
@@ -143,7 +143,7 @@ export class DropdownButton extends React.PureComponent
     renderElement(ref, isOpen)
     {
         return (
-            <Button
+            <IconButton
                 ref={ref}
                 name={this.props.iconName}
                 title={this.props.title}

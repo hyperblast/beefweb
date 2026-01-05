@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button } from './elements.js'
+import { IconButton } from './elements.js'
 import { bindHandlers, dbToLinear, linearToDb } from './utils.js'
 import ModelBinding from './model_binding.js';
 import { DropdownButton } from './dropdown.js';
@@ -78,7 +78,7 @@ class VolumeControl_ extends React.PureComponent
 
         return (
             <div className='volume-control button-bar'>
-                <Button
+                <IconButton
                     name={volumeIcon(isMuted)}
                     className='control-bar-button'
                     onClick={this.handleMuteClick}
@@ -86,8 +86,8 @@ class VolumeControl_ extends React.PureComponent
                 {
                     isUpDown
                         ? <>
-                            <Button name='minus' title='Decrease volume' onClick={this.handleVolumeDown}/>
-                            <Button name='plus' title='Increase volume' onClick={this.handleVolumeUp}/>
+                            <IconButton name='minus' title='Decrease volume' onClick={this.handleVolumeDown}/>
+                            <IconButton name='plus' title='Increase volume' onClick={this.handleVolumeUp}/>
                             <div className='volume-text-block'><span className='volume-text'>{valueText}</span></div>
                         </>
                         : <input type='range'

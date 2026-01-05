@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button } from './elements.js';
+import { IconButton } from './elements.js';
 
 function smartSplit(message)
 {
@@ -38,7 +38,7 @@ export default class NotificationGroup extends React.Component
                         <span className='notification-text-end'>{ end }</span>
                     </div>
                 </div>
-                <Button
+                <IconButton
                     name='x'
                     title='Dismiss'
                     className='notification-close-button'

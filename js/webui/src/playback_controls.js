@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js'
+import { IconButton, Menu, MenuItem, MenuLabel, MenuSeparator } from './elements.js'
 import { bindHandlers } from './utils.js'
 import urls from './urls.js';
 import ModelBinding from './model_binding.js';
@@ -21,7 +21,7 @@ export class PlayButton extends React.PureComponent
 
     render()
     {
-        return <Button
+        return <IconButton
             name='media-play'
             title='Play'
             onClick={this.handleClick}
@@ -41,7 +41,7 @@ export class StopButton extends React.PureComponent
 
     render()
     {
-        return <Button
+        return <IconButton
             name='media-stop'
             title='Stop'
             onClick={this.handleClick}
@@ -61,7 +61,7 @@ export class PauseButton extends React.PureComponent
 
     render()
     {
-        return <Button
+        return <IconButton
             name='media-pause'
             title='Pause'
             onClick={this.handleClick}
@@ -90,7 +90,7 @@ class PlayOrPauseButton_ extends React.PureComponent
     {
         const { playbackState } = this.state;
 
-        return <Button
+        return <IconButton
             name={playbackState === PlaybackState.playing ? 'media-pause' : 'media-play'}
             className='control-bar-button'
             title='Play'
@@ -114,7 +114,7 @@ export class PlayPreviousButton extends React.PureComponent
 
     render()
     {
-        return <Button
+        return <IconButton
             name='media-step-backward'
             title='Previous'
             onClick={this.handleClick}
@@ -134,7 +134,7 @@ export class PlayNextButton extends React.PureComponent
 
     render()
     {
-        return <Button
+        return <IconButton
             name='media-step-forward'
             title='Next'
             onClick={this.handleClick}

@@ -40,11 +40,11 @@ Icon.propTypes = {
     className: PropTypes.string,
 };
 
-export const Button = React.forwardRef(function Button(props, ref)
+export const IconButton = React.forwardRef(function IconButton(props, ref)
 {
     const { name, title, className, href, onClick, active } = props;
 
-    const fullClassName = 'button'
+    const fullClassName = 'icon-button'
         + (className ? ' ' + className : '')
         + (active ? ' active' : '');
 
@@ -60,7 +60,7 @@ export const Button = React.forwardRef(function Button(props, ref)
     );
 });
 
-Button.propTypes = {
+IconButton.propTypes = {
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     className: PropTypes.string,

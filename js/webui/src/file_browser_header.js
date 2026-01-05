@@ -1,6 +1,6 @@
 import React from 'react'
 import { rootPath } from './file_browser_model.js'
-import { Button, Menu, MenuItem, Select } from './elements.js';
+import { IconButton, Menu, MenuItem, Select } from './elements.js';
 import urls from './urls.js'
 import ModelBinding from './model_binding.js'
 import { DropdownButton } from './dropdown.js'
@@ -113,7 +113,7 @@ class FileBrowserHeader extends React.PureComponent
 
         const addCurrentDirectoryButton =
             allowChangePlaylists
-            ? <Button name='data-transfer-download'
+            ? <IconButton name='data-transfer-download'
                       onClick={this.handleAddClick}
                       title='Add current directory'/>
             : null;
@@ -138,7 +138,7 @@ class FileBrowserHeader extends React.PureComponent
             <div className='header-block'>
                 <div className='button-bar'>
                     { addCurrentDirectoryButton }
-                    <Button
+                    <IconButton
                         name='arrow-thick-top'
                         href={urls.browsePath(parentPath)}
                         title='Navigate to parent directory'/>
