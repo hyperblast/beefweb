@@ -13,10 +13,10 @@ const iconNames = Object.freeze({
 });
 
 const columnsNarrow = [
-    { title: 'Name', size: 5, bold: true },
+    { size: 10 },
     { lineBreak: true },
-    { title: 'Size', size: 1 },
-    { title: 'Date', size: 2, align: 'right' },
+    { dataIndex: 2, size: 2, italic: true, },
+    { dataIndex: 1, size: 1, italic: true, align: 'right' },
 ];
 
 const columnWide = [

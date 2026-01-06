@@ -335,7 +335,12 @@ export default class DataTable extends React.PureComponent
             if (columns[columnIndex].lineBreak)
                 continue;
 
-            cells.push(<span key={cellIndex} className={cellClassNames[cellIndex]}>{rowData.columns[cellIndex]}</span>);
+            let { dataIndex } = columns[columnIndex];
+
+            if (!Number.isInteger(dataIndex))
+                dataIndex = cellIndex;
+
+            cells.push(<span key={cellIndex} className={cellClassNames[cellIndex]}>{rowData.columns[dataIndex]}</span>);
             cellIndex++;
         }
 
@@ -468,6 +473,11 @@ export default class DataTable extends React.PureComponent
             rules.push('font-weight: bold;')
         }
 
+        if (column.italic)
+        {
+            rules.push('font-style: italic')
+        }
+
         return `#${this.state.elementId} .dtable-cell${index} { ${rules.join(' ')} }`;
     }
 
@@ -517,7 +527,9 @@ DataTable.propTypes = {
         title: PropTypes.string,
         size: PropTypes.number,
         lineBreak: PropTypes.bool,
+        dataIndex: PropTypes.number,
         bold: PropTypes.bool,
+        italic: PropTypes.bool,
         align: PropTypes.oneOf(['left', 'center', 'right'])
     })).isRequired,
 
