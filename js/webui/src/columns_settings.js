@@ -179,12 +179,15 @@ class ColumnEditor_ extends React.PureComponent
 
         let editButton;
         let columnInfo;
+        let columnName;
 
         if (column.lineBreak)
         {
             columnInfo = <div className='column-editor-main'>
                 <span className='column-info-line-break'>{'\u2E3A Line break \u2E3A'}</span>
             </div>;
+
+            columnName = 'line break';
         }
         else
         {
@@ -194,6 +197,7 @@ class ColumnEditor_ extends React.PureComponent
             </div>;
 
             editButton = <IconButton name='cog' onClick={this.handleEdit} title='Edit' />;
+            columnName = `column ${column.title}`;
         }
 
         return (
@@ -217,7 +221,7 @@ class ColumnEditor_ extends React.PureComponent
                 <ConfirmDialog
                     isOpen={deleteDialogOpen}
                     title='Delete column'
-                    message={`Do you want to delete column ${column.title}?`}
+                    message={`Do you want to delete ${columnName}?`}
                     onOk={this.handleDeleteOk}
                     onCancel={this.handleDeleteCancel} />
             </div>
