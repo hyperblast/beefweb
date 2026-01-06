@@ -1,23 +1,40 @@
-const urls = Object.freeze({
-    viewCurrentPlaylist: '#/playlists',
+import { View } from './navigation_model.js';
 
-    viewPlaylist(id)
-    {
-        return `#/playlists/${encodeURIComponent(id)}`;
+const playlists = '#/playlists';
+const settings = '#/settings';
+const albumArt = '#/album-art';
+const fileBrowser = '#/files';
+
+const appViewToUrl = {
+    [View.playlist]: playlists,
+    [View.albumArt]: albumArt,
+    [View.fileBrowser]: fileBrowser,
+    [View.settings]: settings,
+};
+
+const urls = Object.freeze({
+    viewCurrentPlaylist: playlists,
+
+    viewPlaylist(id) {
+        return `${playlists}/${encodeURIComponent(id)}`;
     },
 
-    browseCurrentPath: '#/files',
+    browseCurrentPath: fileBrowser,
 
     browsePath(path)
     {
-        return `#/files/!${encodeURIComponent(path)}`;
+        return `${fileBrowser}/!${encodeURIComponent(path)}`;
     },
 
-    viewCurrentSettings: '#/settings',
+    viewCurrentSettings: settings,
+    viewAlbumArt: albumArt,
 
-    viewAlbumArt: '#/album-art',
+    appView(view)
+    {
+        return appViewToUrl[view]
+    },
 
-    viewSettings(view)
+    settingsView(view)
     {
         return `#/settings/${view}`;
     },

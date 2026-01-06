@@ -58,7 +58,7 @@ router.on({
     },
 
     '/settings': () => {
-        router.navigate(urls.viewSettings(navigationModel.settingsView));
+        router.navigate(urls.settingsView(navigationModel.settingsView));
     },
 
     '/settings/:view': params => {
@@ -111,7 +111,6 @@ playerModel.on('trackSwitch', () => {
 });
 
 playlistModel.on('playlistsChange', () => {
-
     if (navigationModel.view !== View.playlist)
         return;
 
@@ -119,6 +118,20 @@ playlistModel.on('playlistsChange', () => {
         router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
     else
         router.navigate(urls.viewCurrentPlaylist);
+});
+
+navigationModel.on('viewChange', () => {
+    router.navigate(urls.appView(navigationModel.view));
+});
+
+navigationModel.on('settingsViewChange', () => {
+    if (navigationModel.view === View.settings)
+        router.navigate(urls.settingsView(navigationModel.settingsView));
+});
+
+fileBrowserModel.on('change', () => {
+    if (navigationModel.view === View.fileBrowser)
+        router.navigate(urls.browsePath(fileBrowserModel.currentPath));
 });
 
 async function main()

@@ -75,7 +75,7 @@ class SettingsHeader extends React.PureComponent
             <PanelHeaderTab
                 key={value.id}
                 active={settingsView === value.id}
-                href={urls.viewSettings(value.id)}
+                href={urls.settingsView(value.id)}
                 title={value.name} />
         ));
 
