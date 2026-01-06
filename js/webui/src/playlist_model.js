@@ -113,7 +113,7 @@ export default class PlaylistModel extends ModelBase
         const request = {
             playlistItems: true,
             plref: this.currentPlaylistId,
-            plcolumns: this.columns.map(c => c.expression),
+            plcolumns: this.columns.filter(c => !c.lineBreak).map(c => c.expression),
             plrange: this.playlistRange,
         };
 
@@ -128,10 +128,7 @@ export default class PlaylistModel extends ModelBase
             return false;
 
         this.layout = mediaSize;
-
-        this.columns = this.settingsModel
-            .columns[mediaSize]
-            .columns.filter(c => !c.lineBreak);
+        this.columns = this.settingsModel.columns[mediaSize].columns;
 
         return true;
     }
