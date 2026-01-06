@@ -327,7 +327,7 @@ export default class DataTable extends React.PureComponent
         }
 
         const url = rowData.url || '#';
-        const title = cells.join(' | ');
+        const title = rowData.columns.join(' | ');
         const rowContent = (
             <a data-idx={rowIndex} href={url} title={title} className='dtable-row-content'>{ cells }</a>
         );
