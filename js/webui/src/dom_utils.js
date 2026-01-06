@@ -25,16 +25,7 @@ export function generateElementId(prefix)
 {
     const id = nextElementId++;
 
-    return `${prefix}-id${id}`;
-}
-
-export function addStyleSheet(value)
-{
-    const element = document.createElement('style');
-    element.type = 'text/css';
-    element.innerText = value;
-    document.head.appendChild(element);
-    return element;
+    return `${prefix}-id-${id}`;
 }
 
 export function makeClassName(classes)

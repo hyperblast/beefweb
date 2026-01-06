@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
-import { makeClassName } from './dom_utils.js';
+import { generateElementId, makeClassName } from './dom_utils.js';
+import { debounce } from 'lodash';
 
 function makeClickHandler(callback)
 {
@@ -195,3 +196,44 @@ Select.propTypes = {
     idProperty: PropTypes.string,
     nameProperty: PropTypes.string,
 };
+
+function autoScrollCss(elementId, labelWidth)
+{
+    return `@keyframes ${elementId} { from { left: 0; } to { left: -${labelWidth}px; } }
+.auto-scroll-overflow > #${elementId},
+.auto-scroll-overflow > #${elementId}-h { animation: ${labelWidth / 20}s linear 0s ${elementId} infinite; }`;
+}
+
+export function AutoScrollText(props)
+{
+    const { text } = props;
+
+    const container = useRef(null);
+    const label = useRef(null);
+
+    const elementId = useMemo(() => generateElementId('auto-scroll'), []);
+    const [isOverflow, setOverflow] = useState(false);
+    const [labelWidth, setLabelWidth] = useState(0);
+
+    useLayoutEffect(() => {
+        const updateOverflow = () => setOverflow(container.current.clientWidth < label.current.clientWidth);
+        const updateOverflowWithDelay = debounce(updateOverflow, 10);
+
+        setLabelWidth(label.current.clientWidth);
+        updateOverflow();
+
+        window.addEventListener('resize', updateOverflowWithDelay);
+        return () => window.removeEventListener('resize', updateOverflowWithDelay);
+    }, [text]);
+
+    const className = makeClassName([
+        'auto-scroll-container',
+        isOverflow ? 'auto-scroll-overflow' : null
+    ]);
+
+    return <div className={className} ref={container}>
+        <style>{ autoScrollCss(elementId, labelWidth) }</style>
+        <span id={elementId} className='auto-scroll-text' ref={label}>{text}</span>
+        <span id={elementId + '-h'} className='auto-scroll-text auto-scroll-text-helper'>{text}</span>
+    </div>
+}

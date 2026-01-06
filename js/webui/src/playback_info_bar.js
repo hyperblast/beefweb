@@ -2,6 +2,7 @@ import React from 'react';
 import ModelBinding from './model_binding.js';
 import { PlaybackState } from 'beefweb-client';
 import ServiceContext from './service_context.js';
+import { AutoScrollText } from './elements.js';
 
 class PlaybackInfoBar_ extends React.PureComponent
 {
@@ -18,18 +19,20 @@ class PlaybackInfoBar_ extends React.PureComponent
     {
         const { playerModel } = this.context;
 
-        const title = playerModel.playbackState !== PlaybackState.stopped
-            ? (playerModel.activeItem.columns[1] || '')
-            : playerModel.info.title;
+        const text = playerModel.playbackState !== PlaybackState.stopped
+                      ? (playerModel.activeItem.columns[1] || '')
+                      : playerModel.info.title;
 
-        return { title };
+        return { text };
     }
 
     render()
     {
-        const { title } = this.state;
+        const { text } = this.state;
 
-        return <div className='panel playback-info-bar' title={title}>{title}</div>;
+        return <div className='panel playback-info-bar' title={text}>
+            <AutoScrollText text={text} />
+        </div>;
     }
 }
 

@@ -351,6 +351,25 @@ body {
     text-align: center;
 }
 
+.auto-scroll-container  {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.auto-scroll-text {
+    padding: 0 0.75rem;
+    display: inline-block;
+    position: relative;
+}
+
+.auto-scroll-text-helper {
+    display: none;
+}
+
+.auto-scroll-overflow > .auto-scroll-text-helper {
+    display: inline-block;
+}
+
 .notification-group {
     position: fixed;
     width: 30rem;
@@ -683,9 +702,6 @@ body {
     text-align: center;
     padding: 0.5rem;
     font-size: 1.2rem;
-    height: 3rem;
-
-    .no-text-overflow();
 }
 
 .control-bar {
