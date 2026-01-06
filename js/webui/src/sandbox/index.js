@@ -12,7 +12,6 @@ function createRow(index)
         columns: [
             'Artist ' + index,
             'Album ' + index,
-            null,
             '' + ((index % 10) + 1),
             'Title ' + index
         ]
@@ -31,7 +30,7 @@ const tableStyle = { marginTop: '0.5rem', marginBottom: '0.5rem' };
 const columns = [
     { title: 'Artist', size: 3, bold: true },
     { title: 'Album', size: 3 },
-    { size: -1 },
+    { lineBreak: true },
     { title: 'Track', size: 1 },
     { title: 'Title', size: 3, align: 'right' },
 ];

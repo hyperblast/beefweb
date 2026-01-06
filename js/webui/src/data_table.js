@@ -9,6 +9,9 @@ import { DropdownButton, DropdownLink } from './dropdown.js';
 
 const maxColumns = 100;
 const rowHeight = 1.75;
+const subrowHeight = 1.25;
+const rowMarginWithSubrows = 1;
+const rowPadding = 0.25;
 
 const setScrollBarWidthVariable = once(() =>
 {
@@ -62,26 +65,32 @@ export default class DataTable extends React.PureComponent
 
         for (let column of this.props.columns)
         {
-            if (!column.lineBreak)
+            if (column.lineBreak)
                 count++;
         }
 
         return count;
     }
 
-    pixelsPerRow(fontSize)
+    rowHeightRem()
     {
-        return fontSize * rowHeight * this.subrowCount();
+        const subrows = this.subrowCount();
+        return subrows > 1 ? subrowHeight * subrows + 2 * rowPadding + rowMarginWithSubrows: rowHeight;
+    }
+
+    rowHeightPx(fontSize)
+    {
+        return fontSize * this.rowHeightRem();
     }
 
     pixelToRow(px, fontSize)
     {
-        return (px / this.pixelsPerRow(fontSize)) | 0;
+        return (px / this.rowHeightPx(fontSize)) | 0;
     }
 
     rowToPixel(row, fontSize)
     {
-        return (row * this.pixelsPerRow(fontSize)) | 0;
+        return (row * this.rowHeightPx(fontSize)) | 0;
     }
 
     saveScrollPosition()
@@ -265,7 +274,7 @@ export default class DataTable extends React.PureComponent
             'dtable',
             useIcons ? 'dtable-has-row-icons' : null,
             onRenderRowMenu ? 'dtable-has-row-menu' : null,
-            subrowCount > 1 ? 'dtable-vertical' : 'dtable-horizontal',
+            subrowCount > 1 ? 'dtable-has-subrows' : null,
             className,
         ]);
 
@@ -289,7 +298,7 @@ export default class DataTable extends React.PureComponent
         if (height <= 0)
             return null;
 
-        const size = height * rowHeight * this.subrowCount();
+        const size = height * this.rowHeightRem();
         const style = { height: `${size}rem` };
 
         return (

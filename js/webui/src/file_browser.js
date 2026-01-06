@@ -16,7 +16,7 @@ const columnsNarrow = [
     { title: 'Name', size: 5, bold: true },
     { lineBreak: true },
     { title: 'Size', size: 1 },
-    { title: 'Date', size: 2 },
+    { title: 'Date', size: 2, align: 'right' },
 ];
 
 const columnWide = [
