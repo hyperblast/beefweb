@@ -1,44 +1,24 @@
-export const Visibility = Object.freeze({
-    always: Object.freeze({
-        small: true,
-        medium: true,
-        large: true
-    }),
-    mediumAndLarge: Object.freeze({
-        small: false,
-        medium: true,
-        large: true
-    }),
-    largeOnly: Object.freeze({
-        small: false,
-        medium: false,
-        large: true,
-    }),
-    never: Object.freeze({
-        small: false,
-        medium: false,
-        large: false,
-    }),
+export const lineBreak = Object.freeze({
+    lineBreak: true
 });
 
-const defaultOptions = Object.freeze({
+export const ColumnAlign = Object.freeze({
+    left: 'left',
+    center: 'center',
+    right: 'right'
+})
+
+const playlistColumnDefaults = Object.freeze({
     size: 10,
+    small: false,
+    bold: false,
+    italic: false,
+    align: ColumnAlign.left,
 });
 
-function playlistColumn(title, expression, visibility = null, opts = null)
+function playlistColumn(title, expression, opts = null)
 {
-    if (visibility === null)
-        visibility = Visibility.never;
-    else
-        visibility = Object.freeze(Object.assign({}, Visibility.never, visibility));
-
-    const column = {
-        title,
-        expression,
-        visibility
-    };
-
-    return Object.freeze(Object.assign(column, defaultOptions, opts));
+    return Object.freeze(Object.assign({ title, expression }, playlistColumnDefaults, opts));
 }
 
 function column(title, expression, opts = null)
@@ -46,14 +26,14 @@ function column(title, expression, opts = null)
     return Object.freeze(Object.assign({ title, expression }, opts));
 }
 
-export const allColumns = [
-    playlistColumn('Artist', '%artist%', Visibility.always),
-    playlistColumn('Album', '%album%', Visibility.mediumAndLarge),
-    playlistColumn('Track No', '%track%', Visibility.largeOnly),
-    playlistColumn('Title', '%title%', Visibility.always),
-    playlistColumn('Duration', '%length%', Visibility.largeOnly),
-    playlistColumn('Date', '%date%', Visibility.never),
-];
+export const playlistColumns = Object.freeze({
+    artist: playlistColumn('Artist', '%artist%'),
+    album: playlistColumn('Album', '%album%'),
+    track: playlistColumn('Track No', '%track%'),
+    title: playlistColumn('Title', '%title%'),
+    duration: playlistColumn('Duration', '%length%'),
+    date: playlistColumn('Date', '%date%'),
+});
 
 export const sortMenuColumns = [
     column('Artist', '%artist%'),
@@ -68,6 +48,3 @@ export const navigationMenuColumns = [
     column('Artist', '%artist%'),
     column('Album', '%album%'),
 ];
-
-export const defaultPlaylistColumns = allColumns.filter(
-    c => c.visibility.small || c.visibility.medium || c.visibility.large);

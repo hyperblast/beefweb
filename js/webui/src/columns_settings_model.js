@@ -12,10 +12,10 @@ export default class ColumnsSettingsModel extends ModelBase
         this.defineEvent('change');
 
         this.settingsModel = settingsModel;
-        this.columns = [];
+        this.layout = null;
+        this.config = null;
+        this.columns = null;
         this.updating = false;
-
-        settingsModel.on('columns', this.handleColumnsChange.bind(this));
     }
 
     handleColumnsChange()
@@ -27,18 +27,42 @@ export default class ColumnsSettingsModel extends ModelBase
         this.emit('change');
     }
 
-    load()
+    setLayout(mediaSize)
     {
-        this.columns = cloneDeep(this.settingsModel.columns);
+        this.layout = mediaSize;
+        this.columns = this.config[mediaSize].columns;
+        this.emit('change');
     }
 
-    apply()
+    setConfig(config)
+    {
+        this.config = cloneDeep(config);
+        this.columns = config[this.layout].columns;
+        this.emit('change');
+    }
+
+    setColumns(columns)
+    {
+        this.columns = columns;
+        this.config[this.layout].columns = columns;
+        this.emit('change');
+    }
+
+    start()
+    {
+        this.settingsModel.on('columns', this.handleColumnsChange.bind(this));
+        this.layout ??= this.settingsModel.mediaSize;
+        this.revertChanges();
+    }
+
+    applyChanges()
     {
         this.updating = true;
 
         try
         {
-            this.settingsModel.columns = cloneDeep(this.columns);
+            // SettingsModel clones value for us
+            this.settingsModel.columns = this.config;
         }
         finally
         {
@@ -48,42 +72,33 @@ export default class ColumnsSettingsModel extends ModelBase
 
     revertChanges()
     {
-        this.columns = cloneDeep(this.settingsModel.columns);
-        this.emit('change');
+        this.setConfig(this.settingsModel.columns);
     }
 
-    resetToDefault()
+    async resetToDefault()
     {
-        this.settingsModel.getDefaultValue('columns')
-            .then(v => {
-                this.columns = cloneDeep(v);
-                this.emit('change');
-            });
+        this.setConfig(await this.settingsModel.getDefaultValue('columns'));
     }
 
     addColumn(column)
     {
-        this.columns = [... this.columns, column];
-        this.emit('change');
+        this.setColumns([... this.columns, cloneDeep(column)]);
     }
 
     updateColumn(index, patch)
     {
         const newColumns = [... this.columns];
         newColumns[index] = Object.assign({}, this.columns[index], patch);
-        this.columns = newColumns;
-        this.emit('change');
+        this.setColumns(newColumns);
     }
 
     moveColumn(oldIndex, newIndex)
     {
-        this.columns = arrayMove(this.columns, oldIndex, newIndex);
-        this.emit('change');
+        this.setColumns(arrayMove(this.columns, oldIndex, newIndex));
     }
 
     removeColumn(index)
     {
-        this.columns = arrayRemove(this.columns, index);
-        this.emit('change');
+        this.setColumns(arrayRemove(this.columns, index));
     }
 }

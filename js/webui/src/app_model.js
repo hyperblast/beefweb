@@ -51,18 +51,17 @@ export default class AppModel
         await this.settingsModel.initialize();
 
         this.notificationModel.load();
-        this.columnsSettingsModel.load();
-
+        this.mediaSizeController.start();
         this.playerModel.start();
         this.playlistModel.start();
         this.playQueueModel.start();
         this.outputSettingsModel.start();
         this.dataSource.start();
         this.notificationModel.start();
-        this.mediaSizeController.start();
         this.mediaThemeController.start();
         this.touchModeController.start();
         this.cssSettingsController.start();
+        this.columnsSettingsModel.start();
         this.windowController.start();
     }
 }

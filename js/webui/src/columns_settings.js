@@ -7,9 +7,6 @@ import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
 import { cloneDeep } from 'lodash'
 import ModelBinding from './model_binding.js';
-import ColumnsSettingsModel from './columns_settings_model.js';
-import { Visibility } from './columns.js';
-import { MediaSize } from './settings_model.js';
 import ServiceContext from "./service_context.js";
 
 class ColumnEditorDialog extends React.PureComponent
@@ -44,34 +41,9 @@ class ColumnEditorDialog extends React.PureComponent
             this.update({ size: value });
     }
 
-    handleOptionsMenuRequestOpen(value)
-    {
-        this.setState({ optionsMenuOpen: value });
-    }
-
-    setVisibility(e, size)
-    {
-        const { visibility } = this.props.column;
-        const newVisibility = Object.assign({}, visibility, { [size]: e.target.checked });
-        this.update({ visibility: newVisibility });
-    }
-
     render()
     {
         const { isOpen, column, onOk, onCancel } = this.props;
-        const { visibility } = column;
-
-        const visibilityControls = [MediaSize.small, MediaSize.medium, MediaSize.large].map(size => (
-            <div key={size} className='dialog-row'>
-                <label className='dialog-label'>
-                    <input
-                        type='checkbox'
-                        checked={visibility[size]}
-                        onChange={e => this.setVisibility(e, size)} />
-                    <span>Show in {size} layout</span>
-                </label>
-            </div>
-        ));
 
         return (
             <ReactModal
@@ -110,7 +82,6 @@ class ColumnEditorDialog extends React.PureComponent
                                 value={column.size}
                                 onChange={this.handleSizeChange} />
                         </div>
-                        { visibilityControls }
                     </div>
                     <div className='dialog-footer'>
                         <DialogButton type='ok' onClick={onOk} />
@@ -156,8 +127,7 @@ class ColumnEditor_ extends React.PureComponent
             editedColumn: {
                 title: '',
                 expression: '',
-                size: 1,
-                visibility: Visibility.never
+                size: 1
             }
         };
     }
@@ -207,18 +177,34 @@ class ColumnEditor_ extends React.PureComponent
         const { column } = this.props;
         const { deleteDialogOpen, editDialogOpen, editedColumn } = this.state;
 
+        let editButton;
+        let columnInfo;
+
+        if (column.lineBreak)
+        {
+            columnInfo = <div className='column-editor-main'>
+                <span className='column-info-line-break'>{'\u2E3A Line break \u2E3A'}</span>
+            </div>;
+        }
+        else
+        {
+            columnInfo = <div className='column-editor-main'>
+                <span className='column-info-title'>{ column.title }</span>
+                <span className='column-info-expression'>{ column.expression }</span>
+            </div>;
+
+            editButton = <IconButton name='cog' onClick={this.handleEdit} title='Edit' />;
+        }
+
         return (
             <div className='column-editor'>
                 <div className='column-editor-side'>
                     <ColumnEditorDragHandle />
                 </div>
-                <div className='column-editor-main'>
-                    <span className='column-info-title'>{ column.title }</span>
-                    <span className='column-info-expression'>{ column.expression }</span>
-                </div>
+                { columnInfo }
                 <div className='column-editor-side'>
                     <div className='button-bar'>
-                        <IconButton name='cog' onClick={this.handleEdit} title='Edit' />
+                        { editButton }
                         <IconButton name='minus' onClick={this.handleDelete} title='Delete' />
                     </div>
                 </div>
@@ -295,7 +281,8 @@ class ColumnEditorList_ extends React.PureComponent
     }
 }
 
-const ColumnEditorList = SortableContainer(ModelBinding(ColumnEditorList_, { columnsSettingsModel: 'change' }));
+const ColumnEditorList = SortableContainer(ModelBinding(
+    ColumnEditorList_, { columnsSettingsModel: 'change' }));
 
 export default class ColumnsSettings extends React.PureComponent
 {
@@ -317,7 +304,7 @@ export default class ColumnsSettings extends React.PureComponent
 
     componentWillUnmount()
     {
-        this.context.columnsSettingsModel.apply();
+        this.context.columnsSettingsModel.applyChanges();
     }
 
     render()

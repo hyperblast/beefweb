@@ -128,9 +128,10 @@ export default class PlaylistModel extends ModelBase
             return false;
 
         this.layout = mediaSize;
-        this.columns = this.settingsModel.columns
-            .filter(c => c.visibility[mediaSize])
-            .map(c => Object.assign({}, c));
+
+        this.columns = this.settingsModel
+            .columns[mediaSize]
+            .columns.filter(c => !c.lineBreak);
 
         return true;
     }

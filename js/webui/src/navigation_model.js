@@ -45,6 +45,15 @@ export default class NavigationModel extends ModelBase
         this.emit('viewChange');
     }
 
+    setSettingsView(view)
+    {
+        if (view === this.settingsView)
+            return;
+
+        this.settingsView = view;
+        this.emit('settingsViewChange');
+    }
+
     navigateToNext()
     {
         const currentIndex = viewOrder.indexOf(this.view);
@@ -57,14 +66,5 @@ export default class NavigationModel extends ModelBase
         const currentIndex = viewOrder.indexOf(this.view);
         const prevIndex = currentIndex >= 0 ? (currentIndex + viewOrder.length - 1) % viewOrder.length : 0;
         this.setView(viewOrder[prevIndex]);
-    }
-
-    setSettingsView(view)
-    {
-        if (view === this.settingsView)
-            return;
-
-        this.settingsView = view;
-        this.emit('settingsViewChange');
     }
 }

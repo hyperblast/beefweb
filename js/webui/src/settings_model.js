@@ -1,4 +1,4 @@
-import { defaultPlaylistColumns } from './columns.js';
+import { lineBreak, playlistColumns } from './columns.js';
 import { primaryInput } from 'detect-it'
 import SettingsModelBase from './settings_model_base.js';
 
@@ -40,9 +40,39 @@ export const AddAction = Object.freeze({
     replaceAndPlay: 'replaceAndPlay'
 });
 
+const defaultColumns = {
+    [MediaSize.small]: {
+        columns: [
+            playlistColumns.title,
+            lineBreak,
+            playlistColumns.artist,
+        ]
+    },
+
+    [MediaSize.medium]: {
+        columns: [
+            playlistColumns.artist,
+            playlistColumns.album,
+            playlistColumns.title,
+        ]
+    },
+
+    [MediaSize.large]: {
+        columns: [
+            playlistColumns.artist,
+            playlistColumns.album,
+            playlistColumns.track,
+            playlistColumns.title,
+            playlistColumns.duration
+        ]
+    }
+};
+
+
 /**
  * @class SettingsModel
  * @property {object} metadata
+ * @property {object} columns
  * @property {boolean} fullWidth
  * @property {boolean} cursorFollowsPlayback
  * @property {string} customSortBy
@@ -192,8 +222,9 @@ export default class SettingsModel extends SettingsModelBase
         this.define({
             key: 'columns',
             type: SettingType.custom,
-            defaultValue: defaultPlaylistColumns,
+            defaultValue: defaultColumns,
             persistent: true,
+            version: 2
         });
 
         this.define({

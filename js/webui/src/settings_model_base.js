@@ -41,12 +41,13 @@ export default class SettingsModelBase extends ModelBase
         }
 
         Object.freeze(metadata);
+        Object.freeze(metadata.defaultValue);
 
         if (type === SettingType.enum)
             Object.freeze(metadata.enumNames);
 
         this.metadata[key] = metadata;
-        this.values[key] = cloneDeep(metadata.defaultValue);
+        this.values[key] = metadata.defaultValue;
 
         Object.defineProperty(this, key, {
             enumerable: true,
@@ -60,14 +61,13 @@ export default class SettingsModelBase extends ModelBase
     setValue(key, value)
     {
         const metadata = this.metadata[key];
-
         if (!metadata)
             throw new Error(`Unknown setting key '${key}'`);
 
         if (isEqual(value, this.values[key]))
             return;
 
-        this.values[key] = cloneDeep(value);
+        this.values[key] = Object.freeze(cloneDeep(value));
 
         if (metadata.persistent)
             this.save();
@@ -81,15 +81,31 @@ export default class SettingsModelBase extends ModelBase
         return this.values[key];
     }
 
-    getDefaultValue(key)
+    async getDefaultValue(key)
     {
-        return this.client.getClientConfig(clientConfigKey)
-            .then(r => r && r[key] !== undefined ? r[key] : this.metadata[key].defaultValue);
+        const metadata = this.metadata[key];
+        if (!metadata)
+            throw new Error(`Unknown setting key '${key}'`);
+
+        let defaultValue;
+
+        if (metadata.persistent)
+        {
+            const savedDefaults = await this.client.getClientConfig(clientConfigKey);
+
+            if (savedDefaults)
+            {
+                defaultValue = savedDefaults[metadata.persistenceKey];
+            }
+        }
+
+        return defaultValue !== undefined ? Object.freeze(defaultValue) : metadata.defaultValue
     }
 
-    resetValueToDefault(key)
+    async resetValueToDefault(key)
     {
-        this.getDefaultValue(key).then(value => this.setValue(key, value));
+        const value = await this.getDefaultValue(key);
+        this.setValue(key, value);
     }
 
     getDefaultValuesFromCode()
@@ -138,7 +154,7 @@ export default class SettingsModelBase extends ModelBase
             if (value === undefined || isEqual(this.values[key], value))
                 continue;
 
-            this.values[key] = value;
+            this.values[key] = Object.freeze(value);
             pendingEvents.push(key);
         }
 
@@ -179,18 +195,18 @@ export default class SettingsModelBase extends ModelBase
         this.store.setItem(storageKey, JSON.stringify(values));
     }
 
-    saveAsDefault()
+    async saveAsDefault()
     {
-        return this.client.setClientConfig(clientConfigKey, this.saveToObject());
+        const config = await this.client.getClientConfig(clientConfigKey);
+        Object.assign(config, this.saveToObject());
+        return this.client.setClientConfig(clientConfigKey, config);
     }
 
-    resetToDefault()
+    async resetToDefault()
     {
-        return this.client.getClientConfig(clientConfigKey)
-        .then(r => {
-            this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), r));
-            this.save();
-        });
+        const config = await this.client.getClientConfig(clientConfigKey);
+        this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), config));
+        this.save();
     }
 
     clearSavedDefault()
