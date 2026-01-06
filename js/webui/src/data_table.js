@@ -8,8 +8,10 @@ import ScrollManager from './scroll_manager.js';
 import { DropdownButton, DropdownLink } from './dropdown.js';
 
 const maxColumns = 100;
-const rowHeight = 1.75;
-const subrowHeight = 1.25;
+
+// These values must be synced with variables in styles.less
+const rowHeight = 2;
+const subrowHeight = 1.5;
 const rowMarginWithSubrows = 1;
 const rowPadding = 0.25;
 
