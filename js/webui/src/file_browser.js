@@ -14,9 +14,9 @@ const iconNames = Object.freeze({
 
 const columnsNarrow = [
     { title: 'Name', size: 5, bold: true },
-    { size: -1 },
+    { lineBreak: true },
     { title: 'Size', size: 1 },
-    { title: 'Date', size: 1 },
+    { title: 'Date', size: 2 },
 ];
 
 const columnWide = [
@@ -29,18 +29,14 @@ const pageSize = 100;
 
 function getRowData(item, wide)
 {
-    const size = getDisplaySize(item.size);
-    const date = getDisplayDate(item.timestamp);
-
-    const columns =
-        wide
-            ? [ item.name, size, date ]
-            : [ item.name, null, size, date ];
-
     return {
         icon: iconNames[item.type],
         url: item.type === 'D' ? urls.browsePath(item.path) : null,
-        columns,
+        columns:  [
+            item.name,
+            getDisplaySize(item.size),
+            getDisplayDate(item.timestamp)
+        ],
     };
 }
 

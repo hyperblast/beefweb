@@ -62,7 +62,7 @@ export default class DataTable extends React.PureComponent
 
         for (let column of this.props.columns)
         {
-            if (column.size < 0)
+            if (!column.lineBreak)
                 count++;
         }
 
@@ -257,7 +257,7 @@ export default class DataTable extends React.PureComponent
 
     render()
     {
-        const { className, style, useIcons, onRenderRowMenu, columns } = this.props;
+        const { className, style, useIcons, onRenderRowMenu } = this.props;
         const { elementId } = this.state;
 
         const subrowCount = this.subrowCount();
@@ -313,21 +313,23 @@ export default class DataTable extends React.PureComponent
             }
         }
 
-        const url = rowData.url || '#';
-        const cells = rowData.columns;
+        const { columns } = this.props;
+        const cells = [];
+        let cellIndex = 0;
 
+        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++)
+        {
+            if (columns[columnIndex].lineBreak)
+                continue;
+
+            cells.push(<span key={cellIndex} className={cellClassNames[cellIndex]}>{rowData.columns[cellIndex]}</span>);
+            cellIndex++;
+        }
+
+        const url = rowData.url || '#';
+        const title = cells.join(' | ');
         const rowContent = (
-            <a
-                data-idx={rowIndex}
-                href={url}
-                title={cells[0]}
-                className='dtable-row-content'>
-                {
-                    cells.map(((value, index) => this.props.columns[index].size < 0
-                        ? <br key={index}/>
-                        : <span key={index} className={cellClassNames[index]}>{value}</span>))
-                }
-            </a>
+            <a data-idx={rowIndex} href={url} title={title} className='dtable-row-content'>{ cells }</a>
         );
 
         let rowMenuButton = null;
@@ -393,7 +395,7 @@ export default class DataTable extends React.PureComponent
         {
             const column = columns[i];
 
-            if (column.size < 0)
+            if (column.lineBreak)
                 break;
 
             if (onRenderColumnMenu)
@@ -463,28 +465,29 @@ export default class DataTable extends React.PureComponent
 
         let subrowStart = 0;
         let subrowSize = 0;
+        let subrowIndex = 0;
 
         for (let i = 0; i < columns.length; i++)
         {
-            const size = columns[i].size;
-            if (size >= 0)
+            if (!columns[i].lineBreak)
             {
-                subrowSize += size;
+                subrowSize += columns[i].size;
                 continue;
             }
 
             for (let j = subrowStart; j < i; j++)
             {
-                styles.push(this.renderCellStyle(j, columns[j], columns[j].size / subrowSize));
+                styles.push(this.renderCellStyle(j - subrowIndex, columns[j], columns[j].size / subrowSize));
             }
 
             subrowStart = i + 1;
             subrowSize = 0;
+            subrowIndex++;
         }
 
         for (let j = subrowStart; j < columns.length; j++)
         {
-            styles.push(this.renderCellStyle(j, columns[j], columns[j].size / subrowSize));
+            styles.push(this.renderCellStyle(j - subrowIndex, columns[j], columns[j].size / subrowSize));
         }
 
         return styles.join('\n');
@@ -494,7 +497,10 @@ export default class DataTable extends React.PureComponent
 DataTable.propTypes = {
     columns: PropTypes.arrayOf(PropTypes.shape({
         title: PropTypes.string,
-        size: PropTypes.number
+        size: PropTypes.number,
+        lineBreak: PropTypes.bool,
+        bold: PropTypes.bool,
+        align: PropTypes.oneOf(['left', 'center', 'right'])
     })).isRequired,
 
     globalKey: PropTypes.string,
