@@ -15,8 +15,8 @@ const iconNames = Object.freeze({
 const columnsNarrow = [
     { size: 10 },
     { lineBreak: true },
-    { dataIndex: 2, size: 2, italic: true, },
-    { dataIndex: 1, size: 1, italic: true, align: 'right' },
+    { dataIndex: 2, size: 2, small: true, },
+    { dataIndex: 1, size: 1, small: true, align: 'right' },
 ];
 
 const columnWide = [

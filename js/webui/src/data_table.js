@@ -480,6 +480,11 @@ export default class DataTable extends React.PureComponent
             rules.push('font-style: italic')
         }
 
+        if (column.small)
+        {
+            rules.push('font-size: 0.8rem')
+        }
+
         return `#${this.state.elementId} .dtable-cell${index} { ${rules.join(' ')} }`;
     }
 
