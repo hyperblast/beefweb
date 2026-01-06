@@ -129,10 +129,12 @@ class FileBrowser extends React.PureComponent
     render()
     {
         const { data, offset, totalCount, allowChangePlaylists, currentPath, mediaSize } = this.state;
+        const narrow = mediaSize === MediaSize.small;
 
         return (
             <DataTable
-                columns={mediaSize === MediaSize.small ? columnsNarrow : columnWide}
+                columns={narrow ? columnsNarrow : columnWide}
+                showHeader={!narrow}
                 data={data}
                 offset={offset}
                 pageSize={pageSize}

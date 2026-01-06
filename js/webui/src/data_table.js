@@ -278,10 +278,14 @@ export default class DataTable extends React.PureComponent
             className,
         ]);
 
+        const head = this.props.showHeader
+            ? <div className="dtable-head">{ this.renderColumnHeaders() }</div>
+             : null;
+
         return (
             <div id={elementId} className={fullClassName} style={style}>
                 <style>{ this.renderCellStyles() }</style>
-                <div className="dtable-head">{ this.renderColumnHeaders() }</div>
+                { head }
                 <div
                     className='dtable-body'
                     ref={this.setBodyRef}
@@ -504,6 +508,11 @@ export default class DataTable extends React.PureComponent
 }
 
 DataTable.propTypes = {
+    data: PropTypes.arrayOf(PropTypes.object).isRequired,
+    offset: PropTypes.number.isRequired,
+    pageSize: PropTypes.number.isRequired,
+    totalCount: PropTypes.number.isRequired,
+
     columns: PropTypes.arrayOf(PropTypes.shape({
         title: PropTypes.string,
         size: PropTypes.number,
@@ -515,14 +524,9 @@ DataTable.propTypes = {
     globalKey: PropTypes.string,
     scrollManager: PropTypes.instanceOf(ScrollManager),
 
-    data: PropTypes.arrayOf(PropTypes.object).isRequired,
-    offset: PropTypes.number.isRequired,
-    pageSize: PropTypes.number.isRequired,
-    totalCount: PropTypes.number.isRequired,
-
     useIcons: PropTypes.bool,
+    showHeader: PropTypes.bool,
     className: PropTypes.string,
-    style: PropTypes.object,
     rowMenuTitle: PropTypes.string,
     rowMenuIconName: PropTypes.string,
 
@@ -535,6 +539,7 @@ DataTable.propTypes = {
 
 DataTable.defaultProps = {
     useIcons: false,
+    showHeader: true,
     className: '',
     rowMenuTitle: 'Menu',
     rowMenuIconName: 'ellipses'
