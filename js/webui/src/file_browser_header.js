@@ -74,8 +74,7 @@ class FileBrowserHeader extends React.PureComponent
         const selectedPath = items.length > 0 ? items[items.length - 1].path : null;
 
         return <div className='header-block header-block-primary'>
-            <Select id='browser-path-selector'
-                    className='header-selector'
+            <Select className='header-selector'
                     items={items}
                     selectedItemId={selectedPath}
                     idProperty='path'

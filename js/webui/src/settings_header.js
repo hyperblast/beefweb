@@ -61,8 +61,7 @@ class SettingsHeader extends React.PureComponent
     renderSelector(settingsView)
     {
         return <div className='header-block header-block-primary'>
-            <Select id='settings-page-selector'
-                    className='header-selector'
+            <Select className='header-selector'
                     items={settingsViews}
                     selectedItemId={settingsView}
                     onChange={this.handleSelectView}></Select>

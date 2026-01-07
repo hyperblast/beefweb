@@ -110,8 +110,8 @@ class ColumnEditorDialog extends React.PureComponent
                                 onChange={this.handleSizeChange} />
                         </div>
                         <div className='dialog-row'>
-                            <label className='dialog-label' htmlFor='align'>Align:</label>
-                            <Select id='align'
+                            <label className='dialog-label' htmlFor='align'>Text align:</label>
+                            <Select name='align'
                                     className='dialog-input'
                                     items={AlignItems}
                                     onChange={this.handleAlignChange}

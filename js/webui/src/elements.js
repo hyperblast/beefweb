@@ -165,7 +165,7 @@ PanelHeaderTab.propTypes = {
 
 export function Select(props)
 {
-    const { id, selectedItemId, items, onChange, className, disabled } = props;
+    const { id, name, selectedItemId, items, onChange, className, disabled } = props;
 
     if (!items || items.length === 0)
     {
@@ -177,7 +177,13 @@ export function Select(props)
     const idProperty = props.idProperty || 'id';
     const nameProperty = props.nameProperty || 'name';
 
-    return <select className={className} id={id} value={selectedItemId} onChange={onChange} disabled={disabled}>
+    return <select
+        id={id}
+        name={name}
+        className={className}
+        value={selectedItemId}
+        onChange={onChange}
+        disabled={disabled}>
         {items.map(t => {
             const id = t[idProperty];
             const name = t[nameProperty];
@@ -187,7 +193,8 @@ export function Select(props)
 }
 
 Select.propTypes = {
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
+    name: PropTypes.string,
     selectedItemId: PropTypes.string,
     items: PropTypes.arrayOf(PropTypes.object),
     onChange: PropTypes.func,

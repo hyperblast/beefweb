@@ -23,11 +23,8 @@ const dropdownMargin = 4;
 function createContentElement()
 {
     const element = document.createElement('div');
-    const appContainer = document.getElementById('app-container');
-
     element.className = 'dropdown-content';
-    appContainer.parentNode.insertBefore(element, appContainer);
-
+    document.body.insertBefore(element, document.body.children[0]);
     return element;
 }
 

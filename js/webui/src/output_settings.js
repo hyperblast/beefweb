@@ -88,7 +88,7 @@ class OutputSettings extends React.PureComponent
 
         return <>
             <label className='setting-editor-label' htmlFor='output-type-selector'>Output type:</label>
-            <Select id='output-type-selector'
+            <Select name='output-type-selector'
                     selectedItemId={selectedOutputType.id}
                     items={outputTypes}
                     onChange={this.handleOutputTypeChange}
@@ -103,7 +103,7 @@ class OutputSettings extends React.PureComponent
 
         return <>
             <label className='setting-editor-label' htmlFor='output-device-selector'>Output device:</label>
-            <Select id='output-device-selector'
+            <Select name='output-device-selector'
                     selectedItemId={selectedOutputDevice}
                     items={selectedOutputType.devices}
                     onChange={this.handleOutputDeviceChange}

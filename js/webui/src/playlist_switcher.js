@@ -152,12 +152,11 @@ class PlaylistSwitcher extends React.PureComponent
         if (mediaSize === MediaSize.small)
         {
             return <div className='header-block header-block-primary'>
-                <Select id='playlist-selector'
-                        className='header-selector'
+                <Select className='header-selector'
                         items={playlists}
                         selectedItemId={currentPlaylistId}
                         nameProperty='title'
-                        onChange={this.handleSelectPlaylist}></Select>
+                        onChange={this.handleSelectPlaylist} />
             </div>;
         }
 
