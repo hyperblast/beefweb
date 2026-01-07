@@ -29,7 +29,7 @@ class ColumnsSettingsMenu extends React.PureComponent
     constructor(props, context)
     {
         super(props, context);
-        this.state = { addMenuOpen: false, settingsMenuOpen: false, ...this.getStateFromModel() };
+        this.state = this.getStateFromModel();
         bindHandlers(this);
     }
 
@@ -38,16 +38,6 @@ class ColumnsSettingsMenu extends React.PureComponent
         const { layout } = this.context.columnsSettingsModel;
         const { mediaSize } = this.context.settingsModel;
         return { layout, mediaSize };
-    }
-
-    handleAddMenuRequestOpen(value)
-    {
-        this.setState({ addMenuOpen: value });
-    }
-
-    handleSettingsMenuRequestOpen(value)
-    {
-        this.setState({ settingsMenuOpen: value });
     }
 
     handleRevertChanges()
@@ -77,7 +67,7 @@ class ColumnsSettingsMenu extends React.PureComponent
 
     render()
     {
-        const { addMenuOpen, settingsMenuOpen, layout, mediaSize } = this.state;
+        const { layout, mediaSize } = this.state;
 
         const addMenuItems = predefinedColumns.map((c, i) =>
             <MenuItem
@@ -102,9 +92,7 @@ class ColumnsSettingsMenu extends React.PureComponent
                 <div className='button-bar'>
                     <DropdownButton
                         title='Add'
-                        iconName='plus'
-                        isOpen={addMenuOpen}
-                        onRequestOpen={this.handleAddMenuRequestOpen}>
+                        iconName='plus'>
                         <MenuLabel title='Add column' />
                         <Menu>
                             { addMenuItems }
@@ -112,9 +100,7 @@ class ColumnsSettingsMenu extends React.PureComponent
                     </DropdownButton>
                     <DropdownButton
                         title='Columns settings'
-                        iconName='menu'
-                        isOpen={settingsMenuOpen}
-                        onRequestOpen={this.handleSettingsMenuRequestOpen}>
+                        iconName='menu'>
                         <Menu>
                             <MenuLabel title='Layout'/>
                             { layoutMenuItems }

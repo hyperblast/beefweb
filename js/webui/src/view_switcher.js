@@ -71,12 +71,6 @@ class ViewSwitcherButton_ extends React.PureComponent
         bindHandlers(this);
 
         this.state = this.getStateFromModel();
-        this.state.menuOpen = false;
-    }
-
-    handleMenuRequestOpen(value)
-    {
-        this.setState({ menuOpen: value });
     }
 
     getStateFromModel()
@@ -87,16 +81,14 @@ class ViewSwitcherButton_ extends React.PureComponent
 
     render()
     {
-        const { view, menuOpen } = this.state;
+        const { view } = this.state;
 
         return (
             <DropdownButton
                 title='Switch view'
                 iconName='grid-three-up'
                 className='control-bar-button'
-                hideOnContentClick={true}
-                isOpen={menuOpen}
-                onRequestOpen={this.handleMenuRequestOpen}>
+                hideOnContentClick={true}>
                 <Menu>
                     <MenuItem
                         href={urls.viewCurrentPlaylist}

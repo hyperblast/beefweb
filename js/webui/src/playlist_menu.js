@@ -17,7 +17,6 @@ class PlaylistMenu extends React.PureComponent
         super(props, context);
 
         this.state = Object.assign(this.getStateFromModel(), {
-            menuOpen: false,
             removeDialogOpen: false,
             clearDialogOpen: false,
             addUrlDialogOpen: false,
@@ -41,11 +40,6 @@ class PlaylistMenu extends React.PureComponent
             currentPlaylist: currentPlaylist || {},
             allowChangePlaylists: permissions.changePlaylists,
         };
-    }
-
-    handleMenuRequestOpen(value)
-    {
-        this.setState({ menuOpen: value });
     }
 
     handleAddClick()
@@ -182,7 +176,6 @@ class PlaylistMenu extends React.PureComponent
 
         const {
             currentPlaylist,
-            menuOpen,
             clearDialogOpen,
             removeDialogOpen,
             addUrlDialogOpen,
@@ -219,9 +212,7 @@ class PlaylistMenu extends React.PureComponent
         const menu = (
             <DropdownButton
                 title='Playlist menu'
-                iconName='menu'
-                isOpen={menuOpen}
-                onRequestOpen={this.handleMenuRequestOpen}>
+                iconName='menu'>
                 <Menu>
                     { menuItems } { menuSortItems }
                 </Menu>

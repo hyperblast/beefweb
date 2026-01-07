@@ -18,7 +18,7 @@ class FileBrowserHeader extends React.PureComponent
 
         bindHandlers(this);
 
-        this.state = Object.assign({ menuOpen: false }, this.getStateFromModel());
+        this.state = this.getStateFromModel();
     }
 
     getStateFromModel()
@@ -63,11 +63,6 @@ class FileBrowserHeader extends React.PureComponent
         this.addCurrent(AddAction.replaceAndPlay);
     }
 
-    handleRequestMenuOpen(value)
-    {
-        this.setState({ menuOpen: value });
-    }
-
     handleSelectPath(e)
     {
         this.context.fileBrowserModel.browse(e.target.value);
@@ -106,7 +101,7 @@ class FileBrowserHeader extends React.PureComponent
 
     renderButtons()
     {
-        const { parentPath, menuOpen, allowChangePlaylists } = this.state;
+        const { parentPath, allowChangePlaylists } = this.state;
 
         if (!parentPath)
             return null;
@@ -122,9 +117,7 @@ class FileBrowserHeader extends React.PureComponent
             allowChangePlaylists
             ? <DropdownButton
                 iconName='menu'
-                title='Directory menu'
-                isOpen={menuOpen}
-                onRequestOpen={this.handleRequestMenuOpen}>
+                title='Directory menu'>
                 <Menu>
                     <MenuItem title='Add' onClick={this.handleAddClick}/>
                     <MenuItem title='Add & Play' onClick={this.handleAddAndPlayClick}/>

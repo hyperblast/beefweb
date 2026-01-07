@@ -3,14 +3,14 @@ import { bindHandlers } from './utils.js';
 import PropTypes from 'prop-types';
 import { IconButton } from './elements.js';
 import { makeClassName } from './dom_utils.js';
-import { debounce, pick } from 'lodash';
+import { pick, throttle } from 'lodash';
 import { createPortal } from 'react-dom';
 
 const dropdownTarget = Symbol('dropdownTarget');
 
 const basePropTypes = Object.freeze({
-    isOpen: PropTypes.bool.isRequired,
-    onRequestOpen: PropTypes.func.isRequired,
+    isOpen: PropTypes.bool,
+    onRequestOpen: PropTypes.func,
     hideOnContentClick: PropTypes.bool,
 });
 
@@ -56,7 +56,7 @@ export class Dropdown extends React.PureComponent
     {
         super(props);
 
-        this.state = {};
+        this.state = { isOpen: false };
         this.offsetX = 0;
         this.offsetY = 0;
         this.contentElement = createContentElement();
@@ -64,7 +64,7 @@ export class Dropdown extends React.PureComponent
 
         bindHandlers(this);
 
-        this.resizeWithDelay = debounce(this.resize.bind(this), 50);
+        this.resizeWithDelay = throttle(this.resize.bind(this), 50);
     }
 
     handleToggleClick(e)
@@ -75,10 +75,12 @@ export class Dropdown extends React.PureComponent
         e.preventDefault();
         e[dropdownTarget] = this;
 
-        if (!this.props.isOpen)
+        const newState = !this.isOpen();
+
+        if (newState)
             this.updatePosition();
 
-        this.props.onRequestOpen(!this.props.isOpen);
+        this.setOpen(newState);
     }
 
     handleContentClick(e)
@@ -89,7 +91,7 @@ export class Dropdown extends React.PureComponent
         e[dropdownTarget] = this;
 
         if (this.props.hideOnContentClick)
-            this.props.onRequestOpen(false);
+            this.setOpen(false);
     }
 
     handleWindowClick(e)
@@ -98,7 +100,20 @@ export class Dropdown extends React.PureComponent
             return;
 
         if (this !== e[dropdownTarget])
-            this.props.onRequestOpen(false);
+            this.setOpen(false);
+    }
+
+    isOpen()
+    {
+        return this.props.onRequestOpen ? this.props.isOpen : this.state.isOpen;
+    }
+
+    setOpen(value)
+    {
+        if (this.props.onRequestOpen)
+            this.props.onRequestOpen(value);
+        else
+            this.setState({ isOpen: value });
     }
 
     setToggleRef(element)
@@ -110,7 +125,9 @@ export class Dropdown extends React.PureComponent
 
     updateElement()
     {
-        if (this.props.isOpen)
+        const isOpen = this.isOpen();
+
+        if (isOpen)
         {
             this.contentElement.style.left = this.offsetX + 'px';
             this.contentElement.style.top = this.offsetY + 'px';
@@ -118,7 +135,7 @@ export class Dropdown extends React.PureComponent
 
         this.contentElement.className = makeClassName([
             'dropdown-content',
-            this.props.isOpen ? 'dropdown-content-active' : null,
+            this.isOpen() ? 'dropdown-content-active' : null,
         ]);
     }
 
@@ -131,7 +148,7 @@ export class Dropdown extends React.PureComponent
 
     resize()
     {
-        if (this.props.isOpen)
+        if (this.isOpen())
         {
             this.updatePosition();
             this.updateElement();
@@ -161,23 +178,25 @@ export class Dropdown extends React.PureComponent
 
     render()
     {
-        const { isOpen, children, onRenderElement } = this.props;
+        const { children, onRenderElement } = this.props;
 
         return (
             <>
-                { onRenderElement(this.setToggleRef, isOpen) }
+                { onRenderElement(this.setToggleRef, this.isOpen()) }
                 { createPortal(children, this.contentElement) }
             </>
         );
     }
 }
 
-Dropdown.propTypes = Object.assign(
-    { onRenderElement: PropTypes.func.isRequired },
-    basePropTypes
-);
+Dropdown.propTypes = {
+    onRenderElement: PropTypes.func.isRequired,
+    ...basePropTypes
+};
 
-Dropdown.defaultProps = baseDefaultProps;
+Dropdown.defaultProps = {
+    ...baseDefaultProps
+};
 
 export class DropdownButton extends React.PureComponent
 {
@@ -213,16 +232,16 @@ export class DropdownButton extends React.PureComponent
     }
 }
 
-DropdownButton.propTypes = Object.assign(
-    {
-        title: PropTypes.string.isRequired,
-        iconName: PropTypes.string.isRequired,
-        className: PropTypes.string,
-    },
-    basePropTypes
-);
+DropdownButton.propTypes = {
+    title: PropTypes.string.isRequired,
+    iconName: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    ...basePropTypes
+};
 
-DropdownButton.defaultProps = baseDefaultProps;
+DropdownButton.defaultProps = {
+    ...baseDefaultProps
+};
 
 export class DropdownLink extends React.PureComponent
 {
@@ -260,12 +279,12 @@ export class DropdownLink extends React.PureComponent
     }
 }
 
-DropdownLink.propTypes = Object.assign(
-    {
-        title: PropTypes.string.isRequired,
-        className: PropTypes.string,
-    },
-    basePropTypes
-);
+DropdownLink.propTypes = {
+    title: PropTypes.string.isRequired,
+    className: PropTypes.string,
+    ...basePropTypes
+};
 
-DropdownLink.defaultProps = baseDefaultProps;
+DropdownLink.defaultProps = {
+    ...baseDefaultProps
+};

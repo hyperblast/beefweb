@@ -149,7 +149,7 @@ class PlaybackOptionsButton_ extends React.PureComponent
     constructor(props, context)
     {
         super(props, context);
-        this.state = Object.assign(this.getStateFromModel(), { isOpen: false });
+        this.state = this.getStateFromModel();
         this.handleRequestOpen = value => this.setState({ isOpen: value });
     }
 
@@ -161,14 +161,12 @@ class PlaybackOptionsButton_ extends React.PureComponent
 
     render()
     {
-        const { isOpen, options } = this.state;
+        const { options } = this.state;
 
         return <DropdownButton
             iconName='audio'
             title='Options'
-            className='control-bar-button'
-            isOpen={isOpen}
-            onRequestOpen={this.handleRequestOpen}>
+            className='control-bar-button'>
             <Menu>
                 {this.renderOptions(options)}
             </Menu>
@@ -234,9 +232,8 @@ class PlaybackNavigationButton_ extends React.PureComponent
     {
         super(props, context);
 
-        this.state = Object.assign(this.getStateFromModel(), { isOpen: false });
+        this.state = this.getStateFromModel();
 
-        this.handleRequestOpen = value => this.setState({ isOpen: value });
         this.playRandom = () => this.context.playerModel.playRandom();
         this.toggleCursorFollowsPlayback = () => {
             const { settingsModel } = this.context;
@@ -262,7 +259,7 @@ class PlaybackNavigationButton_ extends React.PureComponent
 
     render()
     {
-        const { isOpen, cursorFollowsPlayback } = this.state;
+        const { cursorFollowsPlayback } = this.state;
 
         const nextByMenuItems = navigationMenuColumns.map((column, index) => (
             <MenuItem
@@ -283,9 +280,7 @@ class PlaybackNavigationButton_ extends React.PureComponent
         return <DropdownButton
             iconName='share'
             title='Navigation'
-            className='control-bar-button'
-            isOpen={isOpen}
-            onRequestOpen={this.handleRequestOpen}>
+            className='control-bar-button'>
             <Menu>
                 <MenuItem
                     title='Play random'
