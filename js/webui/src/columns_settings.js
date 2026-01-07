@@ -2,12 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { bindHandlers } from './utils.js';
-import { IconButton, Icon } from './elements.js';
+import { IconButton, Icon, Select } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
 import { cloneDeep } from 'lodash'
 import ModelBinding from './model_binding.js';
 import ServiceContext from "./service_context.js";
+import { ColumnAlign } from './columns.js';
+
+const AlignItems = [
+    {  id: ColumnAlign.left, name: 'Left' },
+    {  id: ColumnAlign.center, name: 'Center' },
+    {  id: ColumnAlign.right, name: 'Right' },
+];
 
 class ColumnEditorDialog extends React.PureComponent
 {
@@ -39,6 +46,26 @@ class ColumnEditorDialog extends React.PureComponent
 
         if (!isNaN(value) && value >= 0)
             this.update({ size: value });
+    }
+
+    handleAlignChange(e)
+    {
+        this.update({ align: e.target.value });
+    }
+
+    handleBoldChange(e)
+    {
+        this.update({ bold: e.target.checked });
+    }
+
+    handleItalicChange(e)
+    {
+        this.update({ italic: e.target.checked });
+    }
+
+    handleSmallChange(e)
+    {
+        this.update({ small: e.target.checked });
     }
 
     render()
@@ -81,6 +108,34 @@ class ColumnEditorDialog extends React.PureComponent
                                 name='size'
                                 value={column.size}
                                 onChange={this.handleSizeChange} />
+                        </div>
+                        <div className='dialog-row'>
+                            <label className='dialog-label' htmlFor='align'>Align:</label>
+                            <Select id='align'
+                                    className='dialog-input'
+                                    items={AlignItems}
+                                    onChange={this.handleAlignChange}
+                                    selectedItemId={column.align} />
+                        </div>
+                        <div className='dialog-row'>
+                            <span className='dialog-label'>Font attributes:</span>
+                            <div className='dialog-checkbox-columns'>
+                                <label>
+                                    <input className='dialog-checkbox' name='bold' type='checkbox'
+                                           checked={column.bold || false} onChange={this.handleBoldChange}/>
+                                    <span className='dialog-checkbox-label'>Bold</span>
+                                </label>
+                                <label>
+                                    <input className='dialog-checkbox' name='italic' type='checkbox'
+                                           checked={column.italic || false} onChange={this.handleItalicChange}/>
+                                    <span className='dialog-checkbox-label'>Italic</span>
+                                </label>
+                                <label>
+                                    <input className='dialog-check-box' name='small' type='checkbox'
+                                           checked={column.small || false} onChange={this.handleSmallChange}/>
+                                    <span className='dialog-checkbox-label'>Small</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div className='dialog-footer'>
