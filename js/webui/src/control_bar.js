@@ -40,13 +40,13 @@ class ControlBar_ extends React.PureComponent
     {
         return <div key='control-bar' className='panel control-bar'>
             <div className='button-bar button-bar-single'>
-                <PlaybackOptionsButton menuUp={true} menuDirection='right'/>
-                <PlaybackNavigationButton menuUp={true} menuDirection='right'/>
+                <PlaybackOptionsButton />
+                <PlaybackNavigationButton />
                 <PlayPreviousButton/>
                 <PlayOrPauseButton/>
                 <PlayNextButton/>
-                <VolumeControlButton menuUp={true} menuDirection='left'/>
-                <ViewSwitcherButton menuUp={true} menuDirection='left'/>
+                <VolumeControlButton />
+                <ViewSwitcherButton />
             </div>
         </div>;
     }
@@ -56,8 +56,8 @@ class ControlBar_ extends React.PureComponent
         return <div key='control-bar' className='panel control-bar'>
             <PositionControl/>
             <div className='button-bar button-bar-secondary'>
-                <PlaybackNavigationButton menuUp={true} menuDirection='right'/>
-                <PlaybackOptionsButton menuUp={true} menuDirection='right'/>
+                <PlaybackNavigationButton />
+                <PlaybackOptionsButton />
             </div>
             <div className='button-bar button-bar-primary'>
                 <PlayPreviousButton/>
@@ -65,8 +65,8 @@ class ControlBar_ extends React.PureComponent
                 <PlayNextButton/>
             </div>
             <div className='button-bar button-bar-secondary'>
-                <VolumeControlButton menuUp={true} menuDirection='left'/>
-                <ViewSwitcherButton menuUp={true} menuDirection='left'/>
+                <VolumeControlButton />
+                <ViewSwitcherButton />
             </div>
         </div>;
     }

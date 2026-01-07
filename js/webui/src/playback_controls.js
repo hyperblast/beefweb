@@ -161,15 +161,12 @@ class PlaybackOptionsButton_ extends React.PureComponent
 
     render()
     {
-        const { menuDirection, menuUp } = this.props;
         const { isOpen, options } = this.state;
 
         return <DropdownButton
             iconName='audio'
             title='Options'
-            buttonClassName='control-bar-button'
-            direction={menuDirection}
-            up={menuUp}
+            className='control-bar-button'
             isOpen={isOpen}
             onRequestOpen={this.handleRequestOpen}>
             <Menu>
@@ -265,7 +262,6 @@ class PlaybackNavigationButton_ extends React.PureComponent
 
     render()
     {
-        const { menuDirection, menuUp } = this.props;
         const { isOpen, cursorFollowsPlayback } = this.state;
 
         const nextByMenuItems = navigationMenuColumns.map((column, index) => (
@@ -287,9 +283,7 @@ class PlaybackNavigationButton_ extends React.PureComponent
         return <DropdownButton
             iconName='share'
             title='Navigation'
-            buttonClassName='control-bar-button'
-            direction={menuDirection}
-            up={menuUp}
+            className='control-bar-button'
             isOpen={isOpen}
             onRequestOpen={this.handleRequestOpen}>
             <Menu>

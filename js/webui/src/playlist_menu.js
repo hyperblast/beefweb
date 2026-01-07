@@ -220,7 +220,6 @@ class PlaylistMenu extends React.PureComponent
             <DropdownButton
                 title='Playlist menu'
                 iconName='menu'
-                direction='left'
                 isOpen={menuOpen}
                 onRequestOpen={this.handleMenuRequestOpen}>
                 <Menu>

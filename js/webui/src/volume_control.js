@@ -141,17 +141,14 @@ class VolumeControlButton_ extends React.PureComponent
 
     render()
     {
-        const { menuDirection, menuUp } = this.props;
         const { isMuted, panelOpen } = this.state;
 
         return (
             <DropdownButton
                 title='Show volume control'
                 iconName={volumeIcon(isMuted)}
-                buttonClassName='control-bar-button'
+                className='control-bar-button'
                 hideOnContentClick={false}
-                direction={menuDirection}
-                up={menuUp}
                 isOpen={panelOpen}
                 onRequestOpen={this.handlePanelRequestOpen}>
                 <VolumeControl onAfterMuteClick={this.handleMuteClick} />

@@ -87,17 +87,14 @@ class ViewSwitcherButton_ extends React.PureComponent
 
     render()
     {
-        const { menuUp } = this.props;
         const { view, menuOpen } = this.state;
 
         return (
             <DropdownButton
                 title='Switch view'
                 iconName='grid-three-up'
-                buttonClassName='control-bar-button'
+                className='control-bar-button'
                 hideOnContentClick={true}
-                direction='left'
-                up={menuUp}
                 isOpen={menuOpen}
                 onRequestOpen={this.handleMenuRequestOpen}>
                 <Menu>

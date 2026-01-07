@@ -103,7 +103,6 @@ class ColumnsSettingsMenu extends React.PureComponent
                     <DropdownButton
                         title='Add'
                         iconName='plus'
-                        direction='left'
                         isOpen={addMenuOpen}
                         onRequestOpen={this.handleAddMenuRequestOpen}>
                         <MenuLabel title='Add column' />
@@ -114,7 +113,6 @@ class ColumnsSettingsMenu extends React.PureComponent
                     <DropdownButton
                         title='Columns settings'
                         iconName='menu'
-                        direction='left'
                         isOpen={settingsMenuOpen}
                         onRequestOpen={this.handleSettingsMenuRequestOpen}>
                         <Menu>

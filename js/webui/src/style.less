@@ -242,42 +242,21 @@ body {
     fill: var(--color-text);
 }
 
-.dropdown {
-    display: inline-block;
-    position: relative;
-}
-
 .dropdown-content {
-    .dropdown-box();
-
-    position: absolute;
+    position: fixed;
     visibility: hidden;
     z-index: -10;
     opacity: 0;
     transition: opacity 0.2s;
+    max-width: 95vw;
 
-    &.active {
-        visibility: visible;
-        z-index: 10;
-        opacity: 1;
-    }
+    .dropdown-box();
 }
 
-.dropdown-right {
-    left: 0;
-}
-
-.dropdown-left {
-    right: 0;
-}
-
-.dropdown-up {
-    bottom: 100%;
-}
-
-.dropdown-center {
-    margin-left: 50%;
-    transform: translateX(-50%);
+.dropdown-content-active {
+    visibility: visible;
+    z-index: 10;
+    opacity: 1;
 }
 
 .menu {

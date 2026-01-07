@@ -123,7 +123,6 @@ class FileBrowserHeader extends React.PureComponent
             ? <DropdownButton
                 iconName='menu'
                 title='Directory menu'
-                direction='left'
                 isOpen={menuOpen}
                 onRequestOpen={this.handleRequestMenuOpen}>
                 <Menu>

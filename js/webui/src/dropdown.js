@@ -3,24 +3,52 @@ import { bindHandlers } from './utils.js';
 import PropTypes from 'prop-types';
 import { IconButton } from './elements.js';
 import { makeClassName } from './dom_utils.js';
-import { pick } from 'lodash';
+import { debounce, pick } from 'lodash';
+import { createPortal } from 'react-dom';
 
 const dropdownTarget = Symbol('dropdownTarget');
 
 const basePropTypes = Object.freeze({
-    className: PropTypes.string,
     isOpen: PropTypes.bool.isRequired,
     onRequestOpen: PropTypes.func.isRequired,
     hideOnContentClick: PropTypes.bool,
-    direction: PropTypes.oneOf(['left', 'center', 'right', 'top-right']),
-    up: PropTypes.bool,
 });
 
 const baseDefaultProps = Object.freeze({
-    hideOnContentClick: true,
-    direction: 'right',
-    up: false,
+    hideOnContentClick: true
 });
+
+const dropdownMargin = 4;
+
+function createContentElement()
+{
+    const element = document.createElement('div');
+    const appContainer = document.getElementById('app-container');
+
+    element.className = 'dropdown-content';
+    appContainer.parentNode.insertBefore(element, appContainer);
+
+    return element;
+}
+
+function guessPosition(toggleElement, contentElement)
+{
+    const windowHeight = window.innerHeight;
+    const windowWidth = window.innerWidth;
+    const contentWidth = contentElement.clientWidth;
+    const contentHeight = contentElement.clientHeight;
+    const { top, right, bottom, left } = toggleElement.getBoundingClientRect();
+
+    const offsetX = left + contentWidth <= windowWidth
+                    ? left
+                    : right - contentWidth;
+
+    const offsetY = bottom <= windowHeight / 2
+                    ? bottom + dropdownMargin
+                    : top - contentHeight - dropdownMargin;
+
+    return [offsetX, offsetY];
+}
 
 export class Dropdown extends React.PureComponent
 {
@@ -29,10 +57,14 @@ export class Dropdown extends React.PureComponent
         super(props);
 
         this.state = {};
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.contentElement = createContentElement();
         this.setToggleRef = this.setToggleRef.bind(this);
-        this.setContentRef = this.setContentRef.bind(this);
 
         bindHandlers(this);
+
+        this.resizeWithDelay = debounce(this.resize.bind(this), 50);
     }
 
     handleToggleClick(e)
@@ -42,6 +74,9 @@ export class Dropdown extends React.PureComponent
 
         e.preventDefault();
         e[dropdownTarget] = this;
+
+        if (!this.props.isOpen)
+            this.updatePosition();
 
         this.props.onRequestOpen(!this.props.isOpen);
     }
@@ -68,57 +103,71 @@ export class Dropdown extends React.PureComponent
 
     setToggleRef(element)
     {
-        if (this.toggleElement)
-            this.toggleElement.removeEventListener('click', this.handleToggleClick);
-
+        this.toggleElement?.removeEventListener('click', this.handleToggleClick);
         this.toggleElement = element;
-
-        if (this.toggleElement)
-            this.toggleElement.addEventListener('click', this.handleToggleClick);
+        this.toggleElement?.addEventListener('click', this.handleToggleClick);
     }
 
-    setContentRef(element)
+    updateElement()
     {
-        if (this.contentElement)
-            this.contentElement.removeEventListener('click', this.handleContentClick);
+        if (this.props.isOpen)
+        {
+            this.contentElement.style.left = this.offsetX + 'px';
+            this.contentElement.style.top = this.offsetY + 'px';
+        }
 
-        this.contentElement = element;
+        this.contentElement.className = makeClassName([
+            'dropdown-content',
+            this.props.isOpen ? 'dropdown-content-active' : null,
+        ]);
+    }
 
-        if (this.contentElement)
-            this.contentElement.addEventListener('click', this.handleContentClick);
+    updatePosition()
+    {
+        const [x, y] = guessPosition(this.toggleElement, this.contentElement);
+        this.offsetX = x;
+        this.offsetY = y;
+    }
+
+    resize()
+    {
+        if (this.props.isOpen)
+        {
+            this.updatePosition();
+            this.updateElement();
+        }
     }
 
     componentDidMount()
     {
+        this.updateElement();
+        this.contentElement.addEventListener('click', this.handleContentClick);
         window.addEventListener('click', this.handleWindowClick);
+        window.addEventListener('resize', this.resizeWithDelay);
     }
 
     componentWillUnmount()
     {
+        this.contentElement.removeEventListener('click', this.handleContentClick);
+        this.contentElement.parentNode.removeChild(this.contentElement);
         window.removeEventListener('click', this.handleWindowClick);
+        window.removeEventListener('resize', this.resizeWithDelay);
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot)
+    {
+        this.updateElement();
     }
 
     render()
     {
-        const { isOpen, children, direction, onRenderElement, className, up } = this.props;
-
-        const dropdownClass = makeClassName([ 'dropdown', className ]);
-        const contentClass = makeClassName([
-            'dropdown-content',
-            'dropdown-' + direction,
-            up ? 'dropdown-up' : null,
-            isOpen ? 'active' : ''
-        ]);
-
-        const element = onRenderElement(this.setToggleRef, isOpen);
+        const { isOpen, children, onRenderElement } = this.props;
 
         return (
-            <div className={dropdownClass}>
-                { element }
-                <div ref={this.setContentRef} className={contentClass}>
-                    {children}
-                </div>
-            </div>
+            <>
+                { onRenderElement(this.setToggleRef, isOpen) }
+                { createPortal(children, this.contentElement) }
+            </>
         );
     }
 }
@@ -148,7 +197,7 @@ export class DropdownButton extends React.PureComponent
                 name={this.props.iconName}
                 title={this.props.title}
                 active={isOpen}
-                className={this.props.buttonClassName} />
+                className={this.props.className} />
         );
     }
 
@@ -168,7 +217,7 @@ DropdownButton.propTypes = Object.assign(
     {
         title: PropTypes.string.isRequired,
         iconName: PropTypes.string.isRequired,
-        buttonClassName: PropTypes.string,
+        className: PropTypes.string,
     },
     basePropTypes
 );
@@ -187,8 +236,8 @@ export class DropdownLink extends React.PureComponent
 
     renderElement(ref, isOpen)
     {
-        const { title, linkClassName } = this.props;
-        const fullClassName = makeClassName([linkClassName, isOpen ? 'active' : null]);
+        const { title, className } = this.props;
+        const fullClassName = makeClassName([className, isOpen ? 'active' : null]);
 
         return (
             <a
@@ -214,7 +263,7 @@ export class DropdownLink extends React.PureComponent
 DropdownLink.propTypes = Object.assign(
     {
         title: PropTypes.string.isRequired,
-        linkClassName: PropTypes.string,
+        className: PropTypes.string,
     },
     basePropTypes
 );

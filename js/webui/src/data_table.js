@@ -364,7 +364,6 @@ export default class DataTable extends React.PureComponent
                         iconName={this.props.rowMenuIconName}
                         isOpen={this.state.rowMenuIndex === rowIndex}
                         onRequestOpen={o => this.openRowMenu(rowIndex, o)}
-                        direction='left'
                         className='dtable-row-menu'>
                         { rowMenu }
                     </DropdownButton>
@@ -441,17 +440,11 @@ export default class DataTable extends React.PureComponent
 
     renderColumnHeaderWithMenu(name, index)
     {
-        const direction = index === this.props.columns.length - 1
-            ? 'left'
-            : 'right';
-
         return (
             <DropdownLink
                 key={index}
                 title={name}
-                direction={direction}
-                className={`dtable-column-header dtable-cell${index}`}
-                linkClassName='dtable-column-header-text dtable-column-header-link'
+                className={`dtable-column-header dtable-column-header-text dtable-column-header-link dtable-cell${index}`}
                 isOpen={this.state.columnMenuIndex === index}
                 onRequestOpen={o => this.openColumnMenu(index, o)}>
                 { this.props.onRenderColumnMenu(index) }
