@@ -57,14 +57,11 @@ export class Dropdown extends React.PureComponent
         super(props);
 
         this.state = { isOpen: false };
-        this.offsetX = 0;
-        this.offsetY = 0;
-        this.contentElement = createContentElement();
         this.setToggleRef = this.setToggleRef.bind(this);
 
         bindHandlers(this);
 
-        this.resizeWithDelay = throttle(this.resize.bind(this), 50);
+        this.throttledResize = throttle(this.resize.bind(this), 50);
     }
 
     handleToggleClick(e)
@@ -74,13 +71,7 @@ export class Dropdown extends React.PureComponent
 
         e.preventDefault();
         e[dropdownTarget] = this;
-
-        const newState = !this.isOpen();
-
-        if (newState)
-            this.updatePosition();
-
-        this.setOpen(newState);
+        this.setOpen(!this.isOpen());
     }
 
     handleContentClick(e)
@@ -123,67 +114,75 @@ export class Dropdown extends React.PureComponent
         this.toggleElement?.addEventListener('click', this.handleToggleClick);
     }
 
-    updateElement()
+    createContentElement()
     {
-        const isOpen = this.isOpen();
+        if (this.contentElement)
+            return;
 
-        if (isOpen)
-        {
-            this.contentElement.style.left = this.offsetX + 'px';
-            this.contentElement.style.top = this.offsetY + 'px';
-        }
-
-        this.contentElement.className = makeClassName([
-            'dropdown-content',
-            this.isOpen() ? 'dropdown-content-active' : null,
-        ]);
+        this.contentElement = createContentElement();
+        this.contentElement.addEventListener('click', this.handleContentClick);
     }
 
-    updatePosition()
+    destroyContentElement()
     {
+        if (!this.contentElement)
+            return;
+
+        this.contentElement.removeEventListener('click', this.handleContentClick);
+        this.contentElement.parentNode.removeChild(this.contentElement);
+        this.contentElement = null;
+    }
+
+    updateContentElement()
+    {
+        if (!this.contentElement)
+            return;
+
         const [x, y] = guessPosition(this.toggleElement, this.contentElement);
-        this.offsetX = x;
-        this.offsetY = y;
+        this.contentElement.style.left = x + 'px';
+        this.contentElement.style.top = y + 'px';
+        this.contentElement.className = 'dropdown-content dropdown-content-active';
     }
 
     resize()
     {
         if (this.isOpen())
-        {
-            this.updatePosition();
-            this.updateElement();
-        }
+            this.updateContentElement();
     }
 
     componentDidMount()
     {
-        this.updateElement();
-        this.contentElement.addEventListener('click', this.handleContentClick);
+        window.addEventListener('resize', this.throttledResize);
         window.addEventListener('click', this.handleWindowClick);
-        window.addEventListener('resize', this.resizeWithDelay);
     }
 
     componentWillUnmount()
     {
-        this.contentElement.removeEventListener('click', this.handleContentClick);
-        this.contentElement.parentNode.removeChild(this.contentElement);
+        window.removeEventListener('resize', this.throttledResize);
         window.removeEventListener('click', this.handleWindowClick);
-        window.removeEventListener('resize', this.resizeWithDelay);
+        this.destroyContentElement();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot)
     {
-        this.updateElement();
+        if (this.isOpen())
+            this.updateContentElement();
+        else
+            this.destroyContentElement();
     }
 
     render()
     {
         const { children, onRenderElement } = this.props;
+        const isOpen = this.isOpen();
+
+        if (isOpen)
+            this.createContentElement();
 
         return (
             <>
-                { onRenderElement(this.setToggleRef, this.isOpen()) }
-                { createPortal(children, this.contentElement) }
+                { onRenderElement(this.setToggleRef, isOpen) }
+                { isOpen ? createPortal(children, this.contentElement) : null }
             </>
         );
     }
