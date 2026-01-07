@@ -82,7 +82,7 @@ export class Dropdown extends React.PureComponent
         e[dropdownTarget] = this;
 
         if (this.props.hideOnContentClick)
-            this.setOpen(false);
+            setTimeout(() => this.setOpen(false), 0);
     }
 
     handleWindowClick(e)
