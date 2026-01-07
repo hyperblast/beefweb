@@ -245,9 +245,9 @@ export default class SettingsModel extends SettingsModelBase
 
         this.define({
             key: 'compactMode',
-            title: 'Compact mode (hide gaps between panels)',
+            title: 'Hide gaps between panels',
             type: SettingType.bool,
-            defaultValue: true,
+            defaultValue: false,
             persistent: true,
             cssVisible: true,
         });
