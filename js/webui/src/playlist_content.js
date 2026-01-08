@@ -208,6 +208,6 @@ class PlaylistContent extends React.PureComponent
 
 export default ModelBinding(PlaylistContent, {
     playerModel: 'change',
-    playlistModel: ['playlistsChange', 'itemsChange'],
+    playlistModel: ['playlistsChange', 'itemsChange', 'columnsChange'],
     playQueueModel: 'change',
 });

@@ -1,6 +1,7 @@
 import { arrayMove } from 'react-sortable-hoc'
 import { AddAction } from "./settings_model.js";
 import ModelBase from './model_base.js';
+import { looseDeepEqual } from './utils.js';
 
 const addOptions = {
     [AddAction.add]: {},
@@ -26,29 +27,23 @@ export default class PlaylistModel extends ModelBase
 
         this.currentPlaylistId = '';
         this.columns = null;
-        this.layout = null;
+        this.columnExpressions = null;
 
         this.defineEvent('playlistsChange');
         this.defineEvent('itemsChange');
+        this.defineEvent('columnsChange');
     }
 
     start()
     {
-        this.updateLayout();
-
-        this.settingsModel.on('mediaSize', () => {
-            if (this.updateLayout())
-                this.watchPlaylistItems();
-        });
-
-        this.settingsModel.on('columns', () => {
-            this.updateLayout(true);
-            this.watchPlaylistItems();
-        });
-
+        const updateLayout = this.updateLayout.bind(this);
+        this.settingsModel.on('mediaSize', updateLayout);
+        this.settingsModel.on('columns', updateLayout);
         this.dataSource.on('playlists', this.setPlaylists.bind(this));
         this.dataSource.on('playlistItems', this.setPlaylistItems.bind(this));
         this.dataSource.watch('playlists');
+
+        this.updateLayout();
     }
 
     setPlaylists(playlists)
@@ -113,24 +108,33 @@ export default class PlaylistModel extends ModelBase
         const request = {
             playlistItems: true,
             plref: this.currentPlaylistId,
-            plcolumns: this.columns.filter(c => !c.lineBreak).map(c => c.expression),
+            plcolumns: this.columnExpressions,
             plrange: this.playlistRange,
         };
 
         this.dataSource.watch('playlistItems', request, forceUpdate);
     }
 
-    updateLayout(forced = false)
+    updateLayout()
     {
-        const mediaSize = this.settingsModel.mediaSize;
+        const { mediaSize } = this.settingsModel;
+        const { columns } = this.settingsModel.columns[mediaSize];
 
-        if (this.layout === mediaSize && !forced)
-            return false;
+        if (this.columns === columns)
+            return;
 
-        this.layout = mediaSize;
-        this.columns = this.settingsModel.columns[mediaSize].columns;
+        this.columns = columns;
 
-        return true;
+        const columnExpressions = columns.filter(c => !c.lineBreak).map(c => c.expression);
+
+        if (looseDeepEqual(this.columnExpressions, columnExpressions))
+        {
+            setTimeout(() => this.emit('columnsChange'), 0);
+            return;
+        }
+
+        this.columnExpressions = columnExpressions;
+        this.watchPlaylistItems();
     }
 
     addItems(items, addAction)
