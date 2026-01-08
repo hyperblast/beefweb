@@ -10,6 +10,7 @@ export default class ViewSwitcherController
         this.startX = 0;
         this.startY = 0;
         this.lastPosition = 0;
+        this.styleElement = null;
         bindHandlers(this);
     }
 
@@ -60,8 +61,14 @@ export default class ViewSwitcherController
             return;
 
         this.lastPosition = position;
-        const style = document.getElementById('app-swipe-style');
-        style.innerText = `.panel-header, .panel-main { left: ${position}px; }`;
+
+        if (!this.styleElement)
+        {
+            this.styleElement = document.createElement('style');
+            document.head.appendChild(this.styleElement);
+        }
+
+        this.styleElement.innerText = `.panel-header, .panel-main { left: ${position}px; }`;
     }
 
     getSwipeDistance(event)
