@@ -65,7 +65,7 @@ export default class PlayerModel extends ModelBase
         Object.assign(this, initialPlayerInfo);
 
         this.defineEvent('change');
-        this.defineEvent('playbackPosition');
+        this.defineEvent('positionChange');
         this.defineEvent('trackSwitch');
 
         this.setVolumeRemote = debounce(value => this.client.setVolume(value), 80);
@@ -212,7 +212,7 @@ export default class PlayerModel extends ModelBase
 
         const newPosition = clamp(position + delta / 1000, 0, duration);
 
-        this.updateState('activeItem', { position: newPosition }, 'playbackPosition');
+        this.updateState('activeItem', { position: newPosition }, 'positionChange');
     }
 
     notifyTrackSwitch(wasPlaying)

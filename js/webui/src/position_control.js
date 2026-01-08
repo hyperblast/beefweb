@@ -60,5 +60,5 @@ class PositionControl extends React.PureComponent
 }
 
 export default ModelBinding(PositionControl, {
-    playerModel: ['change', 'playbackPosition']
+    playerModel: ['change', 'positionChange']
 });
