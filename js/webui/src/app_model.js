@@ -6,7 +6,7 @@ import PlayerModel from './player_model.js'
 import PlaylistModel from './playlist_model.js'
 import FileBrowserModel from './file_browser_model.js'
 import SettingsModel from './settings_model.js'
-import NotificationModel from './notification_model.js'
+import { NotificationModel } from './notification_model.js'
 import ScrollManager from './scroll_manager.js'
 import NavigationModel from './navigation_model.js';
 import ColumnsSettingsModel from './columns_settings_model.js';
@@ -50,7 +50,6 @@ export default class AppModel
     {
         await this.settingsModel.initialize();
 
-        this.notificationModel.load();
         this.mediaSizeController.start();
         this.playerModel.start();
         this.playlistModel.start();

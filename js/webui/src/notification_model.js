@@ -1,21 +1,25 @@
-import React, { StrictMode } from 'react';
-import ReactDom from 'react-dom'
-import NotificationGroup from './notification_group.js'
-import { bindHandlers } from './utils.js';
+import { arrayRemove } from './utils.js';
 import Timer from './timer.js';
+import ModelBase from './model_base.js';
 
 const maxNotifications = 5;
 const timeToLive = 3000;
 
-export default class NotificationModel
+export class NotificationModel extends ModelBase
 {
     constructor()
     {
+        super();
+
         this.items = [];
+        this.timer = new Timer(this.removeStaleItems.bind(this), timeToLive / 2);
+        this.nextItemId = 0;
+        this.defineEvent('change');
+    }
 
-        bindHandlers(this);
-
-        this.timer = new Timer(this.handleTimeout, timeToLive / 2);
+    start()
+    {
+        this.timer.restart();
     }
 
     notifyAddItem(path)
@@ -30,30 +34,33 @@ export default class NotificationModel
 
     notify(title, message)
     {
-        if (this.items.length >= maxNotifications)
-            this.items.splice(0, 1);
+        const items = [...this.items];
 
-        this.items.push({ title, message, timeout: Date.now() + timeToLive });
-        this.update();
+        if (items.length >= maxNotifications)
+            items.splice(0, 1);
+
+        items.push({
+            id: this.nextItemId++,
+            timeout: Date.now() + timeToLive,
+            title,
+            message,
+        });
+
+        this.items = items;
+        this.emit('change');
     }
 
-    load()
+    close(id)
     {
-        this.container = document.getElementById('notification-container');
+        const index = this.items.findIndex(item => item.id === id);
+        if (index < 0)
+            return;
+
+        this.items = arrayRemove(this.items, index);
+        this.emit('change');
     }
 
-    start()
-    {
-        this.timer.restart();
-    }
-
-    handleCloseQuery(index)
-    {
-        this.items.splice(index, 1);
-        this.update();
-    }
-
-    handleTimeout(delta, now)
+    removeStaleItems(delta, now)
     {
         const isAlive = i => i.timeout >= now;
 
@@ -61,17 +68,6 @@ export default class NotificationModel
             return;
 
         this.items = this.items.filter(isAlive);
-        this.update();
-    }
-
-    update()
-    {
-        const box = (
-            <StrictMode>
-                <NotificationGroup items={this.items} onCloseQuery={this.handleCloseQuery} />
-            </StrictMode>
-        );
-
-        ReactDom.render(box, this.container);
+        this.emit('change');
     }
 }

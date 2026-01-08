@@ -33,7 +33,7 @@ src/media_theme_controller.js
 src/model_base.js
 src/model_binding.js
 src/navigation_model.js
-src/notification_group.js
+src/notification_container.js
 src/notification_model.js
 src/output_settings.js
 src/output_settings_model.js

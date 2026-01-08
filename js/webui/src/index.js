@@ -8,6 +8,7 @@ import urls, { getPathFromUrl } from './urls.js'
 import { playlistTableKey } from './playlist_content.js';
 import { PlaybackState } from 'beefweb-client';
 import { SettingsView, View } from './navigation_model.js';
+import { NotificationContainer } from './notification_container.js';
 
 const appModel = new AppModel();
 
@@ -149,6 +150,7 @@ async function main()
         <StrictMode>
             <ServiceContext.Provider value={appModel}>
                 <App />
+                <NotificationContainer />
             </ServiceContext.Provider>
         </StrictMode>
     );

@@ -1,6 +1,7 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React, { PureComponent } from 'react';
 import { IconButton } from './elements.js';
+import ModelBinding from './model_binding.js';
+import ServiceContext from './service_context.js';
 
 function smartSplit(message)
 {
@@ -12,25 +13,39 @@ function smartSplit(message)
         return { start: message, end: '' };
 
     return {
-        start: message.substr(0, position),
-        end: message.substr(position),
+        start: message.substring(0, position),
+        end: message.substring(position),
     };
 }
 
-export default class NotificationGroup extends React.Component
+class NotificationContainer_ extends PureComponent
 {
-    constructor(props)
+    static contextType = ServiceContext;
+
+    constructor(props, context)
     {
-        super(props);
+        super(props, context);
+
+        this.state = this.getStateFromModel();
     }
 
-    renderBox(index, item)
+    getStateFromModel()
     {
-        const { onCloseQuery } = this.props;
+        const { items } = this.context.notificationModel;
+        return { items };
+    }
+
+    handleClose(id)
+    {
+        this.context.notificationModel.close(id);
+    }
+
+    renderBox(item)
+    {
         const { start, end } = smartSplit(item.message);
 
         return (
-            <div key={index} className='notification-box'>
+            <div key={item.id} className='notification-box'>
                 <div className='notification-content'>
                     <div className='notification-header'>{ item.title }</div>
                     <div className='notification-text' title={item.message}>
@@ -42,33 +57,24 @@ export default class NotificationGroup extends React.Component
                     name='x'
                     title='Dismiss'
                     className='notification-close-button'
-                    onClick={() => onCloseQuery(index)}/>
+                    onClick={() => this.handleClose(item.id)}/>
             </div>
         );
     }
 
     render()
     {
-        if (this.props.items.length === 0)
+        if (this.state.items.length === 0)
             return null;
 
-        const items = this.props.items.map(
-            (item, index) => this.renderBox(index, item));
-
         return (
-            <div className='notification-group'>
-                { items }
+            <div className='notification-container'>
+                { this.state.items.map(item => this.renderBox(item)) }
             </div>
         );
     }
 }
 
-const notificationType = PropTypes.shape({
-    title: PropTypes.string,
-    message: PropTypes.string,
+export const NotificationContainer = ModelBinding(NotificationContainer_, {
+    notificationModel: 'change'
 });
-
-NotificationGroup.propTypes = {
-    items: PropTypes.arrayOf(notificationType).isRequired,
-    onCloseQuery: PropTypes.func.isRequired,
-};
