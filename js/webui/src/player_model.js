@@ -1,5 +1,4 @@
-import { debounce } from 'lodash'
-import { clamp } from 'lodash'
+import { debounce, clamp } from './lodash.js'
 import Timer from './timer.js'
 import { PlaybackState } from 'beefweb-client'
 import { defaultPlayerFeatures, getPlayerFeatures } from './player_features.js';

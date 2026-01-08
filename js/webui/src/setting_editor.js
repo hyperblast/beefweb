@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { values as objectValues } from 'lodash'
 import { SettingType } from './settings_model.js'
 import ServiceContext from './service_context.js';
 import { DialogButton } from './dialogs.js';
@@ -62,7 +61,7 @@ class EnumSettingEditor extends React.PureComponent
     {
         const { value, metadata, elementId, disabled } = this.props;
 
-        const options = objectValues(metadata.enumKeys).map(value => {
+        const options = Object.values(metadata.enumKeys).map(value => {
             return (
                 <option key={value} value={value}>
                     { metadata.enumNames[value] }

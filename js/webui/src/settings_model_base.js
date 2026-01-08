@@ -1,4 +1,4 @@
-import { cloneDeep, isEqual } from 'lodash';
+import { isEqual } from './lodash.js';
 import { SettingType } from './settings_model.js';
 import ModelBase from './model_base.js';
 
@@ -67,7 +67,7 @@ export default class SettingsModelBase extends ModelBase
         if (isEqual(value, this.values[key]))
             return;
 
-        this.values[key] = Object.freeze(cloneDeep(value));
+        this.values[key] = Object.freeze(structuredClone(value));
 
         if (metadata.persistent)
             this.save();

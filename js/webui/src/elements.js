@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
 import { generateElementId, makeClassName } from './dom_utils.js';
-import { debounce } from 'lodash';
+import { debounce } from './lodash.js';
 
 function makeClickHandler(callback)
 {

@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash'
 import { arrayMove } from 'react-sortable-hoc';
 import { arrayRemove } from './utils.js';
 import ModelBase from './model_base.js';
@@ -36,7 +35,7 @@ export default class ColumnsSettingsModel extends ModelBase
 
     setConfig(config)
     {
-        this.config = cloneDeep(config);
+        this.config = structuredClone(config);
         this.columns = config[this.layout].columns;
         this.emit('change');
     }
@@ -82,7 +81,7 @@ export default class ColumnsSettingsModel extends ModelBase
 
     addColumn(column)
     {
-        this.setColumns([... this.columns, cloneDeep(column)]);
+        this.setColumns([... this.columns, structuredClone(column)]);
     }
 
     updateColumn(index, patch)

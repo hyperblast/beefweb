@@ -1,4 +1,4 @@
-import { isFunction } from 'lodash'
+import { isFunction } from './lodash.js'
 
 function formatTimePart(value)
 {

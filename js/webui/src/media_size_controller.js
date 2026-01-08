@@ -1,5 +1,5 @@
 import { MediaSize } from './settings_model.js'
-import { debounce } from 'lodash';
+import { debounce } from './lodash.js';
 
 const Breakpoints = Object.freeze({
     large: 60, // 60 * 16 = 960px

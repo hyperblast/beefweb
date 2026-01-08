@@ -1,8 +1,5 @@
 import { MediaSize } from './settings_model.js'
-import ServiceContext from './service_context.js';
-import App from './app.js';
-import React from 'react';
-import { debounce } from 'lodash';
+import { debounce } from './lodash.js';
 
 const settingClassPrefix = 'st-';
 

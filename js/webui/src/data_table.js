@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { throttle } from 'lodash'
+import { throttle } from './lodash.js'
 import { Icon } from './elements.js';
 import { mapRange, once } from './utils.js'
 import { generateElementId, getFontSize, getScrollBarWidth, makeClassName } from './dom_utils.js'

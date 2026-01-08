@@ -28,6 +28,7 @@ src/general_settings.js
 src/index.html
 src/index.js
 src/loader.gif
+src/lodash.js
 src/media_size_controller.js
 src/media_theme_controller.js
 src/model_base.js

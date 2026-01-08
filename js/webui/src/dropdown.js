@@ -3,7 +3,7 @@ import { bindHandlers } from './utils.js';
 import PropTypes from 'prop-types';
 import { IconButton } from './elements.js';
 import { makeClassName } from './dom_utils.js';
-import { pick, throttle } from 'lodash';
+import { throttle } from './lodash.js';
 import { createPortal } from 'react-dom';
 
 const dropdownTarget = Symbol('dropdownTarget');
@@ -218,10 +218,8 @@ export class DropdownButton extends React.PureComponent
 
     render()
     {
-        const props = pick(this.props, Object.keys(basePropTypes));
-
         return (
-            <Dropdown onRenderElement={this.renderElement} {... props}>
+            <Dropdown {...this.props} onRenderElement={this.renderElement}>
                 { this.props.children }
             </Dropdown>
         );
@@ -265,10 +263,8 @@ export class DropdownLink extends React.PureComponent
 
     render()
     {
-        const props = pick(this.props, Object.keys(basePropTypes));
-
         return (
-            <Dropdown onRenderElement={this.renderElement} {... props}>
+            <Dropdown {...this.props} onRenderElement={this.renderElement}>
                 { this.props.children }
             </Dropdown>
         );

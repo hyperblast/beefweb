@@ -5,7 +5,6 @@ import { bindHandlers } from './utils.js';
 import { IconButton, Icon, Select } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
-import { cloneDeep } from 'lodash'
 import ModelBinding from './model_binding.js';
 import ServiceContext from "./service_context.js";
 import { ColumnAlign } from './columns.js';
@@ -191,7 +190,7 @@ class ColumnEditor_ extends React.PureComponent
     {
         this.setState({
             editDialogOpen: true,
-            editedColumn: cloneDeep(this.props.column),
+            editedColumn: structuredClone(this.props.column),
         });
     }
 

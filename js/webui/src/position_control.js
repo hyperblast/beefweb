@@ -1,5 +1,5 @@
 import React from 'react'
-import { clamp } from 'lodash'
+import { clamp } from './lodash.js'
 import { formatTime } from './utils.js'
 import ModelBinding from './model_binding.js';
 import ServiceContext from "./service_context.js";
