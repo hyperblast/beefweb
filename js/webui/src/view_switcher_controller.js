@@ -23,8 +23,13 @@ export default class ViewSwitcherController
 
     handleTouchStart(event)
     {
-        if (event.target instanceof HTMLInputElement)
+        // nasty
+        if (event.target instanceof HTMLInputElement ||
+            event.target instanceof HTMLAnchorElement ||
+            event.target instanceof SVGElement)
+        {
             return;
+        }
 
         const { screenX, screenY } = event.changedTouches[0];
 
