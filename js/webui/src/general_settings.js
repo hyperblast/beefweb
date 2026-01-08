@@ -17,17 +17,13 @@ class GeneralSettings extends React.PureComponent
 
     getStateFromModel()
     {
-        const { showPlaybackInfo } = this.context.settingsModel;
-
-        return {
-            showPlaybackInfo,
-            showFullWidth: this.context.settingsModel.mediaSizeUp(MediaSize.large),
-        };
+        const { mediaSize, showPlaybackInfo } = this.context.settingsModel;
+        return { mediaSize, showPlaybackInfo };
     }
 
     render()
     {
-        const { showPlaybackInfo, showFullWidth } = this.state;
+        const { mediaSize, showPlaybackInfo } = this.state;
 
         return (
             <form className='settings-form'>
@@ -36,11 +32,13 @@ class GeneralSettings extends React.PureComponent
                 <SettingEditor settingKey='compactMode' />
                 <SettingEditor settingKey='windowTitleExpression' />
                 {
-                    showFullWidth ? <SettingEditor settingKey='fullWidth' /> : null
+                    mediaSize === MediaSize.large ? <SettingEditor settingKey='fullWidth' /> : null
                 }
                 <SettingEditor settingKey='inputMode' />
                 <SettingEditor settingKey='defaultAddAction' />
-                <SettingEditor settingKey='combinePlayPause' />
+                {
+                    mediaSize !== MediaSize.small ? <SettingEditor settingKey='combinePlayPause' /> : null
+                }
                 <SettingEditor settingKey='showPlaybackInfo' />
                 <SettingEditor settingKey='playbackInfoExpression' disabled={!showPlaybackInfo} />
                 <SettingEditor settingKey='showStatusBar' />
