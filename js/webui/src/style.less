@@ -535,15 +535,16 @@ body {
 
 .dtable-head {
     height: @dtable-row-height;
+    padding: 0 0.25rem;
     margin-right: var(--dtable-scroll-bar-width);
 }
 
-.dtable-has-row-icons .dtable-head {
+.dtable-has-row-icons > .dtable-head {
     margin-left: 3rem;
 }
 
-.dtable-has-row-menu .dtable-head {
-    margin-right: calc(@dtable-row-height + var(--dtable-scroll-bar-width));
+.dtable-has-row-menu > .dtable-head {
+    margin-right: calc(var(--dtable-scroll-bar-width) + @dtable-row-height);
 }
 
 .dtable-body {
@@ -619,18 +620,12 @@ body {
 
 .dtable-column-header {
     display: inline-block;
-    padding: 0 0.25rem;
-}
-
-.dtable-column-header-text {
     font-weight: bold;
 
     .no-text-overflow();
 }
 
 .dtable-column-header-link {
-    text-decoration: none;
-
     .action-link();
 }
 

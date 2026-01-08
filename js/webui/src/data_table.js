@@ -22,7 +22,7 @@ const setScrollBarWidthVariable = once(() =>
 });
 
 const cellClassNames = mapRange(
-    0, maxColumns, value => `dtable-cell dtable-cell${value}`);
+    0, maxColumns, value => `dtable-cell dtable-column-${value}`);
 
 export default class DataTable extends React.PureComponent
 {
@@ -30,7 +30,8 @@ export default class DataTable extends React.PureComponent
     {
         super(props);
 
-        this.state = { elementId: generateElementId('dtable'), columnMenuIndex: -1, rowMenuIndex: -1 };
+        this.elementId = generateElementId('dtable');
+        this.state = { columnMenuIndex: -1, rowMenuIndex: -1 };
         this.setBodyRef = this.setBodyRef.bind(this);
         this.handleScroll = throttle(this.handleScroll.bind(this), 50);
         this.handleClick = this.handleClick.bind(this);
@@ -269,7 +270,6 @@ export default class DataTable extends React.PureComponent
     render()
     {
         const { className, style, useIcons, onRenderRowMenu } = this.props;
-        const { elementId } = this.state;
 
         const subrowCount = this.subrowCount();
         const fullClassName = makeClassName([
@@ -285,7 +285,7 @@ export default class DataTable extends React.PureComponent
              : null;
 
         return (
-            <div id={elementId} className={fullClassName} style={style}>
+            <div id={this.elementId} className={fullClassName} style={style}>
                 <style>{ this.renderCellStyles() }</style>
                 { head }
                 <div
@@ -428,7 +428,7 @@ export default class DataTable extends React.PureComponent
 
     renderColumnHeaderSimple(name, index)
     {
-        const className = `dtable-column-header dtable-column-header-text dtable-cell${index}`;
+        const className = `dtable-column-header dtable-column-${index}`;
 
         return (
             <span
@@ -444,7 +444,7 @@ export default class DataTable extends React.PureComponent
             <DropdownLink
                 key={index}
                 title={name}
-                className={`dtable-column-header dtable-column-header-text dtable-column-header-link dtable-cell${index}`}
+                className={`dtable-column-header dtable-column-header-link dtable-column-${index}`}
                 isOpen={this.state.columnMenuIndex === index}
                 onRequestOpen={o => this.openColumnMenu(index, o)}>
                 { this.props.onRenderColumnMenu(index) }
@@ -452,7 +452,7 @@ export default class DataTable extends React.PureComponent
         );
     }
 
-    renderCellStyle(index, column, size)
+    renderCellStyle(index, column, size, withHeader)
     {
         const rules = [
             `width: ${size * 100}%;`
@@ -478,7 +478,11 @@ export default class DataTable extends React.PureComponent
             rules.push('font-size: 0.8rem')
         }
 
-        return `#${this.state.elementId} .dtable-cell${index} { ${rules.join(' ')} }`;
+        const headerStyle = withHeader
+            ? `#${this.elementId} .dtable-column-header.dtable-column-${index} { ${rules[0]} }\n`
+            : '';
+
+        return `${headerStyle}#${this.elementId} .dtable-cell.dtable-column-${index} { ${rules.join(' ')} }`;
     }
 
     renderCellStyles()
@@ -500,7 +504,11 @@ export default class DataTable extends React.PureComponent
 
             for (let j = subrowStart; j < i; j++)
             {
-                styles.push(this.renderCellStyle(j - subrowIndex, columns[j], columns[j].size / subrowSize));
+                styles.push(this.renderCellStyle(
+                    j - subrowIndex,
+                    columns[j],
+                    columns[j].size / subrowSize,
+                    subrowIndex === 0));
             }
 
             subrowStart = i + 1;
@@ -510,7 +518,11 @@ export default class DataTable extends React.PureComponent
 
         for (let j = subrowStart; j < columns.length; j++)
         {
-            styles.push(this.renderCellStyle(j - subrowIndex, columns[j], columns[j].size / subrowSize));
+            styles.push(this.renderCellStyle(
+                j - subrowIndex,
+                columns[j],
+                columns[j].size / subrowSize,
+                subrowIndex === 0));
         }
 
         return styles.join('\n');
