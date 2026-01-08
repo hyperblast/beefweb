@@ -12,25 +12,18 @@ export default class ViewSwitcherController
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
     }
 
-    update()
+    start()
     {
-        const element = document.getElementsByClassName('panel-main')[0];
-        if (element === this.element)
-            return;
-
-        this.element?.removeEventListener('touchstart', this.handleTouchStart);
-        this.element?.removeEventListener('touchend', this.handleTouchEnd);
-
-        this.startX = null;
-        this.startY = null;
-        this.element = element;
-
-        this.element?.addEventListener('touchstart', this.handleTouchStart);
-        this.element?.addEventListener('touchend', this.handleTouchEnd);
+        this.element = document.getElementById('app-container');
+        this.element.addEventListener('touchstart', this.handleTouchStart);
+        this.element.addEventListener('touchend', this.handleTouchEnd);
     }
 
     handleTouchStart(event)
     {
+        if (event.target instanceof HTMLInputElement)
+            return;
+
         const { screenX, screenY } = event.changedTouches[0];
 
         this.startX = screenX;

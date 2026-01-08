@@ -63,6 +63,7 @@ export default class AppModel
         this.cssSettingsController.start();
         this.columnsSettingsModel.start();
         this.windowController.start();
+        this.viewSwitcherController.start();
     }
 }
 

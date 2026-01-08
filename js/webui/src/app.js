@@ -42,21 +42,6 @@ class App extends React.PureComponent
         return { view, showPlaybackInfo, showStatusBar };
     }
 
-    componentDidMount()
-    {
-        this.context.viewSwitcherController.update();
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot)
-    {
-        this.context.viewSwitcherController.update();
-    }
-
-    componentWillUnmount()
-    {
-        this.context.viewSwitcherController.update();
-    }
-
     renderPlaylistView()
     {
         return {
