@@ -1,22 +1,22 @@
-const minTouchDistance = 100;
+import { bindHandlers } from './utils.js';
+
+const switchDistance = 100;
 
 export default class ViewSwitcherController
 {
     constructor(navigationModel)
     {
         this.navigationModel = navigationModel;
-        this.element = null;
-        this.startX = null;
-        this.startY = null;
-        this.handleTouchStart = this.handleTouchStart.bind(this);
-        this.handleTouchEnd = this.handleTouchEnd.bind(this);
+        this.startX = 0;
+        this.startY = 0;
+        bindHandlers(this);
     }
 
     start()
     {
-        this.element = document.getElementById('app-container');
-        this.element.addEventListener('touchstart', this.handleTouchStart);
-        this.element.addEventListener('touchend', this.handleTouchEnd);
+        window.addEventListener('touchstart', this.handleTouchStart);
+        window.addEventListener('touchmove', this.handleTouchMove);
+        window.addEventListener('touchend', this.handleTouchEnd);
     }
 
     handleTouchStart(event)
@@ -30,25 +30,45 @@ export default class ViewSwitcherController
         this.startY = screenY;
     }
 
+    handleTouchMove(event)
+    {
+        const swipeDistance = this.getSwipeDistance(event);
+
+        if (swipeDistance)
+            this.moveContent(swipeDistance);
+    }
+
     handleTouchEnd(event)
     {
+        const swipeDistance = this.getSwipeDistance(event);
+
+        this.startX = 0;
+        this.startY = 0;
+
+        if (swipeDistance >= switchDistance)
+            this.navigationModel.navigateToPrevious();
+        else if (swipeDistance <= -switchDistance)
+            this.navigationModel.navigateToNext();
+
+        this.moveContent(0);
+    }
+
+    moveContent(position)
+    {
+        const style = document.getElementById('app-swipe-style');
+        style.innerText = `.panel-header, .panel-main { left: ${position}px; }`;
+    }
+
+    getSwipeDistance(event)
+    {
         if (!this.startX || !this.startY)
-            return;
+            return 0;
 
         const { screenX, screenY } = event.changedTouches[0];
 
         const distanceX = screenX - this.startX;
         const distanceY = screenY - this.startY;
 
-        this.startX = null;
-        this.startY = null;
-
-        if (Math.abs(distanceX) <= Math.abs(distanceY) || Math.abs(distanceX) < minTouchDistance)
-            return;
-
-        if (distanceY > 0)
-            this.navigationModel.navigateToPrevious();
-        else
-            this.navigationModel.navigateToNext();
+        return Math.abs(distanceX) > Math.abs(distanceY) ? distanceX : 0;
     }
 }
