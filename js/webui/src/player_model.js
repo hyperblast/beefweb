@@ -5,6 +5,15 @@ import { PlaybackState } from 'beefweb-client'
 import { defaultPlayerFeatures, getPlayerFeatures } from './player_features.js';
 import ModelBase from './model_base.js';
 
+const playerInfoKeys = [
+    'activeItem',
+    'info',
+    'options',
+    'permissions',
+    'playbackState',
+    'volume'
+];
+
 const initialPlayerInfo = Object.freeze({
     features: defaultPlayerFeatures,
     info: {
@@ -14,8 +23,6 @@ const initialPlayerInfo = Object.freeze({
         pluginVersion: '0.0',
     },
     playbackState: PlaybackState.stopped,
-    playbackMode: 0,
-    playbackModes: ['Default'],
     options: [],
     volume: {
         type: 'db',
@@ -45,10 +52,11 @@ const initialPlayerInfo = Object.freeze({
  * @property {object} features
  * @property {object} info
  * @property {string} playbackState
- * @property {number} playbackMode
+ * @property {array} options
  * @property {object} volume
  * @property {object} activeItem
  * @property {string} activeItemId
+ * @property {object} permissions
  */
 export default class PlayerModel extends ModelBase
 {
@@ -170,7 +178,8 @@ export default class PlayerModel extends ModelBase
     {
         const wasPlaying = this.playbackState === PlaybackState.playing;
 
-        Object.assign(this, playerInfo);
+        for (let key of playerInfoKeys)
+            this[key] = playerInfo[key];
 
         if (!this.featuresInitialized) {
             this.features = getPlayerFeatures(this.info.name);
