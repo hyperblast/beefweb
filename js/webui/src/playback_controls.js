@@ -235,6 +235,8 @@ class PlaybackNavigationButton_ extends React.PureComponent
         this.state = this.getStateFromModel();
 
         this.playRandom = () => this.context.playerModel.playRandom();
+        this.stop = () => this.context.playerModel.stop();
+
         this.toggleCursorFollowsPlayback = () => {
             const { settingsModel } = this.context;
             settingsModel.cursorFollowsPlayback = !settingsModel.cursorFollowsPlayback;
@@ -259,6 +261,7 @@ class PlaybackNavigationButton_ extends React.PureComponent
 
     render()
     {
+        const { showStop } = this.props;
         const { cursorFollowsPlayback } = this.state;
 
         const nextByMenuItems = navigationMenuColumns.map((column, index) => (
@@ -282,6 +285,7 @@ class PlaybackNavigationButton_ extends React.PureComponent
             title='Navigation'
             className='control-bar-button'>
             <Menu>
+                { showStop ? <MenuItem title='Stop' checked={false} onClick={this.stop}/> : null }
                 <MenuItem
                     title='Play random'
                     checked={false}

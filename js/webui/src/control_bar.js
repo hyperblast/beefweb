@@ -41,7 +41,7 @@ class ControlBar_ extends React.PureComponent
         return <div key='control-bar' className='panel control-bar'>
             <div className='button-bar button-bar-single'>
                 <PlaybackOptionsButton />
-                <PlaybackNavigationButton />
+                <PlaybackNavigationButton showStop={true} />
                 <PlayPreviousButton/>
                 <PlayOrPauseButton/>
                 <PlayNextButton/>
@@ -56,7 +56,7 @@ class ControlBar_ extends React.PureComponent
         return <div key='control-bar' className='panel control-bar'>
             <PositionControl/>
             <div className='button-bar button-bar-secondary'>
-                <PlaybackNavigationButton />
+                <PlaybackNavigationButton showStop={true} />
                 <PlaybackOptionsButton />
             </div>
             <div className='button-bar button-bar-primary'>
