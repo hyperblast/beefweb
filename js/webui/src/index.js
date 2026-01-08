@@ -4,7 +4,7 @@ import Navigo from 'navigo'
 import ServiceContext from './service_context.js'
 import App from './app.js'
 import AppModel from './app_model.js'
-import urls, { getPathFromUrl } from './urls.js'
+import urls, { getValueAfterHash } from './urls.js';
 import { playlistTableKey } from './playlist_content.js';
 import { PlaybackState } from 'beefweb-client';
 import { SettingsView, View } from './navigation_model.js';
@@ -21,37 +21,53 @@ const {
     navigationModel,
 } = appModel;
 
+const router = new Navigo('/', { hash: true });
+const noCallbacks = { callHandler: false, callHooks: false };
 
-const router = new Navigo(null, true);
+function navigate(url, options)
+{
+    const currentUrl = getValueAfterHash(router.getCurrentLocation().url);
+    const requestedUrl = getValueAfterHash(url);
+
+    if (currentUrl !== requestedUrl)
+        router.navigate(requestedUrl, options);
+}
+
+function setCurrentUrl(url)
+{
+    navigate(url, noCallbacks);
+}
 
 router.on({
     '/': () => {
-        router.navigate(urls.viewCurrentPlaylist);
+        navigate(urls.viewCurrentPlaylist);
     },
 
     '/playlists': () => {
         if (playlistModel.currentPlaylistId)
-            router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
+            navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
         else
             navigationModel.setView(View.playlist);
     },
 
-    '/playlists/:id': params => {
-        playlistModel.setCurrentPlaylistId(params.id);
+    '/playlists/:id': match => {
+        const { id } = match.data;
+        playlistModel.setCurrentPlaylistId(id);
         navigationModel.setView(View.playlist);
     },
 
     '/files': () => {
-        router.navigate(urls.browsePath(fileBrowserModel.currentPath));
+        navigate(urls.browsePath(fileBrowserModel.currentPath));
     },
 
-    '/files/!*': () => {
-        navigationModel.setView(View.fileBrowser);
+    '/files/!:path': match => {
+        const { path } = match.data;
 
-        const path = getPathFromUrl(router.lastRouteResolved().url);
+        navigationModel.setView(View.fileBrowser);
 
         if (path)
             fileBrowserModel.browse(path);
+
     },
 
     '/album-art': () => {
@@ -59,23 +75,27 @@ router.on({
     },
 
     '/settings': () => {
-        router.navigate(urls.settingsView(navigationModel.settingsView));
+        navigate(urls.settingsView(navigationModel.settingsView));
     },
 
-    '/settings/:view': params => {
-        if (params.view in SettingsView)
+    '/settings/:view': match => {
+        const { view } = match.data;
+
+        if (view in SettingsView)
         {
             navigationModel.setView(View.settings);
-            navigationModel.setSettingsView(params.view);
+            navigationModel.setSettingsView(view);
         }
         else
+        {
             navigationModel.setView(View.notFound);
+        }
     },
 
     '/now-playing': () => {
         if (playerModel.playbackState === PlaybackState.stopped)
         {
-            router.navigate(urls.viewCurrentPlaylist);
+            navigate(urls.viewCurrentPlaylist);
             return;
         }
 
@@ -84,15 +104,15 @@ router.on({
         if (playlistId && index >= 0)
         {
             scrollManager.scrollToItem(playlistTableKey(playlistId), index);
-            router.navigate(urls.viewPlaylist(playlistId));
+            navigate(urls.viewPlaylist(playlistId));
         }
         else if (playlistId)
         {
-            router.navigate(urls.viewPlaylist(playlistId));
+            navigate(urls.viewPlaylist(playlistId));
         }
         else
         {
-            router.navigate(urls.viewCurrentPlaylist);
+            navigate(urls.viewCurrentPlaylist);
         }
     }
 });
@@ -116,23 +136,23 @@ playlistModel.on('playlistsChange', () => {
         return;
 
     if (playlistModel.currentPlaylistId)
-        router.navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
+        setCurrentUrl(urls.viewPlaylist(playlistModel.currentPlaylistId));
     else
-        router.navigate(urls.viewCurrentPlaylist);
+        setCurrentUrl(urls.viewCurrentPlaylist);
 });
 
 navigationModel.on('viewChange', () => {
-    router.navigate(urls.appView(navigationModel.view));
+    setCurrentUrl(urls.appView(navigationModel.view));
 });
 
 navigationModel.on('settingsViewChange', () => {
     if (navigationModel.view === View.settings)
-        router.navigate(urls.settingsView(navigationModel.settingsView));
+        setCurrentUrl(urls.settingsView(navigationModel.settingsView));
 });
 
 fileBrowserModel.on('change', () => {
     if (navigationModel.view === View.fileBrowser)
-        router.navigate(urls.browsePath(fileBrowserModel.currentPath));
+        setCurrentUrl(urls.browsePath(fileBrowserModel.currentPath));
 });
 
 async function main()

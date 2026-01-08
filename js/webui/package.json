@@ -15,7 +15,7 @@
   "dependencies": {
     "detect-it": "^4.0.1",
     "lodash": "^4.17.21",
-    "navigo": "^7.1.3",
+    "navigo": "^8.11.1",
     "normalize.css": "^8.0.1",
     "open-iconic": "^1.1.1",
     "prop-types": "^15.8.1",

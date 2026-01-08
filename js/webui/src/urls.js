@@ -44,12 +44,8 @@ const urls = Object.freeze({
 
 export default urls;
 
-export function getPathFromUrl(url)
+export function getValueAfterHash(url)
 {
-    const index = url.indexOf('!');
-
-    if (index < 0)
-        return null;
-
-    return decodeURIComponent(url.substring(index + 1));
+    const pos = url.indexOf('#');
+    return pos >= 0 ? url.substring(pos + 1) : url;
 }
