@@ -233,6 +233,7 @@ export default class SettingsModel extends SettingsModelBase
             type: SettingType.bool,
             defaultValue: true,
             persistent: true,
+            cssVisible: true,
         });
 
         this.define({
