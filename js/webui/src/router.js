@@ -64,19 +64,6 @@ export class Router
         }
     }
 
-    async updateAsync(callback)
-    {
-        this.updating++;
-        try
-        {
-            return await callback();
-        }
-        finally
-        {
-            this.updating--;
-        }
-    }
-
     onModelEvent(model, eventName, callback)
     {
         model.on(eventName, () => {

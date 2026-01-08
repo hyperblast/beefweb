@@ -37,7 +37,7 @@ async function viewFileBrowser(match)
 {
     const { path } = match.data;
     router.setView(View.fileBrowser);
-    await router.updateAsync(() => fileBrowserModel.browse(path));
+    await fileBrowserModel.browse(path)
 }
 
 router.on({
@@ -52,7 +52,7 @@ router.on({
 
     '/files': async () => {
         if (router.setView(View.fileBrowser))
-            await router.updateAsync(async () => fileBrowserModel.reload());
+            fileBrowserModel.reload();
 
         router.replaceUrl(urls.browsePath(fileBrowserModel.currentPath));
     },
