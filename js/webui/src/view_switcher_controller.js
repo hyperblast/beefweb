@@ -9,6 +9,7 @@ export default class ViewSwitcherController
         this.navigationModel = navigationModel;
         this.startX = 0;
         this.startY = 0;
+        this.lastPosition = 0;
         bindHandlers(this);
     }
 
@@ -55,6 +56,10 @@ export default class ViewSwitcherController
 
     moveContent(position)
     {
+        if (position === this.lastPosition)
+            return;
+
+        this.lastPosition = position;
         const style = document.getElementById('app-swipe-style');
         style.innerText = `.panel-header, .panel-main { left: ${position}px; }`;
     }
