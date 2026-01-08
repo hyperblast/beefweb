@@ -470,12 +470,12 @@ export default class DataTable extends React.PureComponent
 
         if (column.italic)
         {
-            rules.push('font-style: italic')
+            rules.push('font-style: italic;')
         }
 
         if (column.small)
         {
-            rules.push('font-size: 0.8rem')
+            rules.push('font-size: 0.8rem;')
         }
 
         const headerStyle = withHeader
