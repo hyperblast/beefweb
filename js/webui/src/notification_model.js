@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDom from 'react-dom'
 import NotificationGroup from './notification_group.js'
 import { bindHandlers } from './utils.js';
@@ -67,9 +67,9 @@ export default class NotificationModel
     update()
     {
         const box = (
-            <NotificationGroup
-                items={this.items}
-                onCloseQuery={this.handleCloseQuery} />
+            <StrictMode>
+                <NotificationGroup items={this.items} onCloseQuery={this.handleCloseQuery} />
+            </StrictMode>
         );
 
         ReactDom.render(box, this.container);

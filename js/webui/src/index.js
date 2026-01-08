@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { StrictMode } from 'react';
 import ReactDom from 'react-dom'
 import Navigo from 'navigo'
 import ServiceContext from './service_context.js'
@@ -146,9 +146,11 @@ async function main()
     }
 
     const appComponent = (
-        <ServiceContext.Provider value={appModel}>
-            <App />
-        </ServiceContext.Provider>
+        <StrictMode>
+            <ServiceContext.Provider value={appModel}>
+                <App />
+            </ServiceContext.Provider>
+        </StrictMode>
     );
 
     ReactDom.render(appComponent, document.getElementById('app-container'));
