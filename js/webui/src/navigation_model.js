@@ -39,19 +39,21 @@ export default class NavigationModel extends ModelBase
     setView(view)
     {
         if (view === this.view)
-            return;
+            return false;
 
         this.view = view;
         this.emit('viewChange');
+        return true;
     }
 
     setSettingsView(view)
     {
         if (view === this.settingsView)
-            return;
+            return false;
 
         this.settingsView = view;
         this.emit('settingsViewChange');
+        return true;
     }
 
     navigateToNext()

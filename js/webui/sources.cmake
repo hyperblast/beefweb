@@ -49,6 +49,7 @@ src/playlist_model.js
 src/playlist_switcher.js
 src/position_control.js
 src/request_handler.js
+src/router.js
 src/sandbox/index.js
 src/scroll_manager.js
 src/service_context.js

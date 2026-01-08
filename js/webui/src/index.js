@@ -1,14 +1,14 @@
 import React, { StrictMode } from 'react';
 import ReactDom from 'react-dom'
-import Navigo from 'navigo'
 import ServiceContext from './service_context.js'
 import App from './app.js'
 import AppModel from './app_model.js'
-import urls, { getValueAfterHash } from './urls.js';
+import urls from './urls.js';
 import { playlistTableKey } from './playlist_content.js';
 import { PlaybackState } from 'beefweb-client';
 import { SettingsView, View } from './navigation_model.js';
 import { NotificationContainer } from './notification_container.js';
+import { Router } from './router.js';
 
 const appModel = new AppModel();
 
@@ -21,61 +21,55 @@ const {
     navigationModel,
 } = appModel;
 
-const router = new Navigo('/', { hash: true });
-const noCallbacks = { callHandler: false, callHooks: false };
+const router = new Router(navigationModel);
 
-function navigate(url, options)
+function viewCurrentPlaylist()
 {
-    const currentUrl = getValueAfterHash(router.getCurrentLocation().url);
-    const requestedUrl = getValueAfterHash(url);
+    router.setView(View.playlist);
 
-    if (currentUrl !== requestedUrl)
-        router.navigate(requestedUrl, options);
+    if (playlistModel.currentPlaylistId)
+        router.replaceUrl(urls.viewPlaylist(playlistModel.currentPlaylistId));
+    else
+        router.replaceUrl(urls.viewCurrentPlaylist);
 }
 
-function setCurrentUrl(url)
+async function viewFileBrowser(match)
 {
-    navigate(url, noCallbacks);
+    const { path } = match.data;
+    router.setView(View.fileBrowser);
+    await router.updateAsync(() => fileBrowserModel.browse(path));
 }
 
 router.on({
-    '/': () => {
-        navigate(urls.viewCurrentPlaylist);
-    },
-
-    '/playlists': () => {
-        if (playlistModel.currentPlaylistId)
-            navigate(urls.viewPlaylist(playlistModel.currentPlaylistId));
-        else
-            navigationModel.setView(View.playlist);
-    },
+    '/': () => viewCurrentPlaylist,
+    '/playlists': viewCurrentPlaylist,
 
     '/playlists/:id': match => {
         const { id } = match.data;
-        playlistModel.setCurrentPlaylistId(id);
-        navigationModel.setView(View.playlist);
+        router.update(() => playlistModel.setCurrentPlaylistId(id));
+        router.setView(View.playlist);
     },
 
-    '/files': () => {
-        navigate(urls.browsePath(fileBrowserModel.currentPath));
+    '/files': async () => {
+        if (router.setView(View.fileBrowser))
+            await router.updateAsync(async () => fileBrowserModel.reload());
+
+        router.replaceUrl(urls.browsePath(fileBrowserModel.currentPath));
     },
 
-    '/files/!:path': match => {
-        const { path } = match.data;
-
-        navigationModel.setView(View.fileBrowser);
-
-        if (path)
-            fileBrowserModel.browse(path);
-
+    // legacy route
+    '/files/!:path': async match => {
+        router.replaceUrl(urls.browsePath(match.data.path))
+        await viewFileBrowser(match);
     },
 
-    '/album-art': () => {
-        navigationModel.setView(View.albumArt);
-    },
+    '/files/:path': viewFileBrowser,
+
+    '/album-art': () => router.setView(View.albumArt),
 
     '/settings': () => {
-        navigate(urls.settingsView(navigationModel.settingsView));
+        router.setView(View.settings);
+        router.replaceUrl(urls.settingsView(navigationModel.settingsView));
     },
 
     '/settings/:view': match => {
@@ -83,19 +77,19 @@ router.on({
 
         if (view in SettingsView)
         {
-            navigationModel.setView(View.settings);
-            navigationModel.setSettingsView(view);
+            router.setView(View.settings);
+            router.setSettingsView(view);
         }
         else
         {
-            navigationModel.setView(View.notFound);
+            router.setView(View.notFound);
         }
     },
 
     '/now-playing': () => {
         if (playerModel.playbackState === PlaybackState.stopped)
         {
-            navigate(urls.viewCurrentPlaylist);
+            viewCurrentPlaylist();
             return;
         }
 
@@ -104,21 +98,19 @@ router.on({
         if (playlistId && index >= 0)
         {
             scrollManager.scrollToItem(playlistTableKey(playlistId), index);
-            navigate(urls.viewPlaylist(playlistId));
-        }
-        else if (playlistId)
-        {
-            navigate(urls.viewPlaylist(playlistId));
+            router.update(() => playlistModel.setCurrentPlaylistId(playlistId));
+            router.setView(View.playlist);
+            router.replaceUrl(urls.viewPlaylist(playlistId));
         }
         else
         {
-            navigate(urls.viewCurrentPlaylist);
+            viewCurrentPlaylist();
         }
     }
 });
 
 router.notFound(() => {
-    navigationModel.setView(View.notFound);
+    router.setView(View.notFound);
 });
 
 playerModel.on('trackSwitch', () => {
@@ -127,39 +119,39 @@ playerModel.on('trackSwitch', () => {
 
     const { playlistId, index } = playerModel.activeItem;
 
-    if (playlistId !== '' && index >= 0)
+    if (playlistId && index >= 0)
         scrollManager.scrollToItem(playlistTableKey(playlistId), index);
 });
 
-playlistModel.on('playlistsChange', () => {
+router.onModelEvent(playlistModel, 'playlistsChange', () => {
     if (navigationModel.view !== View.playlist)
         return;
 
     if (playlistModel.currentPlaylistId)
-        setCurrentUrl(urls.viewPlaylist(playlistModel.currentPlaylistId));
+        router.pushUrl(urls.viewPlaylist(playlistModel.currentPlaylistId));
     else
-        setCurrentUrl(urls.viewCurrentPlaylist);
+        router.pushUrl(urls.viewCurrentPlaylist);
 });
 
-navigationModel.on('viewChange', () => {
-    setCurrentUrl(urls.appView(navigationModel.view));
+router.onModelEvent(navigationModel, 'viewChange', () => {
+    router.pushUrl(urls.appView(navigationModel.view));
 });
 
-navigationModel.on('settingsViewChange', () => {
+router.onModelEvent(navigationModel, 'settingsViewChange', () => {
     if (navigationModel.view === View.settings)
-        setCurrentUrl(urls.settingsView(navigationModel.settingsView));
+        router.pushUrl(urls.settingsView(navigationModel.settingsView));
 });
 
-fileBrowserModel.on('change', () => {
+router.onModelEvent(fileBrowserModel, 'change', () => {
     if (navigationModel.view === View.fileBrowser)
-        setCurrentUrl(urls.browsePath(fileBrowserModel.currentPath));
+        router.pushUrl(urls.browsePath(fileBrowserModel.currentPath));
 });
 
 async function main()
 {
     await appModel.start();
 
-    router.resolve();
+    router.start();
 
     if (navigationModel.view !== View.fileBrowser)
     {

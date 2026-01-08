@@ -15,7 +15,8 @@ const appViewToUrl = {
 const urls = Object.freeze({
     viewCurrentPlaylist: playlists,
 
-    viewPlaylist(id) {
+    viewPlaylist(id)
+    {
         return `${playlists}/${encodeURIComponent(id)}`;
     },
 
@@ -23,7 +24,7 @@ const urls = Object.freeze({
 
     browsePath(path)
     {
-        return `${fileBrowser}/!${encodeURIComponent(path)}`;
+        return `${fileBrowser}/${encodeURIComponent(path)}`;
     },
 
     viewCurrentSettings: settings,
@@ -43,9 +44,3 @@ const urls = Object.freeze({
 });
 
 export default urls;
-
-export function getValueAfterHash(url)
-{
-    const pos = url.indexOf('#');
-    return pos >= 0 ? url.substring(pos + 1) : url;
-}
