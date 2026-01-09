@@ -9,6 +9,7 @@ import { PlaybackState } from 'beefweb-client';
 import { SettingsView, View } from './navigation_model.js';
 import { NotificationContainer } from './notification_container.js';
 import { Router } from './router.js';
+import { createRoot } from 'react-dom/client';
 
 const appModel = new AppModel();
 
@@ -158,7 +159,9 @@ async function main()
         fileBrowserModel.reload();
     }
 
-    const appComponent = (
+    const root = createRoot(document.getElementById('app-container'));
+
+    root.render(
         <StrictMode>
             <ServiceContext.Provider value={appModel}>
                 <App />
@@ -166,8 +169,6 @@ async function main()
             </ServiceContext.Provider>
         </StrictMode>
     );
-
-    ReactDom.render(appComponent, document.getElementById('app-container'));
 }
 
 main();

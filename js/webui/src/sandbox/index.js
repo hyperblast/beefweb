@@ -4,6 +4,7 @@ import { mapRange } from '../utils.js'
 import DataTable from '../data_table.js'
 import { Menu, MenuLabel } from '../elements.js';
 import { DialogButton } from '../dialogs.js';
+import { createRoot } from 'react-dom/client';
 
 function createRow(index)
 {
@@ -86,6 +87,5 @@ class Sandbox extends React.PureComponent
 
 document.title = 'Sandbox';
 
-ReactDom.render(
-    <Sandbox />,
-    document.getElementById('app-container'));
+const root = createRoot(document.getElementById('app-container'));
+root.render(<Sandbox />);
