@@ -5,9 +5,9 @@ import { Select } from './elements.js';
 import urls from './urls.js'
 import { makeClassName } from './dom_utils.js'
 import { defineModelData, usePlaylistModel } from './hooks.js';
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { SimpleSortableContext, useDefaultSensors } from './sortable.js';
 
 const usePlaylistsData = defineModelData({
     selector(context)
@@ -94,22 +94,7 @@ PlaylistTab.propTypes = {
 
 export function TabbedPlaylistSwitcher()
 {
-    const sensors = useSensors(
-        useSensor(MouseSensor, {
-            activationConstraint: {
-                distance: 10,
-            },
-        }),
-        useSensor(TouchSensor, {
-            activationConstraint: {
-                delay: 250,
-                tolerance: 5,
-            },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
-    );
+    const sensors = useDefaultSensors();
 
     const model = usePlaylistModel();
     const { playlists, activePlaylistId, currentPlaylistId, allowChange } = usePlaylistsData();
@@ -133,11 +118,10 @@ export function TabbedPlaylistSwitcher()
             isActive={p.id === activePlaylistId}/>
     ));
 
-    return <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <SortableContext items={playlists} disabled={!allowChange}>
+    return (
+        <SimpleSortableContext sensors={sensors} items={playlists} onDragEnd={handleDragEnd} disabled={!allowChange}>
             <ul className='header-block header-block-primary'>
                 {tabs}
             </ul>
-        </SortableContext>
-    </DndContext>;
+        </SimpleSortableContext>);
 }

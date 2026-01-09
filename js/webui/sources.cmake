@@ -25,6 +25,7 @@ src/file_browser.js
 src/file_browser_header.js
 src/file_browser_model.js
 src/general_settings.js
+src/hooks.js
 src/index.html
 src/index.js
 src/loader.gif
@@ -59,6 +60,7 @@ src/settings_header.js
 src/settings_model.js
 src/settings_model_base.js
 src/settings_store.js
+src/sortable.js
 src/status_bar.js
 src/style.less
 src/tests/index.html

@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types'
-import { IconButton, Icon, Select } from './elements.js';
+import { IconButton, Select } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
 import { ColumnAlign } from './columns.js';
 import { defineKeyedModelData, defineModelData, useColumnsSettingsModel, useDispose, useServices } from './hooks.js';
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { SimpleSortableContext, useDefaultSensors } from './sortable.js';
 
 const AlignItems = [
     {  id: ColumnAlign.left, name: 'Left' },
@@ -273,36 +273,20 @@ EditableColumn.propTypes = {
 
 export function ColumnsSettings()
 {
-    const sensors = useSensors(
-        useSensor(MouseSensor, {
-            activationConstraint: {
-                distance: 10,
-            },
-        }),
-        useSensor(TouchSensor, {
-            activationConstraint: {
-                delay: 250,
-                tolerance: 5,
-            },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
-    );
-
+    const sensors = useDefaultSensors();
     const model = useColumnsSettingsModel();
     const columns = useColumnList();
-    const columnElements = columns.map(c => <EditableColumn key={c.id} columnId={c.id} />);
+    const columnElements = columns.map(c => <EditableColumn key={c.id} columnId={c.id}/>);
 
     const handleDragEnd = useCallback(e => model.moveColumn(e.active.id, e.over.id), []);
 
     useDispose(() => model.applyChanges());
 
-    return <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <SortableContext items={columns}>
+    return (
+        <SimpleSortableContext sensors={sensors} items={columns} onDragEnd={handleDragEnd}>
             <div className='column-editor-list'>
                 {columnElements}
             </div>
-        </SortableContext>
-    </DndContext>;
+        </SimpleSortableContext>
+    );
 }
