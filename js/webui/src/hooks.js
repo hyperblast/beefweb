@@ -1,4 +1,5 @@
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext } from 'react';
+import shallowEqual from 'shallowequal';
 import ServiceContext from './service_context.js';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
 import { subscribeAll } from './model_base.js';
@@ -23,27 +24,16 @@ export function useSetting(settingName)
     return [value, metadata.setter];
 }
 
-function getSnapshot(context, selector, modelData)
+function getSnapshot(context, selector)
 {
-    const oldData = modelData.current;
+    const oldData = context.modelData.get(selector);
     const newData = selector(context);
 
-    if (oldData === null)
-        return modelData.current = newData;
-
-    if (oldData === newData)
+    if (oldData !== null && shallowEqual(oldData, newData))
         return oldData;
 
-    if (typeof oldData !== 'object')
-        return modelData.current = newData;
-
-    for (let key in oldData)
-    {
-        if (oldData[key] !== newData[key])
-            return modelData.current = newData;
-    }
-
-    return oldData;
+    context.modelData.set(selector, newData);
+    return newData;
 }
 
 export function defineModelData(arg)
@@ -52,9 +42,8 @@ export function defineModelData(arg)
 
     return () => {
         const context = useServices();
-        const modelData = useRef(null);
         const subscribe = useCallback(cb => subscribeAll(context, updateOn, cb), []);
-        const snapshot = useCallback(() => getSnapshot(context, selector, modelData), []);
+        const snapshot = useCallback(() => getSnapshot(context, selector), []);
         return useSyncExternalStore(subscribe, snapshot);
     };
 }
