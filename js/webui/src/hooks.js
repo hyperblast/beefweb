@@ -19,6 +19,11 @@ export function usePlaylistModel()
     return useServices().playlistModel;
 }
 
+export function useColumnsSettingsModel()
+{
+    return useServices().columnsSettingsModel;
+}
+
 export function useSettingValue(settingName)
 {
     const { settingsModel } = useServices();

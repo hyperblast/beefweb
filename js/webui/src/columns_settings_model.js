@@ -131,8 +131,12 @@ export default class ColumnsSettingsModel extends ModelBase
 
     moveColumn(oldId, newId)
     {
+        if (oldId === newId)
+            return;
+
         const oldIndex = this.getColumnIndex(oldId);
         const newIndex = this.getColumnIndex(newId);
+
         if (oldIndex < 0 || newIndex < 0)
             return;
 

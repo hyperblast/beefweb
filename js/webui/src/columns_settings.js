@@ -4,7 +4,7 @@ import { IconButton, Icon, Select } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
 import { ColumnAlign } from './columns.js';
-import { defineKeyedModelData, defineModelData, useDispose, useServices } from './hooks.js';
+import { defineKeyedModelData, defineModelData, useColumnsSettingsModel, useDispose, useServices } from './hooks.js';
 import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -32,7 +32,7 @@ const useColumn = defineKeyedModelData({
 function ColumnEditButton(props)
 {
     const { columnId } = props;
-    const model = useServices().columnsSettingsModel;
+    const model = useColumnsSettingsModel();
     const [dialogOpen, setDialogOpen] = useState(false);
     const [columnData, setColumnData] = useState(null);
     const callbackDeps = [columnId, columnData];
@@ -180,7 +180,7 @@ ColumnEditButton.propTypes = {
 function ColumnDeleteButton(props)
 {
     const { columnId } = props;
-    const model = useServices().columnsSettingsModel;
+    const model = useColumnsSettingsModel();
     const [dialogOpen, setDialogOpen] = useState(false);
     const column = useColumn(columnId);
 
@@ -293,15 +293,11 @@ export function ColumnsSettings()
         })
     );
 
-    const model = useServices().columnsSettingsModel;
+    const model = useColumnsSettingsModel();
     const columns = useColumnList();
     const columnElements = columns.map(c => <EditableColumn key={c.id} columnId={c.id} />);
 
-    const handleDragEnd = useCallback(event => {
-        const { active, over } = event;
-        if (active.id !== over.id)
-            model.moveColumn(active.id, over.id);
-    }, []);
+    const handleDragEnd = useCallback(e => model.moveColumn(e.active.id, e.over.id), []);
 
     useDispose(() => model.applyChanges());
 
