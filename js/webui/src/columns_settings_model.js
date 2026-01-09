@@ -52,11 +52,8 @@ export default class ColumnsSettingsModel extends ModelBase
 
     handleColumnsChange()
     {
-        if (this.updating)
-            return;
-
-        this.revertChanges();
-        this.emit('change');
+        if (!this.updating)
+            this.revertChanges();
     }
 
     setLayout(mediaSize)
