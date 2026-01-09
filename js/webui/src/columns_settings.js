@@ -256,9 +256,6 @@ function EditableColumn(props)
 
     return (
         <div className='column-editor' ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <div className='column-editor-side'>
-                <Icon name='ellipses' className='column-editor-drag-handle' />
-            </div>
             { columnInfo }
             <div className='column-editor-side'>
                 <div className='button-bar'>
