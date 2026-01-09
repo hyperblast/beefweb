@@ -1,6 +1,32 @@
 import { arrayMove } from 'react-sortable-hoc';
 import { arrayRemove } from './utils.js';
 import ModelBase from './model_base.js';
+import { MediaSize } from './settings_model.js';
+
+let nextColumnId = 0;
+
+function modifyColumns(config, callback)
+{
+    config = structuredClone(config);
+
+    for (let mediaSize in MediaSize)
+    {
+        for (let column of config[mediaSize].columns)
+            callback(column);
+    }
+
+    return config;
+}
+
+function addColumnIds(config)
+{
+    return modifyColumns(config, c => c.id = nextColumnId++);
+}
+
+function removeColumnIds(config)
+{
+    return modifyColumns(config, c => delete c.id);
+}
 
 export default class ColumnsSettingsModel extends ModelBase
 {
@@ -17,12 +43,19 @@ export default class ColumnsSettingsModel extends ModelBase
         this.updating = false;
     }
 
+    start()
+    {
+        this.settingsModel.on('columns', this.handleColumnsChange.bind(this));
+        this.layout ??= this.settingsModel.mediaSize;
+        this.revertChanges();
+    }
+
     handleColumnsChange()
     {
         if (this.updating)
             return;
 
-        this.load();
+        this.revertChanges();
         this.emit('change');
     }
 
@@ -35,8 +68,8 @@ export default class ColumnsSettingsModel extends ModelBase
 
     setConfig(config)
     {
-        this.config = structuredClone(config);
-        this.columns = config[this.layout].columns;
+        this.config = addColumnIds(config);
+        this.columns = this.config[this.layout].columns;
         this.emit('change');
     }
 
@@ -47,21 +80,13 @@ export default class ColumnsSettingsModel extends ModelBase
         this.emit('change');
     }
 
-    start()
-    {
-        this.settingsModel.on('columns', this.handleColumnsChange.bind(this));
-        this.layout ??= this.settingsModel.mediaSize;
-        this.revertChanges();
-    }
-
     applyChanges()
     {
         this.updating = true;
 
         try
         {
-            // SettingsModel clones value for us
-            this.settingsModel.columns = this.config;
+            this.settingsModel.columns = removeColumnIds(this.config);
         }
         finally
         {
@@ -81,7 +106,9 @@ export default class ColumnsSettingsModel extends ModelBase
 
     addColumn(column)
     {
-        this.setColumns([... this.columns, structuredClone(column)]);
+        column = structuredClone(column);
+        column.id = nextColumnId++;
+        this.setColumns([... this.columns, column]);
     }
 
     updateColumn(index, patch)
