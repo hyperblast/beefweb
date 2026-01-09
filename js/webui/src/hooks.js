@@ -29,7 +29,7 @@ function getSnapshot(context, selector)
     const oldData = context.modelData.get(selector);
     const newData = selector(context);
 
-    if (oldData !== null && shallowEqual(oldData, newData))
+    if (shallowEqual(oldData, newData))
         return oldData;
 
     context.modelData.set(selector, newData);
