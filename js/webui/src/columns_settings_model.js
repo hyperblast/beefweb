@@ -56,6 +56,16 @@ export default class ColumnsSettingsModel extends ModelBase
             this.revertChanges();
     }
 
+    getColumn(id)
+    {
+        return this.columns.find(c => c.id === id);
+    }
+
+    getColumnIndex(id)
+    {
+        return this.columns.findIndex(c => c.id === id);
+    }
+
     setLayout(mediaSize)
     {
         this.layout = mediaSize;
@@ -72,8 +82,8 @@ export default class ColumnsSettingsModel extends ModelBase
 
     setColumns(columns)
     {
-        this.columns = columns;
         this.config[this.layout].columns = columns;
+        this.columns = columns;
         this.emit('change');
     }
 
@@ -108,20 +118,33 @@ export default class ColumnsSettingsModel extends ModelBase
         this.setColumns([... this.columns, column]);
     }
 
-    updateColumn(index, patch)
+    updateColumn(id, patch)
     {
+        const index = this.getColumnIndex(id);
+        if (index < 0)
+            return;
+
         const newColumns = [... this.columns];
         newColumns[index] = Object.assign({}, this.columns[index], patch);
         this.setColumns(newColumns);
     }
 
-    moveColumn(oldIndex, newIndex)
+    moveColumn(oldId, newId)
     {
+        const oldIndex = this.getColumnIndex(oldId);
+        const newIndex = this.getColumnIndex(newId);
+        if (oldIndex < 0 || newIndex < 0)
+            return;
+
         this.setColumns(arrayMove(this.columns, oldIndex, newIndex));
     }
 
-    removeColumn(index)
+    removeColumn(id)
     {
+        const index = this.getColumnIndex(id);
+        if (index < 0)
+            return;
+
         this.setColumns(arrayRemove(this.columns, index));
     }
 }
