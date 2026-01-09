@@ -27,7 +27,6 @@ const usePlaylistsData = defineModelData({
     updateOn: {
         playerModel: 'change',
         playlistModel: 'playlistsChange',
-        settingsModel: ['touchMode', 'mediaSize'],
     }
 });
 
