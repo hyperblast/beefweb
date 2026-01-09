@@ -38,7 +38,10 @@ function getSnapshot(context, selector)
 
 function getKeyedSnapshot(context, selector, store, key)
 {
-    const oldData = store.current && store.current.lastKey === key ? store.current.lastValue : null;
+    const oldData = store.current && shallowEqual(store.current.lastKey, key)
+                    ? store.current.lastValue
+                    : null;
+
     const newData = selector(context, key);
 
     if (shallowEqual(oldData, newData))
