@@ -52,19 +52,25 @@ export function App()
     const playbackInfoBar = mediaSize === MediaSize.small && showPlaybackInfo ? <PlaybackInfoBar/> : null;
     const statusBar = showStatusBar ? <StatusBar/> : null;
 
-    const controlBar =
+    const upperControlBar =
+        mediaSize !== MediaSize.small
+            ? <ControlBarWide/>
+            : null;
+
+    const lowerControlBar =
         mediaSize === MediaSize.small
             ? view === View.playlist || view === View.albumArt
                 ? <ControlBarNarrowFull/>
                 : <ControlBarNarrowCompact/>
-            : <ControlBarWide/>;
+            : null;
 
     return (
         <div className='app'>
             {playbackInfoBar}
-            {controlBar}
+            {upperControlBar}
             {header}
             {main}
+            {lowerControlBar}
             {statusBar}
         </div>
     );
