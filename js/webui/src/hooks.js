@@ -10,15 +10,15 @@ export function useServices()
 
 export function useSettingValue(settingName)
 {
-    const { settingModel } = useServices();
-    const metadata = settingModel.metadata[settingName];
+    const { settingsModel } = useServices();
+    const metadata = settingsModel.metadata[settingName];
     return useSyncExternalStore(metadata.subscriber, metadata.getter);
 }
 
 export function useSetting(settingName)
 {
-    const { settingModel } = useServices();
-    const metadata = settingModel.metadata[settingName];
+    const { settingsModel } = useServices();
+    const metadata = settingsModel.metadata[settingName];
     const value = useSyncExternalStore(metadata.subscriber, metadata.getter);
     return [value, metadata.setter];
 }
@@ -34,9 +34,7 @@ function getSnapshot(context, selector, modelData)
     for (let key in oldData)
     {
         if (oldData[key] !== newData[key])
-        {
             return modelData.current = newData;
-        }
     }
 
     return oldData;
