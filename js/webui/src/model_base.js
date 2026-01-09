@@ -64,6 +64,11 @@ export default class ModelBase
         this[events] = new Map();
     }
 
+    defineEvent(eventName)
+    {
+        this[events].set(eventName, new Set());
+    }
+
     on(eventName, callback)
     {
         getCallbacks(this, eventName).add(callback);
@@ -74,16 +79,14 @@ export default class ModelBase
         getCallbacks(this, eventName).delete(callback);
     }
 
-    subscribe(eventName, callback)
+    createSubscriber(eventName)
     {
         const callbacks = getCallbacks(this, eventName);
-        callbacks.add(callback);
-        return () => callbacks.delete(callback);
-    }
 
-    defineEvent(eventName)
-    {
-        this[events].set(eventName, new Set());
+        return callback => {
+            callbacks.add(callback);
+            return () => callbacks.delete(callback);
+        };
     }
 
     emit(eventName, arg)

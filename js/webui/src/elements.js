@@ -213,7 +213,7 @@ function autoScrollCss(elementId, labelWidth)
 
 export function AutoScrollText(props)
 {
-    const { text } = props;
+    const { text, className } = props;
 
     const container = useRef(null);
     const label = useRef(null);
@@ -233,12 +233,13 @@ export function AutoScrollText(props)
         return () => window.removeEventListener('resize', updateOverflowWithDelay);
     }, [text]);
 
-    const className = makeClassName([
+    const fullClassName = makeClassName([
         'auto-scroll-container',
-        isOverflow ? 'auto-scroll-overflow' : null
+        isOverflow ? 'auto-scroll-overflow' : null,
+        className,
     ]);
 
-    return <div className={className} ref={container}>
+    return <div className={fullClassName} ref={container} title={text}>
         <style>{ autoScrollCss(elementId, labelWidth) }</style>
         <span id={elementId} className='auto-scroll-text' ref={label}>{text}</span>
         <span id={elementId + '-h'} className='auto-scroll-text auto-scroll-text-helper'>{text}</span>

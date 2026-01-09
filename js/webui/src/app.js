@@ -12,7 +12,7 @@ import { View } from './navigation_model.js';
 import SettingsHeader from './settings_header.js';
 import SettingsContent from './settings_content.js';
 import ServiceContext from './service_context.js';
-import PlaybackInfoBar from './playback_info_bar.js';
+import { PlaybackInfoBar } from './playback_info_bar.js';
 import AlbumArtViewer from "./album_art_viewer.js";
 
 class App extends React.PureComponent

@@ -32,8 +32,11 @@ export default class SettingsModelBase extends ModelBase
         const { key, type } = props;
         const metadata = Object.assign({}, defaultSettingProps, props);
 
+        this.defineEvent(key);
+
         metadata.getter = () => this.getValue(key);
         metadata.setter = value => this.setValue(key, value);
+        metadata.subscriber = this.createSubscriber(key);
 
         if (metadata.persistent)
         {
@@ -54,8 +57,6 @@ export default class SettingsModelBase extends ModelBase
             get: metadata.getter,
             set: metadata.setter,
         });
-
-        this.defineEvent(key);
     }
 
     setValue(key, value)

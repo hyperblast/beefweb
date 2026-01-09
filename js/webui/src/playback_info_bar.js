@@ -1,43 +1,31 @@
 import React from 'react';
-import ModelBinding from './model_binding.js';
 import { PlaybackState } from 'beefweb-client';
-import ServiceContext from './service_context.js';
 import { AutoScrollText } from './elements.js';
+import { defineModelData } from './hooks.js';
 
-class PlaybackInfoBar_ extends React.PureComponent
-{
-    static contextType = ServiceContext;
-
-    constructor(props, context)
-    {
-        super(props, context);
-
-        this.state = this.getStateFromModel();
-    }
-
-    getStateFromModel()
-    {
-        const { playerModel } = this.context;
+const usePlaybackInfoData = defineModelData({
+    selector(context) {
+        const { playerModel } = context;
 
         const text = playerModel.playbackState !== PlaybackState.stopped
-                      ? (playerModel.activeItem.columns[1] || '')
-                      : playerModel.info.title;
+                     ? (playerModel.activeItem.columns[1] || '')
+                     : playerModel.info.title;
 
         return { text };
+    },
+
+    updateOn: {
+        playerModel: 'change'
     }
-
-    render()
-    {
-        const { text } = this.state;
-
-        return <div className='panel playback-info-bar' title={text}>
-            <AutoScrollText text={text} />
-        </div>;
-    }
-}
-
-const PlaybackInfoBar = ModelBinding(PlaybackInfoBar_, {
-    playerModel: 'change'
 });
 
-export default PlaybackInfoBar;
+function PlaybackInfoText()
+{
+    const { text } = usePlaybackInfoData();
+    return <AutoScrollText className='playback-info-text' text={text}/>;
+}
+
+export function PlaybackInfoBar()
+{
+    return <div className='panel playback-info-bar'><PlaybackInfoText/></div>
+}
