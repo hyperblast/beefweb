@@ -1,7 +1,7 @@
 import React from 'react'
 import { PanelHeader } from './elements.js'
 import { ControlBarNarrowCompact, ControlBarNarrowFull, ControlBarWide } from './control_bar.js'
-import PlaylistSwitcher from './playlist_switcher.js'
+import { PlaylistSelector, TabbedPlaylistSwitcher } from './playlist_switcher.js'
 import PlaylistMenu from './playlist_menu.js'
 import PlaylistContent from './playlist_content.js'
 import FileBrowser from './file_browser.js'
@@ -16,12 +16,14 @@ import { useCurrentView, useSettingValue } from './hooks.js';
 import { MediaSize } from './settings_model.js';
 
 const viewContent = {
-    [View.playlist]: {
-        header: <div className="panel panel-header">
-            <PlaylistSwitcher/>
-            <PlaylistMenu/>
-        </div>,
-        main: <PlaylistContent/>,
+    [View.playlist]: mediaSize => {
+        return {
+            header: <div className="panel panel-header">
+                { mediaSize === MediaSize.small ? <PlaylistSelector/> : <TabbedPlaylistSwitcher/> }
+                <PlaylistMenu/>
+            </div>,
+            main: <PlaylistContent/>,
+        };
     },
     [View.fileBrowser]: {
         header: <FileBrowserHeader />,
@@ -47,7 +49,8 @@ export function App()
     const showStatusBar = useSettingValue('showStatusBar');
     const mediaSize = useSettingValue('mediaSize');
 
-    const { header, main } = viewContent[view];
+    const contentProvider = viewContent[view];
+    const { header, main } = typeof contentProvider === 'function' ? contentProvider(mediaSize) : contentProvider;
 
     const playbackInfoBar = mediaSize === MediaSize.small && showPlaybackInfo ? <PlaybackInfoBar/> : null;
     const statusBar = showStatusBar ? <StatusBar/> : null;

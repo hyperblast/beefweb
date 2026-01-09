@@ -13,6 +13,9 @@
     "watch": "webpack-cli --watch"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "detect-it": "^4.0.1",
     "lodash": "^4.17.21",
     "navigo": "^8.11.1",
@@ -22,7 +25,6 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-modal": "^3.16.1",
-    "react-sortable-hoc": "^2.0.0",
     "shallowequal": "^1.1.0",
     "use-sync-external-store": "^1.6.0"
   },

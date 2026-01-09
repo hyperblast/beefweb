@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import shallowEqual from 'shallowequal';
 import ServiceContext from './service_context.js';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
@@ -7,6 +7,21 @@ import { subscribeAll } from './model_base.js';
 export function useServices()
 {
     return useContext(ServiceContext);
+}
+
+export function useDispose(callback)
+{
+    return useEffect(() => callback, []);
+}
+
+export function usePlaylistModel()
+{
+    return useServices().playlistModel;
+}
+
+export function useColumnsSettingsModel()
+{
+    return useServices().columnsSettingsModel;
 }
 
 export function useSettingValue(settingName)
@@ -36,6 +51,21 @@ function getSnapshot(context, selector)
     return newData;
 }
 
+function getKeyedSnapshot(context, selector, store, key)
+{
+    const oldData = store.current && shallowEqual(store.current.lastKey, key)
+                    ? store.current.lastValue
+                    : null;
+
+    const newData = selector(context, key);
+
+    if (shallowEqual(oldData, newData))
+        return oldData;
+
+    store.current = { lastKey: key, lastValue: newData };
+    return newData;
+}
+
 export function defineModelData(arg)
 {
     const { selector, updateOn } = arg;
@@ -44,6 +74,19 @@ export function defineModelData(arg)
         const context = useServices();
         const subscribe = useCallback(cb => subscribeAll(context, updateOn, cb), []);
         const snapshot = useCallback(() => getSnapshot(context, selector), []);
+        return useSyncExternalStore(subscribe, snapshot);
+    };
+}
+
+export function defineKeyedModelData(arg)
+{
+    const { selector, updateOn } = arg;
+
+    return key => {
+        const context = useServices();
+        const store = useRef(null);
+        const subscribe = useCallback(cb => subscribeAll(context, updateOn, cb), []);
+        const snapshot = useCallback(() => getKeyedSnapshot(context, selector, store, key), [key]);
         return useSyncExternalStore(subscribe, snapshot);
     };
 }

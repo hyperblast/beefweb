@@ -3,7 +3,7 @@ import { SettingsView } from './navigation_model.js';
 import ModelBinding from './model_binding.js';
 import DefaultsSettings from './defaults_settings.js'
 import GeneralSettings from './general_settings.js';
-import ColumnsSettings from './columns_settings.js';
+import { ColumnsSettings } from './columns_settings.js';
 import ServiceContext from './service_context.js';
 import AboutBox from './about_box.js';
 import OutputSettings from './output_settings.js';
