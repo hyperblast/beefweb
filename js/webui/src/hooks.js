@@ -31,6 +31,9 @@ function getSnapshot(context, selector, modelData)
     if (oldData === null)
         return modelData.current = newData;
 
+    if (oldData === newData)
+        return oldData;
+
     for (let key in oldData)
     {
         if (oldData[key] !== newData[key])
@@ -52,3 +55,8 @@ export function defineModelData(arg)
         return useSyncExternalStore(subscribe, snapshot);
     };
 }
+
+export const useCurrentView = defineModelData({
+    selector: context => context.navigationModel.view,
+    updateOn: { navigationModel: 'viewChange' }
+});

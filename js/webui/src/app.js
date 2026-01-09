@@ -1,119 +1,71 @@
 import React from 'react'
 import { PanelHeader } from './elements.js'
-import { ControlBar } from './control_bar.js'
+import { ControlBarNarrowCompact, ControlBarNarrowFull, ControlBarWide } from './control_bar.js'
 import PlaylistSwitcher from './playlist_switcher.js'
 import PlaylistMenu from './playlist_menu.js'
 import PlaylistContent from './playlist_content.js'
 import FileBrowser from './file_browser.js'
 import FileBrowserHeader from './file_browser_header.js'
 import StatusBar from './status_bar.js'
-import ModelBinding from './model_binding.js';
 import { View } from './navigation_model.js';
 import SettingsHeader from './settings_header.js';
 import SettingsContent from './settings_content.js';
-import ServiceContext from './service_context.js';
 import { PlaybackInfoBar } from './playback_info_bar.js';
 import AlbumArtViewer from "./album_art_viewer.js";
+import { useCurrentView, useSettingValue } from './hooks.js';
+import { MediaSize } from './settings_model.js';
 
-class App extends React.PureComponent
-{
-    static contextType = ServiceContext;
-
-    constructor(props, context)
-    {
-        super(props, context);
-
-        this.state = this.getStateFromModel();
-
-        this.renderView = {
-            [View.playlist]: this.renderPlaylistView,
-            [View.fileBrowser]: this.renderFileBrowserView,
-            [View.albumArt]: this.renderAlbumArt,
-            [View.settings]: this.renderSettingsView,
-            [View.notFound]: this.renderNotFoundView,
-        };
-    }
-
-    getStateFromModel()
-    {
-        const { navigationModel, settingsModel } = this.context;
-        const { view } = navigationModel;
-        const { showPlaybackInfo, showStatusBar } = settingsModel;
-        return { view, showPlaybackInfo, showStatusBar };
-    }
-
-    renderPlaylistView()
-    {
-        return {
-            header: (
-                <div className='panel panel-header'>
-                    <PlaylistSwitcher />
-                    <PlaylistMenu />
-                </div>
-            ),
-            main: (
-                <PlaylistContent />
-            )
-        };
-    }
-
-    renderFileBrowserView()
-    {
-        return {
-            header: (
-                <FileBrowserHeader />
-            ),
-            main: (
-                <FileBrowser />
-            )
-        };
-    }
-
-    renderAlbumArt()
-    {
-        return {
-            header: null,
-            main: <AlbumArtViewer/>
-        };
-    }
-
-    renderSettingsView()
-    {
-        return {
-            header: <SettingsHeader />,
-            main: <SettingsContent/>
-        };
-    }
-
-    renderNotFoundView()
-    {
-        return {
-            header: <PanelHeader title='Invalid url' />,
-            main: <div className='panel panel-main'>Invalid url</div>
-        };
-    }
-
-    render()
-    {
-        const { view, showPlaybackInfo, showStatusBar } = this.state;
-        const { header, main } = this.renderView[view].call(this);
-
-        const playbackInfoBar = showPlaybackInfo ? <PlaybackInfoBar /> : null;
-        const statusBar = showStatusBar ? <StatusBar /> : null;
-
-        return (
-            <div className='app'>
-                { playbackInfoBar }
-                <ControlBar />
-                { header }
-                { main }
-                { statusBar }
-            </div>
-        );
-    }
+const viewContent = {
+    [View.playlist]: {
+        header: <div className="panel panel-header">
+            <PlaylistSwitcher/>
+            <PlaylistMenu/>
+        </div>,
+        main: <PlaylistContent/>,
+    },
+    [View.fileBrowser]: {
+        header: <FileBrowserHeader />,
+        main: <FileBrowser />
+    },
+    [View.albumArt]: {
+        header: null,
+        main: <AlbumArtViewer/>
+    },
+    [View.settings]: {
+        header: <SettingsHeader />,
+        main: <SettingsContent/>
+    },
+    [View.notFound]:  {
+        header: <PanelHeader title='Invalid url' />,
+        main: <div className='panel panel-main'>Invalid url</div>
+    },
 }
+export function App()
+{
+    const view = useCurrentView();
+    const showPlaybackInfo = useSettingValue('showPlaybackInfo');
+    const showStatusBar = useSettingValue('showStatusBar');
+    const mediaSize = useSettingValue('mediaSize');
 
-export default ModelBinding(App, {
-    navigationModel: 'viewChange',
-    settingsModel: ['showPlaybackInfo', 'showStatusBar']
-});
+    const { header, main } = viewContent[view];
+
+    const playbackInfoBar = mediaSize === MediaSize.small && showPlaybackInfo ? <PlaybackInfoBar/> : null;
+    const statusBar = showStatusBar ? <StatusBar/> : null;
+
+    const controlBar =
+        mediaSize === MediaSize.small
+            ? view === View.playlist || view === View.albumArt
+                ? <ControlBarNarrowFull/>
+                : <ControlBarNarrowCompact/>
+            : <ControlBarWide/>;
+
+    return (
+        <div className='app'>
+            {playbackInfoBar}
+            {controlBar}
+            {header}
+            {main}
+            {statusBar}
+        </div>
+    );
+}

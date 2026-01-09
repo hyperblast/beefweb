@@ -14,101 +14,70 @@ import {
 import PositionControl from './position_control.js'
 import { VolumeControl, VolumeControlButton } from './volume_control.js'
 import { ViewSwitcher, ViewSwitcherButton } from './view_switcher.js'
-import ServiceContext from "./service_context.js";
-import ModelBinding from "./model_binding.js";
-import { MediaSize } from "./settings_model.js";
-import { View } from './navigation_model.js';
+import { useSettingValue } from './hooks.js';
+import { PlaybackInfoText } from './playback_info_bar.js';
 
-class ControlBar_ extends React.PureComponent
+export function ControlBarNarrowCompact()
 {
-    static contextType = ServiceContext;
-
-    constructor(props, context)
-    {
-        super(props, context);
-        this.state = this.getStateFromModel();
-    }
-
-    getStateFromModel()
-    {
-        const { view } = this.context.navigationModel;
-        const { mediaSize, combinePlayPause } = this.context.settingsModel;
-        return { view, mediaSize, combinePlayPause };
-    }
-
-    renderNarrowCompact()
-    {
-        return <div key='control-bar' className='panel control-bar'>
-            <div className='button-bar button-bar-single'>
-                <PlaybackOptionsButton />
-                <PlaybackNavigationButton showStop={true} />
-                <PlayPreviousButton/>
-                <PlayOrPauseButton/>
-                <PlayNextButton/>
-                <VolumeControlButton />
-                <ViewSwitcherButton />
-            </div>
-        </div>;
-    }
-
-    renderNarrowFull()
-    {
-        return <div key='control-bar' className='panel control-bar'>
-            <PositionControl/>
-            <div className='button-bar button-bar-secondary'>
-                <PlaybackNavigationButton showStop={true} />
-                <PlaybackOptionsButton />
-            </div>
-            <div className='button-bar button-bar-primary'>
-                <PlayPreviousButton/>
-                <PlayOrPauseButton/>
-                <PlayNextButton/>
-            </div>
-            <div className='button-bar button-bar-secondary'>
-                <VolumeControlButton />
-                <ViewSwitcherButton />
-            </div>
-        </div>;
-    }
-
-    renderWide()
-    {
-        const playPauseButtons =
-            this.state.combinePlayPause
-            ? <PlayOrPauseButton/>
-            : <>
-                <PlayButton/>
-                <PauseButton/>
-            </>
-
-        return <div key='control-bar' className='panel control-bar'>
-            <div className='button-bar'>
-                <StopButton/>
-                {playPauseButtons}
-                <PlayPreviousButton/>
-                <PlayNextButton/>
-                <PlaybackOptionsButton/>
-                <PlaybackNavigationButton/>
-            </div>
-            <PositionControl/>
-            <VolumeControl/>
-            <ViewSwitcher/>
-        </div>;
-    }
-
-    render()
-    {
-        const { view, mediaSize } = this.state;
-
-        return mediaSize === MediaSize.small
-               ? view === View.playlist || view === View.albumArt
-                    ? this.renderNarrowFull()
-                    : this.renderNarrowCompact()
-               : this.renderWide();
-    }
+    return <div key='control-bar' className='panel control-bar'>
+        <div className='button-bar button-bar-single'>
+            <PlaybackOptionsButton />
+            <PlaybackNavigationButton showStop={true} />
+            <PlayPreviousButton/>
+            <PlayOrPauseButton/>
+            <PlayNextButton/>
+            <VolumeControlButton />
+            <ViewSwitcherButton />
+        </div>
+    </div>;
 }
 
-export const ControlBar = ModelBinding(ControlBar_, {
-    navigationModel: 'viewChange',
-    settingsModel: ['mediaSize', 'combinePlayPause']
-});
+export function ControlBarNarrowFull()
+{
+    return <div key='control-bar' className='panel control-bar'>
+        <PositionControl/>
+        <div className='button-bar button-bar-secondary'>
+            <PlaybackNavigationButton showStop={true} />
+            <PlaybackOptionsButton />
+        </div>
+        <div className='button-bar button-bar-primary'>
+            <PlayPreviousButton/>
+            <PlayOrPauseButton/>
+            <PlayNextButton/>
+        </div>
+        <div className='button-bar button-bar-secondary'>
+            <VolumeControlButton />
+            <ViewSwitcherButton />
+        </div>
+    </div>
+}
+
+export function ControlBarWide()
+{
+    const combinePlayPause = useSettingValue('combinePlayPause');
+    const showPlaybackInfo = useSettingValue('showPlaybackInfo');
+
+    const playPauseButtons = combinePlayPause
+        ? <PlayOrPauseButton/>
+        : <>
+            <PlayButton/>
+            <PauseButton/>
+        </>;
+
+    const playbackInfo = showPlaybackInfo ? <PlaybackInfoText/> : null;
+
+    return <div key='control-bar' className='panel control-bar'>
+        { playbackInfo }
+        <div className='button-bar'>
+            <StopButton/>
+            {playPauseButtons}
+            <PlayPreviousButton/>
+            <PlayNextButton/>
+            <PlaybackOptionsButton/>
+            <PlaybackNavigationButton/>
+        </div>
+        <PositionControl/>
+        <VolumeControl/>
+        <ViewSwitcher/>
+    </div>
+}

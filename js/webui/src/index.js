@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react';
 import ReactDom from 'react-dom'
 import ServiceContext from './service_context.js'
-import App from './app.js'
+import { App } from './app.js'
 import AppModel from './app_model.js'
 import urls from './urls.js';
 import { playlistTableKey } from './playlist_content.js';

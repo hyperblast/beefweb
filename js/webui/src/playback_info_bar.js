@@ -19,7 +19,7 @@ const usePlaybackInfoData = defineModelData({
     }
 });
 
-function PlaybackInfoText()
+export function PlaybackInfoText()
 {
     const { text } = usePlaybackInfoData();
     return <AutoScrollText className='playback-info-text' text={text}/>;
