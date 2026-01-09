@@ -4,7 +4,10 @@ import { IconButton, Icon, Select } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
 import { ColumnAlign } from './columns.js';
-import { defineKeyedModelData, defineModelData, useServices } from './hooks.js';
+import { defineKeyedModelData, defineModelData, useDispose, useServices } from './hooks.js';
+import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const AlignItems = [
     {  id: ColumnAlign.left, name: 'Left' },
@@ -214,15 +217,23 @@ ColumnDeleteButton.propTypes = {
     columnId: PropTypes.number.isRequired,
 };
 
-function ColumnDragHandle()
-{
-    return <Icon name='ellipses' className='column-editor-drag-handle' />;
-}
-
 function EditableColumn(props)
 {
     const { columnId } = props;
     const column = useColumn(columnId);
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: columnId });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
 
     let editButton;
     let columnInfo;
@@ -244,9 +255,9 @@ function EditableColumn(props)
     }
 
     return (
-        <div className='column-editor'>
+        <div className='column-editor' ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <div className='column-editor-side'>
-                <ColumnDragHandle />
+                <Icon name='ellipses' className='column-editor-drag-handle' />
             </div>
             { columnInfo }
             <div className='column-editor-side'>
@@ -263,22 +274,42 @@ EditableColumn.propTypes = {
     columnId: PropTypes.number.isRequired,
 };
 
-function EditableColumnList()
-{
-    const columns = useColumnList();
-
-    const columnElements = columns.map(c => (
-        <EditableColumn key={c.id} columnId={c.id} />
-    ));
-
-    return (
-        <div className='column-editor-list'>
-            {columnElements}
-        </div>
-    );
-}
-
 export function ColumnsSettings()
 {
-    return <EditableColumnList />;
+    const sensors = useSensors(
+        useSensor(MouseSensor, {
+            activationConstraint: {
+                distance: 10,
+            },
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 250,
+                tolerance: 5,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const model = useServices().columnsSettingsModel;
+    const columns = useColumnList();
+    const columnElements = columns.map(c => <EditableColumn key={c.id} columnId={c.id} />);
+
+    const handleDragEnd = useCallback(event => {
+        const { active, over } = event;
+        if (active.id !== over.id)
+            model.moveColumn(active.id, over.id);
+    }, []);
+
+    useDispose(() => model.applyChanges());
+
+    return <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <SortableContext items={columns}>
+            <div className='column-editor-list'>
+                {columnElements}
+            </div>
+        </SortableContext>
+    </DndContext>;
 }

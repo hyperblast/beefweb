@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef } from 'react';
 import shallowEqual from 'shallowequal';
 import ServiceContext from './service_context.js';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
@@ -7,6 +7,11 @@ import { subscribeAll } from './model_base.js';
 export function useServices()
 {
     return useContext(ServiceContext);
+}
+
+export function useDispose(callback)
+{
+    return useEffect(() => callback, []);
 }
 
 export function useSettingValue(settingName)

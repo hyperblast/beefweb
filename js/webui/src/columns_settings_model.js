@@ -1,4 +1,4 @@
-import { arrayMove } from 'react-sortable-hoc';
+import { arrayMove } from '@dnd-kit/sortable';
 import { arrayRemove } from './utils.js';
 import ModelBase from './model_base.js';
 import { MediaSize } from './settings_model.js';
