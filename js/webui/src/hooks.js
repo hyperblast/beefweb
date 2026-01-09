@@ -1,7 +1,7 @@
 import { useCallback, useContext, useRef } from 'react';
 import ServiceContext from './service_context.js';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
-import { createSubscriber } from './model_base.js';
+import { subscribeAll } from './model_base.js';
 
 export function useServices()
 {
@@ -45,12 +45,11 @@ function getSnapshot(context, selector, modelData)
 export function defineModelData(arg)
 {
     const { selector, updateOn } = arg;
-    const subscriber = createSubscriber(updateOn);
 
     return () => {
         const context = useServices();
         const modelData = useRef(null);
-        const subscribe = useCallback(cb => subscriber(context, cb), []);
+        const subscribe = useCallback(cb => subscribeAll(context, updateOn, cb), []);
         const snapshot = useCallback(() => getSnapshot(context, selector, modelData), []);
         return useSyncExternalStore(subscribe, snapshot);
     };

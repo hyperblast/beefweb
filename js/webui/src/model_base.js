@@ -40,20 +40,16 @@ function buildCallbackList(context, eventDefs)
     return callbacks;
 }
 
-export function createSubscriber(eventDefs)
+export function subscribeAll(context, eventDefs, callback)
 {
-    let callbacks = null;
+    const callbacks = buildCallbackList(context, eventDefs);
 
-    return (context, callback) => {
-        callbacks ??= buildCallbackList(context, eventDefs);
+    for (let set of callbacks)
+        set.add(callback);
 
+    return () => {
         for (let set of callbacks)
-            set.add(callback);
-
-        return () => {
-            for (let set of callbacks)
-                set.delete(callback);
-        };
+            set.delete(callback);
     };
 }
 

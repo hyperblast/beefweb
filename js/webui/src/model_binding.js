@@ -1,17 +1,15 @@
 import React from 'react';
 import ServiceContext from './service_context.js'
-import { createSubscriber } from './model_base.js';
+import { subscribeAll } from './model_base.js';
 
 const subscription = Symbol('subscription');
 
-export default function ModelBinding(InnerComponent, eventBindings)
+export default function ModelBinding(InnerComponent, eventDefs)
 {
     const BaseComponent =
         InnerComponent.prototype instanceof React.PureComponent
             ? React.PureComponent
             : React.Component;
-
-    const subscriber = createSubscriber(eventBindings);
 
     class ModelBinder extends BaseComponent
     {
@@ -32,7 +30,7 @@ export default function ModelBinding(InnerComponent, eventBindings)
 
         componentDidMount()
         {
-            this[subscription] = subscriber(this.context, this.handleModelUpdate.bind(this));
+            this[subscription] = subscribeAll(this.context, eventDefs, this.handleModelUpdate.bind(this));
         }
 
         componentWillUnmount()
