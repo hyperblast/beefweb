@@ -34,6 +34,9 @@ function getSnapshot(context, selector, modelData)
     if (oldData === newData)
         return oldData;
 
+    if (typeof oldData !== 'object')
+        return modelData.current = newData;
+
     for (let key in oldData)
     {
         if (oldData[key] !== newData[key])

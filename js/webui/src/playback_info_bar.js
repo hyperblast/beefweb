@@ -3,15 +3,13 @@ import { PlaybackState } from 'beefweb-client';
 import { AutoScrollText } from './elements.js';
 import { defineModelData } from './hooks.js';
 
-const usePlaybackInfoData = defineModelData({
+const usePlaybackInfo = defineModelData({
     selector(context) {
         const { playerModel } = context;
 
-        const text = playerModel.playbackState !== PlaybackState.stopped
+        return playerModel.playbackState !== PlaybackState.stopped
                      ? (playerModel.activeItem.columns[1] || '')
                      : playerModel.info.title;
-
-        return { text };
     },
 
     updateOn: {
@@ -21,7 +19,7 @@ const usePlaybackInfoData = defineModelData({
 
 export function PlaybackInfoText()
 {
-    const { text } = usePlaybackInfoData();
+    const text = usePlaybackInfo();
     return <AutoScrollText className='playback-info-text' text={text}/>;
 }
 
