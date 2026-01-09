@@ -118,14 +118,14 @@ export default class ColumnsSettingsModel extends ModelBase
         this.setColumns([... this.columns, column]);
     }
 
-    updateColumn(id, patch)
+    updateColumn(column)
     {
-        const index = this.getColumnIndex(id);
+        const index = this.getColumnIndex(column.id);
         if (index < 0)
             return;
 
         const newColumns = [... this.columns];
-        newColumns[index] = Object.assign({}, this.columns[index], patch);
+        newColumns[index] = structuredClone(column);
         this.setColumns(newColumns);
     }
 

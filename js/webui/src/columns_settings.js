@@ -1,13 +1,10 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types'
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
-import { bindHandlers } from './utils.js';
 import { IconButton, Icon, Select } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
-import ModelBinding from './model_binding.js';
-import ServiceContext from "./service_context.js";
 import { ColumnAlign } from './columns.js';
+import { defineKeyedModelData, defineModelData, useServices } from './hooks.js';
 
 const AlignItems = [
     {  id: ColumnAlign.left, name: 'Left' },
@@ -15,364 +12,273 @@ const AlignItems = [
     {  id: ColumnAlign.right, name: 'Right' },
 ];
 
-class ColumnEditorDialog extends React.PureComponent
+const useColumnList = defineModelData({
+    selector: context => context.columnsSettingsModel.columns,
+    updateOn: {
+        columnsSettingsModel: 'change'
+    }
+});
+
+const useColumn = defineKeyedModelData({
+    selector: (context, columnId) => context.columnsSettingsModel.getColumn(columnId),
+    updateOn: {
+        columnsSettingsModel: 'change'
+    }
+});
+
+function ColumnEditButton(props)
 {
-    constructor(props)
-    {
-        super(props);
-        this.state = { };
-        bindHandlers(this);
-    }
+    const { columnId } = props;
+    const model = useServices().columnsSettingsModel;
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [columnData, setColumnData] = useState(null);
+    const callbackDeps = [columnId, columnData];
 
-    update(patch)
-    {
-        this.props.onUpdate(patch);
-    }
+    const changeTitle = useCallback(
+        e => setColumnData({ ...columnData, title: e.target.value }),
+        callbackDeps);
 
-    handleTitleChange(e)
-    {
-        this.update({ title: e.target.value });
-    }
+    const changeExpression = useCallback(
+        e => setColumnData({ ...columnData, expression: e.target.value }),
+        callbackDeps);
 
-    handleExpressionChange(e)
-    {
-        this.update({ expression: e.target.value });
-    }
+    const changeSize = useCallback(
+        e => {
+            const value = Number(e.target.value);
 
-    handleSizeChange(e)
-    {
-        const value = Number(e.target.value);
+            if (!isNaN(value) && value >= 0)
+                setColumnData({ ...columnData, size: value });
+        },
+        callbackDeps);
 
-        if (!isNaN(value) && value >= 0)
-            this.update({ size: value });
-    }
+    const changeAlign = useCallback(
+        e => setColumnData({ ...columnData, align: e.target.value }),
+        callbackDeps);
 
-    handleAlignChange(e)
-    {
-        this.update({ align: e.target.value });
-    }
+    const changeBold = useCallback(
+        e => setColumnData({ ...columnData, bold: e.target.checked }),
+        callbackDeps);
 
-    handleBoldChange(e)
-    {
-        this.update({ bold: e.target.checked });
-    }
+    const changeItalic = useCallback(
+        e => setColumnData({ ...columnData, italic: e.target.checked }),
+        callbackDeps);
 
-    handleItalicChange(e)
-    {
-        this.update({ italic: e.target.checked });
-    }
+    const changeSmall = useCallback(
+        e => setColumnData({ ...columnData, small: e.target.checked }),
+        callbackDeps);
 
-    handleSmallChange(e)
-    {
-        this.update({ small: e.target.checked });
-    }
+    const handleOpen = useCallback(
+        () => {
+            setColumnData({ ...model.getColumn(columnId) });
+            setDialogOpen(true);
+        },
+        callbackDeps)
 
-    render()
-    {
-        const { isOpen, column, onOk, onCancel } = this.props;
+    const handleOk = useCallback(
+        () => {
+            model.updateColumn(columnData);
+            setColumnData(null);
+            setDialogOpen(false);
+        },
+        callbackDeps);
 
-        return (
-            <ReactModal
-                isOpen={isOpen}
-                onRequestClose={onCancel}
-                className='dialog column-editor-dialog'
-                overlayClassName='dialog-overlay'
-                ariaHideApp={false}>
-                <form className='dialog-content'>
-                    <div className='dialog-header'>Edit column</div>
-                    <div className='dialog-body'>
-                        <div className='dialog-row'>
-                            <label className='dialog-label' htmlFor='title'>Title:</label>
-                            <input
+    const handleCancel = useCallback(
+        () => {
+            setColumnData(null);
+            setDialogOpen(false);
+        },
+        callbackDeps);
+
+    const icon = <IconButton name='cog' onClick={handleOpen} title='Edit'/>;
+
+    if (!dialogOpen)
+        return icon;
+
+    return <>
+        {icon}
+        <ReactModal
+            isOpen={true}
+            onRequestClose={handleCancel}
+            className='dialog column-editor-dialog'
+            overlayClassName='dialog-overlay'
+            ariaHideApp={false}>
+            <form className='dialog-content'>
+                <div className='dialog-header'>Edit column</div>
+                <div className='dialog-body'>
+                    <div className='dialog-row'>
+                        <label className='dialog-label' htmlFor='title'>Title:</label>
+                        <input
+                            className='dialog-input'
+                            type='text'
+                            name='title'
+                            value={columnData.title}
+                            onChange={changeTitle}/>
+                    </div>
+                    <div className='dialog-row'>
+                        <label className='dialog-label' htmlFor='expr'>Expression:</label>
+                        <input
+                            className='dialog-input'
+                            type='text'
+                            name='expr'
+                            value={columnData.expression}
+                            onChange={changeExpression}/>
+                    </div>
+                    <div className='dialog-row'>
+                        <label className='dialog-label' htmlFor='size'>Size:</label>
+                        <input
+                            className='dialog-input'
+                            type='text'
+                            name='size'
+                            value={columnData.size}
+                            onChange={changeSize}/>
+                    </div>
+                    <div className='dialog-row'>
+                        <label className='dialog-label' htmlFor='align'>Text align:</label>
+                        <Select name='align'
                                 className='dialog-input'
-                                type='text'
-                                name='title'
-                                value={column.title}
-                                onChange={this.handleTitleChange} />
-                        </div>
-                        <div className='dialog-row'>
-                            <label className='dialog-label' htmlFor='expr'>Expression:</label>
-                            <input
-                                className='dialog-input'
-                                type='text'
-                                name='expr'
-                                value={column.expression}
-                                onChange={this.handleExpressionChange} />
-                        </div>
-                        <div className='dialog-row'>
-                            <label className='dialog-label' htmlFor='size'>Size:</label>
-                            <input
-                                className='dialog-input'
-                                type='text'
-                                name='size'
-                                value={column.size}
-                                onChange={this.handleSizeChange} />
-                        </div>
-                        <div className='dialog-row'>
-                            <label className='dialog-label' htmlFor='align'>Text align:</label>
-                            <Select name='align'
-                                    className='dialog-input'
-                                    items={AlignItems}
-                                    onChange={this.handleAlignChange}
-                                    selectedItemId={column.align} />
-                        </div>
-                        <div className='dialog-row'>
-                            <span className='dialog-label'>Font attributes:</span>
-                            <div className='dialog-checkbox-columns'>
-                                <label>
-                                    <input className='dialog-checkbox' name='bold' type='checkbox'
-                                           checked={column.bold || false} onChange={this.handleBoldChange}/>
-                                    <span className='dialog-checkbox-label'>Bold</span>
-                                </label>
-                                <label>
-                                    <input className='dialog-checkbox' name='italic' type='checkbox'
-                                           checked={column.italic || false} onChange={this.handleItalicChange}/>
-                                    <span className='dialog-checkbox-label'>Italic</span>
-                                </label>
-                                <label>
-                                    <input className='dialog-check-box' name='small' type='checkbox'
-                                           checked={column.small || false} onChange={this.handleSmallChange}/>
-                                    <span className='dialog-checkbox-label'>Small</span>
-                                </label>
-                            </div>
+                                items={AlignItems}
+                                onChange={changeAlign}
+                                selectedItemId={columnData.align}/>
+                    </div>
+                    <div className='dialog-row'>
+                        <span className='dialog-label'>Font attributes:</span>
+                        <div className='dialog-checkbox-columns'>
+                            <label>
+                                <input className='dialog-checkbox' name='bold' type='checkbox'
+                                       checked={columnData.bold} onChange={changeBold}/>
+                                <span className='dialog-checkbox-label'>Bold</span>
+                            </label>
+                            <label>
+                                <input className='dialog-checkbox' name='italic' type='checkbox'
+                                       checked={columnData.italic} onChange={changeItalic}/>
+                                <span className='dialog-checkbox-label'>Italic</span>
+                            </label>
+                            <label>
+                                <input className='dialog-check-box' name='small' type='checkbox'
+                                       checked={columnData.small} onChange={changeSmall}/>
+                                <span className='dialog-checkbox-label'>Small</span>
+                            </label>
                         </div>
                     </div>
-                    <div className='dialog-footer'>
-                        <DialogButton type='ok' onClick={onOk} />
-                        <DialogButton type='cancel' onClick={onCancel} />
-                    </div>
-                </form>
-            </ReactModal>
-        );
-    }
+                </div>
+                <div className='dialog-footer'>
+                    <DialogButton type='ok' onClick={handleOk}/>
+                    <DialogButton type='cancel' onClick={handleCancel}/>
+                </div>
+            </form>
+        </ReactModal>
+    </>;
 }
 
-ColumnEditorDialog.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    column: PropTypes.object.isRequired,
-    onOk: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired,
-    onUpdate: PropTypes.func.isRequired,
+ColumnEditButton.propTypes = {
+    columnId: PropTypes.number.isRequired,
 };
 
-function ColumnEditorDragHandle_()
+function ColumnDeleteButton(props)
+{
+    const { columnId } = props;
+    const model = useServices().columnsSettingsModel;
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const column = useColumn(columnId);
+
+    const handleOpen = useCallback(() => setDialogOpen(true), []);
+
+    const handleOk = useCallback(
+        () => {
+            model.removeColumn(columnId)
+            setDialogOpen(false);
+        },
+        [columnId]);
+
+    const handleCancel = useCallback(() => setDialogOpen(false), [])
+
+    const icon = <IconButton name='minus' onClick={handleOpen} title='Delete' />;
+
+    if (!dialogOpen)
+        return icon;
+
+    const columnName = column.lineBreak ? 'line break' : `column ${column.title}`;
+
+    return <>
+        {icon}
+        <ConfirmDialog
+            isOpen={true}
+            title='Delete column'
+            message={`Do you want to delete ${columnName}?`}
+            onOk={handleOk}
+            onCancel={handleCancel} />
+    </>
+}
+
+ColumnDeleteButton.propTypes = {
+    columnId: PropTypes.number.isRequired,
+};
+
+function ColumnDragHandle()
 {
     return <Icon name='ellipses' className='column-editor-drag-handle' />;
 }
 
-const ColumnEditorDragHandle = SortableHandle(ColumnEditorDragHandle_);
-
-class ColumnEditor_ extends React.PureComponent
+function EditableColumn(props)
 {
-    constructor(props)
+    const { columnId } = props;
+    const column = useColumn(columnId);
+
+    let editButton;
+    let columnInfo;
+
+    if (column.lineBreak)
     {
-        super(props);
+        columnInfo = <div className='column-editor-main'>
+            <span className='column-info-line-break'>{'\u2E3A Line break \u2E3A'}</span>
+        </div>;
+    }
+    else
+    {
+        columnInfo = <div className='column-editor-main'>
+            <span className='column-info-title'>{ column.title }</span>
+            <span className='column-info-expression'>{ column.expression }</span>
+        </div>;
 
-        this.state = Object.assign(
-            { deleteDialogOpen: false }, ColumnEditor_.editDialogClosed());
-
-        bindHandlers(this);
+        editButton = <ColumnEditButton columnId={columnId} />;
     }
 
-    static editDialogClosed()
-    {
-        return {
-            editDialogOpen: false,
-            editedColumn: {
-                title: '',
-                expression: '',
-                size: 1
-            }
-        };
-    }
-
-    handleEdit()
-    {
-        this.setState({
-            editDialogOpen: true,
-            editedColumn: structuredClone(this.props.column),
-        });
-    }
-
-    handleEditOk()
-    {
-        this.props.onUpdate(this.props.columnIndex, this.state.editedColumn);
-        this.setState(ColumnEditor_.editDialogClosed);
-    }
-
-    handleEditCancel()
-    {
-        this.setState(ColumnEditor_.editDialogClosed);
-    }
-
-    handleEditUpdate(patch)
-    {
-        this.setState(state => ({ editedColumn: Object.assign({}, state.editedColumn, patch) }));
-    }
-
-    handleDelete()
-    {
-        this.setState({ deleteDialogOpen: true });
-    }
-
-    handleDeleteOk()
-    {
-        this.props.onDelete(this.props.columnIndex);
-        this.setState({ deleteDialogOpen: false });
-    }
-
-    handleDeleteCancel()
-    {
-        this.setState({ deleteDialogOpen: false });
-    }
-
-    render()
-    {
-        const { column } = this.props;
-        const { deleteDialogOpen, editDialogOpen, editedColumn } = this.state;
-
-        let editButton;
-        let columnInfo;
-        let columnName;
-
-        if (column.lineBreak)
-        {
-            columnInfo = <div className='column-editor-main'>
-                <span className='column-info-line-break'>{'\u2E3A Line break \u2E3A'}</span>
-            </div>;
-
-            columnName = 'line break';
-        }
-        else
-        {
-            columnInfo = <div className='column-editor-main'>
-                <span className='column-info-title'>{ column.title }</span>
-                <span className='column-info-expression'>{ column.expression }</span>
-            </div>;
-
-            editButton = <IconButton name='cog' onClick={this.handleEdit} title='Edit' />;
-            columnName = `column ${column.title}`;
-        }
-
-        return (
-            <div className='column-editor'>
-                <div className='column-editor-side'>
-                    <ColumnEditorDragHandle />
-                </div>
-                { columnInfo }
-                <div className='column-editor-side'>
-                    <div className='button-bar'>
-                        { editButton }
-                        <IconButton name='minus' onClick={this.handleDelete} title='Delete' />
-                    </div>
-                </div>
-                <ColumnEditorDialog
-                    isOpen={editDialogOpen}
-                    column={editedColumn}
-                    onOk={this.handleEditOk}
-                    onCancel={this.handleEditCancel}
-                    onUpdate={this.handleEditUpdate} />
-                <ConfirmDialog
-                    isOpen={deleteDialogOpen}
-                    title='Delete column'
-                    message={`Do you want to delete ${columnName}?`}
-                    onOk={this.handleDeleteOk}
-                    onCancel={this.handleDeleteCancel} />
+    return (
+        <div className='column-editor'>
+            <div className='column-editor-side'>
+                <ColumnDragHandle />
             </div>
-        );
-    }
+            { columnInfo }
+            <div className='column-editor-side'>
+                <div className='button-bar'>
+                    { editButton }
+                    <ColumnDeleteButton columnId={columnId} />
+                </div>
+            </div>
+        </div>
+    );
 }
 
-ColumnEditor_.propTypes = {
-    columnIndex: PropTypes.number.isRequired,
-    column: PropTypes.object.isRequired,
-    onUpdate: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired,
+EditableColumn.propTypes = {
+    columnId: PropTypes.number.isRequired,
 };
 
-const ColumnEditor = SortableElement(ColumnEditor_);
-
-class ColumnEditorList_ extends React.PureComponent
+function EditableColumnList()
 {
-    static contextType = ServiceContext;
+    const columns = useColumnList();
 
-    constructor(props, context)
-    {
-        super(props, context);
-        this.state = this.getStateFromModel();
-        bindHandlers(this);
-    }
+    const columnElements = columns.map(c => (
+        <EditableColumn key={c.id} columnId={c.id} />
+    ));
 
-    getStateFromModel()
-    {
-        const { columns } = this.context.columnsSettingsModel;
-        return { columns };
-    }
-
-    handleUpdate(index, patch)
-    {
-        this.context.columnsSettingsModel.updateColumn(index, patch);
-    }
-
-    handleDelete(index)
-    {
-        this.context.columnsSettingsModel.removeColumn(index);
-    }
-
-    render()
-    {
-        const editors = this.state.columns.map((c, i) => (
-            <ColumnEditor
-                key={i}
-                index={i}
-                columnIndex={i}
-                column={c}
-                onUpdate={this.handleUpdate}
-                onDelete={this.handleDelete} />
-        ));
-
-        return (
-            <div className='column-editor-list'>
-                {editors}
-            </div>
-        );
-    }
+    return (
+        <div className='column-editor-list'>
+            {columnElements}
+        </div>
+    );
 }
 
-const ColumnEditorList = SortableContainer(ModelBinding(
-    ColumnEditorList_, { columnsSettingsModel: 'change' }));
-
-export default class ColumnsSettings extends React.PureComponent
+export function ColumnsSettings()
 {
-    static contextType = ServiceContext;
-
-    constructor(props)
-    {
-        super(props);
-
-        this.state = {};
-
-        bindHandlers(this);
-    }
-
-    handleSortEnd(e)
-    {
-        this.context.columnsSettingsModel.moveColumn(e.oldIndex, e.newIndex);
-    }
-
-    componentWillUnmount()
-    {
-        this.context.columnsSettingsModel.applyChanges();
-    }
-
-    render()
-    {
-        return (
-            <ColumnEditorList
-                axis='y'
-                lockAxis='y'
-                useDragHandle={true}
-                onSortEnd={this.handleSortEnd} />
-        );
-    }
+    return <EditableColumnList />;
 }
