@@ -23,6 +23,7 @@ export default class AppModel
 {
     constructor()
     {
+        this.eventCallbacks = new Map();
         this.client = new PlayerClient(new RequestHandler());
         this.settingsStore = new SettingsStore();
         this.dataSource = new DataSource(this.client);

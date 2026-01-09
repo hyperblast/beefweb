@@ -10,15 +10,13 @@ function getCallbacks(model, eventName)
     return callbacks;
 }
 
-const callbackListCache = new Map();
-
 function getCallbackList(context, eventDefs)
 {
-    const cacheEntry = callbackListCache.get(eventDefs);
+    const cachedValue = context.eventCallbacks.get(eventDefs);
 
-    if (cacheEntry && cacheEntry.context === context)
+    if (cachedValue)
     {
-        return cacheEntry.callbacks;
+        return cachedValue;
     }
 
     const callbacks = [];
@@ -46,10 +44,7 @@ function getCallbackList(context, eventDefs)
         }
     }
 
-    if (!cacheEntry)
-    {
-        callbackListCache.set(eventDefs, { context, callbacks });
-    }
+    context.eventCallbacks.set(eventDefs, callbacks);
 
     return callbacks;
 }
