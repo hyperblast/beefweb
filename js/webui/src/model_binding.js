@@ -2,8 +2,6 @@ import React from 'react';
 import ServiceContext from './service_context.js'
 import { subscribeAll } from './model_base.js';
 
-const subscription = Symbol('subscription');
-
 export default function ModelBinding(InnerComponent, eventDefs)
 {
     const BaseComponent =
@@ -19,6 +17,7 @@ export default function ModelBinding(InnerComponent, eventDefs)
         {
             super(props);
 
+            this.unsubscribe = null;
             this.setComponent = c => this.component = c;
         }
 
@@ -30,12 +29,12 @@ export default function ModelBinding(InnerComponent, eventDefs)
 
         componentDidMount()
         {
-            this[subscription] = subscribeAll(this.context, eventDefs, this.handleModelUpdate.bind(this));
+            this.unsubscribe = subscribeAll(this.context, eventDefs, this.handleModelUpdate.bind(this));
         }
 
         componentWillUnmount()
         {
-            this[subscription]();
+            this.unsubscribe();
         }
 
         render()
