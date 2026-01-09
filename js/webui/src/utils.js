@@ -63,10 +63,8 @@ export function bindHandlers(obj)
 
         const handler = proto[prop];
 
-        if (isFunction(handler))
-        {
+        if (typeof handler === 'function')
             obj[prop] = handler.bind(obj);
-        }
     }
 }
 
