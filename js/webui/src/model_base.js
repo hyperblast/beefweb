@@ -10,8 +10,17 @@ function getCallbacks(model, eventName)
     return callbacks;
 }
 
-function buildCallbackList(context, eventDefs)
+const callbackListCache = new Map();
+
+function getCallbackList(context, eventDefs)
 {
+    const cacheEntry = callbackListCache.get(eventDefs);
+
+    if (cacheEntry && cacheEntry.context === context)
+    {
+        return cacheEntry.callbacks;
+    }
+
     const callbacks = [];
 
     for (let modelKey in eventDefs)
@@ -37,12 +46,17 @@ function buildCallbackList(context, eventDefs)
         }
     }
 
+    if (!cacheEntry)
+    {
+        callbackListCache.set(eventDefs, { context, callbacks });
+    }
+
     return callbacks;
 }
 
 export function subscribeAll(context, eventDefs, callback)
 {
-    const callbacks = buildCallbackList(context, eventDefs);
+    const callbacks = getCallbackList(context, eventDefs);
 
     for (let set of callbacks)
         set.add(callback);
