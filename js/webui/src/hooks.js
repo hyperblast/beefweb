@@ -1,7 +1,6 @@
-import { useCallback, useContext, useEffect, useRef } from 'react';
+import { useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
 import shallowEqual from 'shallowequal';
 import ServiceContext from './service_context.js';
-import { useSyncExternalStore } from 'use-sync-external-store/shim';
 import { subscribeAll } from './model_base.js';
 
 export function useServices()
