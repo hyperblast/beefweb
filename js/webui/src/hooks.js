@@ -14,6 +14,11 @@ export function useDispose(callback)
     return useEffect(() => callback, []);
 }
 
+export function usePlaylistModel()
+{
+    return useServices().playlistModel;
+}
+
 export function useSettingValue(settingName)
 {
     const { settingsModel } = useServices();

@@ -1,185 +1,96 @@
-import React from 'react'
-import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
+import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
-import { Icon, Select } from './elements.js';
+import { Select } from './elements.js';
 import urls from './urls.js'
-import { bindHandlers } from './utils.js'
 import { makeClassName } from './dom_utils.js'
-import ModelBinding from './model_binding.js';
-import ServiceContext from "./service_context.js";
-import { MediaSize } from './settings_model.js';
+import { defineModelData, usePlaylistModel } from './hooks.js';
 
-function PlaylistTabHandle_()
-{
-    return (
-        <Icon name='ellipses' className='drag-handle' />
-    );
-}
-
-const PlaylistTabHandle = SortableHandle(PlaylistTabHandle_);
-
-class PlaylistTab_ extends React.PureComponent
-{
-    componentDidMount()
+const usePlaylistsData = defineModelData({
+    selector(context)
     {
-        const { playlist, currentPlaylistId } = this.props;
-
-        if (playlist.id === currentPlaylistId)
-            this.element.scrollIntoView();
-    }
-
-    render()
-    {
-        const {
-            playlist: p,
-            playbackState,
-            activePlaylistId,
-            currentPlaylistId,
-            drawHandle
-        } = this.props;
-
-        const className = makeClassName({
-            'header-tab': true,
-            'header-tab-with-icon': true,
-            'header-tab-active': p.id === currentPlaylistId,
-            'header-tab-playing': playbackState !== PlaybackState.stopped && p.id === activePlaylistId,
-        });
-
-        const handle = drawHandle ? <PlaylistTabHandle /> : null;
-
-        return (
-            <li className={className} ref={el => this.element = el}>
-                {handle}
-                <a href={urls.viewPlaylist(p.id)} title={p.title}>
-                    {p.title}
-                </a>
-            </li>
-        );
-    }
-}
-
-const PlaylistTab = SortableElement(PlaylistTab_);
-
-function PlaylistTabList_(props)
-{
-    const {
-        playbackState,
-        activePlaylistId,
-        currentPlaylistId,
-        playlists,
-        drawHandle,
-        disabled,
-    } = props;
-
-    return (
-        <ul className='header-block header-block-primary'>
-            {
-                playlists.map(p => (
-                    <PlaylistTab
-                        key={p.id}
-                        index={p.index}
-                        playlist={p}
-                        playbackState={playbackState}
-                        activePlaylistId={activePlaylistId}
-                        currentPlaylistId={currentPlaylistId}
-                        drawHandle={drawHandle}
-                        disabled={disabled} />
-                ))
-            }
-        </ul>
-    );
-}
-
-const PlaylistTabList = SortableContainer(PlaylistTabList_);
-
-class PlaylistSwitcher extends React.PureComponent
-{
-    static contextType = ServiceContext;
-
-    constructor(props, context)
-    {
-        super(props, context);
-        this.state = this.getStateFromModel();
-        bindHandlers(this);
-    }
-
-    getStateFromModel()
-    {
-        const { playbackState, activeItem, permissions } = this.context.playerModel;
-        let { touchMode, mediaSize } = this.context.settingsModel;
-        const { currentPlaylistId, playlists } = this.context.playlistModel;
-
-        if (touchMode && !permissions.changePlaylists)
-        {
-            // If playlist changing is not allowed
-            // disable rendering of touch friendly elements since playlist tabs are not draggable anyway
-            touchMode = false;
-        }
+        const { playerModel, playlistModel } = context;
+        const { playbackState, activeItem, permissions } = playerModel;
+        const { currentPlaylistId, playlists } = playlistModel;
 
         return {
-            playbackState,
-            activePlaylistId: activeItem.playlistId,
+            activePlaylistId: playbackState !== PlaybackState.stopped ? activeItem.playlistId : null,
             currentPlaylistId,
             playlists,
-            touchMode,
-            mediaSize,
-            allowChangePlaylists: permissions.changePlaylists,
+            allowChange: permissions.changePlaylists,
         };
+    },
+
+    updateOn: {
+        playerModel: 'change',
+        playlistModel: 'playlistsChange',
+        settingsModel: ['touchMode', 'mediaSize'],
     }
+});
 
-    handleSortEnd(e)
-    {
-        this.context.playlistModel.movePlaylist(e.oldIndex, e.newIndex);
-    }
+export function PlaylistSelector()
+{
+    const model = usePlaylistModel();
+    const data = usePlaylistsData();
+    const setCurrentPlaylist = useCallback(e => model.setCurrentPlaylistId(e.target.value), []);
 
-    handleSelectPlaylist(e)
-    {
-        this.context.playlistModel.setCurrentPlaylistId(e.target.value);
-    }
-
-    render()
-    {
-        const {
-            playbackState,
-            activePlaylistId,
-            currentPlaylistId,
-            playlists,
-            touchMode,
-            allowChangePlaylists,
-            mediaSize,
-        } = this.state;
-
-        if (mediaSize === MediaSize.small)
-        {
-            return <div className='header-block header-block-primary'>
-                <Select className='header-selector'
-                        items={playlists}
-                        selectedItemId={currentPlaylistId}
-                        nameProperty='title'
-                        onChange={this.handleSelectPlaylist} />
-            </div>;
-        }
-
-        return (
-            <PlaylistTabList
-                playbackState={playbackState}
-                activePlaylistId={activePlaylistId}
-                currentPlaylistId={currentPlaylistId}
-                playlists={playlists}
-                onSortEnd={this.handleSortEnd}
-                axis='x'
-                lockAxis='x'
-                helperClass='dragged'
-                distance={touchMode ? null : 30}
-                useDragHandle={touchMode}
-                drawHandle={touchMode}
-                disabled={!allowChangePlaylists} />
-        );
-    }
+    return <div className='header-block header-block-primary'>
+        <Select className='header-selector'
+                items={data.playlists}
+                selectedItemId={data.currentPlaylistId}
+                nameProperty='title'
+                onChange={setCurrentPlaylist} />
+    </div>;
 }
 
-export default ModelBinding(PlaylistSwitcher, {
-    playerModel: 'change',
-    playlistModel: 'playlistsChange',
-    settingsModel: ['touchMode', 'mediaSize'],
+const PlaylistTab = forwardRef(function PlaylistTab(props, ref)
+{
+    const { playlist, isCurrent, isActive } = props;
+
+    const className = makeClassName({
+        'header-tab': true,
+        'header-tab-with-icon': true,
+        'header-tab-active': isCurrent,
+        'header-tab-playing': isActive,
+    });
+
+    return (
+        <li className={className} ref={ref}>
+            <a href={urls.viewPlaylist(playlist.id)} title={playlist.title}>
+                {playlist.title}
+            </a>
+        </li>
+    );
 });
+
+PlaylistTab.propTypes = {
+    playlist: PropTypes.object.isRequired,
+    isCurrent: PropTypes.bool.isRequired,
+    isActive: PropTypes.bool.isRequired,
+};
+
+export function TabbedPlaylistSwitcher()
+{
+    const { playlists, activePlaylistId, currentPlaylistId } = usePlaylistsData();
+    const currentPlaylistRef = useRef();
+
+    useLayoutEffect(
+        () => {
+            if (currentPlaylistRef.current)
+                currentPlaylistRef.current.scrollIntoView();
+        },
+        [currentPlaylistId]);
+
+    return <ul className='header-block header-block-primary'>
+        {
+            playlists.map(p => (
+                <PlaylistTab
+                    key={p.id}
+                    ref={p.id === currentPlaylistId ? currentPlaylistRef : null}
+                    playlist={p}
+                    isCurrent={p.id === currentPlaylistId}
+                    isActive={p.id === activePlaylistId}/>
+            ))
+        }
+    </ul>
+}
