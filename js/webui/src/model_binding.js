@@ -1,27 +1,8 @@
 import React from 'react';
 import ServiceContext from './service_context.js'
+import { createSubscriber } from './model_base.js';
 
-function makeBindingList(bindings)
-{
-    let result = [];
-
-    for (let model of Object.keys(bindings))
-    {
-        const event = bindings[model];
-
-        if (Array.isArray(event))
-        {
-            for (let item of event)
-                result.push({ model, event: item });
-        }
-        else if (typeof event === 'string')
-            result.push({ model, event });
-        else
-            throw new Error(`Invalid event name or event list for model '${model}': '${event}'`);
-    }
-
-    return result;
-}
+const subscription = Symbol('subscription');
 
 export default function ModelBinding(InnerComponent, eventBindings)
 {
@@ -30,7 +11,7 @@ export default function ModelBinding(InnerComponent, eventBindings)
             ? React.PureComponent
             : React.Component;
 
-    const bindings = makeBindingList(eventBindings);
+    const subscriber = createSubscriber(eventBindings);
 
     class ModelBinder extends BaseComponent
     {
@@ -40,7 +21,6 @@ export default function ModelBinding(InnerComponent, eventBindings)
         {
             super(props);
 
-            this.handleModelUpdate = this.handleModelUpdate.bind(this);
             this.setComponent = c => this.component = c;
         }
 
@@ -52,24 +32,12 @@ export default function ModelBinding(InnerComponent, eventBindings)
 
         componentDidMount()
         {
-            for (let binding of bindings)
-            {
-                const model = this.context[binding.model];
-
-                if (model)
-                    model.on(binding.event, this.handleModelUpdate);
-            }
+            this[subscription] = subscriber(this.context, this.handleModelUpdate.bind(this));
         }
 
         componentWillUnmount()
         {
-            for (let binding of bindings)
-            {
-                const model = this.context[binding.model];
-
-                if (model)
-                    model.off(binding.event, this.handleModelUpdate);
-            }
+            this[subscription]();
         }
 
         render()
