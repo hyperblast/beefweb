@@ -1,4 +1,4 @@
-import { arrayMove } from 'react-sortable-hoc'
+import { arrayMove } from '@dnd-kit/sortable';
 import { AddAction } from "./settings_model.js";
 import ModelBase from './model_base.js';
 import { looseDeepEqual } from './utils.js';
@@ -153,9 +153,14 @@ export default class PlaylistModel extends ModelBase
         this.client.play(this.currentPlaylistId, index);
     }
 
+    getPlaylistIndex(id)
+    {
+        return this.playlists.findIndex(p => p.id === id);
+    }
+
     getNewPlaylistTitle()
     {
-        var title = 'New Playlist';
+        let title = 'New Playlist';
 
         if (!this.playlists.find(p => p.title === title))
             return title;
@@ -169,18 +174,18 @@ export default class PlaylistModel extends ModelBase
         }
     }
 
-    movePlaylist(oldIndex, newIndex)
+    movePlaylist(oldId, newId)
     {
-        const oldPlaylists = this.playlists;
-
-        if (oldIndex === newIndex
-            || oldIndex > oldPlaylists.length
-            || newIndex > oldPlaylists.length)
+        if (oldId === newId)
             return;
 
-        const playlistId = oldPlaylists[oldIndex].id;
+        const oldIndex = this.getPlaylistIndex(oldId);
+        const newIndex = this.getPlaylistIndex(newId);
 
-        const newPlaylists = oldPlaylists.map(p => {
+        if (oldIndex < 0 || newIndex < 0)
+            return;
+
+        const newPlaylists = this.playlists.map(p => {
             if (p.index === oldIndex)
                 return Object.assign({}, p, { index: newIndex });
             else if (p.index === newIndex)
@@ -189,7 +194,7 @@ export default class PlaylistModel extends ModelBase
         });
 
         this.setPlaylists(arrayMove(newPlaylists, oldIndex, newIndex));
-        this.client.movePlaylist(playlistId, newIndex);
+        this.client.movePlaylist(oldId, newIndex);
     }
 
     addPlaylist()
