@@ -34,7 +34,6 @@ class GeneralSettings extends React.PureComponent
                 {
                     mediaSize === MediaSize.large ? <SettingEditor settingKey='fullWidth' /> : null
                 }
-                <SettingEditor settingKey='inputMode' />
                 <SettingEditor settingKey='defaultAddAction' />
                 {
                     mediaSize !== MediaSize.small ? <SettingEditor settingKey='combinePlayPause' /> : null
