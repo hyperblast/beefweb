@@ -98,7 +98,8 @@ export function TabbedPlaylistSwitcher()
     const model = usePlaylistModel();
     const { playlists, activePlaylistId, currentPlaylistId, allowChange } = usePlaylistsData();
     const currentPlaylistRef = useRef();
-    const [overflow, playlistTabs] = useOverflowDetection([playlists]);
+    const playlistTabs = useRef();
+    const overflow = useOverflowDetection(playlistTabs, null, [playlists]);
 
     useLayoutEffect(
         () => {

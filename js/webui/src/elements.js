@@ -215,11 +215,12 @@ export function AutoScrollText(props)
 {
     const { text, className } = props;
 
-    const label = useRef(null);
+    const container = useRef();
+    const label = useRef();
     const elementId = useMemo(() => generateElementId('auto-scroll'), []);
-    const [overflow, containerRef] = useOverflowDetection([text]);
     const [labelWidth, setLabelWidth] = useState(0);
     useLayoutEffect(() => setLabelWidth(label.current.clientWidth), [text]);
+    const overflow = useOverflowDetection(container, label, [text]);
 
     const fullClassName = makeClassName([
         'auto-scroll-container',
@@ -227,7 +228,7 @@ export function AutoScrollText(props)
         className,
     ]);
 
-    return <div className={fullClassName} ref={containerRef} title={text}>
+    return <div className={fullClassName} ref={container} title={text}>
         <style>{ autoScrollCss(elementId, labelWidth) }</style>
         <span id={elementId} className='auto-scroll-text' ref={label}>{text}</span>
         <span id={elementId + '-h'} className='auto-scroll-text auto-scroll-text-helper'>{text}</span>

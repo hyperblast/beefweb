@@ -4,22 +4,24 @@ import ServiceContext from './service_context.js';
 import { subscribeAll } from './model_base.js';
 import { subscribeWindowResize } from './dom_utils.js';
 
-export function useOverflowDetection(deps)
+export function useOverflowDetection(container, content, deps)
 {
     const [overflow, setOverflow] = useState(false);
-    const containerRef = useRef();
 
     useLayoutEffect(() => {
         const updateOverflow = () => {
-            if (containerRef.current)
-                setOverflow(containerRef.current.clientWidth < containerRef.current.scrollWidth);
+            if (container.current)
+            {
+                const contentWidth = content?.current?.clientWidth ?? container.current.scrollWidth;
+                setOverflow(container.current.clientWidth < contentWidth);
+            }
         };
 
         updateOverflow();
         return subscribeWindowResize(updateOverflow);
     }, deps);
 
-    return [overflow, containerRef];
+    return overflow;
 }
 
 export function useDispose(callback)

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { rootPath } from './file_browser_model.js'
 import { IconButton, Menu, MenuItem, Select } from './elements.js';
 import urls from './urls.js'
@@ -37,7 +37,8 @@ function BrowserPathSelector()
 function BrowserPathBreadcrumbs()
 {
     const items = usePathStack();
-    const [overflow, containerRef] = useOverflowDetection([items])
+    const container = useRef();
+    const overflow = useOverflowDetection(container, null, [items])
 
     const elements = items.map((item, index) => (
         <li key={index} className='header-tab header-tab-selected'>
@@ -53,7 +54,7 @@ function BrowserPathBreadcrumbs()
         overflow ? 'header-block-overflow' : null,
     ])
 
-    return <ul className={className} ref={containerRef}>
+    return <ul className={className} ref={container}>
         { elements }
     </ul>
 }
