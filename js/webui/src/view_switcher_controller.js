@@ -73,7 +73,7 @@ export default class ViewSwitcherController
             document.head.appendChild(this.styleElement);
         }
 
-        this.styleElement.innerText = `.panel-header, .panel-main { left: ${position}px; }`;
+        this.styleElement.innerText = `.app { left: ${position}px; }`;
     }
 
     getSwipeDistance(event)
