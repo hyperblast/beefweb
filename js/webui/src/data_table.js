@@ -294,18 +294,17 @@ export default class DataTable extends React.PureComponent
         this.updateColumnsConfig();
 
         const { className, style, useIcons, onRenderRowMenu } = this.props;
+        const hasSubrows = this.columnsConfig.subrowCount > 1;
 
         const fullClassName = makeClassName([
             'dtable',
             useIcons ? 'dtable-has-row-icons' : null,
             onRenderRowMenu ? 'dtable-has-row-menu' : null,
-            this.columnsConfig.subrowCount > 1 ? 'dtable-has-subrows' : null,
+            hasSubrows ? 'dtable-has-subrows' : null,
             className,
         ]);
 
-        const head = this.props.showHeader
-                     ? <div className="dtable-head">{this.renderColumnHeaders()}</div>
-                     : null;
+        const head = hasSubrows ? null : <div className="dtable-head">{this.renderColumnHeaders()}</div>;
 
         return (
             <div id={this.elementId} className={fullClassName} style={style}>
@@ -575,7 +574,6 @@ DataTable.propTypes = {
     scrollManager: PropTypes.instanceOf(ScrollManager),
 
     useIcons: PropTypes.bool,
-    showHeader: PropTypes.bool,
     className: PropTypes.string,
     rowMenuTitle: PropTypes.string,
     rowMenuIconName: PropTypes.string,
@@ -589,7 +587,6 @@ DataTable.propTypes = {
 
 DataTable.defaultProps = {
     useIcons: false,
-    showHeader: true,
     className: '',
     rowMenuTitle: 'Menu',
     rowMenuIconName: 'ellipses'

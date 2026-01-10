@@ -134,7 +134,6 @@ class FileBrowser extends React.PureComponent
         return (
             <DataTable
                 columns={narrow ? columnsNarrow : columnWide}
-                showHeader={!narrow}
                 data={data}
                 offset={offset}
                 pageSize={pageSize}
