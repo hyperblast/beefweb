@@ -14,6 +14,8 @@ import { PlaybackInfoBar } from './playback_info_bar.js';
 import AlbumArtViewer from "./album_art_viewer.js";
 import { useCurrentView, useSettingValue } from './hooks.js';
 import { MediaSize } from './settings_model.js';
+import { WindowTitle } from './window_title.js';
+import { NotificationContainer } from './notification_container.js';
 
 const viewContent = {
     [View.playlist]: mediaSize => {
@@ -68,13 +70,17 @@ export function App()
             : null;
 
     return (
-        <div className='app'>
-            {playbackInfoBar}
-            {upperControlBar}
-            {header}
-            {main}
-            {lowerControlBar}
-            {statusBar}
-        </div>
+        <>
+            <WindowTitle/>
+            <div className='app'>
+                {playbackInfoBar}
+                {upperControlBar}
+                {header}
+                {main}
+                {lowerControlBar}
+                {statusBar}
+            </div>
+            <NotificationContainer/>
+        </>
     );
 }

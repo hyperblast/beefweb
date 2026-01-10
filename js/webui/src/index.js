@@ -165,7 +165,6 @@ async function main()
         <StrictMode>
             <ServiceContext value={appModel}>
                 <App />
-                <NotificationContainer />
             </ServiceContext>
         </StrictMode>
     );

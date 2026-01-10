@@ -13,7 +13,6 @@ import ColumnsSettingsModel from './columns_settings_model.js';
 import PlayQueueModel from './play_queue_model.js';
 import OutputSettingsModel from './output_settings_model.js';
 import ViewSwitcherController from './view_switcher_controller.js';
-import WindowController from './window_controller.js';
 import MediaSizeController from './media_size_controller.js';
 import MediaThemeController from './media_theme_controller.js';
 import TouchModeController from './touch_mode_controller.js';
@@ -43,7 +42,6 @@ export default class AppModel
         this.mediaThemeController = new MediaThemeController(this.settingsModel);
         this.touchModeController = new TouchModeController(this.settingsModel);
         this.cssSettingsController = new CssSettingsController(this.settingsModel);
-        this.windowController = new WindowController(this.playerModel);
 
         Object.freeze(this);
     }
@@ -63,7 +61,6 @@ export default class AppModel
         this.touchModeController.start();
         this.cssSettingsController.start();
         this.columnsSettingsModel.start();
-        this.windowController.start();
         this.viewSwitcherController.start();
     }
 }
