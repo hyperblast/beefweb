@@ -150,6 +150,9 @@ export default class SettingsModelBase extends ModelBase
         for (let key in this.metadata)
         {
             const metadata = this.metadata[key];
+            if (!metadata.persistent)
+                continue;
+
             const value = newValues[metadata.persistenceKey];
 
             if (value === undefined || isEqual(this.values[key], value))
