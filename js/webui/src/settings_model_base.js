@@ -196,11 +196,9 @@ export default class SettingsModelBase extends ModelBase
         this.store.setItem(storageKey, JSON.stringify(values));
     }
 
-    async saveAsDefault()
+    saveAsDefault()
     {
-        const config = await this.client.getClientConfig(clientConfigKey);
-        Object.assign(config, this.saveToObject());
-        return this.client.setClientConfig(clientConfigKey, config);
+        return this.client.setClientConfig(clientConfigKey, this.saveToObject());
     }
 
     async resetToDefault()
