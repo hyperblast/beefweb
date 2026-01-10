@@ -496,6 +496,8 @@ body {
 @dtable-row-margin-with-subrows: 0.5rem;
 @dtable-row-padding: 0.25rem;
 
+@dtable-margin-right: 0.25rem;
+
 .dtable {
     padding: 0.5rem;
     display: flex;
@@ -505,7 +507,7 @@ body {
 .dtable-head {
     height: @dtable-row-height;
     padding: 0 0.25rem;
-    margin-right: var(--scroll-bar-width);
+    margin-right: calc(var(--scroll-bar-width) + @dtable-margin-right);
 }
 
 .dtable-has-row-icons > .dtable-head {
@@ -513,7 +515,7 @@ body {
 }
 
 .dtable-has-row-menu > .dtable-head {
-    margin-right: calc(var(--scroll-bar-width) + @dtable-row-height);
+    margin-right: calc(var(--scroll-bar-width) + @dtable-margin-right + @dtable-row-height);
 }
 
 .dtable-body {
@@ -533,6 +535,7 @@ body {
 .dtable-row {
     display: flex;
     align-items: center;
+    margin-right: @dtable-margin-right;
 }
 
 .dtable-row-content {
