@@ -38,57 +38,30 @@ export function useSetting(settingName)
     return [value, metadata.setter];
 }
 
-function getSnapshot(context, selector)
+function getSnapshot(context, selector, store)
 {
-    const oldData = context.modelData.get(selector);
     const newData = selector(context);
 
-    if (shallowEqual(oldData, newData))
-        return oldData;
+    if (shallowEqual(store.current, newData))
+        return store.current;
 
-    context.modelData.set(selector, newData);
-    return newData;
-}
-
-function getKeyedSnapshot(context, selector, store, key)
-{
-    const oldData = store.current && shallowEqual(store.current.lastKey, key)
-                    ? store.current.lastValue
-                    : null;
-
-    const newData = selector(context, key);
-
-    if (shallowEqual(oldData, newData))
-        return oldData;
-
-    store.current = { lastKey: key, lastValue: newData };
-    return newData;
+    return store.current = newData;
 }
 
 export function defineModelData(arg)
 {
     const { selector, updateOn } = arg;
 
-    return () => {
+    return function useModelData()
+    {
         const context = useServices();
+        const store = useRef();
         const subscribe = useCallback(cb => subscribeAll(context, updateOn, cb), []);
-        const snapshot = useCallback(() => getSnapshot(context, selector), []);
+        const snapshot = useCallback(() => getSnapshot(context, selector, store), []);
         return useSyncExternalStore(subscribe, snapshot);
     };
 }
 
-export function defineKeyedModelData(arg)
-{
-    const { selector, updateOn } = arg;
-
-    return key => {
-        const context = useServices();
-        const store = useRef(null);
-        const subscribe = useCallback(cb => subscribeAll(context, updateOn, cb), []);
-        const snapshot = useCallback(() => getKeyedSnapshot(context, selector, store, key), [key]);
-        return useSyncExternalStore(subscribe, snapshot);
-    };
-}
 
 export const useCurrentView = defineModelData({
     selector: context => context.navigationModel.view,

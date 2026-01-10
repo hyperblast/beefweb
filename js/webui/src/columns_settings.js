@@ -4,7 +4,7 @@ import { IconButton, Select } from './elements.js';
 import ReactModal from 'react-modal';
 import { ConfirmDialog, DialogButton } from './dialogs.js';
 import { ColumnAlign } from './columns.js';
-import { defineKeyedModelData, defineModelData, useColumnsSettingsModel, useDispose, useServices } from './hooks.js';
+import { defineModelData, useColumnsSettingsModel, useDispose } from './hooks.js';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { SimpleSortableContext, useDefaultSensors } from './sortable.js';
@@ -17,13 +17,6 @@ const AlignItems = [
 
 const useColumnList = defineModelData({
     selector: context => context.columnsSettingsModel.columns,
-    updateOn: {
-        columnsSettingsModel: 'change'
-    }
-});
-
-const useColumn = defineKeyedModelData({
-    selector: (context, columnId) => context.columnsSettingsModel.getColumn(columnId),
     updateOn: {
         columnsSettingsModel: 'change'
     }
@@ -179,19 +172,18 @@ ColumnEditButton.propTypes = {
 
 function ColumnDeleteButton(props)
 {
-    const { columnId } = props;
+    const { column } = props;
     const model = useColumnsSettingsModel();
     const [dialogOpen, setDialogOpen] = useState(false);
-    const column = useColumn(columnId);
 
     const handleOpen = useCallback(() => setDialogOpen(true), []);
 
     const handleOk = useCallback(
         () => {
-            model.removeColumn(columnId)
+            model.removeColumn(column.id)
             setDialogOpen(false);
         },
-        [columnId]);
+        [column.id]);
 
     const handleCancel = useCallback(() => setDialogOpen(false), [])
 
@@ -214,13 +206,12 @@ function ColumnDeleteButton(props)
 }
 
 ColumnDeleteButton.propTypes = {
-    columnId: PropTypes.number.isRequired,
+    column: PropTypes.object.isRequired,
 };
 
 function EditableColumn(props)
 {
-    const { columnId } = props;
-    const column = useColumn(columnId);
+    const { column } = props;
 
     const {
         attributes,
@@ -228,7 +219,7 @@ function EditableColumn(props)
         setNodeRef,
         transform,
         transition,
-    } = useSortable({ id: columnId });
+    } = useSortable({ id: column.id });
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -251,7 +242,7 @@ function EditableColumn(props)
             <span className='column-info-expression'>{ column.expression }</span>
         </div>;
 
-        editButton = <ColumnEditButton columnId={columnId} />;
+        editButton = <ColumnEditButton columnId={column.id} />;
     }
 
     return (
@@ -260,7 +251,7 @@ function EditableColumn(props)
             <div className='column-editor-side'>
                 <div className='button-bar'>
                     { editButton }
-                    <ColumnDeleteButton columnId={columnId} />
+                    <ColumnDeleteButton column={column} />
                 </div>
             </div>
         </div>
@@ -268,7 +259,7 @@ function EditableColumn(props)
 }
 
 EditableColumn.propTypes = {
-    columnId: PropTypes.number.isRequired,
+    column: PropTypes.object.isRequired,
 };
 
 export function ColumnsSettings()
@@ -276,8 +267,7 @@ export function ColumnsSettings()
     const sensors = useDefaultSensors();
     const model = useColumnsSettingsModel();
     const columns = useColumnList();
-    const columnElements = columns.map(c => <EditableColumn key={c.id} columnId={c.id}/>);
-
+    const columnElements = columns.map(c => <EditableColumn key={c.id} column={c}/>);
     const handleDragEnd = useCallback(e => model.moveColumn(e.active.id, e.over.id), []);
 
     useDispose(() => model.applyChanges());
