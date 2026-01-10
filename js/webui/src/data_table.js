@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { throttle } from './lodash.js'
+import { clamp, throttle } from './lodash.js';
 import { Icon } from './elements.js';
 import { mapRange } from './utils.js'
 import { generateElementId, getFontSize, makeClassName } from './dom_utils.js'
@@ -71,7 +71,7 @@ export default class DataTable extends React.PureComponent
     rowHeightRem()
     {
         const subrows = this.subrowCount();
-        return subrows > 1 ? subrowHeight * subrows + 2 * rowPadding + rowMarginWithSubrows: rowHeight;
+        return subrows > 1 ? subrowHeight * subrows + 2 * rowPadding + rowMarginWithSubrows : rowHeight;
     }
 
     rowHeightPx(fontSize)
@@ -147,56 +147,35 @@ export default class DataTable extends React.PureComponent
             this.body.addEventListener('scroll', this.throttledScroll);
     }
 
-    movePage(delta, offset, endOffset, totalCount)
-    {
-        if (offset + delta < 0)
-            delta = -offset;
-
-        if (endOffset + delta > totalCount)
-            delta = totalCount - endOffset;
-
-        if (delta === 0)
-            return;
-
-        this.props.onLoadPage(offset + delta);
-    }
-
     handleScroll()
     {
         this.saveScrollPosition();
 
         const { offset, pageSize, totalCount } = this.props;
 
-        let endOffset = offset + pageSize;
-
-        if (endOffset > totalCount)
-            endOffset = totalCount;
-
         const margin = pageSize / 5 | 0;
 
         const fontSize = getFontSize();
         const visibleOffset = this.pixelToRow(this.body.scrollTop, fontSize);
         const visibleCount = this.pixelToRow(this.body.offsetHeight, fontSize);
-        const visibleEndOffset = visibleOffset + visibleCount;
 
-        if (visibleOffset - margin <= offset)
+        if (visibleOffset - margin >= offset &&
+            visibleOffset + visibleCount + margin <= offset + pageSize)
         {
-            let delta = visibleOffset - offset;
-
-            if (delta > -margin)
-                delta = -margin;
-
-            this.movePage(delta, offset, endOffset, totalCount);
+            // Current page covers entire visible area, and we have some margins for scrolling without loading
+            return;
         }
-        else if (visibleEndOffset + margin >= endOffset)
-        {
-            let delta = visibleEndOffset - endOffset;
 
-            if (delta < margin)
-                delta = margin;
+        const newOffset = clamp(
+            // Center data page around center of visible area
+            visibleOffset + ((visibleCount - pageSize) >> 1),
+            0,
+            totalCount - pageSize);
 
-            this.movePage(delta, offset, endOffset, totalCount);
-        }
+        if (offset === newOffset)
+            return;
+
+        this.props.onLoadPage(newOffset);
     }
 
     openColumnMenu(index, isOpen)
