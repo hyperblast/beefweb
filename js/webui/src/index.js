@@ -163,10 +163,10 @@ async function main()
 
     root.render(
         <StrictMode>
-            <ServiceContext.Provider value={appModel}>
+            <ServiceContext value={appModel}>
                 <App />
                 <NotificationContainer />
-            </ServiceContext.Provider>
+            </ServiceContext>
         </StrictMode>
     );
 }
