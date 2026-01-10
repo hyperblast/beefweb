@@ -12,7 +12,7 @@ const maxColumns = 100;
 // These values must be synced with variables in styles.less
 const rowHeight = 2;
 const subrowHeight = 1.5;
-const rowMarginWithSubrows = 1;
+const rowMarginWithSubrows = 0.5;
 const rowPadding = 0.25;
 
 const cellClassNames = mapRange(

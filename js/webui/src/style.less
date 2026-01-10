@@ -530,7 +530,7 @@ body {
 // These values must be synced with variables in data_table.js
 @dtable-row-height: 2rem;
 @dtable-subrow-height: 1.5rem;
-@dtable-row-margin-with-subrows: 1rem;
+@dtable-row-margin-with-subrows: 0.5rem;
 @dtable-row-padding: 0.25rem;
 
 .dtable {
@@ -668,6 +668,10 @@ body {
 }
 
 /* Components */
+
+#app-container {
+    overflow: hidden;
+}
 
 .app {
     display: flex;
