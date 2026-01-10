@@ -72,5 +72,5 @@ src/utils.js
 src/view_switcher.js
 src/view_switcher_controller.js
 src/volume_control.js
-src/window_controller.js
+src/window_title.js
 )
