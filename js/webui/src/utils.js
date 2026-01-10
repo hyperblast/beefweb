@@ -24,7 +24,7 @@ export function getParentDir(path, sep)
     if (index < 0 || index === path.length - 1)
         return '';
 
-    const result = path.substr(0, index);
+    const result = path.substring(0, index);
 
     return result.indexOf(sep) >= 0
         ? result
@@ -38,7 +38,7 @@ export function getBaseName(path, sep)
     if (index < 0 || index === path.length - 1)
         return path;
 
-    return path.substr(index + 1);
+    return path.substring(index + 1);
 }
 
 export function isSubpath(parentPath, childPath, sep)

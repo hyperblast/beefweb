@@ -101,7 +101,7 @@ export default class FileBrowserModel extends ModelBase
         while (path.length > 0 && this.isUnderRootPath(path));
 
         const lastItem = items[items.length - 1];
-        lastItem.longName = lastItem.path;
+        lastItem.shortName = lastItem.path;
 
         items.push(rootEntry);
         return items.reverse();

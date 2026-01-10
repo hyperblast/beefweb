@@ -78,7 +78,7 @@ class FileBrowserHeader extends React.PureComponent
                     items={items}
                     selectedItemId={selectedPath}
                     idProperty='path'
-                    nameProperty='longName'
+                    nameProperty='shortName'
                     onChange={this.handleSelectPath}/>
         </div>
     }
@@ -87,7 +87,7 @@ class FileBrowserHeader extends React.PureComponent
     {
        const items = this.state.pathStack.map((item, index) => (
             <li key={index} className='header-tab header-tab-selected'>
-                <a href={urls.browsePath(item.path)} title={item.path}>
+                <a href={urls.browsePath(item.path)} title={item.longName}>
                     {item.shortName}
                 </a>
             </li>
