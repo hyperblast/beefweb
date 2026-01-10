@@ -1,6 +1,6 @@
-import { once } from './utils.js'
+import { debounce } from './lodash.js';
 
-export const getScrollBarWidth = once(() =>
+export function setScrollBarSize()
 {
     // Based on https://github.com/sonicdoe/measure-scrollbar/blob/master/index.js
 
@@ -14,10 +14,19 @@ export const getScrollBarWidth = once(() =>
 
     document.body.appendChild(div);
     const width = div.offsetWidth - div.clientWidth;
+    const height = div.offsetHeight - div.clientHeight;
     document.body.removeChild(div);
 
-    return width;
-});
+    document.documentElement.style.setProperty('--scroll-bar-width', `${width}px`);
+    document.documentElement.style.setProperty('--scroll-bar-height', `${height}px`);
+}
+
+export function subscribeWindowResize(callback)
+{
+    const debouncedCallback = debounce(callback, 50);
+    window.addEventListener('resize', debouncedCallback);
+    return () => window.removeEventListener('resize', debouncedCallback);
+}
 
 let nextElementId = 0;
 

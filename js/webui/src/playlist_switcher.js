@@ -1,9 +1,9 @@
-import React, { useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
 import { Select } from './elements.js';
 import urls from './urls.js'
-import { makeClassName } from './dom_utils.js'
+import { makeClassName, subscribeWindowResize } from './dom_utils.js';
 import { defineModelData, usePlaylistModel } from './hooks.js';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -99,6 +99,8 @@ export function TabbedPlaylistSwitcher()
     const model = usePlaylistModel();
     const { playlists, activePlaylistId, currentPlaylistId, allowChange } = usePlaylistsData();
     const currentPlaylistRef = useRef();
+    const playlistTabs = useRef();
+    const [overflow, setOverflow] = useState(false);
 
     useLayoutEffect(
         () => {
@@ -106,6 +108,16 @@ export function TabbedPlaylistSwitcher()
                 currentPlaylistRef.current.scrollIntoView();
         },
         [currentPlaylistId]);
+
+    useLayoutEffect(() => {
+        const updateOverflow = () => {
+            if (playlistTabs.current)
+                setOverflow(playlistTabs.current.clientWidth < playlistTabs.current.scrollWidth);
+        };
+
+        updateOverflow();
+        return subscribeWindowResize(updateOverflow);
+    }, [playlists]);
 
     const handleDragEnd = useCallback(e => model.movePlaylist(e.active.id, e.over.id), []);
 
@@ -118,9 +130,15 @@ export function TabbedPlaylistSwitcher()
             isActive={p.id === activePlaylistId}/>
     ));
 
+    const className = makeClassName([
+        'header-block',
+        'header-block-primary',
+        overflow ? 'header-block-overflow' : null
+    ]);
+
     return (
         <SimpleSortableContext sensors={sensors} items={playlists} onDragEnd={handleDragEnd} disabled={!allowChange}>
-            <ul className='header-block header-block-primary'>
+            <ul className={className} ref={playlistTabs}>
                 {tabs}
             </ul>
         </SimpleSortableContext>);

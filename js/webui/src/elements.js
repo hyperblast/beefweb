@@ -1,8 +1,7 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
-import { generateElementId, makeClassName } from './dom_utils.js';
-import { debounce } from './lodash.js';
+import { generateElementId, makeClassName, subscribeWindowResize } from './dom_utils.js';
 
 function makeClickHandler(callback)
 {
@@ -228,13 +227,9 @@ export function AutoScrollText(props)
                 setOverflow(container.current.clientWidth < label.current.clientWidth);
         };
 
-        const updateOverflowWithDelay = debounce(updateOverflow, 50);
-
         setLabelWidth(label.current.clientWidth);
         updateOverflow();
-
-        window.addEventListener('resize', updateOverflowWithDelay);
-        return () => window.removeEventListener('resize', updateOverflowWithDelay);
+        return subscribeWindowResize(updateOverflow);
     }, [text]);
 
     const fullClassName = makeClassName([

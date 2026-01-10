@@ -148,6 +148,10 @@ body {
     overflow-y: hidden;
 }
 
+.header-block-overflow {
+    height: calc(2.5rem + var(--scroll-bar-height));
+}
+
 .header-selector {
     display: block;
     width: 100%;
@@ -538,7 +542,7 @@ body {
 .dtable-head {
     height: @dtable-row-height;
     padding: 0 0.25rem;
-    margin-right: var(--dtable-scroll-bar-width);
+    margin-right: var(--scroll-bar-width);
 }
 
 .dtable-has-row-icons > .dtable-head {
@@ -546,7 +550,7 @@ body {
 }
 
 .dtable-has-row-menu > .dtable-head {
-    margin-right: calc(var(--dtable-scroll-bar-width) + @dtable-row-height);
+    margin-right: calc(var(--scroll-bar-width) + @dtable-row-height);
 }
 
 .dtable-body {
@@ -638,7 +642,6 @@ body {
 .panel-header {
     display: flex;
     align-items: center;
-    height: 2.5rem;
     position: relative;
 }
 

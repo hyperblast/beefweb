@@ -1,5 +1,4 @@
 import React, { StrictMode } from 'react';
-import ReactDom from 'react-dom'
 import ServiceContext from './service_context.js'
 import { App } from './app.js'
 import AppModel from './app_model.js'
@@ -7,9 +6,9 @@ import urls from './urls.js';
 import { playlistTableKey } from './playlist_content.js';
 import { PlaybackState } from 'beefweb-client';
 import { SettingsView, View } from './navigation_model.js';
-import { NotificationContainer } from './notification_container.js';
 import { Router } from './router.js';
 import { createRoot } from 'react-dom/client';
+import { setScrollBarSize } from './dom_utils.js';
 
 const appModel = new AppModel();
 
@@ -158,6 +157,8 @@ async function main()
     {
         fileBrowserModel.reload();
     }
+
+    setScrollBarSize();
 
     const root = createRoot(document.getElementById('app-container'));
 

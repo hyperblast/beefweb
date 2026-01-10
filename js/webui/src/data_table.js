@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { throttle } from './lodash.js'
 import { Icon } from './elements.js';
-import { mapRange, once } from './utils.js'
-import { generateElementId, getFontSize, getScrollBarWidth, makeClassName } from './dom_utils.js'
+import { mapRange } from './utils.js'
+import { generateElementId, getFontSize, makeClassName } from './dom_utils.js'
 import ScrollManager from './scroll_manager.js';
 import { DropdownButton, DropdownLink } from './dropdown.js';
 
@@ -14,12 +14,6 @@ const rowHeight = 2;
 const subrowHeight = 1.5;
 const rowMarginWithSubrows = 1;
 const rowPadding = 0.25;
-
-const setScrollBarWidthVariable = once(() =>
-{
-    const width = getScrollBarWidth();
-    document.documentElement.style.setProperty('--dtable-scroll-bar-width', `${width}px`);
-});
 
 const cellClassNames = mapRange(
     0, maxColumns, value => `dtable-cell dtable-column-${value}`);
@@ -40,8 +34,6 @@ export default class DataTable extends React.PureComponent
 
     componentDidMount()
     {
-        setScrollBarWidthVariable();
-
         this.registerInScrollManager(this.props);
         this.restoreScrollPosition();
     }
