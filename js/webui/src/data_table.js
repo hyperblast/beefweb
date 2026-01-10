@@ -357,12 +357,15 @@ export default class DataTable extends React.PureComponent
 
         for (let columnIndex = 0; columnIndex < columns.length; columnIndex++)
         {
+            if (columns[columnIndex].lineBreak)
+                continue;
+
             let { dataIndex } = columns[columnIndex];
 
             if (!Number.isInteger(dataIndex))
                 dataIndex = cellIndex;
 
-            cells.push(<span key={dataIndex} className={cellClassNames[cellIndex]}>{rowData.columns[dataIndex]}</span>);
+            cells.push(<span key={cellIndex} className={cellClassNames[cellIndex]}>{rowData.columns[dataIndex]}</span>);
             cellIndex++;
         }
 

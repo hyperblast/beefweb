@@ -27,7 +27,7 @@ const columnWide = [
 
 const pageSize = 100;
 
-function getRowData(item, wide)
+function getRowData(item)
 {
     return {
         icon: iconNames[item.type],
