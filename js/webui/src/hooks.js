@@ -1,11 +1,25 @@
-import { useCallback, useContext, useEffect, useRef, useSyncExternalStore } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import shallowEqual from 'shallowequal';
 import ServiceContext from './service_context.js';
 import { subscribeAll } from './model_base.js';
+import { subscribeWindowResize } from './dom_utils.js';
 
-export function useServices()
+export function useOverflowDetection(deps)
 {
-    return useContext(ServiceContext);
+    const [overflow, setOverflow] = useState(false);
+    const containerRef = useRef();
+
+    useLayoutEffect(() => {
+        const updateOverflow = () => {
+            if (containerRef.current)
+                setOverflow(containerRef.current.clientWidth < containerRef.current.scrollWidth);
+        };
+
+        updateOverflow();
+        return subscribeWindowResize(updateOverflow);
+    }, deps);
+
+    return [overflow, containerRef];
 }
 
 export function useDispose(callback)
@@ -13,9 +27,19 @@ export function useDispose(callback)
     return useEffect(() => callback, []);
 }
 
+export function useServices()
+{
+    return useContext(ServiceContext);
+}
+
 export function usePlaylistModel()
 {
     return useServices().playlistModel;
+}
+
+export function useFileBrowserModel()
+{
+    return useServices().fileBrowserModel;
 }
 
 export function useColumnsSettingsModel()

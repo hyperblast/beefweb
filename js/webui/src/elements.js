@@ -1,7 +1,8 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
-import { generateElementId, makeClassName, subscribeWindowResize } from './dom_utils.js';
+import { generateElementId, makeClassName } from './dom_utils.js';
+import { useOverflowDetection } from './hooks.js';
 
 function makeClickHandler(callback)
 {
@@ -214,31 +215,19 @@ export function AutoScrollText(props)
 {
     const { text, className } = props;
 
-    const container = useRef(null);
     const label = useRef(null);
-
     const elementId = useMemo(() => generateElementId('auto-scroll'), []);
-    const [isOverflow, setOverflow] = useState(false);
+    const [overflow, containerRef] = useOverflowDetection([text]);
     const [labelWidth, setLabelWidth] = useState(0);
-
-    useLayoutEffect(() => {
-        const updateOverflow = () => {
-            if (container.current && label.current)
-                setOverflow(container.current.clientWidth < label.current.clientWidth);
-        };
-
-        setLabelWidth(label.current.clientWidth);
-        updateOverflow();
-        return subscribeWindowResize(updateOverflow);
-    }, [text]);
+    useLayoutEffect(() => setLabelWidth(label.current.clientWidth), [text]);
 
     const fullClassName = makeClassName([
         'auto-scroll-container',
-        isOverflow ? 'auto-scroll-overflow' : null,
+        overflow ? 'auto-scroll-overflow' : null,
         className,
     ]);
 
-    return <div className={fullClassName} ref={container} title={text}>
+    return <div className={fullClassName} ref={containerRef} title={text}>
         <style>{ autoScrollCss(elementId, labelWidth) }</style>
         <span id={elementId} className='auto-scroll-text' ref={label}>{text}</span>
         <span id={elementId + '-h'} className='auto-scroll-text auto-scroll-text-helper'>{text}</span>

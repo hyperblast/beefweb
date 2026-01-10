@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react';
 import { rootPath } from './file_browser_model.js'
 import { IconButton, Menu, MenuItem, Select } from './elements.js';
 import urls from './urls.js'
@@ -7,6 +7,56 @@ import { DropdownButton } from './dropdown.js'
 import { bindHandlers } from './utils.js'
 import { AddAction, MediaSize } from './settings_model.js';
 import ServiceContext from "./service_context.js";
+import { makeClassName } from './dom_utils.js';
+import { defineModelData, useFileBrowserModel, useOverflowDetection } from './hooks.js';
+
+const usePathStack = defineModelData({
+    selector: context => context.fileBrowserModel.pathStack,
+    updateOn: {
+        fileBrowserModel: 'change'
+    }
+});
+
+function BrowserPathSelector()
+{
+    const model = useFileBrowserModel();
+    const handleSelectPath = useCallback(e => model.browse(e.target.value), []);
+    const items = usePathStack();
+    const selectedPath = items.length > 0 ? items[items.length - 1].path : null;
+
+    return <div className='header-block header-block-primary'>
+        <Select className='header-selector'
+                items={items}
+                selectedItemId={selectedPath}
+                idProperty='path'
+                nameProperty='shortName'
+                onChange={handleSelectPath}/>
+    </div>
+}
+
+function BrowserPathBreadcrumbs()
+{
+    const items = usePathStack();
+    const [overflow, containerRef] = useOverflowDetection([items])
+
+    const elements = items.map((item, index) => (
+        <li key={index} className='header-tab header-tab-selected'>
+            <a href={urls.browsePath(item.path)} title={item.longName}>
+                {item.shortName}
+            </a>
+        </li>
+    ));
+
+    const className = makeClassName([
+        'header-block',
+        'header-block-primary',
+        overflow ? 'header-block-overflow' : null,
+    ])
+
+    return <ul className={className} ref={containerRef}>
+        { elements }
+    </ul>
+}
 
 class FileBrowserHeader extends React.PureComponent
 {
@@ -63,41 +113,6 @@ class FileBrowserHeader extends React.PureComponent
         this.addCurrent(AddAction.replaceAndPlay);
     }
 
-    handleSelectPath(e)
-    {
-        this.context.fileBrowserModel.browse(e.target.value);
-    }
-
-    renderSelector()
-    {
-        const items = this.state.pathStack;
-        const selectedPath = items.length > 0 ? items[items.length - 1].path : null;
-
-        return <div className='header-block header-block-primary'>
-            <Select className='header-selector'
-                    items={items}
-                    selectedItemId={selectedPath}
-                    idProperty='path'
-                    nameProperty='shortName'
-                    onChange={this.handleSelectPath}/>
-        </div>
-    }
-
-    renderBreadcrumbs()
-    {
-       const items = this.state.pathStack.map((item, index) => (
-            <li key={index} className='header-tab header-tab-selected'>
-                <a href={urls.browsePath(item.path)} title={item.longName}>
-                    {item.shortName}
-                </a>
-            </li>
-       ));
-
-        return <ul className='header-block header-block-primary'>
-            { items }
-        </ul>
-    }
-
     renderButtons()
     {
         const { parentPath, allowChangePlaylists } = this.state;
@@ -145,7 +160,7 @@ class FileBrowserHeader extends React.PureComponent
 
         return (
             <div className='panel panel-header'>
-                { mediaSize === MediaSize.small ? this.renderSelector() : this.renderBreadcrumbs() }
+                { mediaSize === MediaSize.small ? <BrowserPathSelector/> : <BrowserPathBreadcrumbs/> }
                 { this.renderButtons() }
             </div>
         );
