@@ -1,4 +1,4 @@
-import React, { forwardRef, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types'
 import spriteSvg from 'open-iconic/sprite/sprite.svg'
 import { generateElementId, makeClassName } from './dom_utils.js';
@@ -19,9 +19,9 @@ function makeClickHandler(callback)
     };
 }
 
-export const Icon = forwardRef(function Icon(props, ref)
+function Icon(props)
 {
-    const { name, className } = props;
+    const { name, className, ref } = props;
     const fullClassName = 'icon icon-' + name + (className ? ' ' + className : '');
 
     if (name === 'none')
@@ -34,16 +34,16 @@ export const Icon = forwardRef(function Icon(props, ref)
             <use xlinkHref={href} href={href} />
         </svg>
     );
-});
+}
 
 Icon.propTypes = {
     name: PropTypes.string.isRequired,
     className: PropTypes.string,
 };
 
-export const IconButton = React.forwardRef(function IconButton(props, ref)
+export function IconButton(props)
 {
-    const { name, title, className, href, onClick, active } = props;
+    const { name, title, className, href, onClick, active, ref } = props;
 
     const fullClassName = 'icon-button'
         + (className ? ' ' + className : '')
@@ -59,7 +59,7 @@ export const IconButton = React.forwardRef(function IconButton(props, ref)
             <Icon name={name} />
         </a>
     );
-});
+}
 
 IconButton.propTypes = {
     name: PropTypes.string.isRequired,

@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useLayoutEffect, useRef } from 'react';
+import React, { useCallback, useLayoutEffect, useRef } from 'react';
 import PropTypes from 'prop-types'
 import { PlaybackState } from 'beefweb-client'
 import { Select } from './elements.js';
@@ -45,9 +45,9 @@ export function PlaylistSelector()
     </div>;
 }
 
-const PlaylistTab = forwardRef(function PlaylistTab(props, ref)
+function PlaylistTab(props, ref)
 {
-    const { playlist, isCurrent, isActive } = props;
+    const { playlist, isCurrent, isActive, ref } = props;
 
     const {
         attributes,
@@ -84,7 +84,7 @@ const PlaylistTab = forwardRef(function PlaylistTab(props, ref)
             </a>
         </li>
     );
-});
+}
 
 PlaylistTab.propTypes = {
     playlist: PropTypes.object.isRequired,
