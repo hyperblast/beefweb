@@ -56,7 +56,7 @@ function getColumnsConfig(originalColumns)
 {
     const columns = normalizeColumns(originalColumns);
     const subrowCount = getSubrowCount(columns);
-    const columnHeightRem =
+    const rowHeightRem =
         subrowCount > 1
             ? subrowHeight * subrowCount + 2 * rowPadding + rowMarginWithSubrows
             : rowHeight;
@@ -65,7 +65,7 @@ function getColumnsConfig(originalColumns)
         originalColumns,
         columns,
         subrowCount,
-        columnHeightRem
+        rowHeightRem
     };
 }
 
@@ -121,7 +121,7 @@ export default class DataTable extends React.PureComponent
 
     rowHeightPx(fontSize)
     {
-        return fontSize * this.columnsConfig.columnHeightRem;
+        return fontSize * this.columnsConfig.rowHeightRem;
     }
 
     pixelToRow(px, fontSize)
@@ -327,7 +327,7 @@ export default class DataTable extends React.PureComponent
         if (height <= 0)
             return null;
 
-        const size = height * this.columnsConfig.columnHeightRem;
+        const size = height * this.columnsConfig.rowHeightRem;
         const style = { height: `${size}rem` };
 
         return (
