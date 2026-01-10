@@ -119,7 +119,7 @@ export default class SettingsModelBase extends ModelBase
 
             if (metadata.persistent)
             {
-                result[key] = metadata.defaultValue;
+                result[metadata.persistenceKey] = metadata.defaultValue;
             }
         }
 
