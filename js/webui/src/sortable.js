@@ -1,5 +1,5 @@
-import { DndContext, KeyboardSensor, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { DndContext, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext } from '@dnd-kit/sortable';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -16,9 +16,6 @@ export function useDefaultSensors()
                 delay: 250,
                 tolerance: 5,
             },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
         })
     );
 }
