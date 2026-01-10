@@ -178,33 +178,12 @@ body {
     display: inline-block;
     padding: 0.25rem;
     margin: 0.25rem;
-    min-width: 4em;
-    max-width: 12em;
+    min-width: 5rem;
+    max-width: 12rem;
+    text-align: center;
     vertical-align: bottom;
 
     .no-text-overflow();
-}
-
-.header-tab-with-icon > a {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-
-.header-tab-icon {
-    position: absolute;
-    width: 1.25rem;
-    height: 1.25rem;
-    margin-top: 0.5rem;
-    margin-left: 0.25rem;
-    padding: 0.0625rem;
-}
-
-.header-tab-icon > use {
-    fill: var(--color-border);
-}
-
-.header-tab-active .header-tab-icon > use {
-    fill: var(--color-text);
 }
 
 .header-tab:after {
@@ -224,28 +203,12 @@ body {
     color: var(--color-border);
 }
 
-.header-tab > .drag-handle {
-    position: absolute;
-    width: 2.0rem;
-    height: 1.5rem;
-    margin-top: -0.5rem;
-    cursor: grab;
-}
-
-.header-tab-active > a {
+.header-tab-selected > a {
     color: var(--color-text);
 }
 
 .header-tab-playing > a {
     font-style: italic;
-}
-
-.drag-handle > use {
-    fill: var(--color-border);
-}
-
-.header-tab-active .drag-handle > use {
-    fill: var(--color-text);
 }
 
 .dropdown-content {

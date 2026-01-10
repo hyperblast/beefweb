@@ -146,7 +146,7 @@ export function PanelHeaderTab(props)
 {
     const className = makeClassName({
         'header-tab': true,
-        'header-tab-active': props.active
+        'header-tab-selected': props.selected
     });
 
     return (
@@ -157,7 +157,7 @@ export function PanelHeaderTab(props)
 }
 
 PanelHeaderTab.propTypes = {
-    active: PropTypes.bool.isRequired,
+    selected: PropTypes.bool.isRequired,
     href: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
 };

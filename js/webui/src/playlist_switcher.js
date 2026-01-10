@@ -72,8 +72,7 @@ function PlaylistTab(props)
 
     const className = makeClassName({
         'header-tab': true,
-        'header-tab-with-icon': true,
-        'header-tab-active': isCurrent,
+        'header-tab-selected': isCurrent,
         'header-tab-playing': isActive,
     });
 

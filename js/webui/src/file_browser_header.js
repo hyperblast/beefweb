@@ -86,7 +86,7 @@ class FileBrowserHeader extends React.PureComponent
     renderBreadcrumbs()
     {
        const items = this.state.pathStack.map((item, index) => (
-            <li key={index} className='header-tab header-tab-active'>
+            <li key={index} className='header-tab header-tab-selected'>
                 <a href={urls.browsePath(item.path)} title={item.path}>
                     {item.shortName}
                 </a>

@@ -73,7 +73,7 @@ class SettingsHeader extends React.PureComponent
         const tabs = settingsViews.map(value => (
             <PanelHeaderTab
                 key={value.id}
-                active={settingsView === value.id}
+                selected={settingsView === value.id}
                 href={urls.settingsView(value.id)}
                 title={value.name} />
         ));
