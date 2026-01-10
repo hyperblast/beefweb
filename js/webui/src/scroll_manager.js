@@ -1,41 +1,41 @@
-const defaultPosition = Object.freeze({ offset: 0 });
+const defaultPosition = Object.freeze({ item: 0, offset: 0 });
 
 export default class ScrollManager
 {
     constructor()
     {
-        this.components = {};
-        this.positions = {};
+        this.components = new Map();
+        this.positions = new Map();
     }
 
     registerComponent(key, component)
     {
-        this.components[key] = component;
+        this.components.set(key, component);
     }
 
     unregisterComponent(key)
     {
-        delete this.components[key];
+        this.components.delete(key);
     }
 
     getPosition(key)
     {
-        return this.positions[key] || defaultPosition;
+        return this.positions.get(key) || defaultPosition;
     }
 
-    savePosition(key, offset)
+    savePosition(key, item, offset)
     {
-        this.positions[key] = Object.freeze({ offset });
+        this.positions.set(key, Object.freeze({ item, offset }));
     }
 
-    scrollToItem(key, offsetItem)
+    scrollToItem(key, item)
     {
-        const component = this.components[key];
-        const position = Object.freeze({ offsetItem });
+        const component = this.components.get(key);
+        const position = Object.freeze({ item, offset: 0 });
 
         if (component)
             component.scrollTo(position);
         else
-            this.positions[key] = position;
+            this.positions.set(key, position);
     }
 }

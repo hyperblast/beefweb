@@ -1,9 +1,9 @@
-import React from 'react'
-import PropTypes from 'prop-types'
+import React from 'react';
+import PropTypes from 'prop-types';
 import { clamp, throttle } from './lodash.js';
 import { Icon } from './elements.js';
-import { mapRange } from './utils.js'
-import { generateElementId, getFontSize, makeClassName } from './dom_utils.js'
+import { mapRange } from './utils.js';
+import { generateElementId, getFontSize, makeClassName } from './dom_utils.js';
 import ScrollManager from './scroll_manager.js';
 import { DropdownButton, DropdownLink } from './dropdown.js';
 
@@ -18,6 +18,57 @@ const rowPadding = 0.25;
 const cellClassNames = mapRange(
     0, maxColumns, value => `dtable-cell dtable-column-${value}`);
 
+function normalizeColumns(columns)
+{
+    const result = [];
+
+    let prevIsBreak = true;
+
+    for (const column of columns)
+    {
+        if (prevIsBreak && column.lineBreak)
+            continue;
+
+        prevIsBreak = column.lineBreak;
+        result.push(column)
+    }
+
+    if (result.length > 0 && result[result.length - 1].lineBreak)
+        result.pop();
+
+    return result;
+}
+
+function getSubrowCount(columns)
+{
+    let count = 1;
+
+    for (let column of columns)
+    {
+        if (column.lineBreak)
+            count++;
+    }
+
+    return count;
+}
+
+function getColumnsConfig(originalColumns)
+{
+    const columns = normalizeColumns(originalColumns);
+    const subrowCount = getSubrowCount(columns);
+    const columnHeightRem =
+        subrowCount > 1
+            ? subrowHeight * subrowCount + 2 * rowPadding + rowMarginWithSubrows
+            : rowHeight;
+
+    return {
+        originalColumns,
+        columns,
+        subrowCount,
+        columnHeightRem
+    };
+}
+
 export default class DataTable extends React.PureComponent
 {
     constructor(props)
@@ -26,6 +77,7 @@ export default class DataTable extends React.PureComponent
 
         this.elementId = generateElementId('dtable');
         this.state = { columnMenuIndex: -1, rowMenuIndex: -1 };
+        this.columnsConfig = getColumnsConfig(props.columns);
         this.setBodyRef = this.setBodyRef.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
@@ -53,30 +105,23 @@ export default class DataTable extends React.PureComponent
             this.registerInScrollManager(this.props);
             this.restoreScrollPosition();
         }
-    }
-
-    subrowCount()
-    {
-        let count = 1;
-
-        for (let column of this.props.columns)
+        else if (prevProps.columns !== this.props.columns)
         {
-            if (column.lineBreak)
-                count++;
+            this.restoreScrollPosition();
         }
-
-        return count;
     }
 
-    rowHeightRem()
+    updateColumnsConfig()
     {
-        const subrows = this.subrowCount();
-        return subrows > 1 ? subrowHeight * subrows + 2 * rowPadding + rowMarginWithSubrows : rowHeight;
+        if (this.props.columns === this.columnsConfig.originalColumns)
+            return;
+
+        this.columnsConfig = getColumnsConfig(this.props.columns);
     }
 
     rowHeightPx(fontSize)
     {
-        return fontSize * this.rowHeightRem();
+        return fontSize * this.columnsConfig.columnHeightRem;
     }
 
     pixelToRow(px, fontSize)
@@ -93,8 +138,14 @@ export default class DataTable extends React.PureComponent
     {
         const { globalKey, scrollManager } = this.props;
 
-        if (globalKey && scrollManager)
-            scrollManager.savePosition(globalKey, this.body.scrollTop);
+        if (!globalKey || !scrollManager)
+            return;
+
+        const fontSize = getFontSize();
+        const item = this.pixelToRow(this.body.scrollTop, fontSize);
+        const offset = this.body.scrollTop - this.rowToPixel(item, fontSize);
+
+        scrollManager.savePosition(globalKey, item, offset);
     }
 
     restoreScrollPosition()
@@ -111,12 +162,11 @@ export default class DataTable extends React.PureComponent
             if (!this.body)
                 return;
 
-            const { offset, offsetItem } = position;
-
-            if (offset !== undefined)
-                this.body.scrollTop = offset;
-            else if (offsetItem !== undefined)
-                this.body.scrollTop = this.rowToPixel(offsetItem, getFontSize());
+            const fontSize = getFontSize();
+            this.body.scrollTop = (
+                this.rowToPixel(position.item, fontSize) +
+                Math.min(position.offset, this.rowHeightPx(fontSize))
+            );
         }, 30);
     }
 
@@ -157,7 +207,7 @@ export default class DataTable extends React.PureComponent
 
         const fontSize = getFontSize();
         const visibleOffset = this.pixelToRow(this.body.scrollTop, fontSize);
-        const visibleCount = this.pixelToRow(this.body.offsetHeight, fontSize);
+        const visibleCount = this.pixelToRow(this.body.clientHeight, fontSize);
 
         if (visibleOffset - margin >= offset &&
             visibleOffset + visibleCount + margin <= offset + pageSize)
@@ -241,31 +291,32 @@ export default class DataTable extends React.PureComponent
 
     render()
     {
+        this.updateColumnsConfig();
+
         const { className, style, useIcons, onRenderRowMenu } = this.props;
 
-        const subrowCount = this.subrowCount();
         const fullClassName = makeClassName([
             'dtable',
             useIcons ? 'dtable-has-row-icons' : null,
             onRenderRowMenu ? 'dtable-has-row-menu' : null,
-            subrowCount > 1 ? 'dtable-has-subrows' : null,
+            this.columnsConfig.subrowCount > 1 ? 'dtable-has-subrows' : null,
             className,
         ]);
 
         const head = this.props.showHeader
-            ? <div className="dtable-head">{ this.renderColumnHeaders() }</div>
-             : null;
+                     ? <div className="dtable-head">{this.renderColumnHeaders()}</div>
+                     : null;
 
         return (
             <div id={this.elementId} className={fullClassName} style={style}>
-                <style>{ this.renderCellStyles() }</style>
-                { head }
+                <style>{this.renderCellStyles()}</style>
+                {head}
                 <div
                     className='dtable-body'
                     ref={this.setBodyRef}
                     onClick={this.handleClick}
                     onDoubleClick={this.handleDoubleClick}>
-                    { this.renderRows() }
+                    {this.renderRows()}
                 </div>
             </div>
         );
@@ -276,11 +327,11 @@ export default class DataTable extends React.PureComponent
         if (height <= 0)
             return null;
 
-        const size = height * this.rowHeightRem();
+        const size = height * this.columnsConfig.columnHeightRem;
         const style = { height: `${size}rem` };
 
         return (
-            <div key={key} className='dtable-spacer' style={style} />
+            <div key={key} className='dtable-spacer' style={style}/>
         );
     }
 
@@ -300,33 +351,31 @@ export default class DataTable extends React.PureComponent
             }
         }
 
-        const { columns } = this.props;
+        const { columns } = this.columnsConfig;
         const cells = [];
         let cellIndex = 0;
 
         for (let columnIndex = 0; columnIndex < columns.length; columnIndex++)
         {
-            if (columns[columnIndex].lineBreak)
-                continue;
-
             let { dataIndex } = columns[columnIndex];
 
             if (!Number.isInteger(dataIndex))
                 dataIndex = cellIndex;
 
-            cells.push(<span key={cellIndex} className={cellClassNames[cellIndex]}>{rowData.columns[dataIndex]}</span>);
+            cells.push(<span key={dataIndex} className={cellClassNames[cellIndex]}>{rowData.columns[dataIndex]}</span>);
             cellIndex++;
         }
 
         const url = rowData.url || '#';
         const title = rowData.columns.join(' | ');
         const rowContent = (
-            <a data-idx={rowIndex} href={url} title={title} className='dtable-row-content'>{ cells }</a>
+            <a data-idx={rowIndex} href={url} title={title} className='dtable-row-content'>{cells}</a>
         );
 
         let rowMenuButton = null;
 
-        if (this.props.onRenderRowMenu) {
+        if (this.props.onRenderRowMenu)
+        {
             const rowMenu = this.props.onRenderRowMenu(rowIndex);
             if (rowMenu)
             {
@@ -337,20 +386,21 @@ export default class DataTable extends React.PureComponent
                         isOpen={this.state.rowMenuIndex === rowIndex}
                         onRequestOpen={o => this.openRowMenu(rowIndex, o)}
                         className='dtable-row-menu'>
-                        { rowMenu }
+                        {rowMenu}
                     </DropdownButton>
                 );
             }
-            else {
+            else
+            {
                 rowMenuButton = <Icon name='none'/>;
             }
         }
 
         return (
             <div key={rowIndex} className='dtable-row'>
-                { icon }
-                { rowContent }
-                { rowMenuButton }
+                {icon}
+                {rowContent}
+                {rowMenuButton}
             </div>
         );
     }
@@ -378,7 +428,8 @@ export default class DataTable extends React.PureComponent
 
     renderColumnHeaders()
     {
-        const { columns, onRenderColumnMenu } = this.props;
+        const { columns } = this.columnsConfig;
+        const { onRenderColumnMenu } = this.props;
 
         const headers = [];
 
@@ -419,7 +470,7 @@ export default class DataTable extends React.PureComponent
                 className={`dtable-column-header dtable-column-header-link dtable-column-${index}`}
                 isOpen={this.state.columnMenuIndex === index}
                 onRequestOpen={o => this.openColumnMenu(index, o)}>
-                { this.props.onRenderColumnMenu(index) }
+                {this.props.onRenderColumnMenu(index)}
             </DropdownLink>
         );
     }
@@ -451,15 +502,15 @@ export default class DataTable extends React.PureComponent
         }
 
         const headerStyle = withHeader
-            ? `#${this.elementId} .dtable-column-header.dtable-column-${index} { ${rules[0]} }\n`
-            : '';
+                            ? `#${this.elementId} .dtable-column-header.dtable-column-${index} { ${rules[0]} }\n`
+                            : '';
 
         return `${headerStyle}#${this.elementId} .dtable-cell.dtable-column-${index} { ${rules.join(' ')} }`;
     }
 
     renderCellStyles()
     {
-        const { columns } = this.props;
+        const { columns } = this.columnsConfig;
         const styles = [];
 
         let subrowStart = 0;
