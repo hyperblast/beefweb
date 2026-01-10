@@ -19,7 +19,7 @@ function makeClickHandler(callback)
     };
 }
 
-function Icon(props)
+export function Icon(props)
 {
     const { name, className, ref } = props;
     const fullClassName = 'icon icon-' + name + (className ? ' ' + className : '');
@@ -223,8 +223,12 @@ export function AutoScrollText(props)
     const [labelWidth, setLabelWidth] = useState(0);
 
     useLayoutEffect(() => {
-        const updateOverflow = () => setOverflow(container.current.clientWidth < label.current.clientWidth);
-        const updateOverflowWithDelay = debounce(updateOverflow, 10);
+        const updateOverflow = () => {
+            if (container.current && label.current)
+                setOverflow(container.current.clientWidth < label.current.clientWidth);
+        };
+
+        const updateOverflowWithDelay = debounce(updateOverflow, 50);
 
         setLabelWidth(label.current.clientWidth);
         updateOverflow();

@@ -1,4 +1,5 @@
-import { PlaybackState } from 'beefweb-client'
+import React from 'react';
+import { PlaybackState } from 'beefweb-client';
 import { defineModelData } from './hooks.js';
 
 const stateToIcon = {

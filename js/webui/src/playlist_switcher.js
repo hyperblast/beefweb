@@ -45,7 +45,7 @@ export function PlaylistSelector()
     </div>;
 }
 
-function PlaylistTab(props, ref)
+function PlaylistTab(props)
 {
     const { playlist, isCurrent, isActive, ref } = props;
 

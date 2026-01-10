@@ -98,6 +98,9 @@ export class Dropdown extends React.PureComponent
 
     setOpen(value)
     {
+        if (!this.toggleElement)
+            return;
+
         if (this.props.onRequestOpen)
             this.props.onRequestOpen(value);
         else
@@ -132,7 +135,7 @@ export class Dropdown extends React.PureComponent
 
     updateContentElement()
     {
-        if (!this.contentElement)
+        if (!this.toggleElement || !this.contentElement)
             return;
 
         const [x, y] = guessPosition(this.toggleElement, this.contentElement);
