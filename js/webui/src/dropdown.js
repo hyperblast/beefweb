@@ -158,6 +158,7 @@ export class Dropdown extends React.PureComponent
 
     componentWillUnmount()
     {
+        this.throttledResize.cancel();
         window.removeEventListener('resize', this.throttledResize);
         window.removeEventListener('click', this.handleWindowClick);
         this.destroyContentElement();

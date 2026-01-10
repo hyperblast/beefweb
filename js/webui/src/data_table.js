@@ -27,9 +27,9 @@ export default class DataTable extends React.PureComponent
         this.elementId = generateElementId('dtable');
         this.state = { columnMenuIndex: -1, rowMenuIndex: -1 };
         this.setBodyRef = this.setBodyRef.bind(this);
-        this.handleScroll = throttle(this.handleScroll.bind(this), 50);
         this.handleClick = this.handleClick.bind(this);
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
+        this.throttledScroll = throttle(this.handleScroll.bind(this), 50);
     }
 
     componentDidMount()
@@ -40,6 +40,7 @@ export default class DataTable extends React.PureComponent
 
     componentWillUnmount()
     {
+        this.throttledScroll.cancel();
         this.unregisterInScrollManager(this.props);
     }
 
@@ -138,12 +139,12 @@ export default class DataTable extends React.PureComponent
     setBodyRef(body)
     {
         if (this.body)
-            this.body.removeEventListener('scroll', this.handleScroll);
+            this.body.removeEventListener('scroll', this.throttledScroll);
 
         this.body = body;
 
         if (this.body)
-            this.body.addEventListener('scroll', this.handleScroll);
+            this.body.addEventListener('scroll', this.throttledScroll);
     }
 
     movePage(delta, offset, endOffset, totalCount)

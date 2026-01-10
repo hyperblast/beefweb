@@ -25,7 +25,10 @@ export function subscribeWindowResize(callback)
 {
     const debouncedCallback = debounce(callback, 50);
     window.addEventListener('resize', debouncedCallback);
-    return () => window.removeEventListener('resize', debouncedCallback);
+    return () => {
+        debouncedCallback.cancel();
+        window.removeEventListener('resize', debouncedCallback);
+    };
 }
 
 let nextElementId = 0;
