@@ -69,9 +69,9 @@ const defaultPlaylistColumns = {
 };
 
 const oldFontSizes = {
-    small: 0.8,
+    small: 0.85,
     medium: 1,
-    large: 1.2
+    large: 1.15
 };
 
 function migrateUiScale(config)
