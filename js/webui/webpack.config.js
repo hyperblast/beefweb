@@ -1,7 +1,5 @@
 import path from 'path'
-import fs from 'fs'
 import { fileURLToPath } from 'url'
-import webpack from 'webpack'
 import HtmlPlugin from 'html-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
@@ -147,26 +145,44 @@ function getDefaultOutputDir(buildType)
     return path.join(binaryDir, 'js', 'webui', outputDirName);
 }
 
-function getBuildType(value)
+function getBuildType(env)
 {
-    if (!value)
+    const matchedTypes = [];
+
+    for (let key in env)
+    {
+        // --env {type}
+
+        const buildType = buildTypes[key.toLowerCase()];
+        if (buildType)
+            matchedTypes.push(buildType);
+    }
+
+    if (env.buildType)
+    {
+        // --env buildType={type}
+
+        const buildType = buildTypes[env.buildType.toLowerCase()];
+        if (buildType)
+            matchedTypes.push(buildType)
+        else
+            throw Error(`Unknown build type '${env.buildType}'`);
+    }
+
+    if (matchedTypes.length === 0)
         return buildTypes.debug;
 
-    const buildType = buildTypes[value.toLowerCase()];
+    if (matchedTypes.length === 1)
+        return matchedTypes[0];
 
-    if (buildType)
-        return buildType;
-
-    console.log(`Unknown build type '${value}' was specified, defaulting to '${buildTypes.debug}'`);
-    return buildTypes.debug;
+    throw Error('Multiple build types specified: ' + matchedTypes.join(', '));
 }
 
 function makeBuildParams(env)
 {
-    let { buildType, outputDir, analyze, tests } = env;
+    let { outputDir, analyze, tests } = env;
+    const buildType = getBuildType(env);
 
-    buildType = getBuildType(buildType);
-    
     if (!outputDir)
         outputDir = getDefaultOutputDir(buildType);
 
@@ -174,8 +190,8 @@ function makeBuildParams(env)
 
     return {
         buildType,
-        enableTests: tests,
-        analyze,
+        enableTests: tests || false,
+        analyze: analyze || false,
         sourceDir,
         outputDir,
     };
@@ -207,6 +223,7 @@ function makeTarget(configTarget, params)
 export default function(env)
 {
     const params = makeBuildParams(env || {});
+    console.log('using build config', params);
     const allTargets = [makeTarget(configApp, params)];
 
     if (params.enableTests)
