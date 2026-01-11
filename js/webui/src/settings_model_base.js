@@ -9,7 +9,35 @@ const defaultSettingProps = Object.freeze({
     persistent: false,
     cssVisible: false,
     version: 1,
+    migrator: null
 });
+
+function isConfigValue(value)
+{
+    return value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function parseConfig(str)
+{
+    if (!str)
+        return null;
+
+    try
+    {
+        const config = JSON.parse(str);
+
+        if (isConfigValue(config))
+            return config;
+
+        console.log('invalid config value', str);
+        return null;
+    }
+    catch (ex)
+    {
+        console.log('failed to parse config value', str, ex);
+        return null;
+    }
+}
 
 export default class SettingsModelBase extends ModelBase
 {
@@ -34,13 +62,13 @@ export default class SettingsModelBase extends ModelBase
 
         this.defineEvent(key);
 
-        metadata.getter = () => this.getValue(key);
+        metadata.getter = () => this.values[key];
         metadata.setter = value => this.setValue(key, value);
         metadata.subscriber = this.createSubscriber(key);
 
         if (metadata.persistent)
         {
-            metadata.persistenceKey = metadata.version === 1 ? key :`${key}_v${metadata.version}`
+            metadata.persistenceKey = metadata.version === 1 ? key : `${key}_v${metadata.version}`
         }
 
         Object.freeze(metadata);
@@ -59,11 +87,20 @@ export default class SettingsModelBase extends ModelBase
         });
     }
 
+    getMetadata(key)
+    {
+        const result = this.metadata[key];
+        if (!result)
+            throw new Error(`Unknown setting '${key}'`);
+        return result;
+    }
+
     setValue(key, value)
     {
-        const metadata = this.metadata[key];
-        if (!metadata)
-            throw new Error(`Unknown setting key '${key}'`);
+        const metadata = this.getMetadata(key);
+
+        if (value === undefined)
+            throw new Error(`Attempt to set '${key}' to undefined`);
 
         if (isEqual(value, this.values[key]))
             return;
@@ -77,26 +114,20 @@ export default class SettingsModelBase extends ModelBase
         this.emit('change');
     }
 
-    getValue(key)
-    {
-        return this.values[key];
-    }
-
     async getDefaultValue(key)
     {
-        const metadata = this.metadata[key];
-        if (!metadata)
-            throw new Error(`Unknown setting key '${key}'`);
+        const metadata = this.getMetadata(key);
 
         let defaultValue;
 
         if (metadata.persistent)
         {
-            const savedDefaults = await this.client.getClientConfig(clientConfigKey);
+            const defaultConfig = await this.client.getClientConfig(clientConfigKey);
 
-            if (savedDefaults)
+            if (isConfigValue(defaultConfig))
             {
-                defaultValue = savedDefaults[metadata.persistenceKey];
+                this.migrateConfig(defaultConfig);
+                defaultValue = defaultConfig[metadata.persistenceKey];
             }
         }
 
@@ -171,25 +202,17 @@ export default class SettingsModelBase extends ModelBase
 
     initialize()
     {
-        if (this.load())
-        {
-            return Promise.resolve();
-        }
-        else
-        {
-            return this.resetToDefault();
-        }
+        return this.load() ? Promise.resolve() : this.resetToDefault();
     }
 
     load()
     {
-        const data = this.store.getItem(storageKey);
-
-        if (!data)
+        const config = parseConfig(this.store.getItem(storageKey));
+        if (!config)
             return false;
 
-        const newValues = JSON.parse(data);
-        this.loadFromObject(newValues);
+        this.migrateConfig(config)
+        this.loadFromObject(config);
         return true;
     }
 
@@ -207,7 +230,18 @@ export default class SettingsModelBase extends ModelBase
     async resetToDefault()
     {
         const config = await this.client.getClientConfig(clientConfigKey);
-        this.loadFromObject(Object.assign(this.getDefaultValuesFromCode(), config));
+        const defaults = this.getDefaultValuesFromCode();
+
+        if (isConfigValue(config))
+        {
+            this.migrateConfig(config);
+            this.loadFromObject({...defaults, ...config});
+        }
+        else
+        {
+            this.loadFromObject(defaults);
+        }
+
         this.save();
     }
 
@@ -219,5 +253,21 @@ export default class SettingsModelBase extends ModelBase
     finishConstruction()
     {
         Object.freeze(this.metadata);
+        Object.seal(this.values);
+        Object.seal(this);
+    }
+
+    migrateConfig(config)
+    {
+        for (let key in this.metadata)
+        {
+            const metadata = this.metadata[key];
+            if (!metadata.persistent || !metadata.migrator || config[metadata.persistenceKey] !== undefined)
+                continue;
+
+            const migratedValue = metadata.migrator(config);
+            if (migratedValue !== undefined)
+                config[metadata.persistenceKey] = migratedValue;
+        }
     }
 }

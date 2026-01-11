@@ -1,4 +1,4 @@
-import { lineBreak, playlistColumns } from './columns.js';
+import { lineBreak, playlistColumnDefaults, playlistColumns } from './columns.js';
 import { primaryInput } from 'detect-it'
 import SettingsModelBase from './settings_model_base.js';
 
@@ -40,7 +40,7 @@ export const AddAction = Object.freeze({
     replaceAndPlay: 'replaceAndPlay'
 });
 
-const defaultColumns = {
+const defaultPlaylistColumns = {
     [MediaSize.small]: {
         columns: [
             playlistColumns.title,
@@ -68,6 +68,71 @@ const defaultColumns = {
     }
 };
 
+const oldFontSizes = {
+    small: 0.8,
+    medium: 1,
+    large: 1.2
+};
+
+function migrateUiScale(config)
+{
+    if (config.fontSize_v2 === undefined)
+        return undefined;
+
+    const newValue = oldFontSizes[config.fontSize_v2];
+    if (newValue === undefined)
+        return undefined;
+
+    console.log('migrated ui scale', config.fontSize_v2, newValue);
+    return newValue;
+}
+
+function migrateColumns(config)
+{
+    if (!Array.isArray(config.columns))
+        return undefined;
+
+    const result = {};
+    const mediaSizes = Object.values(MediaSize);
+
+    for (let mediaSize of mediaSizes)
+        result[mediaSize] = { ...structuredClone(defaultPlaylistColumns[mediaSize]), columns: [] };
+
+    for (let column of config.columns)
+    {
+        const { title, expression, size, visibility } = column;
+        const migratedColumn = {...playlistColumnDefaults, title, expression, size};
+
+        for (let mediaSize of mediaSizes)
+        {
+            if (visibility[mediaSize])
+                result[mediaSize].columns.push({...migratedColumn});
+        }
+    }
+
+    const smallColumns = result[MediaSize.small].columns;
+    const smallColumnsWithBreaks = [];
+
+    for (let i = 0; i < smallColumns.length - 1; i++)
+    {
+        smallColumnsWithBreaks.push(smallColumns[i]);
+        smallColumnsWithBreaks.push({...lineBreak});
+    }
+
+    if (smallColumns.length > 0)
+        smallColumnsWithBreaks.push(smallColumns[smallColumns.length - 1]);
+
+    result[MediaSize.small].columns = smallColumnsWithBreaks;
+
+    for (let mediaSize of mediaSizes)
+    {
+        if (result[mediaSize].columns.length === 0)
+            result[mediaSize].columns = structuredClone(defaultPlaylistColumns[mediaSize]);
+    }
+
+    console.log('migrated columns', config.columns, result);
+    return result;
+}
 
 /**
  * @class SettingsModel
@@ -195,6 +260,7 @@ export default class SettingsModel extends SettingsModelBase
             maxValue: 1.5,
             step: 0.05,
             persistent: true,
+            migrator: migrateUiScale,
         });
 
         this.define({
@@ -222,9 +288,10 @@ export default class SettingsModel extends SettingsModelBase
         this.define({
             key: 'columns',
             type: SettingType.custom,
-            defaultValue: defaultColumns,
+            defaultValue: defaultPlaylistColumns,
             persistent: true,
-            version: 2
+            version: 2,
+            migrator: migrateColumns,
         });
 
         this.define({

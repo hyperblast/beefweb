@@ -227,7 +227,7 @@ export default class SettingEditor extends React.PureComponent
 
         return {
             value: settingsModel[settingKey],
-            metadata: settingsModel.metadata[settingKey],
+            metadata: settingsModel.getMetadata(settingKey),
             elementId: settingKey.toLowerCase() + '-setting',
         };
     }

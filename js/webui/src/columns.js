@@ -8,7 +8,7 @@ export const ColumnAlign = Object.freeze({
     right: 'right'
 })
 
-const playlistColumnDefaults = Object.freeze({
+export const playlistColumnDefaults = Object.freeze({
     size: 10,
     small: false,
     bold: false,

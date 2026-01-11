@@ -34,6 +34,11 @@ export function useServices()
     return useContext(ServiceContext);
 }
 
+export function useSettingsModel()
+{
+    return useContext(ServiceContext).settingsModel;
+}
+
 export function usePlaylistModel()
 {
     return useServices().playlistModel;
@@ -51,15 +56,13 @@ export function useColumnsSettingsModel()
 
 export function useSettingValue(settingName)
 {
-    const { settingsModel } = useServices();
-    const metadata = settingsModel.metadata[settingName];
+    const metadata = useSettingsModel().getMetadata(settingName);
     return useSyncExternalStore(metadata.subscriber, metadata.getter);
 }
 
 export function useSetting(settingName)
 {
-    const { settingsModel } = useServices();
-    const metadata = settingsModel.metadata[settingName];
+    const metadata = useSettingsModel().getMetadata(settingName);
     const value = useSyncExternalStore(metadata.subscriber, metadata.getter);
     return [value, metadata.setter];
 }
