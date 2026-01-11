@@ -1,13 +1,19 @@
 # Changes in v0.11 (not released)
+- Rework mobile layout: make elements larger and better positioned, support swiping between views
+- Rework column editor: add support for subrows and basic formatting, each layout is now configured separately
 - Allow non-absolute paths in config (resolved relative to {player profile directory}/beefweb/)
 - Fix ignoring of "clientConfigDir" setting
-- Rework mobile layout: make elements larger, support swiping between views
-- Rework column editor: add support for subrows and basic formatting, each layout is now configured separately
 - Allow setting arbitrary UI scale
 - Preserve scroll position in file browser
 - Rename 'UI Theme' to 'Color scheme'
 - Increase icon sizes in all layouts
-- Display current input mode in settings
+- Move playback information panel to main control bar (except mobile layout)
+- Auto-scroll playback information if too wide
+- Don't use ! in file browser URLs
+- Correctly preserve navigation history for all views
+- Make menus automatically use best position
+- Use emoji for playback state in window title instead of favicon
+- Rework sorting of playlists/column definitions (now requires long tap in mobile browsers instead of dedicated drag handle)
 
 ### DeaDBeeF
 - Provide universal .deb package to match `deadbeef-static_*.deb`
