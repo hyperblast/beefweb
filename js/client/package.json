@@ -7,12 +7,5 @@
   "repository": "https://github.com/hyperblast/beefweb",
   "author": "Hyperblast",
   "license": "MIT",
-  "private": true,
-  "scripts": {
-    "build": "webpack-cli"
-  },
-  "devDependencies": {
-    "webpack": "^5.76.0",
-    "webpack-cli": "^4.10.0"
-  }
+  "private": true
 }
