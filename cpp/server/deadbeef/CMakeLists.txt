@@ -30,14 +30,20 @@ target_link_libraries(
     "${CORE_LIBRARIES}"
 )
 
-configure_file(linker_script.in linker_script)
-
 set_target_properties(
     deadbeef_plugin PROPERTIES
     PREFIX ""
     OUTPUT_NAME "${DEADBEEF_PLUGIN_FILE}"
-    LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_BINARY_DIR}/linker_script"
 )
+
+if(NOT OS_MAC)
+    configure_file(linker_script.in linker_script)
+
+    set_target_properties(
+        deadbeef_plugin PROPERTIES
+        LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_BINARY_DIR}/linker_script"
+    )
+endif()
 
 add_dependencies(deadbeef_plugin ext_all)
 

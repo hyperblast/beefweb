@@ -1,5 +1,6 @@
 set(OS_WINDOWS  OFF)
 set(OS_POSIX    OFF)
+set(OS_MAC      OFF)
 
 if(WIN32 AND NOT CYGWIN)
     set(OS_WINDOWS ON)
@@ -8,6 +9,10 @@ elseif(UNIX)
     set(SCRIPT_SUFFIX .sh)
 else()
     message(SEND_ERROR "Target OS is not Windows or POSIX" )
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+    set(OS_MAC ON)
 endif()
 
 set(HOST_OS_WINDOWS OFF)

@@ -1,7 +1,7 @@
 set(COMMON_C_FLAGS "")
 
 if(OS_POSIX)
-    set(COMMON_C_FLAGS "${COMMON_C_FLAGS} -fPIC -pthread -D_GNU_SOURCE=1 -D_FILE_OFFSET_BITS=64")
+    set(COMMON_C_FLAGS "${COMMON_C_FLAGS} -fPIC -pthread -D_FILE_OFFSET_BITS=64")
 endif()
 
 if(CXX_MSVC)

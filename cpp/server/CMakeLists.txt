@@ -28,8 +28,12 @@ endif()
 if(OS_POSIX)
     add_definitions(-DMSRV_OS_POSIX=1)
 
-    add_linker_flag(-Wl,--no-undefined)
-    add_linker_flag(-Wl,--as-needed)
+    if(OS_MAC)
+        add_definitions(-DMSRV_OS_MAC=1)
+    else()
+        add_linker_flag(-Wl,--no-undefined)
+        add_linker_flag(-Wl,--as-needed)
+    endif()
 
     check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
 
@@ -139,7 +143,11 @@ if(OS_POSIX)
         system_posix.cpp
     )
 
-    set(SYSTEM_LIBRARIES "dl;rt;m")
+    set(SYSTEM_LIBRARIES "dl;m")
+
+    if(NOT OS_MAC)
+        list(APPEND SYSTEM_LIBRARIES rt)
+    endif()
 endif()
 
 if(OS_WINDOWS)
