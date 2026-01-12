@@ -33,7 +33,7 @@ and add `-DENABLE_TESTS=ON` to cmake parameters.
 Create .tar.xz package:
 ```
 $ cmake . -DDEADBEEF_INSTALL_INTO_ROOT=ON
-$ cpack -G DEB
+$ cpack -G TXZ
 ```
 
 `ddb_beefweb-*.tar.xz` will be created in `build/Release`.

@@ -42,9 +42,9 @@ if(OS_POSIX)
     local_library_option(deadbeef ENABLE_LOCAL_DEADBEEF "ENABLE_DEADBEEF")
 
     if(DEADBEEF_INSTALL_INTO_ROOT)
-        set(DEADBEEF_LIB_DIR ".")
+        set(DEADBEEF_INSTALL_DIR ".")
     else()
-        set(DEADBEEF_LIB_DIR "lib/deadbeef")
+        set(DEADBEEF_INSTALL_DIR "lib/deadbeef")
     endif()
 endif()
 

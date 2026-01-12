@@ -66,7 +66,7 @@ function(install_webui COMP DIR)
 endfunction()
 
 if(ENABLE_DEADBEEF)
-    install_webui(deadbeef_plugin ${DEADBEEF_LIB_DIR})
+    install_webui(deadbeef_plugin ${DEADBEEF_INSTALL_DIR})
 endif()
 
 if(ENABLE_FOOBAR2000)
