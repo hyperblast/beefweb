@@ -27,26 +27,27 @@ Build:
 $ cmake --build . --parallel
 ```
 
+If you want to develop backend change `Release` to `Debug` in the commands above
+and add `-DENABLE_TESTS=ON` to cmake parameters.
+
 Create .tar.xz package:
 ```
-$ cpack
+$ cmake . -DDEADBEEF_INSTALL_INTO_ROOT=ON
+$ cpack -G DEB
 ```
 
 `ddb_beefweb-*.tar.xz` will be created in `build/Release`.
 
 Create .deb package:
 ```
-$ cmake . -DENABLE_DEADBEEF_SINGLE_DIR=OFF
+$ cmake . -DDEADBEEF_INSTALL_INTO_ROOT=OFF
 $ cpack -G DEB
 ```
 
 `deadbeef-beefweb_*.deb` will be created.
 
-`ENABLE_DEADBEEF_SINGLE_DIR` option affects directory layout inside package,
-make sure it is ON when creating .tar.xz and OFF when creating .deb
-
-If you want to develop backend change `Release` to `Debug` in the commands above
-and add `-DENABLE_TESTS=ON` to cmake parameters.
+`DEADBEEF_INSTALL_INTO_ROOT` option affects directory layout inside package,
+make sure it is `ON` when creating `.tar.xz` and `OFF` when creating .deb
 
 ### foobar2000
 Visual Studio is used to build backend. Currently tested with VS2022 Community.

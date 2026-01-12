@@ -61,6 +61,7 @@ function(install_webui COMP DIR)
         COMPONENT ${COMP}
         PATTERN tests EXCLUDE
         PATTERN sandbox EXCLUDE
+        PATTERN stats EXCLUDE
     )
 endfunction()
 
