@@ -70,6 +70,8 @@ else()
     set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/js/webui/output)
 endif()
 
+print_status()
+
 add_subdirectory(cpp)
 
 if(ENABLE_JS)
@@ -78,5 +80,3 @@ endif()
 
 include(Packages)
 include(CPack)
-
-print_status()

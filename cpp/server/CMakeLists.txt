@@ -3,22 +3,26 @@ set(CMAKE_CXX_STANDARD 17)
 
 include(CheckSymbolExists)
 
+if(OS_LINUX)
+    add_compiler_flag(-D_GNU_SOURCE)
+endif()
+
 if(CXX_GCC OR CXX_CLANG)
-    add_cxx_compiler_flag(-Wall)
-    add_cxx_compiler_flag(-Wextra)
+    add_compiler_flag(-Wall)
+    add_compiler_flag(-Wextra)
 
     if(ENABLE_WERROR)
-        add_cxx_compiler_flag(-Werror)
+        add_compiler_flag(-Werror)
     endif()
 
     if(ENABLE_STATIC_STDLIB)
-        add_linker_flag(-static-libstdc++)
+        checked_add_linker_flag(-static-libstdc++)
     endif()
 endif()
 
 if(CXX_CLANG)
-    add_cxx_compiler_flag(-Wno-potentially-evaluated-expression)
-    add_cxx_compiler_flag(-Wno-extern-c-compat)
+    checked_add_compiler_flag(-Wno-potentially-evaluated-expression)
+    checked_add_compiler_flag(-Wno-extern-c-compat)
 endif()
 
 if(CXX_MSVC)
@@ -31,15 +35,12 @@ if(OS_POSIX)
     if(OS_MAC)
         add_definitions(-DMSRV_OS_MAC=1)
     else()
-        add_linker_flag(-Wl,--no-undefined)
-        add_linker_flag(-Wl,--as-needed)
+        checked_add_linker_flag(-Wl,--no-undefined)
+        checked_add_linker_flag(-Wl,--as-needed)
     endif()
 
     check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
-
-    if(NOT HAVE_PTHREAD_SETNAME_NP)
-        check_symbol_exists(pthread_set_name_np "pthread.h" HAVE_PTHREAD_SET_NAME_NP)
-    endif()
+    check_symbol_exists(pthread_set_name_np "pthread.h" HAVE_PTHREAD_SET_NAME_NP)
 endif()
 
 if(OS_WINDOWS)
@@ -190,3 +191,5 @@ if(ENABLE_TESTS)
 
     file(GENERATE OUTPUT ${CONFIG_JSON} CONTENT "{\"webRoot\":\"${WEBUI_OUTPUT_DIR}\"}")
 endif()
+
+print_toolchain_flags()
