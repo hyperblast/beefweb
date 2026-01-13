@@ -22,6 +22,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+    set(OS_MAC ON)
     set(SHARED_LIB_SUFFIX .dylib)
 endif()
 
