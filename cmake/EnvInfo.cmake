@@ -3,18 +3,26 @@ set(OS_POSIX    OFF)
 set(OS_MAC      OFF)
 set(OS_LINUX    OFF)
 
-if(WIN32 AND NOT CYGWIN)
+if(CMAKE_SYSTEM_NAME STREQUAL Windows)
     set(OS_WINDOWS ON)
-elseif(UNIX)
+    set(SHARED_LIB_SUFFIX .dll)
+endif()
+
+if(UNIX)
     set(OS_POSIX ON)
-else()
+    set(SHARED_LIB_SUFFIX .so)
+endif()
+
+if(NOT OS_WINDOWS AND NOT OS_POSIX)
     message(SEND_ERROR "Target OS is not Windows or POSIX")
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
-    set(OS_MAC ON)
-elseif(CMAKE_SYSTEM_NAME STREQUAL Linux)
+if(CMAKE_SYSTEM_NAME STREQUAL Linux)
     set(OS_LINUX ON)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+    set(SHARED_LIB_SUFFIX .dylib)
 endif()
 
 set(HOST_OS_WINDOWS OFF)

@@ -33,6 +33,7 @@ target_link_libraries(
 set_target_properties(
     deadbeef_plugin PROPERTIES
     PREFIX ""
+    SUFFIX ${SHARED_LIB_SUFFIX}
     OUTPUT_NAME "${DEADBEEF_PLUGIN_FILE}"
 )
 
@@ -62,6 +63,7 @@ if(ENABLE_TESTS)
     set_target_properties(
         deadbeef_plugin_dummy_gui PROPERTIES
         PREFIX ""
+        SUFFIX ${SHARED_LIB_SUFFIX}
         OUTPUT_NAME "ddb_gui_dummy"
     )
 
@@ -75,6 +77,7 @@ if(ENABLE_TESTS)
     set_target_properties(
         deadbeef_plugin_nullout2 PROPERTIES
         PREFIX ""
+        SUFFIX ${SHARED_LIB_SUFFIX}
         OUTPUT_NAME "nullout2"
     )
 
