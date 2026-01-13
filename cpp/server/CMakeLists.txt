@@ -37,10 +37,12 @@ if(OS_POSIX)
     else()
         checked_add_linker_flag(-Wl,--no-undefined)
         checked_add_linker_flag(-Wl,--as-needed)
+
+        # TODO check for signature
+        check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
+        check_symbol_exists(pthread_set_name_np "pthread.h" HAVE_PTHREAD_SET_NAME_NP)
     endif()
 
-    check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
-    check_symbol_exists(pthread_set_name_np "pthread.h" HAVE_PTHREAD_SET_NAME_NP)
 endif()
 
 if(OS_WINDOWS)
