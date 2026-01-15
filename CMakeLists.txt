@@ -48,13 +48,15 @@ if(OS_POSIX)
     endif()
 endif()
 
-if(OS_WINDOWS)
+if(OS_WINDOWS OR OS_MAC)
     option(ENABLE_FOOBAR2000 "Build plugin for foobar2000 player" ON)
 
     if(ENABLE_FOOBAR2000)
         local_library(foosdk)
     endif()
+endif()
 
+if(OS_WINDOWS)
     local_library_option(zlib ENABLE_LOCAL_ZLIB "")
 endif()
 
