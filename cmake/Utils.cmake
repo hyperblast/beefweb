@@ -119,8 +119,10 @@ function(print_toolchain_flags)
 
     if(IS_MULTI_CONFIG)
         set(BUILD_TYPES ${ALL_BUILD_TYPES})
-    else()
+    elseif(CMAKE_BUILD_TYPE)
         string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPES)
+    else()
+        set(BUILD_TYPES "")
     endif()
 
     foreach(LANG_NAME ${ALL_LANG_NAMES})
