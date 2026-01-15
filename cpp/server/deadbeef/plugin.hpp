@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../defines.hpp"
-#include "../settings.hpp"
-#include "../server_host.hpp"
-#include "../file_system.hpp"
+#include "defines.hpp"
+#include "settings.hpp"
+#include "server_host.hpp"
+#include "file_system.hpp"
 #include "project_info.hpp"
 
 #include "player.hpp"

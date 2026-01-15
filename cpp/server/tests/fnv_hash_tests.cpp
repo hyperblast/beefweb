@@ -1,4 +1,4 @@
-#include "../fnv_hash.hpp"
+#include "fnv_hash.hpp"
 
 #include <catch.hpp>
 

@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 #include "player_options.hpp"
-#include "../player_api.hpp"
+#include "player_api.hpp"
 #include "playlist_mapping.hpp"
 #include "utils.hpp"
 

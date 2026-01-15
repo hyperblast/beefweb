@@ -3,8 +3,8 @@
 #include "plugin.hpp"
 #include "resource.h"
 
-#include "../log.hpp"
-#include "../system.hpp"
+#include "log.hpp"
+#include "system.hpp"
 #include "project_info.hpp"
 
 namespace msrv::player_foobar2000 {

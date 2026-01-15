@@ -142,6 +142,16 @@ function(print_toolchain_flags)
     endforeach()
 endfunction()
 
+macro(set_by_pointer_size VAR VALUE_4 VALUE_8)
+    if(${CMAKE_SIZEOF_VOID_P} STREQUAL 4)
+        set(${VAR} ${VALUE_4})
+    elseif(${CMAKE_SIZEOF_VOID_P} STREQUAL 8)
+        set(${VAR} ${VALUE_8})
+    else()
+        message(SEND_ERROR "Unsupported pointer size: ${CMAKE_SIZEOF_VOID_P}")
+    endif()
+endmacro()
+
 macro(detect_git_revision VAR)
     execute_process(
         COMMAND git rev-parse --short HEAD

@@ -1,16 +1,17 @@
 find_package(foosdk REQUIRED)
 
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${FOOSDK_INCLUDE_DIRS}
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /d2notypeopt")
+if(CXX_MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /d2notypeopt")
+endif()
 
 set(
-    FOOBAR2000_PLUGIN_SOURCES
+    PLUGIN_SOURCES
     common.hpp
-    main_prefs_page.cpp main_prefs_page.hpp
-    permissions_prefs_page.cpp permissions_prefs_page.hpp
     player.hpp
     player_control.cpp
     player_misc.cpp
@@ -18,37 +19,62 @@ set(
     player_playlists.cpp
     playlist_mapping.cpp playlist_mapping.hpp
     plugin.cpp plugin.hpp
-    prefs_page.cpp prefs_page.hpp
-    resource.h resource.rc
     settings.cpp settings.hpp
     utils.cpp utils.hpp
 )
 
+if(OS_WINDOWS)
+    set(
+        PLUGIN_SOURCES
+        ${PLUGIN_SOURCES}
+        windows/main_prefs_page.cpp windows/main_prefs_page.hpp
+        windows/permissions_prefs_page.cpp windows/permissions_prefs_page.hpp
+        windows/prefs_page.cpp windows/prefs_page.hpp
+        windows/resource.h windows/resource.rc
+    )
+endif()
+
 set(
-    CORE_LIBRARIES_FOOBAR2000
-    ${CORE_LIBRARIES}
+    PLUGIN_LIBRARIES
+    "${CORE_LIBRARIES};${FOOSDK_LIBRARIES}"
 )
 
-if(ZLIB_DLL_LIBRARIES)
-    list(REMOVE_ITEM CORE_LIBRARIES_FOOBAR2000 "${ZLIB_LIBRARIES}")
-    list(APPEND CORE_LIBRARIES_FOOBAR2000 "${ZLIB_DLL_LIBRARIES}")
+if(OS_WINDOWS)
+    list(APPEND PLUGIN_LIBRARIES shlwapi.lib)
+
+    if(ZLIB_DLL_LIBRARIES)
+        list(REMOVE_ITEM PLUGIN_LIBRARIES "${ZLIB_LIBRARIES}")
+        list(APPEND PLUGIN_LIBRARIES "${ZLIB_DLL_LIBRARIES}")
+    endif()
+endif()
+
+if(OS_MAC)
+    list(APPEND PLUGIN_LIBRARIES "-framework Cocoa")
 endif()
 
 add_library(
     foobar2000_plugin MODULE
-    ${FOOBAR2000_PLUGIN_SOURCES}
+    ${PLUGIN_SOURCES}
     $<TARGET_OBJECTS:core>
 )
 
 target_link_libraries(
     foobar2000_plugin
-    "${CORE_LIBRARIES_FOOBAR2000};${FOOSDK_LIBRARIES};shlwapi.lib"
+    ${PLUGIN_LIBRARIES}
 )
 
 set_target_properties(
     foobar2000_plugin PROPERTIES
     OUTPUT_NAME "${FOOBAR2000_PLUGIN_FILE}"
 )
+
+if(OS_MAC)
+    set_target_properties(
+        foobar2000_plugin PROPERTIES
+        BUNDLE ON
+        BUNDLE_EXTENSION component
+    )
+endif()
 
 install(
     TARGETS foobar2000_plugin

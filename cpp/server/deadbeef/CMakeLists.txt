@@ -5,7 +5,7 @@ include_directories(
 )
 
 set(
-    DEADBEEF_PLUGIN_SOURCES
+    PLUGIN_SOURCES
     add_items_scope.cpp add_items_scope.hpp
     artwork_fetcher_v1.cpp artwork_fetcher_v2.cpp artwork_fetcher.hpp
     common.cpp common.hpp
@@ -21,13 +21,13 @@ set(
 
 add_library(
     deadbeef_plugin MODULE
-    ${DEADBEEF_PLUGIN_SOURCES}
+    ${PLUGIN_SOURCES}
     $<TARGET_OBJECTS:core>
 )
 
 target_link_libraries(
     deadbeef_plugin
-    "${CORE_LIBRARIES}"
+    ${CORE_LIBRARIES}
 )
 
 set_target_properties(

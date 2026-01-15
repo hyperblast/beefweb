@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../log.hpp"
+#include "log.hpp"
 #include "common.hpp"
 #include "project_info.hpp"
 

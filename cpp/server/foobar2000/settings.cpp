@@ -1,7 +1,7 @@
 #include "settings.hpp"
 #include "project_info.hpp"
-#include "../string_utils.hpp"
-#include "../core_types_parsers.hpp"
+#include "string_utils.hpp"
+#include "core_types_parsers.hpp"
 
 namespace msrv::player_foobar2000::settings_store {
 

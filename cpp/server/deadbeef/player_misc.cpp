@@ -1,5 +1,5 @@
 #include "player.hpp"
-#include "../log.hpp"
+#include "log.hpp"
 
 namespace msrv::player_deadbeef {
 

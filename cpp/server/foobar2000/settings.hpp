@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "../settings.hpp"
+#include "settings.hpp"
 
 #include <string>
 #include <vector>

@@ -71,6 +71,7 @@ configure_file(env_info.hpp.in env_info.hpp)
 configure_file(project_info.hpp.in project_info.hpp)
 
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${Boost_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
