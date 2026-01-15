@@ -41,8 +41,8 @@ void Plugin::reconfigure()
         settings->allowRemote = settings_store::allowRemote;
         settings->musicDirsOrig = settings_store::getMusicDirs();
         settings->authRequired = settings_store::authRequired;
-        settings->authUser = settings_store::authUser;
-        settings->authPassword = settings_store::authPassword;
+        settings->authUser = settings_store::authUser.get();
+        settings->authPassword = settings_store::authPassword.get();
         settings->permissions = settings_store::getPermissions();
 
         settings->initialize(getProfileDir());

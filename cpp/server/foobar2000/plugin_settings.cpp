@@ -66,7 +66,8 @@ ApiPermissions getPermissions()
 
 std::vector<std::string> getMusicDirs()
 {
-    StringView dirs(musicDirs.get_ptr(), musicDirs.get_length());
+    auto value = musicDirs.get();
+    StringView dirs(value.get_ptr(), value.get_length());
     return parseValueList<std::string>(dirs, listSeparator);
 }
 
@@ -83,7 +84,7 @@ void setMusicDirs(const std::vector<std::string>& dirs)
     if (!str.empty())
         str.pop_back();
 
-    musicDirs.set_string(str.data(), str.length());
+    musicDirs.set(str.c_str());
 }
 
 }
