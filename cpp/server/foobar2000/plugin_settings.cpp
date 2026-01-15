@@ -1,4 +1,4 @@
-#include "settings.hpp"
+#include "plugin_settings.hpp"
 #include "project_info.hpp"
 #include "string_utils.hpp"
 #include "core_types_parsers.hpp"

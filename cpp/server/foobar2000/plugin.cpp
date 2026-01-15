@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-#include "settings.hpp"
+#include "plugin_settings.hpp"
 #include "project_info.hpp"
 #include "utils.hpp"
 

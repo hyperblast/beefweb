@@ -1,7 +1,7 @@
 #include "permissions_prefs_page.hpp"
 #include "plugin.hpp"
 #include "resource.h"
-#include "settings.hpp"
+#include "plugin_settings.hpp"
 
 #include "log.hpp"
 #include "project_info.hpp"

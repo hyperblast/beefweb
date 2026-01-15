@@ -1,5 +1,5 @@
 #include "main_prefs_page.hpp"
-#include "settings.hpp"
+#include "plugin_settings.hpp"
 #include "plugin.hpp"
 #include "resource.h"
 

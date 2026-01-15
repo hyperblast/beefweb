@@ -19,7 +19,7 @@ set(
     player_playlists.cpp
     playlist_mapping.cpp playlist_mapping.hpp
     plugin.cpp plugin.hpp
-    settings.cpp settings.hpp
+    plugin_settings.cpp plugin_settings.hpp
     utils.cpp utils.hpp
 )
 
