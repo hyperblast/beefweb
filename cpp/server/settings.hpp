@@ -52,8 +52,6 @@ public:
     static void migrate(const char* appName, const Path& profileDir);
 #endif
 
-    static const Path& getDefaultWebRoot();
-
     void ensurePermissions(ApiPermissions p) const
     {
         if (!hasFlags(permissions, p))
