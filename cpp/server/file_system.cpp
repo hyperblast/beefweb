@@ -28,6 +28,13 @@ bool isSubpath(const Path& parentPath, const Path& childPath)
         && child[parent.length() - 1] == Path::preferred_separator;
 }
 
+Path getThisModuleDir()
+{
+    static int dummySymbol = 0;
+    static Path path = getModulePath(&dummySymbol).parent_path();
+    return path;
+}
+
 namespace file_io {
 
 std::vector<uint8_t> readToEnd(FileHandle::Type handle, int64_t maxBytes)

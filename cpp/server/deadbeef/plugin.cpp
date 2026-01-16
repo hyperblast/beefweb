@@ -1,4 +1,5 @@
 #include "plugin.hpp"
+#include "file_system.hpp"
 
 #define CONF_PORT           MSRV_PROJECT_ID ".port"
 #define CONF_ALLOW_REMOTE   MSRV_PROJECT_ID ".allow_remote"
@@ -66,7 +67,7 @@ void Plugin::reconfigure()
         settings->authPassword = authPassword_;
         settings->permissions = permissions_;
 
-        settings->initialize(getProfileDir());
+        settings->initialize(getThisModuleDir(), getProfileDir());
 
         host_.reconfigure(std::move(settings));
     });

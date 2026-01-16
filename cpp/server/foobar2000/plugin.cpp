@@ -45,7 +45,13 @@ void Plugin::reconfigure()
         settings->authPassword = settings_store::authPassword.get();
         settings->permissions = settings_store::getPermissions();
 
-        settings->initialize(getProfileDir());
+#ifdef OS_MAC
+        auto resourceDir = settings->initialize(getThisModuleDir().parent_path() / Path("Resources"), getProfileDir());
+#else
+        const auto& resourceDir = getThisModuleDir();
+#endif
+
+        settings->initialize(resourceDir, getProfileDir());
 
         host_.reconfigure(std::move(settings));
     });

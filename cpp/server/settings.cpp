@@ -26,14 +26,6 @@ const PermissionDef permissionDefs[] = {
     {ApiPermissions::NONE, nullptr},
 };
 
-int dummySymbol;
-
-const Path& getBundleDir()
-{
-    static Path path = getModulePath(&dummySymbol).parent_path();
-    return path;
-}
-
 template<typename T>
 void loadValue(const Json& json, T* value, const char* name)
 {
@@ -85,6 +77,7 @@ void tryCopyDirectory(const Path& from, const Path& to, const Path& ext)
 SettingsData::SettingsData() = default;
 SettingsData::~SettingsData() = default;
 
+#ifndef MSRV_OS_MAC
 void SettingsData::migrate(const char* appName, const Path& profileDir)
 {
     tryCatchLog([&] {
@@ -110,15 +103,10 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
             tryCopyDirectory(oldClientConfigDir, newClientConfigDir, MSRV_PATH_LITERAL(".json"));
         }
 
-        tryCopyFile(getBundleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
+        tryCopyFile(getThisModuleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
     });
 }
-
-const Path& SettingsData::getDefaultWebRoot()
-{
-    static Path path = getBundleDir() / MSRV_PATH_LITERAL(MSRV_WEBUI_ROOT);
-    return path;
-}
+#endif
 
 bool SettingsData::isAllowedPath(const Path& path) const
 {
@@ -131,8 +119,9 @@ bool SettingsData::isAllowedPath(const Path& path) const
     return false;
 }
 
-void SettingsData::initialize(const Path& profileDir)
+void SettingsData::initialize(const Path& resourceDir, const Path& profileDir)
 {
+    assert(!resourceDir.empty());
     assert(!profileDir.empty());
 
     baseDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
@@ -152,7 +141,7 @@ void SettingsData::initialize(const Path& profileDir)
 
     if (webRoot.empty())
     {
-        webRoot = getDefaultWebRoot();
+        webRoot = resourceDir / MSRV_PATH_LITERAL(MSRV_WEBUI_ROOT);
     }
 
     clientConfigDir = resolvePath(pathFromUtf8(clientConfigDirOrig)).lexically_normal();
