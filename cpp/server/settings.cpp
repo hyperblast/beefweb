@@ -41,6 +41,8 @@ void loadValue(const Json& json, T* value, const char* name)
     }
 }
 
+#ifndef MSRV_OS_MAC
+
 void tryCopyFile(const Path& from, const Path& to)
 {
     boost::system::error_code ec;
@@ -72,12 +74,15 @@ void tryCopyDirectory(const Path& from, const Path& to, const Path& ext)
     }
 }
 
+#endif
+
 }
 
 SettingsData::SettingsData() = default;
 SettingsData::~SettingsData() = default;
 
 #ifndef MSRV_OS_MAC
+
 void SettingsData::migrate(const char* appName, const Path& profileDir)
 {
     tryCatchLog([&] {
@@ -106,6 +111,7 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
         tryCopyFile(getThisModuleDir() / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE_OLD), newConfigFile);
     });
 }
+
 #endif
 
 bool SettingsData::isAllowedPath(const Path& path) const
