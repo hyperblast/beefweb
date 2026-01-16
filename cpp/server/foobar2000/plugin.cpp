@@ -45,8 +45,8 @@ void Plugin::reconfigure()
         settings->authPassword = settings_store::authPassword.get();
         settings->permissions = settings_store::getPermissions();
 
-#ifdef OS_MAC
-        auto resourceDir = settings->initialize(getThisModuleDir().parent_path() / Path("Resources"), getProfileDir());
+#ifdef MSRV_OS_MAC
+        auto resourceDir = getThisModuleDir().parent_path() / Path("Resources");
 #else
         const auto& resourceDir = getThisModuleDir();
 #endif
