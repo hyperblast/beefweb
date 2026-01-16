@@ -9,7 +9,7 @@
 #define MSRV_VERSION_FINAL          @PROJECT_VERSION_FINAL@
 #define MSRV_GIT_REV                "@PROJECT_GIT_REV@"
 #define MSRV_DEADBEEF_ENTRY_POINT   @DEADBEEF_ENTRY_POINT@
-#define MSRV_FOOBAR2000_PLUGIN_FILE "@FOOBAR2000_PLUGIN_FILE@.dll"
+#define MSRV_FOOBAR2000_PLUGIN_FILE "@FOOBAR2000_PLUGIN_FILE@"
 
 #define MSRV_PROJECT_ID             "beefweb"
 #define MSRV_PROJECT_NAME           "Beefweb Remote Control"
@@ -28,7 +28,7 @@
 #if MSRV_VERSION_FINAL
 #define MSRV_VERSION_SUFFIX ""
 #else
-#define MSRV_VERSION_SUFFIX " alpha"
+#define MSRV_VERSION_SUFFIX " beta"
 #endif
 
 #define MSRV_VERSION_STRING_DETAILED \
