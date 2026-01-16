@@ -67,7 +67,9 @@ public:
     void on_init() override
     {
         Logger::setCurrent(&logger_);
+#ifndef MSRV_OS_MAC
         SettingsData::migrate(MSRV_PLAYER_FOOBAR2000, Plugin::getProfileDir());
+#endif
         tryCatchLog([this] { plugin_ = std::make_unique<Plugin>(); });
     }
 
