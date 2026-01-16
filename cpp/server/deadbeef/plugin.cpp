@@ -48,7 +48,9 @@ void Plugin::handlePluginsLoaded()
 {
     pluginsLoaded_ = true;
 
+#ifndef MSRV_OS_MAC
     SettingsData::migrate(MSRV_PLAYER_DEADBEEF, getProfileDir());
+#endif
 
     refreshSettings();
     reconfigure();
