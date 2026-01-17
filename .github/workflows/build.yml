@@ -45,6 +45,28 @@ jobs:
           ci_build/${{ env.BUILD_TYPE }}/*.deb
           ci_build/${{ env.BUILD_TYPE }}/*.tar.xz
 
+  build_macos:
+    runs-on: macos-26
+
+    env:
+      BUILD_TYPE: Release
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build
+      run: ci/macos_build.sh
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos_packages
+        if-no-files-found: error
+        path: |
+          ci_build/${{ env.BUILD_TYPE }}/*.fb2k-component
+          ci_build/${{ env.BUILD_TYPE }}/*.zip
+
   build_windows:
 
     runs-on: windows-2022
