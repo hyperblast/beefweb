@@ -26,10 +26,10 @@ export async function spawnProcess(parameters)
 
         if (logFile)
         {
-            args.push('--stdout');
-            args.push(logFile);
-            args.push('--stderr');
-            args.push(logFile);
+            realArgs.push('--stdout');
+            realArgs.push(logFile);
+            realArgs.push('--stderr');
+            realArgs.push(logFile);
         }
 
         if (args && args.length > 0)
