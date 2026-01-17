@@ -101,13 +101,11 @@ class PlayerController
 
                     console.error('Failed to cleanly stop player, terminating process');
                     this.process.kill();
-                    await waitForExit(this.process);
                 },
 
                 async mac()
                 {
                     await execFile('killall', ['foobar2000']);
-                    await waitForExit(this.process);
                 }
             });
         }
