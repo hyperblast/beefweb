@@ -142,13 +142,13 @@ jobs:
         pkg_ext=fb2k-component
         pkg_w32=$(pwd)/input/*-windows-x86.$pkg_ext
         pkg_w64=$(pwd)/input/*-windows-x86_64.$pkg_ext
-        pkg_mac=$(pwd)/input/*-macos-*.$pkg_ext
-        pkg_univeral=$(pwd)/output/$(basename $pkg_w32 -windows-x86.$pkg_ext).$pkg_ext
+        pkg_mac=$(pwd)/input/*-macos-arm64.$pkg_ext
+        pkg_universal=$(pwd)/output/$(basename $pkg_w32 -windows-x86.$pkg_ext).$pkg_ext
         mkdir -p work/x64 work/mac output
         (cd work/x64 && unzip $pkg_w64 '*.dll')
         (cd work/mac && unzip $pkg_mac '*')
-        cp $pkg_w32 $pkg_univeral
-        (cd work && zip -r -9 $pkg_univeral *)
+        cp $pkg_w32 $pkg_universal
+        (cd work && zip -r -9 $pkg_universal *)
 
     - name: Upload package
       uses: actions/upload-artifact@v4
