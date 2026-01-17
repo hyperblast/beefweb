@@ -49,9 +49,6 @@ static int null_terminate;
 static int state;
 
 static void
-pnull_callback (char *stream, int len);
-
-static void
 pnull_thread (void *context);
 
 static int
@@ -138,15 +135,6 @@ pnull_unpause (void) {
         state = OUTPUT_STATE_PLAYING;
     }
     return 0;
-}
-
-static int
-pnull_get_endianness (void) {
-#if WORDS_BIGENDIAN
-    return 1;
-#else
-    return 0;
-#endif
 }
 
 static void
