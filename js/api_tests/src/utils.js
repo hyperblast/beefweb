@@ -17,7 +17,7 @@ export async function spawnProcess(parameters)
     let realArgs;
     let logFileHandle = null;
 
-    const options = {};
+    const options = { detached: true };
 
     if (os.type() === 'Darwin' && command.endsWith('.app'))
     {
@@ -82,6 +82,7 @@ export async function spawnProcess(parameters)
         await logFileHandle.close();
     }
 
+    process.unref();
     return process;
 }
 
