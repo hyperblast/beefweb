@@ -12,7 +12,7 @@ on:
 
 jobs:
 
-  build_deadbeef:
+  build_linux:
 
     runs-on: ubuntu-22.04
 
@@ -28,24 +28,24 @@ jobs:
       run: ci/docker/build_image.sh
 
     - name: Install apps
-      run: ci/install.sh
+      run: ci/linux_install.sh
 
     - name: Build
-      run: ci/build.sh
+      run: ci/linux_build.sh
 
     - name: Test
-      run: ci/test.sh
+      run: ci/linux_test.sh
 
     - name: Upload binaries
       uses: actions/upload-artifact@v4
       with:
-        name: beefweb_deadbeef
+        name: linux_packages
         if-no-files-found: error
         path: |
           ci_build/${{ env.BUILD_TYPE }}/*.deb
           ci_build/${{ env.BUILD_TYPE }}/*.tar.xz
 
-  build_foobar2000:
+  build_windows:
 
     runs-on: windows-2022
 
@@ -78,32 +78,32 @@ jobs:
         arch: ${{ matrix.arch }}
 
     - name: Install apps
-      run: cmd /c ci\install.cmd
+      run: cmd /c ci\windows_install.cmd
 
     - name: Build
-      run: cmd /c ci\build.cmd
+      run: cmd /c ci\windows_build.cmd
 
     - name: Test
-      run: cmd /c ci\test.cmd
+      run: cmd /c ci\windows_test.cmd
 
     - name: Upload binaries
       uses: actions/upload-artifact@v4
       with:
-        name: 'beefweb_foobar2000_${{ matrix.arch }}'
+        name: 'windows_packages_${{ matrix.arch }}'
         if-no-files-found: error
         path: 'ci_build\${{ env.BUILD_TYPE }}\*.fb2k-component'
 
-  merge_foobar2000_packages:
+  build_universal_foobar2000_package:
 
     runs-on: ubuntu-22.04
 
-    needs: build_foobar2000
+    needs: build_windows
 
     steps:
     - name: Download original packages
       uses: actions/download-artifact@v4
       with:
-        pattern: beefweb_foobar2000_*
+        pattern: windows_packages_*
         merge-multiple: true
         path: input
 
@@ -121,6 +121,6 @@ jobs:
     - name: Upload merged package
       uses: actions/upload-artifact@v4
       with:
-        name: beefweb_foobar2000
+        name: universal_foobar2000_package
         if-no-files-found: error
         path: output/*.fb2k-component
