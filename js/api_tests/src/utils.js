@@ -207,9 +207,15 @@ export function waitForExit(process, timeout = -1)
 }
 
 export const normalizePath = selectBySystem({
-    windows: p => p.toUpperCase(),
-    mac: p => p.toUpperCase(),
-    posix: p => p
+    posix: path => path,
+    windows: path => path.toUpperCase(),
+    mac(path)
+    {
+        if (path.startsWith('~/'))
+            path = process.env.HOME + path.substring(1);
+        path = path.toUpperCase();
+        return path;
+    },
 });
 
 export function pathsEqual(p1, p2)
