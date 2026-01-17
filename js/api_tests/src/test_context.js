@@ -1,8 +1,11 @@
 import path from 'path'
+import fsObj from 'fs';
 import { fileURLToPath } from 'url'
 import { getBinaryDir } from '../../config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
+
+const fs = fsObj.promises;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,7 +72,7 @@ export class TestContext
             return;
         }
 
-        const logData = await this.player.getLog();
+        const logData = await fs.readFile(this.player.logFile, 'utf8');
 
         if (logData)
             console.error('Player run log:\n%s', logData);

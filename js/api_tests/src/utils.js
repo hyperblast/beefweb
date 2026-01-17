@@ -3,33 +3,84 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import fsObj from 'fs';
 import childProcess from 'child_process';
+import { promisify } from 'util';
 
 const fs = fsObj.promises;
 
-export function spawnProcess(parameters)
-{
-    const process = childProcess.spawn(parameters.command, parameters.args || [], parameters);
+export const execFile = promisify(childProcess.execFile);
 
-    let callback = parameters.onExit;
-    let callbackCalled = false;
+export async function spawnProcess(parameters)
+{
+    const { command, env, cwd, args, logFile, onExit } = parameters;
+
+    let realCommand;
+    let realArgs;
+    let logFileHandle = null;
+
+    const options = {};
+
+    if (os.type() === 'Darwin' && command.endsWith('.app'))
+    {
+        realCommand = 'open';
+        realArgs = ['-W', command];
+
+        if (logFile)
+        {
+            args.push('--stdout');
+            args.push(logFile);
+            args.push('--stderr');
+            args.push(logFile);
+        }
+
+        if (args && args.length > 0)
+        {
+            realArgs.push('--args');
+
+            for (let arg of args)
+                realArgs.push(arg);
+        }
+    }
+    else
+    {
+        realCommand = command;
+        realArgs = args || [];
+
+        options.cwd = cwd;
+        options.env = env;
+
+        if (logFile)
+        {
+            logFileHandle = await fs.open(logFile, 'w');
+            options.stdio = ['ignore', logFileHandle, logFileHandle];
+        }
+    }
+
+    const process = childProcess.spawn(realCommand, realArgs, options);
+
+    let exitCalled = false;
 
     process.on('error', err => {
         console.error('Error spawning player process: %s', err);
 
-        if (!callback || callbackCalled)
+        if (!onExit || exitCalled)
             return;
 
-        callbackCalled = true;
-        callback();
+        exitCalled = true;
+        onExit();
     });
 
     process.on('exit', () => {
-        if (!callback || callbackCalled)
+        if (!onExit || exitCalled)
             return;
 
-        callbackCalled = true;
-        callback();
+        exitCalled = true;
+        onExit();
     });
+
+    if (logFileHandle)
+    {
+        await logFileHandle.close();
+    }
 
     return process;
 }
@@ -41,6 +92,7 @@ export function selectBySystem(args)
     case 'Windows_NT':
         if (args.windows !== undefined)
             return args.windows;
+
         break;
 
     case 'Darwin':
@@ -60,6 +112,11 @@ export function selectBySystem(args)
     }
 
     throw new Error(`No configuration provided for ${os.type()} system`);
+}
+
+export function callBySystem(thisObj, arg)
+{
+    return selectBySystem(arg).apply(thisObj);
 }
 
 export async function writePluginSettings(profileDir, settings)
@@ -132,6 +189,7 @@ export function waitForExit(process, timeout = -1)
         if (timeout >= 0)
             setTimeout(() => resolve(false), timeout);
 
+        process.on('error', () => resolve(true));
         process.on('exit', () => resolve(true));
     });
 }
@@ -170,3 +228,9 @@ export function pathCollectionsEqual(paths1, paths2, ignoreOrder = false)
 
     return true;
 }
+
+export const sharedLibraryExt = selectBySystem({
+    windows: 'dll',
+    mac: 'dylib',
+    posix: 'so'
+});

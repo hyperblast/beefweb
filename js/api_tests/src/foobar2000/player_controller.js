@@ -1,9 +1,12 @@
 import path from 'path';
-import childProcess from 'child_process';
-import { installFile, spawnProcess, waitForExit, writePluginSettings } from '../utils.js';
-import { promisify } from 'util';
-
-const execFile = promisify(childProcess.execFile);
+import {
+    callBySystem,
+    execFile,
+    installFile, selectBySystem,
+    spawnProcess,
+    waitForExit,
+    writePluginSettings,
+} from '../utils.js';
 
 const defaultVersion = 'v2.24-x64';
 
@@ -16,18 +19,6 @@ class PlayerController
 
     async setup()
     {
-        const { BEEFWEB_TEST_FOOBAR2000_VERSION: versionEnv } = process.env;
-
-        const version = versionEnv || defaultVersion;
-        const playerDir = path.join(this.config.appsDir, 'foobar2000', version);
-        const profileDir = version.startsWith('v1.')
-            ? playerDir
-            : path.join(playerDir, 'profile');
-
-        const componentsDir = version.endsWith('-x64')
-            ? 'user-components-x64'
-            : 'user-components';
-
         const pluginBuildDir = path.join(
             this.config.binaryDir,
             'cpp',
@@ -35,13 +26,43 @@ class PlayerController
             'foobar2000',
             this.config.buildType);
 
-        this.exeFile = path.join(playerDir, 'foobar2000.exe');
-        this.profileDir = profileDir;
+        this.command = null;
+        this.profileDir = null;
 
-        await installFile(
-            pluginBuildDir,
-            path.join(profileDir, componentsDir, 'foo_beefweb'),
-            'foo_beefweb.dll');
+        await callBySystem(this, {
+            async windows()
+            {
+                const { BEEFWEB_TEST_FOOBAR2000_VERSION: versionEnv } = process.env;
+
+                const version = versionEnv || defaultVersion;
+                const playerDir = path.join(this.config.appsDir, 'foobar2000', version);
+                const profileDir = version.startsWith('v1.') ? playerDir : path.join(playerDir, 'profile');
+                const componentsDir = version.endsWith('-x64') ? 'user-components-x64' : 'user-components';
+
+                this.command = path.join(playerDir, 'foobar2000.exe');
+                this.profileDir = profileDir;
+
+                await installFile(
+                    pluginBuildDir,
+                    path.join(profileDir, componentsDir, 'foo_beefweb'),
+                    'foo_beefweb.dll');
+            },
+
+            async mac()
+            {
+                const { HOME } = process.env;
+
+                this.command = '/Applications/foobar2000.app';
+                this.profileDir = `${HOME}/foobar2000-v2`;
+
+                await installFile(
+                    pluginBuildDir,
+                    path.join(this.profileDir, 'user-components', 'foo_beefweb'),
+                    'foo_beefweb.component');
+            }
+        });
+
+        this.logFile = path.join(this.profileDir, 'api_tests.log');
     }
 
     async start(options)
@@ -51,33 +72,49 @@ class PlayerController
 
         await writePluginSettings(this.profileDir, options.pluginSettings);
 
-        this.process = spawnProcess({
-            command: this.exeFile,
-            args: ['/hide'],
+        this.process = await spawnProcess({
+            command: this.command,
             cwd: this.profileDir,
+            logFile: this.logFile,
+            args: selectBySystem({
+                windows: ['/hide'],
+                mac: []
+            }),
             onExit: () => this.process = null,
         });
     }
 
     async stop()
     {
-        const { process, exeFile } = this;
-
-        if (!process)
+        if (!this.process)
             return;
 
-        await execFile(exeFile, ['/exit']);
-        if (await waitForExit(process, 3000))
-            return;
+        try
+        {
+            await callBySystem(this, {
+                async windows()
+                {
+                    await execFile(this.command, ['/exit']);
 
-        console.error('Failed to cleanly stop player, terminating process');
-        process.kill();
-        await waitForExit(process);
-    }
+                    if (await waitForExit(this.process, 3000))
+                        return;
 
-    getLog()
-    {
-        return null;
+                    console.error('Failed to cleanly stop player, terminating process');
+                    this.process.kill();
+                    await waitForExit(this.process);
+                },
+
+                async mac()
+                {
+                    await execFile('killall', ['foobar2000']);
+                    await waitForExit(this.process);
+                }
+            });
+        }
+        finally
+        {
+            this.process = null;
+        }
     }
 }
 

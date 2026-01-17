@@ -4,7 +4,15 @@ import { promisify } from 'util';
 import mkdirp from 'mkdirp';
 import rimrafWithCallback from 'rimraf';
 import tmp from 'tmp';
-import { installFiles, spawnProcess, writePluginSettings } from '../utils.js';
+import {
+    callBySystem,
+    execFile,
+    installFiles,
+    sharedLibraryExt,
+    spawnProcess,
+    waitForExit,
+    writePluginSettings,
+} from '../utils.js';
 
 const fs = fsObj.promises;
 const rimraf = promisify(rimrafWithCallback)
@@ -13,9 +21,9 @@ const tmpdir = promisify(tmp.dir);
 const defaultVersion = 'v1.10';
 
 const pluginFiles = [
-    'beefweb.so',
-    'ddb_gui_dummy.so',
-    'nullout2.so'
+    `beefweb.${sharedLibraryExt}`,
+    `ddb_gui_dummy.${sharedLibraryExt}`,
+    `nullout2.${sharedLibraryExt}`
 ];
 
 async function writePlayerSettings(profileDir)
@@ -37,12 +45,6 @@ class PlayerController
 
     async setup()
     {
-        const { BEEFWEB_TEST_DEADBEEF_VERSION: versionEnv } = process.env;
-
-        const version = versionEnv || defaultVersion;
-        const playerDir = path.join(this.config.appsDir, 'deadbeef', version);
-        const homeDir = await tmpdir({ prefix: 'beefweb-api-tests' });
-
         this.pluginBuildDir = path.join(
             this.config.binaryDir,
             'cpp',
@@ -50,11 +52,35 @@ class PlayerController
             'deadbeef'
         );
 
-        this.exeFile = path.join(playerDir, 'deadbeef');
-        this.homeDir = homeDir;
-        this.profileDir = path.join(homeDir, '.config/deadbeef');
-        this.pluginDir = path.join(homeDir, '.local/lib/deadbeef');
-        this.logFile = path.join(homeDir, 'run.log');
+        this.command = null;
+        this.homeDir = null;
+        this.profileDir = null;
+        this.pluginDir = null;
+
+        await callBySystem(this, {
+            async posix() {
+                const { BEEFWEB_TEST_DEADBEEF_VERSION: versionEnv } = process.env;
+
+                const version = versionEnv || defaultVersion;
+                const playerDir = path.join(this.config.appsDir, 'deadbeef', version);
+                const homeDir = await tmpdir({ prefix: 'beefweb-api-tests' });
+
+                this.command = path.join(playerDir, 'deadbeef');
+                this.homeDir = homeDir;
+                this.profileDir = path.join(homeDir, '.config/deadbeef');
+                this.pluginDir = path.join(homeDir, '.local/lib/deadbeef');
+            },
+
+            async mac() {
+                const { HOME } = process.env;
+
+                this.command = '/Applications/DeaDBeeF.app';
+                this.profileDir = `${HOME}/Library/Preferences/deadbeef`
+                this.pluginDir = `${HOME}/Library/Application Support/Deadbeef/Plugins`;
+            },
+        });
+
+        this.logFile = path.join(this.profileDir, 'api_tests.log');
     }
 
     async start(options)
@@ -66,39 +92,50 @@ class PlayerController
         await writePlayerSettings(this.profileDir);
         await writePluginSettings(this.profileDir, options.pluginSettings);
 
-        const env = {
+        const env = !this.homeDir ? undefined : {
             ...process.env,
             HOME: this.homeDir,
             XDG_CONFIG_HOME: path.join(this.homeDir, '.config')
         };
 
-        const logFileHandle = await fs.open(this.logFile, 'w');
-
-        this.process = spawnProcess({
-            command: this.exeFile,
+        this.process = await spawnProcess({
+            command: this.command,
             cwd: this.homeDir,
             env,
-            stdio: ['ignore', logFileHandle, logFileHandle],
+            logFile: this.logFile,
             onExit: () => this.process = null,
         });
-
-        await logFileHandle.close();
     }
 
     async stop()
     {
-        if (this.process)
+        if (!this.process)
         {
-            this.process.kill();
-            this.process = null;
+            try
+            {
+                await callBySystem(this, {
+                    async posix()
+                    {
+                        this.process.kill();
+                    },
+
+                    async mac()
+                    {
+                        await execFile('killall', ['deadbeef']);
+                        await waitForExit(this.process);
+                    },
+                });
+            }
+            finally
+            {
+                this.process = null;
+            }
         }
 
-        await rimraf(this.homeDir);
-    }
-
-    async getLog()
-    {
-        return await readFile(this.logFile, 'utf8');
+        if (this.homeDir)
+        {
+            await rimraf(this.homeDir);
+        }
     }
 }
 
