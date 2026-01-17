@@ -9,6 +9,17 @@ const fs = fsObj.promises;
 
 export const execFile = promisify(childProcess.execFile);
 
+async function removeFile(path)
+{
+    try
+    {
+        await fs.unlink(path);
+    }
+    catch
+    {
+    }
+}
+
 export async function spawnProcess(parameters)
 {
     const { command, env, cwd, args, logFile, onExit } = parameters;
@@ -30,6 +41,8 @@ export async function spawnProcess(parameters)
             realArgs.push(logFile);
             realArgs.push('--stderr');
             realArgs.push(logFile);
+
+            await removeFile(logFile);
         }
 
         if (args && args.length > 0)
@@ -135,14 +148,7 @@ const fastCopyFile = selectBySystem({
     windows: fs.copyFile,
     async posix(from, to)
     {
-        try
-        {
-            await fs.unlink(to);
-        }
-        catch
-        {
-        }
-
+        await removeFile(path);
         await fs.symlink(from, to);
     },
 });
