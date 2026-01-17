@@ -122,7 +122,6 @@ class PlayerController
                     async mac()
                     {
                         await execFile('killall', ['DeaDBeeF']);
-                        await waitForExit(this.process);
                     },
                 });
             }

@@ -106,7 +106,6 @@ class PlayerController
                 async mac()
                 {
                     await execFile('killall', ['foobar2000']);
-                    await waitForExit(this.process);
                 }
             });
         }
