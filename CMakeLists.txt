@@ -68,8 +68,10 @@ endif()
 
 if(IS_MULTI_CONFIG)
     set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/js/webui/$<CONFIG>)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/build_config.json "{\"isMultiConfig\":true}")
 else()
     set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/js/webui/output)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/build_config.json "{\"isMultiConfig\":false}")
 endif()
 
 print_status()

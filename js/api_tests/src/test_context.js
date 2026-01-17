@@ -1,7 +1,7 @@
 import path from 'path'
 import fsObj from 'fs';
 import { fileURLToPath } from 'url'
-import { getBinaryDir } from '../../config.mjs';
+import { getBuildConfig } from '../../config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
 
@@ -150,7 +150,14 @@ export class TestContextFactory
         const testsRootDir = path.dirname(__dirname);
         const rootDir = path.dirname(path.dirname(testsRootDir));
         const buildType = buildTypeEnv || 'Debug';
-        const binaryDir = getBinaryDir(buildType);
+        const { buildDir, isMultiConfig } = getBuildConfig(buildType);
+        const pluginBuildDir = path.join(
+            buildDir,
+            'cpp',
+            'server',
+            this.playerId,
+            isMultiConfig ? buildType : '');
+
         const port = parseInt(portEnv) || 8879;
         const serverUrl = `http://127.0.0.1:${port}`;
 
@@ -171,7 +178,7 @@ export class TestContextFactory
             port,
             serverUrl,
             rootDir,
-            binaryDir,
+            pluginBuildDir,
             testsRootDir,
             appsDir,
             webRootDir,

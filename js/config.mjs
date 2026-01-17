@@ -10,7 +10,7 @@ function toAbsolutePath(p)
     return path.isAbsolute(p) ? p : path.join(path.dirname(__dirname), p);
 }
 
-export function getBinaryDir(buildType)
+function getBuildDir(buildType)
 {
     const binaryDir = process.env.BEEFWEB_BINARY_DIR;
 
@@ -18,6 +18,14 @@ export function getBinaryDir(buildType)
         return toAbsolutePath(binaryDir);
 
     const binaryDirBase = process.env.BEEFWEB_BINARY_DIR_BASE || 'build';
-
     return path.join(toAbsolutePath(binaryDirBase), buildType);
+}
+
+export function getBuildConfig(buildType)
+{
+    const buildDir = getBuildDir(buildType);
+    const buildConfigFile = path.join(buildDir, 'build_config.json');
+    const config = JSON.parse(fs.readFileSync(buildConfigFile, 'utf8'));
+
+    return { buildDir, isMultiConfig: config.isMultiConfig || false };
 }

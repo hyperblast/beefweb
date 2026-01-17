@@ -45,13 +45,6 @@ class PlayerController
 
     async setup()
     {
-        this.pluginBuildDir = path.join(
-            this.config.binaryDir,
-            'cpp',
-            'server',
-            'deadbeef'
-        );
-
         this.command = null;
         this.homeDir = null;
         this.profileDir = null;
@@ -88,7 +81,7 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
-        await installFiles(this.pluginBuildDir, this.pluginDir, pluginFiles);
+        await installFiles(this.config.pluginBuildDir, this.pluginDir, pluginFiles);
         await writePlayerSettings(this.profileDir);
         await writePluginSettings(this.profileDir, options.pluginSettings);
 

@@ -19,13 +19,6 @@ class PlayerController
 
     async setup()
     {
-        const pluginBuildDir = path.join(
-            this.config.binaryDir,
-            'cpp',
-            'server',
-            'foobar2000',
-            this.config.buildType);
-
         this.command = null;
         this.profileDir = null;
 
@@ -43,7 +36,7 @@ class PlayerController
                 this.profileDir = profileDir;
 
                 await installFile(
-                    pluginBuildDir,
+                    this.config.pluginBuildDir,
                     path.join(profileDir, componentsDir, 'foo_beefweb'),
                     'foo_beefweb.dll');
             },
@@ -56,7 +49,7 @@ class PlayerController
                 this.profileDir = `${HOME}/foobar2000-v2`;
 
                 await installFile(
-                    pluginBuildDir,
+                    this.config.pluginBuildDir,
                     path.join(this.profileDir, 'user-components', 'foo_beefweb'),
                     'foo_beefweb.component');
             }
