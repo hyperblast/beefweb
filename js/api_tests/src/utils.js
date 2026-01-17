@@ -1,4 +1,71 @@
 import os from 'os';
+import path from 'path';
+import mkdirp from 'mkdirp';
+import fsObj from 'fs';
+import childProcess from 'child_process';
+
+const fs = fsObj.promises;
+
+export function spawnProcess(parameters)
+{
+    const process = childProcess.spawn(parameters.command, parameters.args || [], parameters);
+
+    let callback = parameters.onExit;
+    let callbackCalled = false;
+
+    process.on('error', err => {
+        console.error('Error spawning player process: %s', err);
+
+        if (!callback || callbackCalled)
+            return;
+
+        callbackCalled = true;
+        callback();
+    });
+
+    process.on('exit', () => {
+        if (!callback || callbackCalled)
+            return;
+
+        callbackCalled = true;
+        callback();
+    });
+
+    return process;
+}
+
+export async function writePluginSettings(profileDir, settings)
+{
+    const pluginConfigDir = path.join(profileDir, 'beefweb');
+
+    await mkdirp(path.join(pluginConfigDir, 'clientconfig'));
+
+    await fs.writeFile(
+        path.join(pluginConfigDir, 'config.json'),
+        JSON.stringify(settings));
+}
+
+const fastCopyFile = os.type() === 'Windows_NT' ? fs.copyFile : fs.symlink;
+
+export async function installFile(fromDir, toDir, fileName)
+{
+    await mkdirp(toDir);
+    await fastCopyFile(
+        path.join(fromDir, fileName),
+        path.join(toDir, fileName));
+}
+
+export async function installFiles(fromDir, toDir, fileNames)
+{
+    await mkdirp(toDir);
+
+    for (let fileName of fileNames)
+    {
+        await fastCopyFile(
+            path.join(fromDir, fileName),
+            path.join(toDir, fileName));
+    }
+}
 
 export function sleep(timeout)
 {

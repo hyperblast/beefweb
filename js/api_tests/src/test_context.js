@@ -7,6 +7,11 @@ import TestPlayerClient from './test_player_client.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export const PlayerId = Object.freeze({
+    deadbeef: 'deadbeef',
+    foobar2000: 'foobar2000'
+});
+
 export class TestContext
 {
     constructor(config, player, client, tracks, outputConfigs)
@@ -18,6 +23,7 @@ export class TestContext
         this.outputConfigs = outputConfigs;
         this.options = null;
         this.wantRestart = false;
+        this.playerSetupDone = false;
     }
 
     initOptions(options)
@@ -34,13 +40,12 @@ export class TestContext
             },
             options.resetOptions);
 
-        const { axiosConfig, environment } = options;
+        const { axiosConfig } = options;
 
         this.options = {
             pluginSettings,
             resetOptions,
-            axiosConfig,
-            environment
+            axiosConfig
         };
     }
 
@@ -51,6 +56,12 @@ export class TestContext
 
     async startPlayer()
     {
+        if (!this.playerSetupDone)
+        {
+            await this.player.setup();
+            this.playerSetupDone = true;
+        }
+
         await this.player.start(this.options);
 
         if (await this.client.waitUntilReady())
@@ -71,7 +82,7 @@ export class TestContext
         await this.player.stop();
     }
 
-    async beginSuite(options = {}, reuseOptions = false)
+    async beginSuite(options = {})
     {
         this.wantRestart = false;
         this.initOptions(options);
@@ -131,13 +142,13 @@ export class TestContextFactory
 
     createConfig()
     {
-        const { BEEFWEB_TEST_BUILD_TYPE, BEEFWEB_TEST_PORT } = process.env;
+        const { BEEFWEB_TEST_BUILD_TYPE: buildTypeEnv, BEEFWEB_TEST_PORT: portEnv } = process.env;
 
         const testsRootDir = path.dirname(__dirname);
         const rootDir = path.dirname(path.dirname(testsRootDir));
-        const buildType = BEEFWEB_TEST_BUILD_TYPE || 'Debug';
+        const buildType = buildTypeEnv || 'Debug';
         const binaryDir = getBinaryDir(buildType);
-        const port = parseInt(BEEFWEB_TEST_PORT) || 8879;
+        const port = parseInt(portEnv) || 8879;
         const serverUrl = `http://127.0.0.1:${port}`;
 
         const appsDir = path.join(rootDir, 'apps');
@@ -152,6 +163,7 @@ export class TestContextFactory
         };
 
         return {
+            playerId: this.playerId,
             buildType,
             port,
             serverUrl,
@@ -180,12 +192,7 @@ export class TestContextFactory
 
     createOutputConfigs()
     {
-        return {
-            default: { typeId: 'output', deviceId: 'default' },
-            alternate: [
-                { typeId: 'output', deviceId: 'other_device' }
-            ],
-        }
+        throw new Error('craeteOutputConfigs() is not implemented');
     }
 
     createClient(config)
