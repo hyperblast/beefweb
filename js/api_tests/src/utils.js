@@ -148,7 +148,7 @@ const fastCopyFile = selectBySystem({
     windows: fs.copyFile,
     async posix(from, to)
     {
-        await removeFile(path);
+        await removeFile(to);
         await fs.symlink(from, to);
     },
 });
