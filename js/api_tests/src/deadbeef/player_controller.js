@@ -109,7 +109,7 @@ class PlayerController
 
     async stop()
     {
-        if (!this.process)
+        if (this.process)
         {
             try
             {
