@@ -46,7 +46,7 @@ class PlayerController
                 const { HOME } = process.env;
 
                 this.command = '/Applications/foobar2000.app';
-                this.profileDir = `${HOME}/foobar2000-v2`;
+                this.profileDir = `${HOME}/Library/foobar2000-v2`;
 
                 await installFile(
                     this.config.pluginBuildDir,
