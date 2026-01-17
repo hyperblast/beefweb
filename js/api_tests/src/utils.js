@@ -34,6 +34,34 @@ export function spawnProcess(parameters)
     return process;
 }
 
+export function selectBySystem(args)
+{
+    switch (os.type())
+    {
+    case 'Windows_NT':
+        if (args.windows !== undefined)
+            return args.windows;
+        break;
+
+    case 'Darwin':
+        if (args.mac !== undefined)
+            return args.mac;
+
+        if (args.posix !== undefined)
+            return args.posix;
+
+        break
+
+    default:
+        if (args.posix !== undefined)
+            return args.posix;
+
+        break;
+    }
+
+    throw new Error(`No configuration provided for ${os.type()} system`);
+}
+
 export async function writePluginSettings(profileDir, settings)
 {
     const pluginConfigDir = path.join(profileDir, 'beefweb');
@@ -45,7 +73,10 @@ export async function writePluginSettings(profileDir, settings)
         JSON.stringify(settings));
 }
 
-const fastCopyFile = os.type() === 'Windows_NT' ? fs.copyFile : fs.symlink;
+const fastCopyFile = selectBySystem({
+    windows: fs.copyFile,
+    posix: fs.symlink,
+});
 
 export async function installFile(fromDir, toDir, fileName)
 {
@@ -105,18 +136,11 @@ export function waitForExit(process, timeout = -1)
     });
 }
 
-function getNormalizePathFunction()
-{
-    switch (os.type())
-    {
-    case 'Windows_NT':
-        return p => p.toUpperCase();
-    default:
-        return p => p;
-    }
-}
-
-export const normalizePath = getNormalizePathFunction();
+export const normalizePath = selectBySystem({
+    windows: p => p.toUpperCase(),
+    mac: p => p.toUpperCase(),
+    posix: p => p
+});
 
 export function pathsEqual(p1, p2)
 {

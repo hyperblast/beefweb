@@ -1,17 +1,28 @@
-import os from 'os';
 import { Foobar2000TestContextFactory } from './foobar2000/test_context.js'
 import { DeadbeefTestContextFactory } from './deadbeef/test_context.js'
+import { selectBySystem } from './utils.js';
 
 function getContextFactory()
 {
-    switch (os.type())
-    {
-    case 'Windows_NT':
-        return new Foobar2000TestContextFactory();
+    const foobar2000Factory = new Foobar2000TestContextFactory();
+    const deadbeefFactory = new DeadbeefTestContextFactory();
 
-    default:
-        return new DeadbeefTestContextFactory();
-    }
+    const availableFactories = selectBySystem({
+        windows: [foobar2000Factory],
+        mac: [foobar2000Factory, deadbeefFactory],
+        posix: [deadbeefFactory]
+    });
+
+    const { BEEFWEB_TEST_PLAYER: playerId } = process.env;
+
+    if (!playerId)
+        return availableFactories[0];
+
+    const factory = availableFactories.find(f => f.playerId === playerId);
+    if (!factory)
+        throw new Error(`Unknown or unsupported player id: ${playerId}`);
+
+    return factory;
 }
 
 export const context = getContextFactory().createContext();
