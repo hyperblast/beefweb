@@ -21,6 +21,7 @@ if(CXX_GCC OR CXX_CLANG)
 endif()
 
 if(CXX_CLANG)
+    checked_add_compiler_flag(-Wno-unused-parameter)
     checked_add_compiler_flag(-Wno-potentially-evaluated-expression)
     checked_add_compiler_flag(-Wno-extern-c-compat)
 endif()
