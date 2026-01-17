@@ -133,7 +133,11 @@ export async function writePluginSettings(profileDir, settings)
 
 const fastCopyFile = selectBySystem({
     windows: fs.copyFile,
-    posix: fs.symlink,
+    async posix(from, to)
+    {
+        await fs.unlink(to);
+        await fs.symlink(from, to);
+    },
 });
 
 export async function installFile(fromDir, toDir, fileName)
