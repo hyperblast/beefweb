@@ -19,10 +19,14 @@ class PlayerController
         const { BEEFWEB_TEST_FOOBAR2000_VERSION: versionEnv } = process.env;
 
         const version = versionEnv || defaultVersion;
-        const playerDir = path.join(config.appsDir, 'foobar2000', version);
+        const playerDir = path.join(this.config.appsDir, 'foobar2000', version);
         const profileDir = version.startsWith('v1.')
             ? playerDir
             : path.join(playerDir, 'profile');
+
+        const componentsDir = version.endsWith('-x64')
+            ? 'user-components-x64'
+            : 'user-components';
 
         const pluginBuildDir = path.join(
             this.config.binaryDir,
@@ -36,8 +40,8 @@ class PlayerController
 
         await installFile(
             pluginBuildDir,
-            path.join(profileDir, 'user-components', 'foo_beefweb'),
-            'foobar2000.dll');
+            path.join(profileDir, componentsDir, 'foo_beefweb'),
+            'foo_beefweb.dll');
     }
 
     async start(options)
