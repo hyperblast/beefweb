@@ -10,3 +10,18 @@ import './playlists_api_tests.js';
 import './play_queue_api_tests.js'
 import './query_api_tests.js';
 import './static_files_tests.js';
+import qunit from 'qunit'
+
+const maxFailedTests = 10;
+let failedTests = 0;
+
+qunit.on('testEnd', event => {
+    if (event.status !== 'failed')
+        return;
+
+    if (++failedTests < maxFailedTests)
+        return;
+
+    console.error('Too many test failures, stopping');
+    QUnit.config.queue.length = 0;
+});
