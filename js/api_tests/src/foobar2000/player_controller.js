@@ -24,6 +24,8 @@ class PlayerController
         this.command = null;
         this.profileDir = null;
         this.templateProfileDir = null;
+        this.pluginDir = null;
+        this.pluginFile = null;
 
         await callBySystem(this, {
             async windows()
@@ -33,7 +35,6 @@ class PlayerController
                 const version = versionEnv || await getDefaultAppVersion(PlayerId.foobar2000);
                 const playerDir = path.join(this.config.appsDir, 'foobar2000', version);
                 const profileDir = path.join(playerDir, 'profile');
-                const componentsDir = version.endsWith('-x64') ? 'user-components-x64' : 'user-components';
 
                 this.command = path.join(playerDir, 'foobar2000.exe');
                 this.profileDir = profileDir;
@@ -43,10 +44,12 @@ class PlayerController
                     'foobar2000',
                     version.startsWith('v1.') ? 'windows-v1' : 'windows-v2');
 
-                await installFile(
-                    this.config.pluginBuildDir,
-                    path.join(profileDir, componentsDir, 'foo_beefweb'),
-                    'foo_beefweb.dll');
+                this.pluginDir = path.join(
+                    profileDir,
+                    version.endsWith('-x64') ? 'user-components-x64' : 'user-components',
+                    'foo_beefweb');
+
+                this.pluginFile = 'foo_beefweb.dll';
             },
 
             async mac()
@@ -55,11 +58,8 @@ class PlayerController
 
                 this.command = '/Applications/foobar2000.app';
                 this.profileDir = `${HOME}/Library/foobar2000-v2`;
-
-                await installFile(
-                    this.config.pluginBuildDir,
-                    path.join(this.profileDir, 'user-components', 'foo_beefweb'),
-                    'foo_beefweb.component');
+                this.pluginDir = path.join(this.profileDir, 'user-components', 'foo_beefweb');
+                this.pluginFile = 'foo_beefweb.component';
             }
         });
 
@@ -72,8 +72,22 @@ class PlayerController
             throw new Error('Process is still running');
 
         await rimraf(this.profileDir);
+
         await writePluginSettings(this.profileDir, options.pluginSettings);
-        await execFile('xcopy.exe', ['/S', this.templateProfileDir, this.profileDir]);
+
+        await callBySystem(this, {
+            async windows()
+            {
+                await execFile('xcopy.exe', ['/S', this.templateProfileDir, this.profileDir]);
+            },
+
+            async mac()
+            {
+                // TODO
+            }
+        });
+
+        await installFile(this.config.pluginBuildDir, this.pluginDir, this.pluginFile);
 
         this.process = await spawnProcess({
             command: this.command,
