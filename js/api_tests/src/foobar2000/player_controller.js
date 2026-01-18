@@ -3,7 +3,7 @@ import {
     callBySystem,
     execFile,
     installFile,
-    rimraf,
+    replaceDirectory,
     selectBySystem,
     spawnProcess,
     waitForExit,
@@ -71,22 +71,10 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
-        await rimraf(this.profileDir);
+        if (this.templateProfileDir)
+            await replaceDirectory(this.templateProfileDir, this.profileDir);
 
         await writePluginSettings(this.profileDir, options.pluginSettings);
-
-        await callBySystem(this, {
-            async windows()
-            {
-                await execFile('xcopy.exe', ['/S', this.templateProfileDir, this.profileDir]);
-            },
-
-            async mac()
-            {
-                // TODO
-            }
-        });
-
         await installFile(this.config.pluginBuildDir, this.pluginDir, this.pluginFile);
 
         this.process = await spawnProcess({

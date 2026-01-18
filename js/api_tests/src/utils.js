@@ -146,9 +146,11 @@ export function selectBySystem(args)
     throw new Error(`No configuration provided for ${os.type()} system`);
 }
 
-export function callBySystem(thisObj, arg)
+export function callBySystem(arg0, arg1)
 {
-    return selectBySystem(arg).apply(thisObj);
+    return arg1 === undefined
+       ? selectBySystem(arg0).apply(undefined)
+       : selectBySystem(arg1).apply(arg0);
 }
 
 export async function writePluginSettings(profileDir, settings)
@@ -170,6 +172,31 @@ const fastCopyFile = selectBySystem({
         await fs.symlink(from, to);
     },
 });
+
+export async function replaceDirectory(source, target)
+{
+    await rimraf(target);
+
+    // old Node.js can't copy directories recursively
+    await callBySystem({
+        async windows()
+        {
+            // Directory must exist, otherwise xcopy will ask stupid questions
+            await mkdirp(target);
+            const { error } = await execFile('xcopy.exe', ['/S', source, target]);
+            if (error)
+                throw Error('Failed to copy directory');
+        },
+
+        async posix()
+        {
+            // Directory must not exist, otherwise cp will copy directory inside instead of copying contents
+            const { error } = await execFile('cp', ['-R', source, target]);
+            if (error)
+                throw Error('Failed to copy directory');
+        },
+    });
+}
 
 export async function installFile(fromDir, toDir, fileName)
 {
