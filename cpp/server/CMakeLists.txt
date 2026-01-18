@@ -3,22 +3,27 @@ set(CMAKE_CXX_STANDARD 17)
 
 include(CheckSymbolExists)
 
+if(OS_LINUX)
+    add_compiler_flag(-D_GNU_SOURCE)
+endif()
+
 if(CXX_GCC OR CXX_CLANG)
-    add_cxx_compiler_flag(-Wall)
-    add_cxx_compiler_flag(-Wextra)
+    add_compiler_flag(-Wall)
+    add_compiler_flag(-Wextra)
+    add_compiler_flag(-Wno-unused-parameter)
 
     if(ENABLE_WERROR)
-        add_cxx_compiler_flag(-Werror)
+        add_compiler_flag(-Werror)
     endif()
 
     if(ENABLE_STATIC_STDLIB)
-        add_linker_flag(-static-libstdc++)
+        checked_add_linker_flag(-static-libstdc++)
     endif()
 endif()
 
 if(CXX_CLANG)
-    add_cxx_compiler_flag(-Wno-potentially-evaluated-expression)
-    add_cxx_compiler_flag(-Wno-extern-c-compat)
+    checked_add_compiler_flag(-Wno-potentially-evaluated-expression)
+    checked_add_compiler_flag(-Wno-extern-c-compat)
 endif()
 
 if(CXX_MSVC)
@@ -28,14 +33,17 @@ endif()
 if(OS_POSIX)
     add_definitions(-DMSRV_OS_POSIX=1)
 
-    add_linker_flag(-Wl,--no-undefined)
-    add_linker_flag(-Wl,--as-needed)
+    if(OS_MAC)
+        add_definitions(-DMSRV_OS_MAC=1)
+    else()
+        checked_add_linker_flag(-Wl,--no-undefined)
+        checked_add_linker_flag(-Wl,--as-needed)
 
-    check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
-
-    if(NOT HAVE_PTHREAD_SETNAME_NP)
+        # TODO check for signature
+        check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
         check_symbol_exists(pthread_set_name_np "pthread.h" HAVE_PTHREAD_SET_NAME_NP)
     endif()
+
 endif()
 
 if(OS_WINDOWS)
@@ -64,6 +72,7 @@ configure_file(env_info.hpp.in env_info.hpp)
 configure_file(project_info.hpp.in project_info.hpp)
 
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${Boost_INCLUDE_DIRS}
     ${NLJSON_INCLUDE_DIRS}
@@ -139,7 +148,11 @@ if(OS_POSIX)
         system_posix.cpp
     )
 
-    set(SYSTEM_LIBRARIES "dl;rt;m")
+    set(SYSTEM_LIBRARIES "dl;m")
+
+    if(NOT OS_MAC)
+        list(APPEND SYSTEM_LIBRARIES rt)
+    endif()
 endif()
 
 if(OS_WINDOWS)
@@ -182,3 +195,5 @@ if(ENABLE_TESTS)
 
     file(GENERATE OUTPUT ${CONFIG_JSON} CONTENT "{\"webRoot\":\"${WEBUI_OUTPUT_DIR}\"}")
 endif()
+
+print_toolchain_flags()

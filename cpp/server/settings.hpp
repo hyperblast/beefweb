@@ -48,8 +48,9 @@ public:
     std::unordered_map<std::string, Path> urlMappings;
     std::unordered_map<std::string, std::string> urlMappingsOrig;
 
+#ifndef MSRV_OS_MAC
     static void migrate(const char* appName, const Path& profileDir);
-    static const Path& getDefaultWebRoot();
+#endif
 
     void ensurePermissions(ApiPermissions p) const
     {
@@ -58,9 +59,9 @@ public:
     }
 
     bool isAllowedPath(const Path& path) const;
-    void initialize(const Path& profileDir);
+    void initialize(const Path& resourceDir, const Path& profileDir);
 
-    Path resolvePath(const Path& path)
+    Path resolvePath(const Path& path) const
     {
         return path.empty() || path.is_absolute() ? path : baseDir / path;
     }

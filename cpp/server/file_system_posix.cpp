@@ -36,6 +36,7 @@ Path getModulePath(void* symbol)
     return Path(info.dli_fname);
 }
 
+#ifndef MSRV_OS_MAC
 Path getUserConfigDir()
 {
     auto xdgConfigHome = ::getenv("XDG_CONFIG_HOME");
@@ -52,6 +53,7 @@ Path getUserConfigDir()
 
     return Path();
 }
+#endif
 
 Path getEnvAsPath(const char* env)
 {

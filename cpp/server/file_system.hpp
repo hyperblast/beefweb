@@ -64,9 +64,13 @@ inline Path pathFromUtf8(const std::string& path)
 
 bool isSubpath(const Path& parentPath, const Path& childPath);
 
+Path getThisModuleDir();
 Path getModulePath(void* symbol);
-Path getUserConfigDir();
 Path getEnvAsPath(const char* env);
+
+#ifndef MSRV_OS_MAC
+Path getUserConfigDir();
+#endif
 
 namespace file_io {
 

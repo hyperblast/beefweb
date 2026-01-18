@@ -1,11 +1,11 @@
 #include "permissions_prefs_page.hpp"
 #include "plugin.hpp"
 #include "resource.h"
-#include "settings.hpp"
+#include "plugin_settings.hpp"
 
-#include "../log.hpp"
+#include "log.hpp"
 #include "project_info.hpp"
-#include "../system.hpp"
+#include "system.hpp"
 
 namespace msrv::player_foobar2000 {
 

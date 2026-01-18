@@ -22,5 +22,5 @@ if [ -d "$patches_dir" ]; then
 fi
 
 if [ -d "$files_dir" ]; then
-    (cd "$files_dir"; cp -r -v -t "$build_dir" *)
+    (cd "$files_dir"; cp -r -v * "$build_dir/")
 fi

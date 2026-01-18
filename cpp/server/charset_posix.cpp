@@ -10,6 +10,8 @@
 
 namespace msrv {
 
+#ifndef MSRV_OS_MAC
+
 namespace {
 
 const char utf8Charset[] = "UTF-8";
@@ -87,8 +89,13 @@ std::string Iconv::convert(const char* buf, size_t size)
 
 }
 
+#endif
+
 void setLocaleCharset(const char* charset)
 {
+#ifdef MSRV_OS_MAC
+    (void)charset;
+#else
     if (charset == nullptr)
     {
         charset = ::nl_langinfo(CODESET);
@@ -103,22 +110,31 @@ void setLocaleCharset(const char* charset)
     ::strcpy(localeCharset, charset);
     localeCharsetIsUtf8 = ::strcmp(charset, utf8Charset) == 0;
     logDebug("locale charset is %s", charset);
+#endif
 }
 
 std::string utf8ToLocale(const std::string& str)
 {
+#ifdef MSRV_OS_MAC
+    return str;
+#else
     if (str.empty() || localeCharsetIsUtf8)
         return str;
 
     return Iconv(utf8Charset, localeCharset).convert(str.data(), str.length());
+#endif
 }
 
 std::string localeToUtf8(const std::string& str)
 {
+#ifdef MSRV_OS_MAC
+    return str;
+#else
     if (str.empty() || localeCharsetIsUtf8)
         return str;
 
     return Iconv(localeCharset, utf8Charset).convert(str.data(), str.length());
+#endif
 }
 
 }

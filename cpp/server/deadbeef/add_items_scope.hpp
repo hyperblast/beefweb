@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../defines.hpp"
+#include "defines.hpp"
 #include "utils.hpp"
 
 namespace msrv {

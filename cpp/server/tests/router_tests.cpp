@@ -1,4 +1,4 @@
-#include "../router.hpp"
+#include "router.hpp"
 
 #include <catch.hpp>
 

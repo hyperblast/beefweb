@@ -1,9 +1,9 @@
 #pragma once
 
 #include "common.hpp"
-#include "../log.hpp"
-#include "../work_queue.hpp"
-#include "../player_api.hpp"
+#include "log.hpp"
+#include "work_queue.hpp"
+#include "player_api.hpp"
 
 namespace msrv::player_foobar2000 {
 

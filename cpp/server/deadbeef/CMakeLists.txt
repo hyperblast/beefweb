@@ -5,7 +5,7 @@ include_directories(
 )
 
 set(
-    DEADBEEF_PLUGIN_SOURCES
+    PLUGIN_SOURCES
     add_items_scope.cpp add_items_scope.hpp
     artwork_fetcher_v1.cpp artwork_fetcher_v2.cpp artwork_fetcher.hpp
     common.cpp common.hpp
@@ -21,23 +21,30 @@ set(
 
 add_library(
     deadbeef_plugin MODULE
-    ${DEADBEEF_PLUGIN_SOURCES}
+    ${PLUGIN_SOURCES}
     $<TARGET_OBJECTS:core>
 )
 
 target_link_libraries(
     deadbeef_plugin
-    "${CORE_LIBRARIES}"
+    ${CORE_LIBRARIES}
 )
-
-configure_file(linker_script.in linker_script)
 
 set_target_properties(
     deadbeef_plugin PROPERTIES
     PREFIX ""
+    SUFFIX ${SHARED_LIB_SUFFIX}
     OUTPUT_NAME "${DEADBEEF_PLUGIN_FILE}"
-    LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_BINARY_DIR}/linker_script"
 )
+
+if(NOT OS_MAC)
+    configure_file(linker_script.in linker_script)
+
+    set_target_properties(
+        deadbeef_plugin PROPERTIES
+        LINK_FLAGS "-Wl,-version-script,${CMAKE_CURRENT_BINARY_DIR}/linker_script"
+    )
+endif()
 
 add_dependencies(deadbeef_plugin ext_all)
 
@@ -56,6 +63,7 @@ if(ENABLE_TESTS)
     set_target_properties(
         deadbeef_plugin_dummy_gui PROPERTIES
         PREFIX ""
+        SUFFIX ${SHARED_LIB_SUFFIX}
         OUTPUT_NAME "ddb_gui_dummy"
     )
 
@@ -69,6 +77,7 @@ if(ENABLE_TESTS)
     set_target_properties(
         deadbeef_plugin_nullout2 PROPERTIES
         PREFIX ""
+        SUFFIX ${SHARED_LIB_SUFFIX}
         OUTPUT_NAME "nullout2"
     )
 

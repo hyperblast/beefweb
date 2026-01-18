@@ -48,13 +48,15 @@ if(OS_POSIX)
     endif()
 endif()
 
-if(OS_WINDOWS)
+if(OS_WINDOWS OR OS_MAC)
     option(ENABLE_FOOBAR2000 "Build plugin for foobar2000 player" ON)
 
     if(ENABLE_FOOBAR2000)
         local_library(foosdk)
     endif()
+endif()
 
+if(OS_WINDOWS)
     local_library_option(zlib ENABLE_LOCAL_ZLIB "")
 endif()
 
@@ -66,9 +68,13 @@ endif()
 
 if(IS_MULTI_CONFIG)
     set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/js/webui/$<CONFIG>)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/build_config.json "{\"isMultiConfig\":true}")
 else()
     set(WEBUI_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/js/webui/output)
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/build_config.json "{\"isMultiConfig\":false}")
 endif()
+
+print_status()
 
 add_subdirectory(cpp)
 
@@ -78,5 +84,3 @@ endif()
 
 include(Packages)
 include(CPack)
-
-print_status()

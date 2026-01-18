@@ -1,4 +1,4 @@
-#include "../parsing.hpp"
+#include "parsing.hpp"
 
 #include <catch.hpp>
 

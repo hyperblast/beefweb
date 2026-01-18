@@ -1,0 +1,64 @@
+{
+    "windows": {
+        "patch": [
+            {
+                "url": "https://hyperblast.org/files/patch/patch.zip",
+                "sha256": "0c44d81803ed5f25609d94e500c124f101992491c4b38192b41102ee0a7f34f6"
+            }
+        ],
+        "foobar2000": [
+            {
+                "version": "v1.6.18-x32",
+                "url": "https://www.foobar2000.org/downloads/foobar2000_v1.6.18.exe",
+                "sha256": "b570121bf240caac488d514e7ad73924c7aaab68d3d1a362665175c943227413"
+            },
+            {
+                "version": "v2.25.5-x32",
+                "url": "https://www.foobar2000.org/downloads/foobar2000_v2.25.5.exe",
+                "sha256": "6ded9549a37debd82d91f2784676c2a6ae4f58b923981d14fffc4367c249d767"
+            },
+            {
+                "version": "v2.25.5-x64",
+                "url": "https://www.foobar2000.org/downloads/foobar2000-x64_v2.25.5.exe",
+                "sha256": "5c9bef59e96d0808cf886e31b9145c65ae6dd0ddb4402e36df914517b811e032"
+            }
+        ]
+    },
+
+    "mac": {
+        "deadbeef": [
+            {
+                "version": "v1.10.1-alpha",
+                "url": "https://sourceforge.net/projects/deadbeef/files/Builds/master/macOS/deadbeef-1.10.1-alpha-macos-universal.zip",
+                "sha256": "6ce46048e3023dc96eeadb83fefca727fbd0493bf4360039f8ad0a31d14dd1e8"
+            }
+        ],
+        "foobar2000": [
+            {
+                "version": "v2.25.5",
+                "url": "hhttps://www.foobar2000.org/downloads/foobar2000-v2.25.5.dmg",
+                "sha256": "5a573da9062e463f54927de36d0713cf2aa8435d9912736f996e2ecdcadbd055"
+            }
+        ]
+    },
+
+    "linux": {
+        "deadbeef": [
+            {
+                "version": "v1.8.8",
+                "url": "https://sourceforge.net/projects/deadbeef/files/travis/linux/1.8.8/deadbeef-static_1.8.8-1_x86_64.tar.bz2",
+                "sha256": "2e65b41ac39ddbc08e60ef25695a7a9a928f4342e038c1cdf3bb8b234f419b9b"
+            },
+            {
+                "version": "v1.9.6",
+                "url": "https://sourceforge.net/projects/deadbeef/files/travis/linux/1.9.6/deadbeef-static_1.9.6-1_x86_64.tar.bz2",
+                "sha256": "aa17741053f63a7fceace003bf269bd4c4c9e55e42ee14286d9fbf34fbc8e014"
+            },
+            {
+                "version": "v1.10.0",
+                "url": "https://sourceforge.net/projects/deadbeef/files/travis/linux/1.10.0/deadbeef-static_1.10.0-1_x86_64.tar.bz2",
+                "sha256": "e6d89edfaa17a2634bffdb9050ab096f14e39ac71ea6183cd48cae136a5f1a97"
+            }
+        ]
+    }
+}

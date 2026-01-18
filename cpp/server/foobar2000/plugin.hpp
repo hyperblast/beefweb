@@ -4,8 +4,8 @@
 #include "player.hpp"
 #include "utils.hpp"
 
-#include "../settings.hpp"
-#include "../server_host.hpp"
+#include "settings.hpp"
+#include "server_host.hpp"
 
 namespace msrv::player_foobar2000 {
 

@@ -1,8 +1,8 @@
-#include "../server_thread.hpp"
-#include "../router.hpp"
-#include "../request_filter.hpp"
-#include "../work_queue.hpp"
-#include "../settings.hpp"
+#include "server_thread.hpp"
+#include "router.hpp"
+#include "request_filter.hpp"
+#include "work_queue.hpp"
+#include "settings.hpp"
 #include "project_info.hpp"
 
 #include <catch.hpp>

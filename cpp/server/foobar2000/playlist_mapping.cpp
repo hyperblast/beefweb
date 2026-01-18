@@ -1,5 +1,5 @@
 #include "playlist_mapping.hpp"
-#include "../string_utils.hpp"
+#include "string_utils.hpp"
 
 #include <inttypes.h>
 
@@ -38,11 +38,14 @@ bool PlaylistMapping::readId(t_size index, pfc::array_t<char>* buffer)
 
 void PlaylistMapping::writeId(t_size index, const void* data, t_size size)
 {
+    stream_reader_memblock_ref reader{data, size};
+
     playlistManager_->playlist_set_property(
-        index, ID_PROPERTY,
-        &stream_reader_memblock_ref(data, size),
+        index,
+        ID_PROPERTY,
+        &reader,
         size,
-        abort_callback_dummy());
+        fb2k::noAbort);
 }
 
 void PlaylistMapping::initialize()

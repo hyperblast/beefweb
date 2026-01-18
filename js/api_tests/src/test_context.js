@@ -1,11 +1,16 @@
 import path from 'path'
-import { fileURLToPath } from 'url'
-import { getBinaryDir } from '../../config.mjs';
+import fsObj from 'fs';
+import { getBuildConfig } from '../../config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
+import { appsDir, rootDir, testsRootDir } from './utils.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const fs = fsObj.promises;
+
+export const PlayerId = Object.freeze({
+    deadbeef: 'deadbeef',
+    foobar2000: 'foobar2000'
+});
 
 export class TestContext
 {
@@ -18,6 +23,7 @@ export class TestContext
         this.outputConfigs = outputConfigs;
         this.options = null;
         this.wantRestart = false;
+        this.playerSetupDone = false;
     }
 
     initOptions(options)
@@ -34,13 +40,12 @@ export class TestContext
             },
             options.resetOptions);
 
-        const { axiosConfig, environment } = options;
+        const { axiosConfig } = options;
 
         this.options = {
             pluginSettings,
             resetOptions,
-            axiosConfig,
-            environment
+            axiosConfig
         };
     }
 
@@ -51,6 +56,12 @@ export class TestContext
 
     async startPlayer()
     {
+        if (!this.playerSetupDone)
+        {
+            await this.player.setup();
+            this.playerSetupDone = true;
+        }
+
         await this.player.start(this.options);
 
         if (await this.client.waitUntilReady())
@@ -58,10 +69,17 @@ export class TestContext
             return;
         }
 
-        const logData = await this.player.getLog();
+        try
+        {
+            const logData = await fs.readFile(this.player.logFile, 'utf8');
 
-        if (logData)
-            console.error('Player run log:\n%s', logData);
+            if (logData)
+                console.error('Player run log:\n%s', logData);
+        }
+        catch
+        {
+            console.error('No player run log available');
+        }
 
         throw new Error('Failed to reach API endpoint');
     }
@@ -71,7 +89,7 @@ export class TestContext
         await this.player.stop();
     }
 
-    async beginSuite(options = {}, reuseOptions = false)
+    async beginSuite(options = {})
     {
         this.wantRestart = false;
         this.initOptions(options);
@@ -131,16 +149,20 @@ export class TestContextFactory
 
     createConfig()
     {
-        const { BEEFWEB_TEST_BUILD_TYPE, BEEFWEB_TEST_PORT } = process.env;
+        const { BEEFWEB_TEST_BUILD_TYPE: buildTypeEnv, BEEFWEB_TEST_PORT: portEnv } = process.env;
 
-        const testsRootDir = path.dirname(__dirname);
-        const rootDir = path.dirname(path.dirname(testsRootDir));
-        const buildType = BEEFWEB_TEST_BUILD_TYPE || 'Debug';
-        const binaryDir = getBinaryDir(buildType);
-        const port = parseInt(BEEFWEB_TEST_PORT) || 8879;
+        const buildType = buildTypeEnv || 'Debug';
+        const { buildDir, isMultiConfig } = getBuildConfig(buildType);
+        const pluginBuildDir = path.join(
+            buildDir,
+            'cpp',
+            'server',
+            this.playerId,
+            isMultiConfig ? buildType : '');
+
+        const port = parseInt(portEnv) || 8879;
         const serverUrl = `http://127.0.0.1:${port}`;
 
-        const appsDir = path.join(rootDir, 'apps');
         const webRootDir = path.join(testsRootDir, 'webroot');
         const musicDir = path.join(testsRootDir, 'tracks');
 
@@ -152,13 +174,11 @@ export class TestContextFactory
         };
 
         return {
+            playerId: this.playerId,
             buildType,
             port,
             serverUrl,
-            rootDir,
-            binaryDir,
-            testsRootDir,
-            appsDir,
+            pluginBuildDir,
             webRootDir,
             musicDir,
             pluginSettings,
@@ -180,12 +200,7 @@ export class TestContextFactory
 
     createOutputConfigs()
     {
-        return {
-            default: { typeId: 'output', deviceId: 'default' },
-            alternate: [
-                { typeId: 'output', deviceId: 'other_device' }
-            ],
-        }
+        throw new Error('createOutputConfigs() is not implemented');
     }
 
     createClient(config)

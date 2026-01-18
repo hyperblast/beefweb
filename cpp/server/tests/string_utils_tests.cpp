@@ -1,4 +1,4 @@
-#include "../string_utils.hpp"
+#include "string_utils.hpp"
 
 #include <catch.hpp>
 

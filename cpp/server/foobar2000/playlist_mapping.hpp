@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../player_api.hpp"
+#include "player_api.hpp"
 #include "common.hpp"
 
 namespace msrv {
