@@ -55,6 +55,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Increase yarn timeout
+      run: yarn config set network-timeout 300000
+
     #- name: Install apps
     #  run: ci/macos_install.sh
 
