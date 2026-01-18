@@ -5,7 +5,7 @@
 #include "utils.hpp"
 
 #include "project_info.hpp"
-#include "../charset.hpp"
+#include "charset.hpp"
 
 #include <string>
 #include <vector>

@@ -5,7 +5,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import { getBinaryDir } from '../config.mjs'
+import { getBuildConfig } from '../config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -140,9 +140,8 @@ function configRelease(config)
 
 function getDefaultOutputDir(buildType)
 {
-    const binaryDir = getBinaryDir(buildType);
-    const outputDirName = process.platform === 'win32' ? buildType : 'output';
-    return path.join(binaryDir, 'js', 'webui', outputDirName);
+    const { buildDir, isMultiConfig } = getBuildConfig(buildType);
+    return path.join(buildDir, 'js', 'webui', isMultiConfig ? buildDir : 'output');
 }
 
 function getBuildType(env)

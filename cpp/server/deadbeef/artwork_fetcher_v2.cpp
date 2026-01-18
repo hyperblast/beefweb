@@ -1,5 +1,5 @@
 #include "artwork_fetcher.hpp"
-#include "../log.hpp"
+#include "log.hpp"
 
 #include <deadbeef/artwork.h>
 #include <boost/smart_ptr/intrusive_ref_counter.hpp>

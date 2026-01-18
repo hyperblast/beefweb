@@ -1,10 +1,10 @@
 #include "test_main.hpp"
 
-#include "../chrono.hpp"
-#include "../server_thread.hpp"
-#include "../request_filter.hpp"
-#include "../router.hpp"
-#include "../work_queue.hpp"
+#include "chrono.hpp"
+#include "server_thread.hpp"
+#include "request_filter.hpp"
+#include "router.hpp"
+#include "work_queue.hpp"
 
 #include <stdio.h>
 

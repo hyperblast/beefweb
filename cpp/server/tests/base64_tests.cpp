@@ -1,4 +1,4 @@
-#include "../base64.hpp"
+#include "base64.hpp"
 
 #include <catch.hpp>
 

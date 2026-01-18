@@ -12,7 +12,7 @@ on:
 
 jobs:
 
-  build_deadbeef:
+  build_linux:
 
     runs-on: ubuntu-22.04
 
@@ -28,24 +28,52 @@ jobs:
       run: ci/docker/build_image.sh
 
     - name: Install apps
-      run: ci/install.sh
+      run: ci/linux_install.sh
 
     - name: Build
-      run: ci/build.sh
+      run: ci/linux_build.sh
 
     - name: Test
-      run: ci/test.sh
+      run: ci/linux_test.sh
 
     - name: Upload binaries
       uses: actions/upload-artifact@v4
       with:
-        name: beefweb_deadbeef
+        name: linux_packages
         if-no-files-found: error
         path: |
           ci_build/${{ env.BUILD_TYPE }}/*.deb
           ci_build/${{ env.BUILD_TYPE }}/*.tar.xz
 
-  build_foobar2000:
+  build_macos:
+    runs-on: macos-26
+
+    env:
+      BUILD_TYPE: Release
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    #- name: Install apps
+    #  run: ci/macos_install.sh
+
+    - name: Build
+      run: ci/macos_build.sh
+
+    #- name: Test
+    # run: ci/macos_test.sh
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos_packages
+        if-no-files-found: error
+        path: |
+          ci_build/${{ env.BUILD_TYPE }}/*.fb2k-component
+          ci_build/${{ env.BUILD_TYPE }}/*.zip
+
+  build_windows:
 
     runs-on: windows-2022
 
@@ -78,49 +106,59 @@ jobs:
         arch: ${{ matrix.arch }}
 
     - name: Install apps
-      run: cmd /c ci\install.cmd
+      run: cmd /c ci\windows_install.cmd
 
     - name: Build
-      run: cmd /c ci\build.cmd
+      run: cmd /c ci\windows_build.cmd
 
     - name: Test
-      run: cmd /c ci\test.cmd
+      run: cmd /c ci\windows_test.cmd
 
     - name: Upload binaries
       uses: actions/upload-artifact@v4
       with:
-        name: 'beefweb_foobar2000_${{ matrix.arch }}'
+        name: 'windows_packages_${{ matrix.arch }}'
         if-no-files-found: error
         path: 'ci_build\${{ env.BUILD_TYPE }}\*.fb2k-component'
 
-  merge_foobar2000_packages:
+  build_universal_foobar2000_package:
 
     runs-on: ubuntu-22.04
 
-    needs: build_foobar2000
+    needs:
+    - build_macos
+    - build_windows
 
     steps:
-    - name: Download original packages
+    - name: Download Windows packages
       uses: actions/download-artifact@v4
       with:
-        pattern: beefweb_foobar2000_*
+        pattern: windows_packages_*
         merge-multiple: true
         path: input
 
-    - name: Merge packages
+    - name: Download macOS packages
+      uses: actions/download-artifact@v4
+      with:
+        name: macos_packages
+        path: input
+
+    - name: Build package
       run: |
         pkg_ext=fb2k-component
-        pkg_32=$(pwd)/input/*-x86.$pkg_ext
-        pkg_64=$(pwd)/input/*-x86_64.$pkg_ext
-        pkg_unified=$(pwd)/output/$(basename $pkg_32 -x86.$pkg_ext).$pkg_ext
-        mkdir -p work/x64 output
-        (cd work/x64 && unzip $pkg_64 '*.dll')
-        cp $pkg_32 $pkg_unified
-        (cd work && zip -r -9 $pkg_unified *)
+        pkg_w32=$(pwd)/input/*-windows-x86.$pkg_ext
+        pkg_w64=$(pwd)/input/*-windows-x86_64.$pkg_ext
+        pkg_mac=$(pwd)/input/*-macos-arm64.$pkg_ext
+        pkg_universal=$(pwd)/output/$(basename $pkg_w32 -windows-x86.$pkg_ext).$pkg_ext
+        mkdir -p work/x64 work/mac output
+        (cd work/x64 && unzip $pkg_w64 '*.dll')
+        (cd work/mac && unzip $pkg_mac '*')
+        cp $pkg_w32 $pkg_universal
+        (cd work && zip -r -9 $pkg_universal *)
 
-    - name: Upload merged package
+    - name: Upload package
       uses: actions/upload-artifact@v4
       with:
-        name: beefweb_foobar2000
+        name: universal_foobar2000_package
         if-no-files-found: error
         path: output/*.fb2k-component

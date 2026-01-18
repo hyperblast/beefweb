@@ -1,6 +1,6 @@
 #include "prefs_page.hpp"
-#include "../system.hpp"
-#include "../log.hpp"
+#include "system.hpp"
+#include "log.hpp"
 
 namespace msrv::player_foobar2000 {
 

@@ -1,5 +1,5 @@
-#include "../file_system.hpp"
-#include "../log.hpp"
+#include "file_system.hpp"
+#include "log.hpp"
 #include "artwork_fetcher.hpp"
 #include "utils.hpp"
 #include <deadbeef/artwork-legacy.h>

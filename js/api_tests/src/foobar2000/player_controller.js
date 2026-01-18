@@ -1,103 +1,122 @@
 import path from 'path';
-import fs from 'fs';
-import childProcess from 'child_process';
-import { promisify } from 'util';
-import { waitForExit } from '../utils.js';
-import mkdirp from 'mkdirp';
-
-const copyFile = promisify(fs.copyFile);
-const writeFile = promisify(fs.writeFile);
-const execFile = promisify(childProcess.execFile);
+import {
+    appsDir,
+    callBySystem,
+    execFile,
+    installFile,
+    replaceDirectory,
+    selectBySystem,
+    spawnProcess, testsRootDir,
+    waitForExit,
+    writePluginSettings,
+} from '../utils.js';
+import { getAppVersion } from '../app_defs.js';
+import { PlayerId } from '../test_context.js';
 
 class PlayerController
 {
     constructor(config)
     {
         this.config = config;
-        this.pluginInstalled = false;
+    }
 
-        const profileDir = config.playerVersion.startsWith('v1.')
-            ? config.playerDir
-            : path.join(config.playerDir, 'profile');
+    async setup()
+    {
+        this.command = null;
+        this.profileDir = null;
+        this.templateProfileDir = null;
+        this.pluginDir = null;
+        this.pluginFile = null;
 
-        this.paths = Object.freeze({
-            exeFile: path.join(config.playerDir, 'foobar2000.exe'),
-            componentsDir: path.join(config.playerDir, 'components'),
-            profileDir,
+        await callBySystem(this, {
+            async windows()
+            {
+                const version = await getAppVersion(PlayerId.foobar2000, 'BEEFWEB_TEST_FOOBAR2000_VERSION');
+                const playerDir = path.join(appsDir, 'foobar2000', version);
+                const profileDir = path.join(playerDir, 'profile');
+
+                this.command = path.join(playerDir, 'foobar2000.exe');
+                this.profileDir = profileDir;
+                this.templateProfileDir = path.join(
+                    testsRootDir,
+                    'profile_data',
+                    'foobar2000',
+                    version.startsWith('v1.') ? 'windows-v1' : 'windows-v2');
+
+                this.pluginDir = path.join(
+                    profileDir,
+                    version.endsWith('-x64') ? 'user-components-x64' : 'user-components',
+                    'foo_beefweb');
+
+                this.pluginFile = 'foo_beefweb.dll';
+            },
+
+            async mac()
+            {
+                const { HOME } = process.env;
+
+                this.command = '/Applications/foobar2000.app';
+                this.profileDir = `${HOME}/Library/foobar2000-v2`;
+                this.pluginDir = path.join(this.profileDir, 'user-components', 'foo_beefweb');
+                this.pluginFile = 'foo_beefweb.component';
+            }
         });
+
+        this.logFile = path.join(this.profileDir, 'api_tests.log');
     }
 
     async start(options)
     {
-        const { pluginSettings, environment } = options;
+        if (this.process)
+            throw new Error('Process is still running');
 
-        if (!this.pluginInstalled)
-            await this.installPlugin();
+        if (this.templateProfileDir)
+            await replaceDirectory(this.templateProfileDir, this.profileDir);
 
-        await this.writePluginSettings(pluginSettings);
-        this.startProcess(environment);
+        await writePluginSettings(this.profileDir, options.pluginSettings);
+        await installFile(this.config.pluginBuildDir, this.pluginDir, this.pluginFile);
+
+        this.process = await spawnProcess({
+            command: this.command,
+            cwd: this.profileDir,
+            logFile: this.logFile,
+            args: selectBySystem({
+                windows: ['/hide'],
+                mac: []
+            }),
+            onExit: () => this.process = null,
+        });
     }
 
     async stop()
     {
-        await this.stopProcess();
-    }
-
-    getLog()
-    {
-        return null;
-    }
-
-    async installPlugin()
-    {
-        await copyFile(
-            path.join(this.config.pluginBuildDir, this.config.pluginFile),
-            path.join(this.paths.componentsDir, this.config.pluginFile));
-
-        this.pluginInstalled = true;
-    }
-
-    async writePluginSettings(settings)
-    {
-        const pluginConfigDir = path.join(this.paths.profileDir, 'beefweb');
-
-        await mkdirp(path.join(pluginConfigDir, 'clientconfig'));
-
-        await writeFile(
-            path.join(pluginConfigDir, 'config.json'),
-            JSON.stringify(settings));
-    }
-
-    startProcess(environment)
-    {
-        if (this.process)
-            throw new Error('Process is still running');
-
-        this.process = childProcess.spawn(this.paths.exeFile, ['/hide'], {
-            cwd: this.config.playerDir,
-            detached: true,
-            env: Object.assign({}, process.env, environment)
-        });
-
-        this.process.on('error', err => console.error('Error spawning player process: %s', err));
-        this.process.on('exit', () => this.process = null);
-        this.process.unref();
-    }
-
-    async stopProcess()
-    {
-        const process = this.process;
-
-        if (!process)
+        if (!this.process)
             return;
 
-        await execFile(this.paths.exeFile, ['/exit']);
-        if (await waitForExit(process, 3000))
-            return;
+        try
+        {
+            await callBySystem(this, {
+                async windows()
+                {
+                    await execFile(this.command, ['/exit']);
 
-        console.error('Failed to cleanly stop player, terminating process');
-        process.kill();
-        await waitForExit(process);
+                    if (await waitForExit(this.process, 3000))
+                        return;
+
+                    console.error('Failed to cleanly stop player, terminating process');
+                    this.process.kill();
+                },
+
+                async mac()
+                {
+                    await execFile('killall', ['foobar2000']);
+                }
+            });
+        }
+        finally
+        {
+            this.process = null;
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 #include "add_items_scope.hpp"
 
-#include "../file_system.hpp"
-#include "../core_types.hpp"
+#include "file_system.hpp"
+#include "core_types.hpp"
 
 namespace msrv {
 namespace player_deadbeef {

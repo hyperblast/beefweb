@@ -1,10 +1,10 @@
 #include "main_prefs_page.hpp"
-#include "settings.hpp"
+#include "plugin_settings.hpp"
 #include "plugin.hpp"
 #include "resource.h"
 
-#include "../log.hpp"
-#include "../system.hpp"
+#include "log.hpp"
+#include "system.hpp"
 #include "project_info.hpp"
 
 namespace msrv::player_foobar2000 {
@@ -86,8 +86,11 @@ INT_PTR MainPrefsPageInstance::handleNotify(NMHDR* data)
         break;
 
     case IDC_LINK_3RD_PARTY_LICENSES:
-        shellExecute((SettingsData::getDefaultWebRoot() / MSRV_PATH_LITERAL(MSRV_WEBUI_LICENSES_FILE)).c_str());
+    {
+        auto licensesFile = getThisModuleDir() / MSRV_PATH_LITERAL(MSRV_WEBUI_ROOT) / MSRV_PATH_LITERAL(MSRV_WEBUI_LICENSES_FILE);
+        shellExecute(licensesFile.c_str());
         break;
+    }
 
     case IDC_LINK_API_DOCS:
         shellExecute(MSRV_API_DOCS_URL);

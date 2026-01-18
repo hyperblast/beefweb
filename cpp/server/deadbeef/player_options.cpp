@@ -1,6 +1,6 @@
 
 #include "player_options.hpp"
-#include "../string_utils.hpp"
+#include "string_utils.hpp"
 
 #define CONF_PLAYBACK_ORDER "playback.order"
 #define CONF_PLAYBACK_LOOP "playback.loop"

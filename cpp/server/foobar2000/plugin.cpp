@@ -1,5 +1,5 @@
 #include "plugin.hpp"
-#include "settings.hpp"
+#include "plugin_settings.hpp"
 #include "project_info.hpp"
 #include "utils.hpp"
 
@@ -41,11 +41,17 @@ void Plugin::reconfigure()
         settings->allowRemote = settings_store::allowRemote;
         settings->musicDirsOrig = settings_store::getMusicDirs();
         settings->authRequired = settings_store::authRequired;
-        settings->authUser = settings_store::authUser;
-        settings->authPassword = settings_store::authPassword;
+        settings->authUser = settings_store::authUser.get();
+        settings->authPassword = settings_store::authPassword.get();
         settings->permissions = settings_store::getPermissions();
 
-        settings->initialize(getProfileDir());
+#ifdef MSRV_OS_MAC
+        auto resourceDir = getThisModuleDir().parent_path() / Path("Resources");
+#else
+        const auto& resourceDir = getThisModuleDir();
+#endif
+
+        settings->initialize(resourceDir, getProfileDir());
 
         host_.reconfigure(std::move(settings));
     });
@@ -61,7 +67,9 @@ public:
     void on_init() override
     {
         Logger::setCurrent(&logger_);
+#ifndef MSRV_OS_MAC
         SettingsData::migrate(MSRV_PLAYER_FOOBAR2000, Plugin::getProfileDir());
+#endif
         tryCatchLog([this] { plugin_ = std::make_unique<Plugin>(); });
     }
 
@@ -86,7 +94,9 @@ DECLARE_COMPONENT_VERSION(
     MSRV_LICENSE_TEXT
 );
 
-VALIDATE_COMPONENT_FILENAME(MSRV_FOOBAR2000_PLUGIN_FILE);
+#ifdef MSRV_OS_WINDOWS
+VALIDATE_COMPONENT_FILENAME(MSRV_FOOBAR2000_PLUGIN_FILE ".dll")
+#endif
 
 }
 

@@ -11,13 +11,13 @@
   "scripts": {
     "test": "qunit src/main.js"
   },
-  "devDependencies": {
+  "dependencies": {
     "axios": "^0.21.2",
     "eventsource": "^2.0.2",
     "lodash": "^4.17.21",
     "mkdirp": "^1.0.4",
+    "picomatch": "^4.0.3",
     "qunit": "^2.19.3",
-    "rimraf": "^3.0.2",
-    "tmp": "^0.2.1"
+    "rimraf": "^3.0.2"
   }
 }

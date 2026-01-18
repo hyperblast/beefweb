@@ -1,7 +1,7 @@
 #include "utils.hpp"
 
-#include "../core_types.hpp"
-#include "../string_utils.hpp"
+#include "core_types.hpp"
+#include "string_utils.hpp"
 
 #include <string.h>
 

@@ -1,175 +1,128 @@
 import path from 'path';
-import fs from 'fs';
-import childProcess from 'child_process';
-import { promisify } from 'util';
+import fsObj from 'fs';
 import mkdirp from 'mkdirp';
-import rimrafWithCallback from 'rimraf';
-import tmp from 'tmp';
+import {
+    appsDir,
+    callBySystem,
+    execFile,
+    installFiles,
+    rimraf,
+    sharedLibraryExt,
+    spawnProcess,
+    writePluginSettings,
+} from '../utils.js';
+import { getAppVersion } from '../app_defs.js';
+import { PlayerId } from '../test_context.js';
 
-const accessCheck = promisify(fs.access);
-const readFile = promisify(fs.readFile);
-const writeFile = promisify(fs.writeFile);
-const symlink = promisify(fs.symlink);
-const open = promisify(fs.open);
-const close = promisify(fs.close);
-const rimraf = promisify(rimrafWithCallback)
-const tmpdir = promisify(tmp.dir);
+const fs = fsObj.promises;
+
+const pluginFiles = [
+    `beefweb.${sharedLibraryExt}`,
+    `ddb_gui_dummy.${sharedLibraryExt}`,
+    `nullout2.${sharedLibraryExt}`
+];
+
+async function writePlayerSettings(profileDir)
+{
+    await mkdirp(profileDir);
+
+    await fs.writeFile(
+        path.join(profileDir, 'config'),
+        'gui_plugin dummy\n' +
+        'output_plugin nullout2\n');
+}
 
 class PlayerController
 {
     constructor(config)
     {
         this.config = config;
-        this.paths = {};
+    }
+
+    async setup()
+    {
+        this.command = null;
+        this.homeDir = null;
+        this.profileDir = null;
+        this.pluginDir = null;
+
+        const version = await getAppVersion(PlayerId.deadbeef, 'BEEFWEB_TEST_DEADBEEF_VERSION');
+        const playerDir = path.join(appsDir, 'deadbeef', version);
+
+        await callBySystem(this, {
+            async posix()
+            {
+                const homeDir = path.join(playerDir, 'test_data');
+
+                this.command = path.join(playerDir, 'deadbeef');
+                this.homeDir = homeDir;
+                this.profileDir = path.join(homeDir, '.config/deadbeef');
+                this.pluginDir = path.join(homeDir, '.local/lib/deadbeef');
+            },
+
+            async mac()
+            {
+                const { HOME } = process.env;
+
+                this.command = path.join(playerDir, 'DeaDBeeF.app');
+                this.profileDir = `${HOME}/Library/Preferences/deadbeef`
+                this.pluginDir = `${HOME}/Library/Application Support/Deadbeef/Plugins`;
+            },
+        });
+
+        this.logFile = path.join(this.profileDir, 'api_tests.log');
     }
 
     async start(options)
     {
-        const { pluginSettings, environment } = options;
+        if (this.process)
+            throw new Error('Process is still running');
 
-        if (!this.paths.playerBinary)
-            await this.findPlayerBinary();
+        if (this.homeDir)
+            await rimraf(this.homeDir);
 
-        if (!this.paths.profileDir)
-            await this.initProfile();
+        await installFiles(this.config.pluginBuildDir, this.pluginDir, pluginFiles);
+        await writePlayerSettings(this.profileDir);
+        await writePluginSettings(this.profileDir, options.pluginSettings);
 
-        await this.installPlugins();
-        await this.writePlayerSettings();
-        await this.writePluginSettings(pluginSettings);
-        await this.startProcess(environment);
+        const env = !this.homeDir ? undefined : {
+            ...process.env,
+            HOME: this.homeDir,
+            XDG_CONFIG_HOME: path.join(this.homeDir, '.config')
+        };
+
+        this.process = await spawnProcess({
+            command: this.command,
+            cwd: this.homeDir,
+            env,
+            logFile: this.logFile,
+            onExit: () => this.process = null,
+        });
     }
 
     async stop()
     {
-        this.stopProcess();
-        await this.removeTempFiles();
-    }
-
-    async getLog()
-    {
-        if (this.paths.logFile)
-            return await readFile(this.paths.logFile, 'utf8');
-
-        return null;
-    }
-
-    async findPlayerBinary()
-    {
-        const locations = [
-            path.join(this.config.playerDirBase, 'deadbeef'),
-            '/opt/deadbeef/bin/deadbeef',
-            '/usr/local/bin/deadbeef',
-            '/usr/bin/deadbeef'
-        ];
-
-        for (let location of locations)
-        {
-            try
-            {
-                await accessCheck(location, fs.constants.X_OK);
-                this.paths.playerBinary = location;
-                console.log('using deadbeef at ' + this.paths.playerBinary);
-                return;
-            }
-            catch(e)
-            {
-            }
-        }
-
-        throw new Error(`Unable to find deadbeef executable`);
-    }
-
-    async initProfile()
-    {
-        const userProfileDir = await tmpdir({ prefix: 'beefweb-api-tests-' });
-        const profileDir = path.join(userProfileDir, '.config/deadbeef');
-        const libDir = path.join(userProfileDir, '.local/lib/deadbeef');
-        const logFile = path.join(userProfileDir, 'run.log');
-
-        Object.assign(this.paths, {
-            userProfileDir,
-            profileDir,
-            libDir,
-            logFile,
-        });
-    }
-
-    async writePlayerSettings()
-    {
-        const settings = this.config.deadbeefSettings;
-
-        const data = Object
-            .keys(settings)
-            .map(key => `${key} ${settings[key]}\n`)
-            .join('');
-
-        await mkdirp(this.paths.profileDir);
-        await writeFile(path.join(this.paths.profileDir, 'config'), data);
-    }
-
-    async writePluginSettings(settings)
-    {
-        const pluginConfigDir = path.join(this.paths.profileDir, 'beefweb');
-    
-        await mkdirp(path.join(pluginConfigDir, 'clientconfig'));
-
-        await writeFile(
-            path.join(pluginConfigDir, 'config.json'),
-            JSON.stringify(settings));
-    }
-
-    async installPlugins()
-    {
-        await mkdirp(this.paths.libDir);
-
-        for (let name of this.config.pluginFiles)
-        {
-            await symlink(
-                path.join(this.config.pluginBuildDir, name),
-                path.join(this.paths.libDir, name));
-        }
-    }
-
-    async removeTempFiles()
-    {
-        if (this.paths.userProfileDir)
-            await rimraf(this.paths.userProfileDir);
-    }
-
-    async startProcess(environment)
-    {
-        const env = Object.assign(
-            {},
-            process.env,
-            {
-                HOME: this.paths.userProfileDir,
-                XDG_CONFIG_HOME: path.join(this.paths.userProfileDir, '.config')
-            },
-            environment);
-
-        const logFile = await open(this.paths.logFile, 'w');
-
-        this.process = childProcess.spawn(this.paths.playerBinary, [], {
-            cwd: this.paths.userProfileDir,
-            env,
-            stdio: ['ignore', logFile, logFile],
-            detached: true,
-        });
-
-        this.process.on('error', err => console.error('Error spawning player process: %s', err));
-        this.process.on('exit', () => this.process = null);
-        this.process.unref();
-
-        await close(logFile);
-    }
-
-    stopProcess()
-    {
         if (!this.process)
             return;
 
-        this.process.kill();
-        this.process = null;
+        try
+        {
+            await callBySystem(this, {
+                async posix()
+                {
+                    this.process.kill();
+                },
+
+                async mac()
+                {
+                    await execFile('killall', ['DeaDBeeF']);
+                },
+            });
+        }
+        finally
+        {
+            this.process = null;
+        }
     }
 }
 

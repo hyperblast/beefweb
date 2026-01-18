@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../defines.hpp"
-#include "../file_system.hpp"
-#include "../work_queue.hpp"
-#include "../player_api.hpp"
+#include "defines.hpp"
+#include "file_system.hpp"
+#include "work_queue.hpp"
+#include "player_api.hpp"
 
 #include "artwork_fetcher.hpp"
 #include "utils.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "../player_api.hpp"
+#include "player_api.hpp"
 
 namespace msrv::player_foobar2000 {
 class PlaybackOrderOption : public EnumPlayerOption
