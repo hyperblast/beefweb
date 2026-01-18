@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url'
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,11 +22,24 @@ function getBuildDir(buildType)
     return path.join(toAbsolutePath(binaryDirBase), buildType);
 }
 
+function readBuildConfig(buildDir)
+{
+    try
+    {
+        const configFile = path.join(buildDir, 'build_config.json');
+        return JSON.parse(fs.readFileSync(configFile, 'utf8'));
+    }
+    catch
+    {
+        console.error('Failed to load build confing, using platform defaults');
+        return { isMultiConfig: os.type() === 'Windows_NT'};
+    }
+}
+
 export function getBuildConfig(buildType)
 {
     const buildDir = getBuildDir(buildType);
-    const buildConfigFile = path.join(buildDir, 'build_config.json');
-    const config = JSON.parse(fs.readFileSync(buildConfigFile, 'utf8'));
-
-    return { buildDir, isMultiConfig: config.isMultiConfig || false };
+    const buildConfig = readBuildConfig(buildDir);
+    buildConfig.buildDir = buildDir;
+    return buildConfig;
 }
