@@ -1,14 +1,11 @@
 import path from 'path'
 import fsObj from 'fs';
-import { fileURLToPath } from 'url'
 import { getBuildConfig } from '../../config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
+import { rootDir, testsRootDir } from './utils.js';
 
 const fs = fsObj.promises;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export const PlayerId = Object.freeze({
     deadbeef: 'deadbeef',
@@ -147,8 +144,6 @@ export class TestContextFactory
     {
         const { BEEFWEB_TEST_BUILD_TYPE: buildTypeEnv, BEEFWEB_TEST_PORT: portEnv } = process.env;
 
-        const testsRootDir = path.dirname(__dirname);
-        const rootDir = path.dirname(path.dirname(testsRootDir));
         const buildType = buildTypeEnv || 'Debug';
         const { buildDir, isMultiConfig } = getBuildConfig(buildType);
         const pluginBuildDir = path.join(
@@ -202,7 +197,7 @@ export class TestContextFactory
 
     createOutputConfigs()
     {
-        throw new Error('craeteOutputConfigs() is not implemented');
+        throw new Error('createOutputConfigs() is not implemented');
     }
 
     createClient(config)

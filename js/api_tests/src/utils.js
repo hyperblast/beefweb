@@ -4,10 +4,24 @@ import mkdirp from 'mkdirp';
 import fsObj from 'fs';
 import childProcess from 'child_process';
 import { promisify } from 'util';
+import { fileURLToPath } from 'url';
+import rimrafWithCallback from 'rimraf';
 
 const fs = fsObj.promises;
 
+export const rimraf = promisify(rimrafWithCallback);
 export const execFile = promisify(childProcess.execFile);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export const testsRootDir = path.dirname(__dirname);
+export const rootDir = path.dirname(path.dirname(testsRootDir));
+
+export function isObject(value)
+{
+    return typeof value === 'object' && !Array.isArray(value);
+}
 
 async function removeFile(path)
 {
@@ -15,8 +29,12 @@ async function removeFile(path)
     {
         await fs.unlink(path);
     }
-    catch
+    catch (e)
     {
+        if (e.code === 'ENOENT')
+            return;
+
+        throw e;
     }
 }
 

@@ -2,20 +2,18 @@ import path from 'path';
 import fsObj from 'fs';
 import { promisify } from 'util';
 import mkdirp from 'mkdirp';
-import rimrafWithCallback from 'rimraf';
 import tmp from 'tmp';
 import {
     callBySystem,
     execFile,
     installFiles,
+    rimraf,
     sharedLibraryExt,
     spawnProcess,
-    waitForExit,
     writePluginSettings,
 } from '../utils.js';
 
 const fs = fsObj.promises;
-const rimraf = promisify(rimrafWithCallback)
 const tmpdir = promisify(tmp.dir);
 
 const defaultVersion = 'v1.10';
