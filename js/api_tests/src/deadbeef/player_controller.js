@@ -45,11 +45,12 @@ class PlayerController
         this.profileDir = null;
         this.pluginDir = null;
 
+        const version = await getAppVersion(PlayerId.deadbeef, 'BEEFWEB_TEST_DEADBEEF_VERSION');
+        const playerDir = path.join(this.config.appsDir, 'deadbeef', version);
+
         await callBySystem(this, {
             async posix()
             {
-                const version = await getAppVersion(PlayerId.deadbeef, 'BEEFWEB_TEST_DEADBEEF_VERSION');
-                const playerDir = path.join(this.config.appsDir, 'deadbeef', version);
                 const homeDir = path.join(playerDir, 'test_data');
 
                 this.command = path.join(playerDir, 'deadbeef');
@@ -62,7 +63,7 @@ class PlayerController
             {
                 const { HOME } = process.env;
 
-                this.command = '/Applications/DeaDBeeF.app';
+                this.command = path.join(playerDir, 'DeaDBeeF.app');
                 this.profileDir = `${HOME}/Library/Preferences/deadbeef`
                 this.pluginDir = `${HOME}/Library/Application Support/Deadbeef/Plugins`;
             },
