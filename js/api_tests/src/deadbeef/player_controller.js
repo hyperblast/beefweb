@@ -1,8 +1,6 @@
 import path from 'path';
 import fsObj from 'fs';
-import { promisify } from 'util';
 import mkdirp from 'mkdirp';
-import tmp from 'tmp';
 import {
     callBySystem,
     execFile,
@@ -16,7 +14,6 @@ import { getDefaultAppVersion } from '../app_defs.js';
 import { PlayerId } from '../test_context.js';
 
 const fs = fsObj.promises;
-const tmpdir = promisify(tmp.dir);
 
 const pluginFiles = [
     `beefweb.${sharedLibraryExt}`,
@@ -54,7 +51,7 @@ class PlayerController
 
                 const version = versionEnv || await getDefaultAppVersion(PlayerId.deadbeef);
                 const playerDir = path.join(this.config.appsDir, 'deadbeef', version);
-                const homeDir = await tmpdir({ prefix: 'beefweb-api-tests' });
+                const homeDir = path.join(playerDir, 'test_data');
 
                 this.command = path.join(playerDir, 'deadbeef');
                 this.homeDir = homeDir;
@@ -79,6 +76,9 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
+        if (this.homeDir)
+            await rimraf(this.homeDir);
+
         await installFiles(this.config.pluginBuildDir, this.pluginDir, pluginFiles);
         await writePlayerSettings(this.profileDir);
         await writePluginSettings(this.profileDir, options.pluginSettings);
@@ -100,31 +100,26 @@ class PlayerController
 
     async stop()
     {
-        if (this.process)
-        {
-            try
-            {
-                await callBySystem(this, {
-                    async posix()
-                    {
-                        this.process.kill();
-                    },
+        if (!this.process)
+            return;
 
-                    async mac()
-                    {
-                        await execFile('killall', ['DeaDBeeF']);
-                    },
-                });
-            }
-            finally
-            {
-                this.process = null;
-            }
+        try
+        {
+            await callBySystem(this, {
+                async posix()
+                {
+                    this.process.kill();
+                },
+
+                async mac()
+                {
+                    await execFile('killall', ['DeaDBeeF']);
+                },
+            });
         }
-
-        if (this.homeDir)
+        finally
         {
-            await rimraf(this.homeDir);
+            this.process = null;
         }
     }
 }
