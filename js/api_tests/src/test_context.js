@@ -69,10 +69,17 @@ export class TestContext
             return;
         }
 
-        const logData = await fs.readFile(this.player.logFile, 'utf8');
+        try
+        {
+            const logData = await fs.readFile(this.player.logFile, 'utf8');
 
-        if (logData)
-            console.error('Player run log:\n%s', logData);
+            if (logData)
+                console.error('Player run log:\n%s', logData);
+        }
+        catch
+        {
+            console.error('No player run log available');
+        }
 
         throw new Error('Failed to reach API endpoint');
     }
