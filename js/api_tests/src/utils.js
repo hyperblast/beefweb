@@ -17,6 +17,7 @@ const __dirname = path.dirname(__filename);
 
 export const testsRootDir = path.dirname(__dirname);
 export const rootDir = path.dirname(path.dirname(testsRootDir));
+export const appsDir = path.join(rootDir, 'apps');
 
 export function isObject(value)
 {

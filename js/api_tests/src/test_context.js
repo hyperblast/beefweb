@@ -3,7 +3,7 @@ import fsObj from 'fs';
 import { getBuildConfig } from '../../config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
-import { rootDir, testsRootDir } from './utils.js';
+import { appsDir, rootDir, testsRootDir } from './utils.js';
 
 const fs = fsObj.promises;
 
@@ -156,7 +156,6 @@ export class TestContextFactory
         const port = parseInt(portEnv) || 8879;
         const serverUrl = `http://127.0.0.1:${port}`;
 
-        const appsDir = path.join(rootDir, 'apps');
         const webRootDir = path.join(testsRootDir, 'webroot');
         const musicDir = path.join(testsRootDir, 'tracks');
 

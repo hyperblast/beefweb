@@ -7,7 +7,7 @@ import os from 'os';
 import stream from 'stream';
 import crypto from 'crypto';
 import mkdirp from 'mkdirp';
-import { execFile, rimraf, rootDir } from './utils.js';
+import { appsDir, execFile, rimraf, rootDir } from './utils.js';
 import { getAppDefs } from './app_defs.js';
 import picomatch from 'picomatch';
 
@@ -46,7 +46,7 @@ async function downloadFile(app, def)
 {
     const { version, url, sha256 } = def;
     const fileName = getFileNameFromUrl(url);
-    const outputDir = path.join(rootDir, 'apps', app, version || '');
+    const outputDir = path.join(appsDir, app, version || '');
     const outputFile = path.join(outputDir, fileName);
 
     await rimraf(outputDir);
