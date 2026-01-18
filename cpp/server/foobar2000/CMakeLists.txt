@@ -82,9 +82,15 @@ if(OS_MAC)
     )
 endif()
 
+if(OS_MAC)
+    set(INSTALL_DIR mac)
+else()
+    set(INSTALL_DIR .)
+endif()
+
 install(
     TARGETS foobar2000_plugin
-    RUNTIME DESTINATION .
-    LIBRARY DESTINATION .
+    RUNTIME DESTINATION ${INSTALL_DIR}
+    LIBRARY DESTINATION ${INSTALL_DIR}
     COMPONENT foobar2000_plugin
 )

@@ -71,7 +71,7 @@ endif()
 
 if(ENABLE_FOOBAR2000)
     if(OS_MAC)
-        install_webui(foobar2000_plugin ${FOOBAR2000_PLUGIN_FILE}.component/Contents/Resources)
+        install_webui(foobar2000_plugin mac/${FOOBAR2000_PLUGIN_FILE}.component/Contents/Resources)
     else()
         install_webui(foobar2000_plugin .)
     endif()
