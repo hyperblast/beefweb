@@ -1,6 +1,6 @@
 setlocal
 
-cd "%~dp0..js"
+cd "%~dp0..\js"
 
 cmd /c yarn.cmd install
 if errorlevel 1 goto :error
