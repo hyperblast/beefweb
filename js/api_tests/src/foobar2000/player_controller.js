@@ -1,11 +1,12 @@
 import path from 'path';
 import {
+    appsDir,
     callBySystem,
     execFile,
     installFile,
     replaceDirectory,
     selectBySystem,
-    spawnProcess,
+    spawnProcess, testsRootDir,
     waitForExit,
     writePluginSettings,
 } from '../utils.js';
@@ -31,13 +32,13 @@ class PlayerController
             async windows()
             {
                 const version = await getAppVersion(PlayerId.foobar2000, 'BEEFWEB_TEST_FOOBAR2000_VERSION');
-                const playerDir = path.join(this.config.appsDir, 'foobar2000', version);
+                const playerDir = path.join(appsDir, 'foobar2000', version);
                 const profileDir = path.join(playerDir, 'profile');
 
                 this.command = path.join(playerDir, 'foobar2000.exe');
                 this.profileDir = profileDir;
                 this.templateProfileDir = path.join(
-                    this.config.testsRootDir,
+                    testsRootDir,
                     'profile_data',
                     'foobar2000',
                     version.startsWith('v1.') ? 'windows-v1' : 'windows-v2');

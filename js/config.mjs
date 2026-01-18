@@ -31,7 +31,7 @@ function readBuildConfig(buildDir)
     }
     catch
     {
-        console.error('Failed to load build confing, using platform defaults');
+        console.error('Failed to load build config, using platform defaults');
         return { isMultiConfig: os.type() === 'Windows_NT'};
     }
 }

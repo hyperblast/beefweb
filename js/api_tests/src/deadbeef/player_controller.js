@@ -2,6 +2,7 @@ import path from 'path';
 import fsObj from 'fs';
 import mkdirp from 'mkdirp';
 import {
+    appsDir,
     callBySystem,
     execFile,
     installFiles,
@@ -46,7 +47,7 @@ class PlayerController
         this.pluginDir = null;
 
         const version = await getAppVersion(PlayerId.deadbeef, 'BEEFWEB_TEST_DEADBEEF_VERSION');
-        const playerDir = path.join(this.config.appsDir, 'deadbeef', version);
+        const playerDir = path.join(appsDir, 'deadbeef', version);
 
         await callBySystem(this, {
             async posix()
