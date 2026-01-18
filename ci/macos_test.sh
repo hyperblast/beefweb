@@ -28,6 +28,10 @@ function run_deadbeef_tests
     (cd js/api_tests && yarn test)
 }
 
+# debug
+open apps/deadbeef/v1.10.1-alpha/DeaDBeeF.app
+exit 1
+
 run_server_tests
 
 for version in $(scripts/install_app.sh list-versions deadbeef); do
