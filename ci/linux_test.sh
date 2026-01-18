@@ -17,24 +17,20 @@ function run_server_tests
 
 function run_api_tests
 {
-    (
-        banner "Running API tests on deadbeef $1"
+    banner "Running API tests on deadbeef $1"
 
-        export BEEFWEB_BINARY_DIR_BASE=ci_build
-        export BEEFWEB_TEST_DEADBEEF_VERSION=$1
-        export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
+    export BEEFWEB_BINARY_DIR_BASE=ci_build
+    export BEEFWEB_TEST_DEADBEEF_VERSION=$1
+    export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
 
-        apps/deadbeef/$1/deadbeef --version
-        cd js/api_tests
-        yarn test
-    )
+    (cd js/api_tests && yarn test)
 }
 
 function main
 {
     run_server_tests
 
-    for version in $(scripts/install_app.sh deadbeef list-versions); do
+    for version in $(scripts/install_app.sh list-versions deadbeef); do
         run_api_tests $version
     done
 }
