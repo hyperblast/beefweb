@@ -2,7 +2,9 @@ import path from 'path';
 import {
     callBySystem,
     execFile,
-    installFile, selectBySystem,
+    installFile,
+    rimraf,
+    selectBySystem,
     spawnProcess,
     waitForExit,
     writePluginSettings,
@@ -21,6 +23,7 @@ class PlayerController
     {
         this.command = null;
         this.profileDir = null;
+        this.templateProfileDir = null;
 
         await callBySystem(this, {
             async windows()
@@ -34,6 +37,11 @@ class PlayerController
 
                 this.command = path.join(playerDir, 'foobar2000.exe');
                 this.profileDir = profileDir;
+                this.templateProfileDir = path.join(
+                    this.config.testsRootDir,
+                    'profile_data',
+                    'foobar2000',
+                    version.startsWith('v1.') ? 'windows-v1' : 'windows-v2');
 
                 await installFile(
                     this.config.pluginBuildDir,
@@ -63,7 +71,9 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
+        await rimraf(this.profileDir);
         await writePluginSettings(this.profileDir, options.pluginSettings);
+        await execFile('xcopy.exe', ['/S', this.templateProfileDir, this.profileDir]);
 
         this.process = await spawnProcess({
             command: this.command,
