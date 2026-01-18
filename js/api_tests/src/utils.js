@@ -52,7 +52,7 @@ export async function spawnProcess(parameters)
     if (os.type() === 'Darwin' && command.endsWith('.app'))
     {
         realCommand = 'open';
-        realArgs = ['-W', command];
+        realArgs = [command, '--wait-apps', '--hide'];
 
         if (logFile)
         {
