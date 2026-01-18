@@ -104,7 +104,7 @@ async function unpackFile(app, filePath)
     else if (tarFileMatcher.test(fileName))
         await unpackTar(workDir, fileName);
     else if (app === 'foobar2000' && fileName.endsWith('.exe'))
-        await installFoobar2000(fileName);
+        await installFoobar2000(workDir, fileName);
     else
         throw new Error('Unsupported archive type: ' + fileName);
 
