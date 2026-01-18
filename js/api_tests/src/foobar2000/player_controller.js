@@ -10,8 +10,6 @@ import {
 import { getDefaultAppVersion } from '../app_defs.js';
 import { PlayerId } from '../test_context.js';
 
-const defaultVersion = 'v2.24-x64';
-
 class PlayerController
 {
     constructor(config)
@@ -31,7 +29,7 @@ class PlayerController
 
                 const version = versionEnv || await getDefaultAppVersion(PlayerId.foobar2000);
                 const playerDir = path.join(this.config.appsDir, 'foobar2000', version);
-                const profileDir = version.startsWith('v1.') ? playerDir : path.join(playerDir, 'profile');
+                const profileDir = path.join(playerDir, 'profile');
                 const componentsDir = version.endsWith('-x64') ? 'user-components-x64' : 'user-components';
 
                 this.command = path.join(playerDir, 'foobar2000.exe');
