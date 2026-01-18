@@ -47,21 +47,6 @@ function validateAppDefs(osType, app, defs)
     }
 }
 
-export async function getDefaultAppVersion(app)
-{
-    const appDefs = await getAppDefs();
-    const defs = appDefs[app];
-
-    if (defs === undefined)
-        throw new Error(`Unknown or unavailable app "${app}"`);
-
-    const { version } = defs[defs.length - 1];
-    if (!version)
-        throw new Error(`App "${app}" has no version`);
-
-    return version;
-}
-
 export async function getAppDefs()
 {
     const osType = OsTypeMap[os.type()];
@@ -84,4 +69,24 @@ export async function getAppDefs()
         validateAppDefs(osType, app, apps[app]);
 
     return apps;
+}
+
+export async function getAppVersion(app, envName)
+{
+    return process.env[envName] || await getDefaultAppVersion(app);
+}
+
+export async function getDefaultAppVersion(app)
+{
+    const appDefs = await getAppDefs();
+    const defs = appDefs[app];
+
+    if (defs === undefined)
+        throw new Error(`Unknown or unavailable app "${app}"`);
+
+    const { version } = defs[defs.length - 1];
+    if (!version)
+        throw new Error(`Default entry for "${app}" has no version`);
+
+    return version;
 }
