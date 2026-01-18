@@ -13,7 +13,7 @@ set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 ci_build\%BUILD_TYPE%\cpp\server\tests\%BUILD_TYPE%\core_tests.exe
 if errorlevel 1 set HAS_ERROR=1
 
-cd "%~dp0..js\api_tests\src"
+cd "%~dp0..\js\api_tests\src"
 
 if "%BUILD_ARCH%" == "x64" (
     set VERSION_PATTERN=*-x64
