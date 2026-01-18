@@ -9,17 +9,17 @@
         "foobar2000": [
             {
                 "version": "v1.6.18-x32",
-                "url": "https://hyperblast.org/files/foobar2000/foobar2000_v1.6.18.exe",
+                "url": "https://www.foobar2000.org/downloads/foobar2000_v1.6.18.exe",
                 "sha256": "b570121bf240caac488d514e7ad73924c7aaab68d3d1a362665175c943227413"
             },
             {
                 "version": "v2.25.3-x32",
-                "url": "https://hyperblast.org/files/foobar2000/foobar2000_v2.25.3.exe",
+                "url": "https://www.foobar2000.org/downloads/foobar2000_v2.25.5.exe",
                 "sha256": "6ded9549a37debd82d91f2784676c2a6ae4f58b923981d14fffc4367c249d767"
             },
             {
                 "version": "v2.25.5-x64",
-                "url": "https://hyperblast.org/files/foobar2000/foobar2000-x64_v2.25.5.exe",
+                "url": "https://www.foobar2000.org/downloads/foobar2000-x64_v2.25.5.exe",
                 "sha256": "5c9bef59e96d0808cf886e31b9145c65ae6dd0ddb4402e36df914517b811e032"
             }
         ]
@@ -36,7 +36,7 @@
         "foobar2000": [
             {
                 "version": "v2.25.5",
-                "url": "hhttps://hyperblast.org/files/foobar2000/foobar2000-v2.25.5.dmg",
+                "url": "hhttps://www.foobar2000.org/downloads/foobar2000-v2.25.5.dmg",
                 "sha256": "5a573da9062e463f54927de36d0713cf2aa8435d9912736f996e2ecdcadbd055"
             }
         ]
