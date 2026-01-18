@@ -1,4 +1,3 @@
-import path from 'path';
 import { PlayerId, TestContextFactory } from '../test_context.js';
 import PlayerController from './player_controller.js';
 

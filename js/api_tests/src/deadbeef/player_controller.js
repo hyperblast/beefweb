@@ -12,11 +12,11 @@ import {
     spawnProcess,
     writePluginSettings,
 } from '../utils.js';
+import { getDefaultAppVersion } from '../app_defs.js';
+import { PlayerId } from '../test_context.js';
 
 const fs = fsObj.promises;
 const tmpdir = promisify(tmp.dir);
-
-const defaultVersion = 'v1.10';
 
 const pluginFiles = [
     `beefweb.${sharedLibraryExt}`,
@@ -52,7 +52,7 @@ class PlayerController
             async posix() {
                 const { BEEFWEB_TEST_DEADBEEF_VERSION: versionEnv } = process.env;
 
-                const version = versionEnv || defaultVersion;
+                const version = versionEnv || await getDefaultAppVersion(PlayerId.deadbeef);
                 const playerDir = path.join(this.config.appsDir, 'deadbeef', version);
                 const homeDir = await tmpdir({ prefix: 'beefweb-api-tests' });
 

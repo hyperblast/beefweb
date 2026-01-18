@@ -104,19 +104,20 @@ async function downloadAndUnpack(app, def)
     await unpackFile(outputFile);
 }
 
-function printUsage(allApps)
+function printUsage(appDefs)
 {
-    const scriptName = path.basename(process.argv[1]);
-    const nodeName = isWindows ? path.basename(process.argv0) + ' ' : '';
-
-    console.error(`Usage:`);
-    console.error(`  ${nodeName}${scriptName} <app> [<version>|all]`);
-    console.error('');
+    console.error('Usage:');
+    console.error('  install_app <app>                 install latest app version');
+    console.error('  install_app <app> <version>       install specific app version');
+    console.error('  install_app <app> all             install all available app version');
+    console.error('  install_app <app> list-versions   print available app versions');
+    console.error('  install_app everything            install all versions of all apps');
+    console.error();
     console.error('Available apps:');
 
-    for (let app in allApps)
+    for (let app in appDefs)
     {
-        const versions = allApps[app].map(d => d.version).join(' ');
+        const versions = appDefs[app].map(d => d.version || 'no-version').join(' ');
         console.error(`  ${app}: ${versions}`);
     }
 }
@@ -132,6 +133,14 @@ async function run(appDefs, app, version)
     {
         const def = defs[defs.length - 1];
         await downloadAndUnpack(app, def);
+        return;
+    }
+
+    if (version === 'list-versions')
+    {
+        for (let def of defs)
+            console.log(def.version || 'no-version');
+
         return;
     }
 
@@ -155,10 +164,20 @@ async function main()
     try
     {
         const appDefs = await getAppDefs();
+        const appName = process.argv[2];
+        const appVersion = process.argv[3];
+
+        if (appName === 'everything')
+        {
+            for (let app in appDefs)
+                await run(appDefs, app, 'all');
+
+            return;
+        }
 
         if (process.argv.length === 3 || process.argv.length === 4)
         {
-            await run(appDefs, process.argv[2], process.argv[3]);
+            await run(appDefs, appName, appVersion);
             return;
         }
 

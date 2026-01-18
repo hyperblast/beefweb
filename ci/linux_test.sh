@@ -33,9 +33,10 @@ function run_api_tests
 function main
 {
     run_server_tests
-    run_api_tests v1.8
-    run_api_tests v1.9
-    run_api_tests v1.10
+
+    for version in $(scripts/install_app.sh deadbeef list-versions); do
+        run_api_tests $version
+    done
 }
 
 source "$(dirname $0)/run_in_docker.sh"

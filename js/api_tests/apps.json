@@ -26,6 +26,13 @@
     },
 
     "mac": {
+        "deadbeef": [
+            {
+                "version": "v1.10.1-alpha",
+                "url": "https://sourceforge.net/projects/deadbeef/files/Builds/master/macOS/deadbeef-1.10.1-alpha-macos-universal.zip",
+                "sha256": "6ce46048e3023dc96eeadb83fefca727fbd0493bf4360039f8ad0a31d14dd1e8"
+            }
+        ],
         "foobar2000": [
             {
                 "version": "v2.25.5",

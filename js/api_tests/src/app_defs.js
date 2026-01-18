@@ -47,6 +47,21 @@ function validateAppDefs(osType, app, defs)
     }
 }
 
+export async function getDefaultAppVersion(app)
+{
+    const appDefs = await getAppDefs();
+    const defs = appDefs[app];
+
+    if (defs === undefined)
+        throw new Error(`Unknown or unavailable app "${app}"`);
+
+    const { version } = defs[defs.length - 1];
+    if (!version)
+        throw new Error(`App "${app}" has no version`);
+
+    return version;
+}
+
 export async function getAppDefs()
 {
     const osType = OsTypeMap[os.type()];
