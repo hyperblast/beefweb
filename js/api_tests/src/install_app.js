@@ -113,7 +113,7 @@ async function unpackFile(app, filePath)
 
 async function downloadAndUnpack(app, def)
 {
-    console.log(`Installing ${app} ${def.version || ''}`);
+    console.error(`Installing ${app} ${def.version || ''}`);
     const outputFile = await downloadFile(app, def);
     await unpackFile(app, outputFile);
 }

@@ -123,7 +123,7 @@ export class TestContext
         }
         catch (err)
         {
-            console.log('failed to reset player state, next test will restart player');
+            console.error('Failed to reset player state, next test will restart player');
             this.wantRestart = true;
             throw err;
         }
