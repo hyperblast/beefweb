@@ -55,8 +55,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Install apps
+      run: ci/macos_install.sh
+
     - name: Build
       run: ci/macos_build.sh
+
+    - name: Test
+      run: ci/macos_test.sh
 
     - name: Upload binaries
       uses: actions/upload-artifact@v4

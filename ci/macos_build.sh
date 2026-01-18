@@ -2,6 +2,8 @@
 
 set -e
 
+cd "$(dirname $0)/.."
+
 function banner
 {
     echo
