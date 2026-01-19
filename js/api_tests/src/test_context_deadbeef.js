@@ -70,8 +70,8 @@ class PlayerController
                 const { HOME } = process.env;
 
                 this.command = path.join(playerDir, 'DeaDBeeF.app');
-                this.profileDir = `${HOME}/Library/Preferences/deadbeef`
-                this.pluginDir = `${HOME}/Library/Application Support/Deadbeef/Plugins`;
+                this.profileDir = path.join(HOME, 'Library/Preferences/deadbeef');
+                this.pluginDir = path.join(HOME, 'Library/Application Support/Deadbeef/Plugins');
             },
         });
 

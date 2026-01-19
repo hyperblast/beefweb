@@ -59,7 +59,7 @@ class PlayerController
                 const { HOME } = process.env;
 
                 this.command = path.join(playerDir, 'foobar2000.app');
-                this.profileDir = `${HOME}/Library/foobar2000-v2`;
+                this.profileDir = path.join(HOME, 'Library/foobar2000-v2');
                 this.pluginDir = path.join(this.profileDir, 'user-components', 'foo_beefweb');
                 this.pluginFile = 'foo_beefweb.component';
             }
