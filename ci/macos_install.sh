@@ -4,4 +4,4 @@ set -e
 
 cd "$(dirname $0)/.."
 
-scripts/install_app.sh deadbeef
+scripts/install_app.sh everything

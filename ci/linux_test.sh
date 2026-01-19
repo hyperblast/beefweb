@@ -19,9 +19,8 @@ function run_deadbeef_tests
 {
     banner "Running API tests on deadbeef $1"
 
-    export BEEFWEB_BINARY_DIR_BASE=ci_build
+    export BEEFWEB_TEST_PLAYER=deadbeef
     export BEEFWEB_TEST_DEADBEEF_VERSION=$1
-    export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
 
     (cd js/api_tests && yarn test)
 }
@@ -29,6 +28,9 @@ function run_deadbeef_tests
 function main
 {
     run_server_tests
+
+    export BEEFWEB_BINARY_DIR_BASE=ci_build
+    export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
 
     for version in $(scripts/install_app.sh list-versions deadbeef); do
         run_deadbeef_tests $version
