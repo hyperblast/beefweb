@@ -28,15 +28,14 @@ class PlayerController
         this.pluginDir = null;
         this.pluginFile = null;
 
-        await callBySystem(this, {
-            async windows()
-            {
-                const version = await getAppVersion(PlayerId.foobar2000, 'BEEFWEB_TEST_FOOBAR2000_VERSION');
-                const playerDir = path.join(appsDir, 'foobar2000', version);
-                const profileDir = path.join(playerDir, 'profile');
+        const version = await getAppVersion(PlayerId.foobar2000, 'BEEFWEB_TEST_FOOBAR2000_VERSION');
+        const playerDir = path.join(appsDir, 'foobar2000', version);
 
+        callBySystem(this, {
+            windows()
+            {
                 this.command = path.join(playerDir, 'foobar2000.exe');
-                this.profileDir = profileDir;
+                this.profileDir = path.join(playerDir, 'profile');
                 this.templateProfileDir = path.join(
                     testsRootDir,
                     'profile_data',
@@ -44,18 +43,18 @@ class PlayerController
                     version.startsWith('v1.') ? 'windows-v1' : 'windows-v2');
 
                 this.pluginDir = path.join(
-                    profileDir,
+                    this.profileDir,
                     version.endsWith('-x64') ? 'user-components-x64' : 'user-components',
                     'foo_beefweb');
 
                 this.pluginFile = 'foo_beefweb.dll';
             },
 
-            async mac()
+            mac()
             {
                 const { HOME } = process.env;
 
-                this.command = '/Applications/foobar2000.app';
+                this.command = path.join(playerDir, 'foobar2000.app');
                 this.profileDir = `${HOME}/Library/foobar2000-v2`;
                 this.pluginDir = path.join(this.profileDir, 'user-components', 'foo_beefweb');
                 this.pluginFile = 'foo_beefweb.component';

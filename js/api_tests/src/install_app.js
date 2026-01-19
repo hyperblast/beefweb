@@ -137,7 +137,7 @@ async function unpackDmg(pkgFilePath, outputDir)
 
         await replaceDirectory(
             path.join(volumePath, appBundle),
-            path.join(outputDir, path.basename(appBundle)));
+            path.join(outputDir, appBundle));
     }
     finally
     {
