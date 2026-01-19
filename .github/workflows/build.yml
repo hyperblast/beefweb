@@ -152,7 +152,7 @@ jobs:
         pkg_w32=$(pwd)/input/*-windows-x86.$pkg_ext
         pkg_w64=$(pwd)/input/*-windows-x86_64.$pkg_ext
         pkg_mac=$(pwd)/input/*-macos-arm64.$pkg_ext
-        pkg_universal=$(pwd)/output/$(basename pkg_mac -macos-arm64.$pkg_ext).$pkg_ext
+        pkg_universal=$(pwd)/output/$(basename $pkg_mac -macos-arm64.$pkg_ext).$pkg_ext
         mkdir -p work/x64 output
         (cd work && unzip $pkg_w32 '*')
         (cd work/x64 && unzip $pkg_w64 '*.dll')
