@@ -1,6 +1,8 @@
 import path from 'path';
 import fsObj from 'fs';
 import mkdirp from 'mkdirp';
+import { getDefaultAppVersion } from './app_defs.js';
+import { PlayerId, TestContextFactory } from './test_context.js';
 import {
     appsDir,
     callBySystem,
@@ -13,8 +15,8 @@ import {
     spawnProcess,
     writePluginSettings,
     isMacOs,
-} from '../utils.js';
-import { getDefaultAppVersion } from '../app_defs.js';
+    isLinux,
+} from './utils.js';
 
 const fs = fsObj.promises;
 
@@ -150,4 +152,31 @@ class PlayerController
     }
 }
 
-export default PlayerController;
+export class DeadbeefTestContextFactory extends TestContextFactory
+{
+    constructor()
+    {
+        super();
+        this.playerId = PlayerId.deadbeef;
+    }
+
+    createOutputConfigs()
+    {
+        const result = {
+            default: { typeId: 'nullout2', deviceId: 'default' },
+            alternate: [
+                { typeId: 'nullout', deviceId: 'default' }
+            ],
+        };
+
+        if (isLinux)
+            result.alternate.push({ typeId: 'alsa', deviceId: 'null' });
+
+        return result;
+    }
+
+    createPlayer(config)
+    {
+        return new PlayerController(config);
+    }
+}

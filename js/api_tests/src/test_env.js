@@ -1,5 +1,5 @@
-import { Foobar2000TestContextFactory } from './foobar2000/test_context.js'
-import { DeadbeefTestContextFactory } from './deadbeef/test_context.js'
+import { Foobar2000TestContextFactory } from './test_context_foobar2000.js'
+import { DeadbeefTestContextFactory } from './test_context_deadbeef.js'
 import { selectBySystem } from './utils.js';
 import qunit from 'qunit'
 
