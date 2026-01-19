@@ -80,7 +80,7 @@ class PlayerController
                 return replaceDirectory(this.templateProfileDir, this.profileDir);
             },
 
-            macos()
+            mac()
             {
                 return prepareProfileDir(this.profileDir);
             }
