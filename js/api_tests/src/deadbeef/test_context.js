@@ -1,5 +1,6 @@
 import { PlayerId, TestContextFactory } from '../test_context.js';
 import PlayerController from './player_controller.js';
+import { isLinux } from '../utils.js';
 
 export class DeadbeefTestContextFactory extends TestContextFactory
 {
@@ -11,13 +12,17 @@ export class DeadbeefTestContextFactory extends TestContextFactory
 
     createOutputConfigs()
     {
-        return {
+        const result = {
             default: { typeId: 'nullout2', deviceId: 'default' },
             alternate: [
-                { typeId: 'nullout', deviceId: 'default' },
-                { typeId: 'alsa', deviceId: 'null' },
+                { typeId: 'nullout', deviceId: 'default' }
             ],
-        }
+        };
+
+        if (isLinux)
+            result.alternate.push({ typeId: 'alsa', deviceId: 'null' });
+
+        return result;
     }
 
     createPlayer(config)

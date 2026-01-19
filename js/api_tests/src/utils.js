@@ -20,6 +20,7 @@ export const rootDir = path.dirname(path.dirname(testsRootDir));
 export const appsDir = path.join(rootDir, 'apps');
 export const isMacOs = os.type() === 'Darwin';
 export const isWindows = os.type() === 'Windows_NT';
+export const isLinux = os.type() === 'Linux';
 
 export function isObject(value)
 {
