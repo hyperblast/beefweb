@@ -110,7 +110,7 @@ export async function restoreProfileDir(dirPath)
     const dirStat = await tryStat(dirPath);
     const realDirStat = await tryStat(realDirPath);
 
-    if (realDirStat?.isDirectory() && (!dirStat || dirStat.isSymbolicLink()))
+    if (realDirStat && realDirStat.isDirectory() && (!dirStat || dirStat.isSymbolicLink()))
     {
         if (dirStat)
             await fs.unlink(dirPath);
