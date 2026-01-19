@@ -23,26 +23,17 @@ function validateAppDefs(osType, app, defs)
 
     for (let def of defs)
     {
-        function checkProperty(name, required = true)
+        function checkProperty(name)
         {
-            const context = `${osType}.${app}[${index}].${name}`;
             const value = def[name];
 
-            if (typeof value === 'undefined')
-            {
-                if (!required)
-                    return;
-
-                throw new Error(`Missing "${context}" property, expected non-empty string`);
-            }
-
             if (typeof value !== 'string' || value === '')
-                throw new Error(`Invalid "${context}" property, expected non-empty string`);
+                throw new Error(`Missing or invalid "${osType}.${app}[${index}].${name}" property, expected non-empty string`);
         }
 
         checkProperty('url');
         checkProperty('sha256');
-        checkProperty('version', false);
+        checkProperty('version');
         index++;
     }
 }

@@ -36,9 +36,9 @@ async function computeHash(filePath)
 
 async function downloadFile(app, def)
 {
-    const { version, url, sha256 } = def;
+    const { version, url, sha256, noVersionInPath } = def;
     const fileName = getFileNameFromUrl(url);
-    const outputDir = path.join(appsDir, app, version || '');
+    const outputDir = path.join(appsDir, app, noVersionInPath ? '' : version);
     const outputFile = path.join(outputDir, fileName);
 
     await rimraf(outputDir);
@@ -124,7 +124,7 @@ function printUsage(appDefs)
 
     for (let app in appDefs)
     {
-        const versions = appDefs[app].map(d => d.version || 'no-version').join(' ');
+        const versions = appDefs[app].map(d => d.version).join(' ');
         console.error(`  ${app}: ${versions}`);
     }
 }
@@ -154,7 +154,7 @@ async function listVersions(appDefs, app, version)
         throw new Error(`Unknown app name "${app}"`);
 
     for (let def of getMatchingVersions(appDefs[app], version))
-        console.log(def.version || 'no-version');
+        console.log(def.version);
 }
 
 async function install(appDefs, app, version)

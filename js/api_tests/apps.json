@@ -2,8 +2,10 @@
     "windows": {
         "patch": [
             {
+                "version": "v2.5.9",
                 "url": "https://hyperblast.org/files/patch/patch.zip",
-                "sha256": "0c44d81803ed5f25609d94e500c124f101992491c4b38192b41102ee0a7f34f6"
+                "sha256": "0c44d81803ed5f25609d94e500c124f101992491c4b38192b41102ee0a7f34f6",
+                "noVersionInPath": true
             }
         ],
         "foobar2000": [
