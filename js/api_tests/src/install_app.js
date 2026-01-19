@@ -119,29 +119,33 @@ async function unpackDmg(pkgFilePath, outputDir)
     if (newVolumes.length === 0)
         throw new Error('No volumes were mounted');
 
-    const volume = path.join(volumesRoot, newVolumes[0]);
+    for (let vol of newVolumes)
+        console.error(`Mounted "${vol}"`);
 
     if (newVolumes.length > 1)
-        console.error('Multiple volumes were mounted, using ' + volume);
-    else
-        console.error('Using volume ' + volume);
+        console.error(`Multiple volumes were mounted, using "${newVolumes[0]}"`);
+
+    const volumePath = path.join(volumesRoot, newVolumes[0]);
 
     try
     {
-        const entries = (await fs.readdir(volume)).filter(e => e.endsWith('.app'));
+        const entries = (await fs.readdir(volumePath)).filter(e => e.endsWith('.app'));
         if (entries.length !== 1)
             throw new Error(`Expected single .app entry, got: ` + entries.join(' '));
 
         const appBundle = entries[0];
 
         await replaceDirectory(
-            path.join(volume, appBundle),
+            path.join(volumePath, appBundle),
             path.join(outputDir, path.basename(appBundle)));
     }
     finally
     {
         for (let vol of newVolumes)
+        {
+            console.error(`Unmounting "${vol}"`);
             await execFile('hdiutil', ['detach', path.join(volumesRoot, vol)]);
+        }
     }
 }
 

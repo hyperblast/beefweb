@@ -38,7 +38,7 @@
         "foobar2000": [
             {
                 "version": "v2.25.5",
-                "url": "hhttps://www.foobar2000.org/downloads/foobar2000-v2.25.5.dmg",
+                "url": "https://www.foobar2000.org/downloads/foobar2000-v2.25.5.dmg",
                 "sha256": "5a573da9062e463f54927de36d0713cf2aa8435d9912736f996e2ecdcadbd055"
             }
         ]
