@@ -7,7 +7,7 @@ import os from 'os';
 import stream from 'stream';
 import crypto from 'crypto';
 import mkdirp from 'mkdirp';
-import { appsDir, execFile, rimraf, rootDir } from './utils.js';
+import { appsDir, checkedExecFile, execFile, rimraf, rootDir } from './utils.js';
 import { getAppDefs } from './app_defs.js';
 import picomatch from 'picomatch';
 
@@ -17,14 +17,6 @@ const streamPipeline = util.promisify(stream.pipeline);
 const isWindows = os.type() === 'Windows_NT';
 const exeSuffix = isWindows ? '.exe' : '';
 const tarFileMatcher = /\.tar(\.(gz|bz2|xz))?$/;
-
-async function runApp(command, args, options)
-{
-    const { error } = await execFile(command, args, options);
-
-    if (error)
-        throw new Error(`Command "${command} ${args.join(' ')}" failed with exit code ${error.code}`);
-}
 
 function getFileNameFromUrl(url)
 {
@@ -54,7 +46,7 @@ async function downloadFile(app, def)
 
     console.error('Downloading ' + url);
 
-    await runApp(
+    await checkedExecFile(
         `curl${exeSuffix}`,
         ['--silent', '--fail', '--show-error', '--location', '-o', outputFile, url]);
 
@@ -70,9 +62,9 @@ async function unpackZip(workDir, fileName)
     const options = { cwd: workDir };
 
     if (isWindows)
-        await runApp('7z.exe', ['x', fileName], options);
+        await checkedExecFile('7z.exe', ['x', fileName], options);
     else
-        await runApp('unzip', [fileName], options);
+        await checkedExecFile('unzip', [fileName], options);
 }
 
 async function unpackTar(workDir, fileName)
@@ -80,7 +72,7 @@ async function unpackTar(workDir, fileName)
     if (isWindows)
         throw new Error('Unpacking tar files is not supported on Windows');
 
-    await runApp('tar', ['xf', fileName, '--strip-components=1'], { cwd: workDir });
+    await checkedExecFile('tar', ['xf', fileName, '--strip-components=1'], { cwd: workDir });
 }
 
 async function installFoobar2000(workDir, fileName)
@@ -89,7 +81,7 @@ async function installFoobar2000(workDir, fileName)
         throw new Error('Running exe installer is supported only on Windows');
 
     await fs.writeFile(path.join(workDir, 'portable_mode_enabled'), '');
-    await runApp(path.join(workDir, fileName), ['/S', '/D=' + workDir]);
+    await checkedExecFile(path.join(workDir, fileName), ['/S', '/D=' + workDir]);
 }
 
 async function unpackFile(app, filePath)

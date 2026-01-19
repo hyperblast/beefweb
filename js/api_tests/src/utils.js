@@ -7,13 +7,13 @@ import { promisify } from 'util';
 import { fileURLToPath } from 'url';
 import rimrafWithCallback from 'rimraf';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const fs = fsObj.promises;
 
 export const rimraf = promisify(rimrafWithCallback);
 export const execFile = promisify(childProcess.execFile);
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export const testsRootDir = path.dirname(__dirname);
 export const rootDir = path.dirname(path.dirname(testsRootDir));
@@ -22,6 +22,14 @@ export const appsDir = path.join(rootDir, 'apps');
 export function isObject(value)
 {
     return typeof value === 'object' && !Array.isArray(value);
+}
+
+export async function checkedExecFile(command, args, options)
+{
+    const { error } = await execFile(command, args, options);
+
+    if (error)
+        throw new Error(`Command "${command} ${args.join(' ')}" failed with exit code ${error.code}`);
 }
 
 async function removeFile(path)
@@ -184,17 +192,13 @@ export async function replaceDirectory(source, target)
         {
             // Directory must exist, otherwise xcopy will ask stupid questions
             await mkdirp(target);
-            const { error } = await execFile('xcopy.exe', ['/S', source, target]);
-            if (error)
-                throw Error('Failed to copy directory');
+            await checkedExecFile('xcopy.exe', ['/S', source, target]);
         },
 
         async posix()
         {
             // Directory must not exist, otherwise cp will copy directory inside instead of copying contents
-            const { error } = await execFile('cp', ['-R', source, target]);
-            if (error)
-                throw Error('Failed to copy directory');
+            await checkedExecFile('cp', ['-R', source, target]);
         },
     });
 }
