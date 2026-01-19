@@ -56,20 +56,6 @@ install(
 
 if(ENABLE_TESTS)
     add_library(
-        deadbeef_plugin_dummy_gui MODULE
-        dummy_gui.c
-    )
-
-    set_target_properties(
-        deadbeef_plugin_dummy_gui PROPERTIES
-        PREFIX ""
-        SUFFIX ${SHARED_LIB_SUFFIX}
-        OUTPUT_NAME "ddb_gui_dummy"
-    )
-
-    add_dependencies(deadbeef_plugin_dummy_gui ext_all)
-
-    add_library(
         deadbeef_plugin_nullout2 MODULE
         nullout2.c
     )
@@ -82,4 +68,20 @@ if(ENABLE_TESTS)
     )
 
     add_dependencies(deadbeef_plugin_nullout2 ext_all)
+
+    if(NOT MAC_OS)
+        add_library(
+            deadbeef_plugin_dummy_gui MODULE
+            dummy_gui.c
+        )
+
+        set_target_properties(
+            deadbeef_plugin_dummy_gui PROPERTIES
+            PREFIX ""
+            SUFFIX ${SHARED_LIB_SUFFIX}
+            OUTPUT_NAME "ddb_gui_dummy"
+        )
+
+        add_dependencies(deadbeef_plugin_dummy_gui ext_all)
+    endif()
 endif()

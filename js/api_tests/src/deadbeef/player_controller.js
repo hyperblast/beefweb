@@ -1,5 +1,6 @@
 import path from 'path';
 import fsObj from 'fs';
+import os from 'os';
 import mkdirp from 'mkdirp';
 import {
     appsDir,
@@ -16,20 +17,23 @@ import { PlayerId } from '../test_context.js';
 
 const fs = fsObj.promises;
 
+const isMacOs = os.type() === 'Darwin';
+
 const pluginFiles = [
     `beefweb.${sharedLibraryExt}`,
-    `ddb_gui_dummy.${sharedLibraryExt}`,
     `nullout2.${sharedLibraryExt}`
 ];
+
+if (!isMacOs)
+{
+    pluginFiles.push(`ddb_gui_dummy.${sharedLibraryExt}`,)
+}
 
 async function writePlayerSettings(profileDir)
 {
     await mkdirp(profileDir);
-
-    await fs.writeFile(
-        path.join(profileDir, 'config'),
-        'gui_plugin dummy\n' +
-        'output_plugin nullout2\n');
+    const configData = 'output_plugin nullout2\n' + (isMacOs ? '' : 'gui_plugin dummy\n');
+    await fs.writeFile(path.join(profileDir, 'config'), configData);
 }
 
 class PlayerController
