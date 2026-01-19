@@ -62,11 +62,6 @@ export async function getAppDefs()
     return apps;
 }
 
-export async function getAppVersion(app, envName)
-{
-    return process.env[envName] || await getDefaultAppVersion(app);
-}
-
 export async function getDefaultAppVersion(app)
 {
     const appDefs = await getAppDefs();

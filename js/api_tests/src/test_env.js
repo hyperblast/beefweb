@@ -14,8 +14,7 @@ function getContextFactory()
         posix: [deadbeefFactory]
     });
 
-    const { BEEFWEB_TEST_PLAYER: playerId } = process.env;
-
+    const playerId = process.env.BEEFWEB_TEST_PLAYER;
     if (!playerId)
         return availableFactories[0];
 

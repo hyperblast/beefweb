@@ -10,8 +10,7 @@ import {
     waitForExit,
     writePluginSettings,
 } from '../utils.js';
-import { getAppVersion } from '../app_defs.js';
-import { PlayerId } from '../test_context.js';
+import { getDefaultAppVersion } from '../app_defs.js';
 
 class PlayerController
 {
@@ -28,7 +27,7 @@ class PlayerController
         this.pluginDir = null;
         this.pluginFile = null;
 
-        const version = await getAppVersion(PlayerId.foobar2000, 'BEEFWEB_TEST_FOOBAR2000_VERSION');
+        const version = process.env.BEEFWEB_TEST_FOOBAR2000_VERSION || await getDefaultAppVersion('foobar2000');
         const playerDir = path.join(appsDir, 'foobar2000', version);
 
         callBySystem(this, {

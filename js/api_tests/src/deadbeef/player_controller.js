@@ -12,8 +12,7 @@ import {
     spawnProcess,
     writePluginSettings,
 } from '../utils.js';
-import { getAppVersion } from '../app_defs.js';
-import { PlayerId } from '../test_context.js';
+import { getDefaultAppVersion } from '../app_defs.js';
 
 const fs = fsObj.promises;
 
@@ -50,7 +49,7 @@ class PlayerController
         this.profileDir = null;
         this.pluginDir = null;
 
-        const version = await getAppVersion(PlayerId.deadbeef, 'BEEFWEB_TEST_DEADBEEF_VERSION');
+        const version = process.env.BEEFWEB_TEST_DEADBEEF_VERSION || await getDefaultAppVersion('deadbeef');
         const playerDir = path.join(appsDir, 'deadbeef', version);
 
         await callBySystem(this, {

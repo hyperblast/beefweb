@@ -149,9 +149,8 @@ export class TestContextFactory
 
     createConfig()
     {
-        const { BEEFWEB_TEST_BUILD_TYPE: buildTypeEnv, BEEFWEB_TEST_PORT: portEnv } = process.env;
-
-        const buildType = buildTypeEnv || 'Debug';
+        const buildType = process.env.BEEFWEB_TEST_BUILD_TYPE || 'Debug';
+        const port = parseInt(process.env.BEEFWEB_TEST_PORT) || 8879;
         const { buildDir, isMultiConfig } = getBuildConfig(buildType);
         const pluginBuildDir = path.join(
             buildDir,
@@ -160,9 +159,7 @@ export class TestContextFactory
             this.playerId,
             isMultiConfig ? buildType : '');
 
-        const port = parseInt(portEnv) || 8879;
         const serverUrl = `http://127.0.0.1:${port}`;
-
         const webRootDir = path.join(testsRootDir, 'webroot');
         const musicDir = path.join(testsRootDir, 'tracks');
 
