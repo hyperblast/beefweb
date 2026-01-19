@@ -3,20 +3,26 @@
 import fsObj from 'fs'
 import util from 'util';
 import path from 'path';
-import os from 'os';
 import stream from 'stream';
 import crypto from 'crypto';
 import mkdirp from 'mkdirp';
-import { appsDir, checkedExecFile, execFile, replaceDirectory, rimraf, tryStat } from './utils.js';
+import {
+    appsDir,
+    checkedExecFile,
+    execFile,
+    replaceDirectory,
+    rimraf,
+    tryStat,
+    isWindows,
+    isMacOs,
+    exeExt,
+} from './utils.js';
 import { getAppDefs } from './app_defs.js';
 import picomatch from 'picomatch';
 
 const fs = fsObj.promises;
 const streamPipeline = util.promisify(stream.pipeline);
 
-const isWindows = os.type() === 'Windows_NT';
-const isMacOs = os.type() === 'Darwin';
-const exeSuffix = isWindows ? '.exe' : '';
 const tarFileMatcher = /\.tar(\.(gz|bz2|xz))?$/;
 
 function getFileNameFromUrl(url)
@@ -69,7 +75,7 @@ async function downloadFile(app, def)
     console.error('Downloading ' + url);
 
     await checkedExecFile(
-        `curl${exeSuffix}`,
+        `curl${exeExt}`,
         ['--silent', '--fail', '--show-error', '--location', '-o', outputFile, url]);
 
     const downloadedHash = await computeHash(outputFile);

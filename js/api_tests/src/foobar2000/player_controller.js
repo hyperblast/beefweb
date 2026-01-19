@@ -14,9 +14,8 @@ import {
     testsRootDir,
     waitForExit,
     writePluginSettings,
+    isMacOs,
 } from '../utils.js';
-
-const isMacOs = os.type() === 'Darwin';
 
 class PlayerController
 {

@@ -1,6 +1,5 @@
 import path from 'path';
 import fsObj from 'fs';
-import os from 'os';
 import mkdirp from 'mkdirp';
 import {
     appsDir,
@@ -13,21 +12,20 @@ import {
     sharedLibraryExt,
     spawnProcess,
     writePluginSettings,
+    isMacOs,
 } from '../utils.js';
 import { getDefaultAppVersion } from '../app_defs.js';
 
 const fs = fsObj.promises;
 
-const isMacOs = os.type() === 'Darwin';
-
 const pluginFiles = [
-    `beefweb.${sharedLibraryExt}`,
-    `nullout2.${sharedLibraryExt}`
+    `beefweb${sharedLibraryExt}`,
+    `nullout2${sharedLibraryExt}`
 ];
 
 if (!isMacOs)
 {
-    pluginFiles.push(`ddb_gui_dummy.${sharedLibraryExt}`,)
+    pluginFiles.push(`ddb_gui_dummy${sharedLibraryExt}`,)
 }
 
 async function writePlayerSettings(profileDir)

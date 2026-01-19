@@ -18,6 +18,8 @@ export const execFile = promisify(childProcess.execFile);
 export const testsRootDir = path.dirname(__dirname);
 export const rootDir = path.dirname(path.dirname(testsRootDir));
 export const appsDir = path.join(rootDir, 'apps');
+export const isMacOs = os.type() === 'Darwin';
+export const isWindows = os.type() === 'Windows_NT';
 
 export function isObject(value)
 {
@@ -125,7 +127,7 @@ export async function spawnProcess(parameters)
 
     const options = { detached: true };
 
-    if (os.type() === 'Darwin' && command.endsWith('.app'))
+    if (isMacOs && command.endsWith('.app'))
     {
         realCommand = 'open';
         realArgs = [command, '--wait-apps', '--hide'];
@@ -371,8 +373,13 @@ export function pathCollectionsEqual(paths1, paths2, ignoreOrder = false)
     return true;
 }
 
+export const exeExt = selectBySystem({
+    windows: '.exe',
+    posix: ''
+});
+
 export const sharedLibraryExt = selectBySystem({
-    windows: 'dll',
-    mac: 'dylib',
-    posix: 'so'
+    windows: '.dll',
+    mac: '.dylib',
+    posix: '.so'
 });
