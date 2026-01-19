@@ -6,7 +6,7 @@ import {
     appsDir,
     callBySystem,
     execFile,
-    installFiles,
+    installFiles, prepareProfileDir,
     rimraf,
     sharedLibraryExt,
     spawnProcess,
@@ -52,8 +52,8 @@ class PlayerController
         const version = process.env.BEEFWEB_TEST_DEADBEEF_VERSION || await getDefaultAppVersion('deadbeef');
         const playerDir = path.join(appsDir, 'deadbeef', version);
 
-        await callBySystem(this, {
-            async posix()
+        callBySystem(this, {
+            posix()
             {
                 const homeDir = path.join(playerDir, 'test_data');
 
@@ -63,7 +63,7 @@ class PlayerController
                 this.pluginDir = path.join(homeDir, '.local/lib/deadbeef');
             },
 
-            async mac()
+            mac()
             {
                 const { HOME } = process.env;
 
@@ -81,8 +81,18 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
-        if (this.homeDir)
-            await rimraf(this.homeDir);
+        await callBySystem({
+            async posix()
+            {
+                await rimraf(this.homeDir);
+            },
+
+            async mac()
+            {
+                await prepareProfileDir(this.profileDir);
+                await prepareProfileDir(this.pluginDir);
+            }
+        })
 
         await installFiles(this.config.pluginBuildDir, this.pluginDir, pluginFiles);
         await writePlayerSettings(this.profileDir);

@@ -3,7 +3,7 @@ import {
     appsDir,
     callBySystem,
     execFile,
-    installFile,
+    installFile, prepareProfileDir,
     replaceDirectory,
     selectBySystem,
     spawnProcess, testsRootDir,
@@ -68,8 +68,17 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
-        if (this.templateProfileDir)
-            await replaceDirectory(this.templateProfileDir, this.profileDir);
+        await callBySystem(this, {
+            windows()
+            {
+                return replaceDirectory(this.templateProfileDir, this.profileDir);
+            },
+
+            macos()
+            {
+                return prepareProfileDir(this.profileDir);
+            }
+        })
 
         await writePluginSettings(this.profileDir, options.pluginSettings);
         await installFile(this.config.pluginBuildDir, this.pluginDir, this.pluginFile);

@@ -62,6 +62,45 @@ async function removeFile(path)
     }
 }
 
+export async function prepareProfileDir(dirPath)
+{
+    const realDirPath = dirPath + '.real';
+    const testDirPath = dirPath + '.test';
+
+    await rimraf(testDirPath);
+    await mkdirp(testDirPath);
+
+    const stat = await tryStat(dirPath);
+
+    if (!stat)
+    {
+        await mkdirp(realDirPath);
+        await fs.symlink(dirPath, testDirPath);
+        return;
+    }
+
+    if (stat.isSymbolicLink())
+    {
+        await mkdirp(realDirPath);
+        await fs.unlink(dirPath);
+        await fs.symlink(dirPath, testDirPath);
+        return;
+    }
+
+    if (stat.isDirectory())
+    {
+        if (await tryStat(realDirPath))
+            throw new Error(`Both "${dirPath}" and "${realDirPath}" exist, unable to continue`);
+
+        console.error(`Making backup of "${dirPath}" -> "${path.basename(realDirPath)}"`);
+        await fs.rename(dirPath, realDirPath);
+        await fs.symlink(dirPath, testDirPath);
+        return;
+    }
+
+    throw new Error(`Unable to proceed "${dirPath}" is not directory or symlink"`);
+}
+
 export async function spawnProcess(parameters)
 {
     const { command, env, cwd, args, logFile, onExit } = parameters;
