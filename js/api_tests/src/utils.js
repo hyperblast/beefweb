@@ -32,6 +32,21 @@ export async function checkedExecFile(command, args, options)
         throw new Error(`Command "${command} ${args.join(' ')}" failed with exit code ${error.code}`);
 }
 
+export async function tryStat(path)
+{
+    try
+    {
+        return await fs.stat(path);
+    }
+    catch (e)
+    {
+        if (e.code === 'ENOENT')
+            return null;
+
+        throw e;
+    }
+}
+
 async function removeFile(path)
 {
     try

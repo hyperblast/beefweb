@@ -7,7 +7,7 @@ import os from 'os';
 import stream from 'stream';
 import crypto from 'crypto';
 import mkdirp from 'mkdirp';
-import { appsDir, checkedExecFile, execFile, rimraf, rootDir } from './utils.js';
+import { appsDir, checkedExecFile, rimraf, tryStat } from './utils.js';
 import { getAppDefs } from './app_defs.js';
 import picomatch from 'picomatch';
 
@@ -34,15 +34,36 @@ async function computeHash(filePath)
     return hash.digest('hex');
 }
 
+function hashMismatchMessage(fileName, expected, actual)
+{
+    return `Hash mismatch for ${fileName}, expected: ${expected}, actual: ${actual}`;
+}
+
 async function downloadFile(app, def)
 {
-    const { version, url, sha256, noVersionInPath } = def;
+    const { version, url, sha256 } = def;
     const fileName = getFileNameFromUrl(url);
-    const outputDir = path.join(appsDir, app, noVersionInPath ? '' : version);
-    const outputFile = path.join(outputDir, fileName);
+    const downloadDir = path.join(appsDir, '.cache', app, version);
+    const outputFile = path.join(downloadDir, fileName);
 
-    await rimraf(outputDir);
-    await mkdirp(outputDir);
+    await mkdirp(downloadDir);
+
+    const stat = await tryStat(outputFile);
+    if (stat)
+    {
+        if (!stat.isFile())
+            throw new Error(`File ${outputFile} exists and is not a file, aborting`);
+
+        const cachedHash = await computeHash(outputFile);
+        if (cachedHash === sha256)
+        {
+            console.error(`Using cached file ${fileName}`);
+            return outputFile;
+        }
+
+        console.error(hashMismatchMessage(fileName, sha256, cachedHash) + ', removing cached file');
+        await fs.unlink(outputFile);
+    }
 
     console.error('Downloading ' + url);
 
@@ -50,64 +71,65 @@ async function downloadFile(app, def)
         `curl${exeSuffix}`,
         ['--silent', '--fail', '--show-error', '--location', '-o', outputFile, url]);
 
-    const hash = await computeHash(outputFile);
-    if (hash !== sha256)
-        throw new Error(`Hash mismatch for ${fileName}, expected: ${sha256}, actual: ${hash}`);
+    const downloadedHash = await computeHash(outputFile);
+    if (downloadedHash !== sha256)
+        throw new Error(hashMismatchMessage(fileName, sha256, downloadedHash));
 
     return outputFile;
 }
 
-async function unpackZip(workDir, fileName)
+async function unpackZip(pkgFilePath, outputDir)
 {
-    const options = { cwd: workDir };
+    const options = { cwd: outputDir };
 
     if (isWindows)
-        await checkedExecFile('7z.exe', ['x', fileName], options);
+        await checkedExecFile('7z.exe', ['x', pkgFilePath], options);
     else
-        await checkedExecFile('unzip', [fileName], options);
+        await checkedExecFile('unzip', [pkgFilePath], options);
 }
 
-async function unpackTar(workDir, fileName)
+async function unpackTar(pkgFilePath, outputDir)
 {
     if (isWindows)
         throw new Error('Unpacking tar files is not supported on Windows');
 
-    await checkedExecFile('tar', ['xf', fileName, '--strip-components=1'], { cwd: workDir });
+    await checkedExecFile('tar', ['xf', pkgFilePath, '--strip-components=1'], { cwd: outputDir });
 }
 
-async function installFoobar2000(workDir, fileName)
+async function installFoobar2000(pkgFilePath, outputDir)
 {
     if (!isWindows)
         throw new Error('Running exe installer is supported only on Windows');
 
-    await fs.writeFile(path.join(workDir, 'portable_mode_enabled'), '');
-    await checkedExecFile(path.join(workDir, fileName), ['/S', '/D=' + workDir]);
+    await fs.writeFile(path.join(outputDir, 'portable_mode_enabled'), '');
+    await checkedExecFile(pkgFilePath, ['/S', '/D=' + outputDir]);
 }
 
-async function unpackFile(app, filePath)
+async function unpackFile(app, def, pkgFilePath)
 {
-    const workDir = path.dirname(filePath);
-    const fileName = path.basename(filePath);
+    const pkgFileName =  path.basename(pkgFilePath);
+    const outputDir = path.join(appsDir, app, def.noVersionInPath ? '' : def.version);
 
-    console.error('Unpacking ' + filePath.substring(rootDir.length + 1));
+    console.error('Unpacking ' + pkgFileName);
 
-    if (fileName.endsWith('.zip'))
-        await unpackZip(workDir, fileName);
-    else if (tarFileMatcher.test(fileName))
-        await unpackTar(workDir, fileName);
-    else if (app === 'foobar2000' && fileName.endsWith('.exe'))
-        await installFoobar2000(workDir, fileName);
+    await rimraf(outputDir);
+    await mkdirp(outputDir);
+
+    if (pkgFilePath.endsWith('.zip'))
+        await unpackZip(pkgFilePath, outputDir);
+    else if (tarFileMatcher.test(pkgFilePath))
+        await unpackTar(pkgFilePath, outputDir);
+    else if (app === 'foobar2000' && pkgFilePath.endsWith('.exe'))
+        await installFoobar2000(pkgFilePath, outputDir);
     else
-        throw new Error('Unsupported archive type: ' + fileName);
-
-    await fs.unlink(filePath);
+        throw new Error('Unsupported package type: ' + pkgFileName);
 }
 
 async function downloadAndUnpack(app, def)
 {
-    console.error(`Installing ${app} ${def.version || ''}`);
-    const outputFile = await downloadFile(app, def);
-    await unpackFile(app, outputFile);
+    console.error(`Installing ${app} ${def.version}`);
+    const pkgFilePath = await downloadFile(app, def);
+    await unpackFile(app, def, pkgFilePath);
 }
 
 function printUsage(appDefs)
