@@ -81,10 +81,10 @@ class PlayerController
         if (this.process)
             throw new Error('Process is still running');
 
-        await callBySystem({
-            async posix()
+        await callBySystem(this, {
+            posix()
             {
-                await rimraf(this.homeDir);
+                return rimraf(this.homeDir);
             },
 
             async mac()
