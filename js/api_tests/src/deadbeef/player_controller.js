@@ -6,7 +6,9 @@ import {
     appsDir,
     callBySystem,
     execFile,
-    installFiles, prepareProfileDir,
+    installFiles,
+    prepareProfileDir,
+    restoreProfileDir,
     rimraf,
     sharedLibraryExt,
     spawnProcess,
@@ -115,9 +117,18 @@ class PlayerController
 
     async stop()
     {
-        if (!this.process)
-            return;
+        if (this.process)
+            await this.stopProcess();
 
+        if (isMacOs)
+        {
+            await restoreProfileDir(this.profileDir);
+            await restoreProfileDir(this.pluginDir);
+        }
+    }
+
+    async stopProcess()
+    {
         try
         {
             await callBySystem(this, {
@@ -132,10 +143,12 @@ class PlayerController
                 },
             });
         }
-        finally
+        catch(e)
         {
-            this.process = null;
+            console.error(e);
         }
+
+        this.process = null;
     }
 }
 

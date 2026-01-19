@@ -36,7 +36,7 @@ export async function tryStat(path)
 {
     try
     {
-        return await fs.stat(path);
+        return await fs.lstat(path);
     }
     catch (e)
     {
@@ -99,6 +99,20 @@ export async function prepareProfileDir(dirPath)
     }
 
     throw new Error(`Unable to proceed "${dirPath}" is not directory or symlink"`);
+}
+
+export async function restoreProfileDir(dirPath)
+{
+    const realDirPath = dirPath + '.real';
+    const dirStat = await tryStat(dirPath);
+    const realDirStat = await tryStat(realDirPath);
+
+    if (dirStat && dirStat.isSymbolicLink() &&
+        realDirStat && realDirStat.isDirectory())
+    {
+        await fs.unlink(dirPath);
+        await fs.symlink(realDirPath, dirPath);
+    }
 }
 
 export async function spawnProcess(parameters)

@@ -1,16 +1,22 @@
 import path from 'path';
+import os from 'os';
+import { getDefaultAppVersion } from '../app_defs.js';
 import {
     appsDir,
     callBySystem,
     execFile,
-    installFile, prepareProfileDir,
+    installFile,
+    prepareProfileDir,
     replaceDirectory,
+    restoreProfileDir,
     selectBySystem,
-    spawnProcess, testsRootDir,
+    spawnProcess,
+    testsRootDir,
     waitForExit,
     writePluginSettings,
 } from '../utils.js';
-import { getDefaultAppVersion } from '../app_defs.js';
+
+const isMacOs = os.type() === 'Darwin';
 
 class PlayerController
 {
@@ -97,9 +103,15 @@ class PlayerController
 
     async stop()
     {
-        if (!this.process)
-            return;
+        if (this.process)
+            await this.stopProcess();
 
+        if (isMacOs)
+            await restoreProfileDir(this.profileDir);
+    }
+
+    async stopProcess()
+    {
         try
         {
             await callBySystem(this, {
@@ -120,10 +132,12 @@ class PlayerController
                 }
             });
         }
-        finally
+        catch(e)
         {
-            this.process = null;
+            console.error(e);
         }
+
+        this.process = null;
     }
 }
 
