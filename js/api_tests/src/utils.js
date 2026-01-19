@@ -75,7 +75,7 @@ export async function prepareProfileDir(dirPath)
     if (!stat)
     {
         await mkdirp(realDirPath);
-        await fs.symlink(testDirPath, dirPath);
+        await fs.symlink(path.basename(testDirPath), dirPath);
         return;
     }
 
@@ -83,7 +83,7 @@ export async function prepareProfileDir(dirPath)
     {
         await mkdirp(realDirPath);
         await fs.unlink(dirPath);
-        await fs.symlink(testDirPath, dirPath);
+        await fs.symlink(path.basename(testDirPath), dirPath);
         return;
     }
 
@@ -94,7 +94,7 @@ export async function prepareProfileDir(dirPath)
 
         console.error(`Making backup of "${dirPath}" -> "${path.basename(realDirPath)}"`);
         await fs.rename(dirPath, realDirPath);
-        await fs.symlink(testDirPath, dirPath);
+        await fs.symlink(path.basename(testDirPath), dirPath);
         return;
     }
 
@@ -111,7 +111,7 @@ export async function restoreProfileDir(dirPath)
         realDirStat && realDirStat.isDirectory())
     {
         await fs.unlink(dirPath);
-        await fs.symlink(realDirPath, dirPath);
+        await fs.symlink(path.basename(realDirPath), dirPath);
     }
 }
 
