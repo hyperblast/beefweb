@@ -7,7 +7,7 @@ import os from 'os';
 import stream from 'stream';
 import crypto from 'crypto';
 import mkdirp from 'mkdirp';
-import { appsDir, checkedExecFile, rimraf, tryStat } from './utils.js';
+import { appsDir, checkedExecFile, execFile, replaceDirectory, rimraf, tryStat } from './utils.js';
 import { getAppDefs } from './app_defs.js';
 import picomatch from 'picomatch';
 
@@ -15,6 +15,7 @@ const fs = fsObj.promises;
 const streamPipeline = util.promisify(stream.pipeline);
 
 const isWindows = os.type() === 'Windows_NT';
+const isMacOs = os.type() === 'Darwin';
 const exeSuffix = isWindows ? '.exe' : '';
 const tarFileMatcher = /\.tar(\.(gz|bz2|xz))?$/;
 
@@ -99,10 +100,49 @@ async function unpackTar(pkgFilePath, outputDir)
 async function installFoobar2000(pkgFilePath, outputDir)
 {
     if (!isWindows)
-        throw new Error('Running exe installer is supported only on Windows');
+        throw new Error('Running .exe installer is supported only on Windows');
 
     await fs.writeFile(path.join(outputDir, 'portable_mode_enabled'), '');
     await checkedExecFile(pkgFilePath, ['/S', '/D=' + outputDir]);
+}
+
+async function unpackDmg(pkgFilePath, outputDir)
+{
+    if (!isMacOs)
+        throw new Error('Installing from .dmg is supported only on macOS');
+
+    const volumesRoot = '/Volumes';
+    const existingVolumes = new Set(await fs.readdir(volumesRoot));
+    await checkedExecFile('hdiutil', ['attach', pkgFilePath]);
+    const newVolumes = (await fs.readdir(volumesRoot)).filter(v => !existingVolumes.has(v));
+
+    if (newVolumes.length === 0)
+        throw new Error('No volumes were mounted');
+
+    const volume = path.join(volumesRoot, newVolumes[0]);
+
+    if (newVolumes.length > 1)
+        console.error('Multiple volumes were mounted, using ' + volume);
+    else
+        console.error('Using volume ' + volume);
+
+    try
+    {
+        const entries = (await fs.readdir(volume)).filter(e => e.endsWith('.app'));
+        if (entries.length !== 1)
+            throw new Error(`Expected single .app entry, got: ` + entries.join(' '));
+
+        const appBundle = entries[0];
+
+        await replaceDirectory(
+            path.join(volume, appBundle),
+            path.join(outputDir, path.basename(appBundle)));
+    }
+    finally
+    {
+        for (let vol of newVolumes)
+            await execFile('hdiutil', ['detach', path.join(volumesRoot, vol)]);
+    }
 }
 
 async function unpackFile(app, def, pkgFilePath)
@@ -119,6 +159,8 @@ async function unpackFile(app, def, pkgFilePath)
         await unpackZip(pkgFilePath, outputDir);
     else if (tarFileMatcher.test(pkgFilePath))
         await unpackTar(pkgFilePath, outputDir);
+    else if (pkgFilePath.endsWith('.dmg'))
+        await unpackDmg(pkgFilePath, outputDir);
     else if (app === 'foobar2000' && pkgFilePath.endsWith('.exe'))
         await installFoobar2000(pkgFilePath, outputDir);
     else
