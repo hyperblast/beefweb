@@ -63,8 +63,6 @@ src/settings_store.js
 src/sortable.js
 src/status_bar.js
 src/style.less
-src/tests/index.html
-src/tests/index.js
 src/timer.js
 src/touch_mode_controller.js
 src/urls.js
