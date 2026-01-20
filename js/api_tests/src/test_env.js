@@ -1,7 +1,7 @@
 import { Foobar2000TestContextFactory } from './test_context_foobar2000.js'
 import { DeadbeefTestContextFactory } from './test_context_deadbeef.js'
 import { selectBySystem } from './utils.js';
-import qunit from 'qunit'
+import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
 function getContextFactory()
 {
@@ -33,24 +33,8 @@ export const outputConfigs = context.outputConfigs;
 
 export function usePlayer(options)
 {
-    return {
-        before: () => context.beginSuite(options),
-        after: () => context.endSuite(),
-        beforeEach: () => context.beginTest(),
-        afterEach: () => context.endTest(),
-    };
+    beforeAll(() => context.beginSuite(options));
+    afterAll(() => context.endSuite());
+    beforeEach(() => context.beginTest());
+    afterEach(() => context.endTest());
 }
-
-const maxFailedTests = 10;
-let failedTests = 0;
-
-qunit.on('testEnd', event => {
-    if (event.status !== 'failed')
-        return;
-
-    if (++failedTests < maxFailedTests)
-        return;
-
-    console.error('Too many test failures, stopping');
-    qunit.config.queue.length = 0;
-});

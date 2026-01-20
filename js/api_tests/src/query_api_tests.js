@@ -1,341 +1,322 @@
-import q from 'qunit';
+import { describe, test, assert } from 'vitest';
 import { client, tracks, outputConfigs, usePlayer } from './test_env.js';
 
-q.module('query api', usePlayer());
+describe('query api', () => {
+    usePlayer();
 
-q.test('query player', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t3]);
+    test('query player', async () => {
+        await client.addPlaylistItems(0, [tracks.t3]);
 
-    await client.play(0, 0);
-    await client.waitForState('playing');
+        await client.play(0, 0);
+        await client.waitForState('playing');
 
-    await client.pause();
-    await client.waitForState('paused');
+        await client.pause();
+        await client.waitForState('paused');
 
-    const columns = ['%title%'];
-    const player = await client.getPlayerState(columns);
-    const result = await client.query({ player: true, trcolumns: columns });
+        const columns = ['%title%'];
+        const player = await client.getPlayerState(columns);
+        const result = await client.query({ player: true, trcolumns: columns });
 
-    assert.deepEqual(result.player, player);
-});
-
-q.test('query playlists', async assert =>
-{
-    await client.addPlaylist({ title: 'My playlist' });
-
-    const playlists = await client.getPlaylists();
-    const result = await client.query({ playlists: true });
-
-    assert.deepEqual(result.playlists, playlists);
-});
-
-q.test('query playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
-
-    const columns = ['%title%'];
-    const playlistItems = await client.getPlaylistItems(0, columns);
-
-    const result = await client.query({
-        playlistItems: true,
-        plref: 0,
-        plcolumns: columns,
+        assert.deepEqual(result.player, player);
     });
 
-    assert.deepEqual(result.playlistItems, playlistItems);
-});
+    test('query playlists', async () => {
+        await client.addPlaylist({ title: 'My playlist' });
 
-q.test('query outputs', async assert =>
-{
-    const queue = await client.getOutputs();
-    const result = await client.query({ outputs: true });
-    assert.deepEqual(result.outputs, queue);
-});
+        const playlists = await client.getPlaylists();
+        const result = await client.query({ playlists: true });
 
-q.test('query all', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
-    await client.addToPlayQueue(0, 1);
-
-    await client.play(0, 0);
-    await client.waitForState('playing');
-
-    await client.pause();
-    await client.waitForState('paused');
-
-    await client.addPlaylist({ title: 'My playlist' });
-
-    const columns = ['%title%'];
-
-    const expected = {
-        player: await client.getPlayerState(columns),
-        playlists: await client.getPlaylists(),
-        playlistItems: await client.getPlaylistItems(0, columns),
-        playQueue: await client.getPlayQueue(),
-        outputs: await client.getOutputs(),
-    };
-
-    const result = await client.query({
-        player: true,
-        trcolumns: columns,
-        playlists: true,
-        playlistItems: true,
-        plref: 0,
-        plcolumns: columns,
-        playQueue: true,
-        outputs: true,
+        assert.deepEqual(result.playlists, playlists);
     });
 
-    assert.deepEqual(result, expected);
-});
+    test('query playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
 
-q.test('expect player events', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
+        const columns = ['%title%'];
+        const playlistItems = await client.getPlaylistItems(0, columns);
 
-    const expectation = client.expectEvent({ player: true }, e => e.player === true);
+        const result = await client.query({
+            playlistItems: true,
+            plref: 0,
+            plcolumns: columns,
+        });
 
-    await expectation.ready;
-    await client.play(0, 0);
-    await expectation.done;
+        assert.deepEqual(result.playlistItems, playlistItems);
+    });
 
-    assert.ok(true);
-});
+    test('query outputs', async () => {
+        const queue = await client.getOutputs();
+        const result = await client.query({ outputs: true });
+        assert.deepEqual(result.outputs, queue);
+    });
 
-q.test('expect playlist events', async assert =>
-{
-    const expectation = client.expectEvent({ playlists: true }, e => e.playlists === true);
+    test('query all', async () => {
+        await client.addPlaylistItems(0, [tracks.t2, tracks.t3]);
+        await client.addToPlayQueue(0, 1);
 
-    await expectation.ready;
-    await client.addPlaylist();
-    await expectation.done;
+        await client.play(0, 0);
+        await client.waitForState('playing');
 
-    assert.ok(true);
-});
+        await client.pause();
+        await client.waitForState('paused');
 
-q.test('expect playlist items events', async assert =>
-{
-    const expectation = client.expectEvent({ playlistItems: true }, e => e.playlistItems === true);
+        await client.addPlaylist({ title: 'My playlist' });
 
-    await expectation.ready;
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await expectation.done;
+        const columns = ['%title%'];
 
-    assert.ok(true);
-});
+        const expected = {
+            player: await client.getPlayerState(columns),
+            playlists: await client.getPlaylists(),
+            playlistItems: await client.getPlaylistItems(0, columns),
+            playQueue: await client.getPlayQueue(),
+            outputs: await client.getOutputs(),
+        };
 
-q.test('expect play queue events', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
+        const result = await client.query({
+            player: true,
+            trcolumns: columns,
+            playlists: true,
+            playlistItems: true,
+            plref: 0,
+            plcolumns: columns,
+            playQueue: true,
+            outputs: true,
+        });
 
-    const expectation = client.expectEvent({ playQueue: true }, e => e.playQueue === true);
+        assert.deepEqual(result, expected);
+    });
 
-    await expectation.ready;
-    await client.addToPlayQueue(0, 0);
-    await expectation.done;
+    test('expect player events', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
 
-    assert.ok(true);
-});
+        const expectation = client.expectEvent({ player: true }, e => e.player === true);
 
-q.test('expect output config events', async assert =>
-{
-    const expectation = client.expectEvent({ outputs: true }, e => e.outputs === true);
-    await expectation.ready;
-    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
-    await expectation.done;
-    assert.ok(true);
-});
+        await expectation.ready;
+        await client.play(0, 0);
+        await expectation.done;
 
-q.test('expect player updates', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
+        assert.ok(true);
+    });
 
-    const expectation = client.expectUpdate({ player: true }, e => typeof e.player === 'object');
+    test('expect playlist events', async () => {
+        const expectation = client.expectEvent({ playlists: true }, e => e.playlists === true);
 
-    await expectation.ready;
-    await client.play(0, 0);
-    await expectation.done;
+        await expectation.ready;
+        await client.addPlaylist();
+        await expectation.done;
 
-    const expected = await client.getPlayerState();
-    delete expected.activeItem.position;
+        assert.ok(true);
+    });
 
-    const actual = expectation.lastEvent.player;
-    delete actual.activeItem.position;
+    test('expect playlist items events', async () => {
+        const expectation = client.expectEvent({ playlistItems: true }, e => e.playlistItems === true);
 
-    assert.deepEqual(actual, expected);
-});
+        await expectation.ready;
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await expectation.done;
 
-q.test('expect playlist updates', async assert =>
-{
-    const expectation = client.expectUpdate({ playlists: true }, e => typeof e.playlists === 'object');
+        assert.ok(true);
+    });
 
-    await expectation.ready;
-    await client.addPlaylist({ title: 'My list' });
-    await expectation.done;
+    test('expect play queue events', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
 
-    const expected = await client.getPlaylists();
-    const actual = expectation.lastEvent.playlists;
+        const expectation = client.expectEvent({ playQueue: true }, e => e.playQueue === true);
 
-    assert.deepEqual(actual, expected);
-});
+        await expectation.ready;
+        await client.addToPlayQueue(0, 0);
+        await expectation.done;
 
-q.test('expect playlist items updates when adding items', async assert =>
-{
-    const columns = ['%title%'];
-    const options = {
-        playlistItems: true,
-        plref: 0,
-        plcolumns: columns,
-    };
+        assert.ok(true);
+    });
 
-    const expectation = client.expectUpdate(
-        options, e => typeof e.playlistItems === 'object');
+    test('expect output config events', async () => {
+        const expectation = client.expectEvent({ outputs: true }, e => e.outputs === true);
+        await expectation.ready;
+        await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
+        await expectation.done;
+        assert.ok(true);
+    });
 
-    await expectation.ready;
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await expectation.done;
+    test('expect player updates', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
 
-    const expected = await client.getPlaylistItems(0, columns);
-    const actual = expectation.lastEvent.playlistItems;
+        const expectation = client.expectUpdate({ player: true }, e => typeof e.player === 'object');
 
-    assert.deepEqual(actual, expected);
-});
+        await expectation.ready;
+        await client.play(0, 0);
+        await expectation.done;
 
-q.test('expect playlist items updates when removing items', async assert =>
-{
-    const columns = ['%title%'];
-    const options = {
-        playlistItems: true,
-        plref: 0,
-        plcolumns: columns,
-    };
+        const expected = await client.getPlayerState();
+        delete expected.activeItem.position;
 
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2]);
+        const actual = expectation.lastEvent.player;
+        delete actual.activeItem.position;
 
-    const expectation = client.expectUpdate(
-        options, e => typeof e.playlistItems === 'object');
+        assert.deepEqual(actual, expected);
+    });
 
-    await expectation.ready;
-    await client.removePlaylistItems(0, [0]);
-    await expectation.done;
+    test('expect playlist updates', async () => {
+        const expectation = client.expectUpdate({ playlists: true }, e => typeof e.playlists === 'object');
 
-    const expected = await client.getPlaylistItems(0, columns);
-    const actual = expectation.lastEvent.playlistItems;
+        await expectation.ready;
+        await client.addPlaylist({ title: 'My list' });
+        await expectation.done;
 
-    assert.deepEqual(actual, expected);
-});
+        const expected = await client.getPlaylists();
+        const actual = expectation.lastEvent.playlists;
 
-q.test('expect volume updates', async assert =>
-{
-    const { volume } = await client.getPlayerState();
+        assert.deepEqual(actual, expected);
+    });
 
-    const targetVolume = (volume.min + volume.max) / 2;
+    test('expect playlist items updates when adding items', async () => {
+        const columns = ['%title%'];
+        const options = {
+            playlistItems: true,
+            plref: 0,
+            plcolumns: columns,
+        };
 
-    const expectation = client.expectUpdate(
-        { player: true },
-        e => e.player && e.player.volume.value === targetVolume);
+        const expectation = client.expectUpdate(
+            options, e => typeof e.playlistItems === 'object');
 
-    await expectation.ready;
-    await client.setVolume(targetVolume);
-    await expectation.done;
+        await expectation.ready;
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await expectation.done;
 
-    assert.ok(true);
-});
+        const expected = await client.getPlaylistItems(0, columns);
+        const actual = expectation.lastEvent.playlistItems;
 
-q.test('expect mute state updates', async assert =>
-{
-    const expectation = client.expectUpdate(
-        { player: true },
-        e => e.player && e.player.volume.isMuted);
+        assert.deepEqual(actual, expected);
+    });
 
-    await expectation.ready;
-    await client.setMuted(true);
-    await expectation.done;
+    test('expect playlist items updates when removing items', async () => {
+        const columns = ['%title%'];
+        const options = {
+            playlistItems: true,
+            plref: 0,
+            plcolumns: columns,
+        };
 
-    assert.ok(true);
-});
+        await client.addPlaylistItems(0, [tracks.t1, tracks.t2]);
 
-q.test('expect active item updates when sorting playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.play(0, 0);
-    await client.waitForState('playing');
+        const expectation = client.expectUpdate(
+            options, e => typeof e.playlistItems === 'object');
 
-    const expectation = client.expectUpdate(
-        { player: true },
-        e => e.player && e.player.activeItem.index === 1);
+        await expectation.ready;
+        await client.removePlaylistItems(0, [0]);
+        await expectation.done;
 
-    await expectation.ready;
-    await client.sortPlaylistItems(0, { by: '%tracknumber%', desc: true });
-    await expectation.done;
+        const expected = await client.getPlaylistItems(0, columns);
+        const actual = expectation.lastEvent.playlistItems;
 
-    assert.ok(true);
-});
+        assert.deepEqual(actual, expected);
+    });
 
-q.test('expect active item updates when adding playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.play(0, 0);
-    await client.waitForState('playing');
+    test('expect volume updates', async () => {
+        const { volume } = await client.getPlayerState();
 
-    const expectation = client.expectUpdate(
-        { player: true },
-        e => e.player && e.player.activeItem.index === 1);
+        const targetVolume = (volume.min + volume.max) / 2;
 
-    await expectation.ready;
-    await client.addPlaylistItems(0, [tracks.t2], { index: 0 });
-    await expectation.done;
+        const expectation = client.expectUpdate(
+            { player: true },
+            e => e.player && e.player.volume.value === targetVolume);
 
-    assert.ok(true);
-});
+        await expectation.ready;
+        await client.setVolume(targetVolume);
+        await expectation.done;
 
-q.test('expect active item updates when removing playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
-    await client.play(0, 2);
-    await client.waitForState('playing');
+        assert.ok(true);
+    });
 
-    const expectation = client.expectUpdate(
-        { player: true },
-        e => e.player && e.player.activeItem.index === 1);
+    test('expect mute state updates', async () => {
+        const expectation = client.expectUpdate(
+            { player: true },
+            e => e.player && e.player.volume.isMuted);
 
-    await expectation.ready;
-    await client.removePlaylistItems(0, [0]);
-    await expectation.done;
+        await expectation.ready;
+        await client.setMuted(true);
+        await expectation.done;
 
-    assert.ok(true);
-});
+        assert.ok(true);
+    });
 
-q.test('expect play queue updates', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
+    test('expect active item updates when sorting playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.play(0, 0);
+        await client.waitForState('playing');
 
-    const columns = ['%artist%', '%title%'];
-    const expectation = client.expectUpdate(
-        { playQueue: true, qcolumns: columns },
-        e => typeof e.playQueue === 'object' && e.playQueue.length > 0);
+        const expectation = client.expectUpdate(
+            { player: true },
+            e => e.player && e.player.activeItem.index === 1);
 
-    await expectation.ready;
-    await client.addToPlayQueue(0, 0);
-    await expectation.done;
+        await expectation.ready;
+        await client.sortPlaylistItems(0, { by: '%tracknumber%', desc: true });
+        await expectation.done;
 
-    const expected = await client.getPlayQueue(columns);
-    const actual = expectation.lastEvent.playQueue;
+        assert.ok(true);
+    });
 
-    assert.deepEqual(actual, expected);
-});
+    test('expect active item updates when adding playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.play(0, 0);
+        await client.waitForState('playing');
 
-q.test('expect output config updates', async assert =>
-{
-    const expectation = client.expectUpdate({ outputs: true }, e => typeof e.outputs === 'object');
-    await expectation.ready;
-    await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
-    await expectation.done;
+        const expectation = client.expectUpdate(
+            { player: true },
+            e => e.player && e.player.activeItem.index === 1);
 
-    const expected = await client.getOutputs();
-    const actual = expectation.lastEvent.outputs;
+        await expectation.ready;
+        await client.addPlaylistItems(0, [tracks.t2], { index: 0 });
+        await expectation.done;
 
-    assert.deepEqual(actual, expected);
+        assert.ok(true);
+    });
+
+    test('expect active item updates when removing playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+        await client.play(0, 2);
+        await client.waitForState('playing');
+
+        const expectation = client.expectUpdate(
+            { player: true },
+            e => e.player && e.player.activeItem.index === 1);
+
+        await expectation.ready;
+        await client.removePlaylistItems(0, [0]);
+        await expectation.done;
+
+        assert.ok(true);
+    });
+
+    test('expect play queue updates', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+
+        const columns = ['%artist%', '%title%'];
+        const expectation = client.expectUpdate(
+            { playQueue: true, qcolumns: columns },
+            e => typeof e.playQueue === 'object' && e.playQueue.length > 0);
+
+        await expectation.ready;
+        await client.addToPlayQueue(0, 0);
+        await expectation.done;
+
+        const expected = await client.getPlayQueue(columns);
+        const actual = expectation.lastEvent.playQueue;
+
+        assert.deepEqual(actual, expected);
+    });
+
+    test('expect output config updates', async () => {
+        const expectation = client.expectUpdate({ outputs: true }, e => typeof e.outputs === 'object');
+        await expectation.ready;
+        await client.setOutputDevice(outputConfigs.alternate[0].typeId, outputConfigs.alternate[0].deviceId);
+        await expectation.done;
+
+        const expected = await client.getOutputs();
+        const actual = expectation.lastEvent.outputs;
+
+        assert.deepEqual(actual, expected);
+    });
 });

@@ -9,7 +9,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "test": "qunit src/main.js"
+    "test": "vitest"
   },
   "dependencies": {
     "axios": "^0.21.2",
@@ -17,7 +17,7 @@
     "lodash": "^4.17.21",
     "mkdirp": "^1.0.4",
     "picomatch": "^4.0.3",
-    "qunit": "^2.19.3",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "vitest": "^4.0.17"
   }
 }

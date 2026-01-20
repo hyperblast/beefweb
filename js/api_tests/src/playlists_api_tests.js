@@ -1,413 +1,384 @@
-import q from 'qunit';
+import { describe, test, assert } from 'vitest';
 import { pathCollectionsEqual, waitUntil } from './utils.js';
-import { client, config, tracks, usePlayer } from './test_env.js';
+import { client, tracks, usePlayer } from './test_env.js';
 
-q.module('playlists api', usePlayer());
+describe('playlists api', () => {
+    usePlayer();
 
-function assertPlaylist(assert, playlist)
-{
-    assert.equal(typeof playlist.id, 'string');
-    assert.equal(typeof playlist.title, 'string');
-
-    delete playlist.id;
-    delete playlist.title;
-
-    assert.deepEqual(playlist, {
-        index: 0,
-        isCurrent: true,
-        itemCount: 0,
-        totalTime: 0,
-    });
-}
-
-q.test('get playlists', async assert =>
-{
-    const playlists = await client.getPlaylists();
-
-    assert.ok(playlists);
-    assert.equal(playlists.length, 1);
-
-    const playlist = playlists[0];
-
-    assertPlaylist(assert, playlist);
-});
-
-q.test('get single playlist', async assert =>
-{
-    const p1 = await client.getPlaylist('current');
-    const p2 = await client.getPlaylist(0);
-
-    assert.deepEqual(p1, p2);
-    assertPlaylist(assert, p1);
-});
-
-q.test('get playlist items', async assert =>
-{
-    const columns = ['%track%'];
-
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.addPlaylistItems(0, [tracks.t3]);
-
-    const expected = [
-        { columns: ['01'] },
-        { columns: ['02'] },
-        { columns: ['03'] },
-    ];
-
-    const result1 = await client.getPlaylistItems(0, columns, '0:3');
-    assert.equal(result1.offset, 0);
-    assert.equal(result1.totalCount, 3);
-    assert.deepEqual(result1.items, expected);
-
-    const result2 = await client.getPlaylistItems(0, columns, '0:2');
-    assert.equal(result2.offset, 0);
-    assert.equal(result2.totalCount, 3);
-    assert.deepEqual(result2.items, expected.slice(0, 2));
-
-    const result3 = await client.getPlaylistItems(0, columns, '2:2');
-    assert.equal(result3.offset, 2);
-    assert.equal(result3.totalCount, 3);
-    assert.deepEqual(result3.items, expected.slice(2, 3));
-
-    const result4 = await client.getPlaylistItems(0, columns, '4:4');
-    assert.equal(result4.offset, 3);
-    assert.equal(result4.totalCount, 3);
-    assert.deepEqual(result4.items, []);
-});
-
-q.test('add playlist simple', async assert =>
-{
-    await client.addPlaylist();
-
-    const playlists = await client.getPlaylists();
-    assert.equal(playlists.length, 2);
-
-    const playlist = playlists[1];
-    assert.equal(typeof playlist.id, 'string');
-    delete playlist.id;
-
-    assert.deepEqual(playlist, {
-        index: 1,
-        title: 'New playlist',
-        isCurrent: false,
-        itemCount: 0,
-        totalTime: 0,
-    });
-});
-
-q.test('add playlist full', async assert =>
-{
-    await client.addPlaylist({ title: 'My playlist', index: 0, setCurrent: true });
-
-    const playlists = await client.getPlaylists();
-    assert.equal(playlists.length, 2);
-
-    const playlist = playlists[0];
-    assert.equal(typeof playlist.id, 'string');
-    delete playlist.id;
-
-    assert.deepEqual(playlist, {
-        index: 0,
-        title: 'My playlist',
-        isCurrent: true,
-        itemCount: 0,
-        totalTime: 0,
-    });
-});
-
-q.test('set current playlist', async assert =>
-{
-    await client.addPlaylist();
-    await client.setCurrentPlaylist(1);
-
-    const playlists = await client.getPlaylists();
-    assert.equal(playlists[0].isCurrent, false);
-    assert.equal(playlists[1].isCurrent, true);
-});
-
-q.test('remove playlist', async assert =>
-{
-    await client.addPlaylist();
-    let playlists = await client.getPlaylists();
-
-    const id = playlists[1].id;
-    await client.removePlaylist(id);
-
-    playlists = await client.getPlaylists();
-    assert.equal(playlists.findIndex(i => i.id === id), -1);
-});
-
-q.test('move playlist', async assert =>
-{
-    await client.addPlaylist();
-    await client.addPlaylist();
-    let playlists = await client.getPlaylists();
-
-    const id1 = playlists[1].id;
-    const id2 = playlists[2].id;
-
-    await client.movePlaylist(id1, 2);
-
-    playlists = await client.getPlaylists();
-    assert.equal(playlists[1].id, id2);
-    assert.equal(playlists[2].id, id1);
-});
-
-q.test('clear playlist', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.clearPlaylist(0);
-
-    const files = await client.getPlaylistFiles(0);
-    assert.deepEqual(files, []);
-});
-
-q.test('rename playlist', async assert =>
-{
-    await client.renamePlaylist(0, 'My cool list');
-    const playlists = await client.getPlaylists();
-    assert.equal(playlists[0].title, 'My cool list');
-});
-
-q.test('add playlist items single', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
-});
-
-q.test('add playlist items url', async assert =>
-{
-    const streamUrl = 'https://upload.wikimedia.org/wikipedia/en/d/d0/Rick_Astley_-_Never_Gonna_Give_You_Up.ogg';
-
-    await client.addPlaylistItems(0, [streamUrl]);
-
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [streamUrl]));
-});
-
-q.test('add playlist items multiple', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
-
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3], true));
-});
-
-q.test('add playlist items to position', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.addPlaylistItems(0, [tracks.t1], { index: 0 });
-    await client.addPlaylistItems(0, [tracks.t3], { index: 1 });
-
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t3, tracks.t2]));
-});
-
-q.test('add playlist items async', async assert =>
-{
-    await client.addPlaylistItems(
-        0, [tracks.t1, tracks.t2, tracks.t3], { async: true });
-
-    assert.equal(client.handler.lastStatus, 202);
-
-    const files = await waitUntil(async () =>
+    function assertPlaylist(assert, playlist)
     {
-        const result = await client.getPlaylistFiles(0);
-        return result.length === 3 ? result : null;
-    });
+        assert.equal(typeof playlist.id, 'string');
+        assert.equal(typeof playlist.title, 'string');
 
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3], true));
-});
+        delete playlist.id;
+        delete playlist.title;
 
-q.test('sort playlist items asc', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t1, tracks.t3]);
-    await client.sortPlaylistItems(0, { by: '%tracknumber%' });
-
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3]));
-});
-
-q.test('sort playlist items desc', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t2, tracks.t1, tracks.t3]);
-    await client.sortPlaylistItems(0, { by: '%tracknumber%', desc: true });
-
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t3, tracks.t2, tracks.t1]));
-});
-
-q.test('sort playlist items random', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
-    const initialFiles = await client.getPlaylistFiles(0);
-
-    for (let i = 0; i < 10; i++)
-    {
-        await client.sortPlaylistItems(0, { random: true });
-        const files = await client.getPlaylistFiles(0);
-
-        if (!pathCollectionsEqual(initialFiles, files))
-        {
-            assert.ok(true);
-            return;
-        }
+        assert.deepEqual(playlist, {
+            index: 0,
+            isCurrent: true,
+            itemCount: 0,
+            totalTime: 0,
+        });
     }
 
-    assert.ok(false, 'expected to sort playlist randomly');
-});
+    test('get playlists', async () => {
+        const playlists = await client.getPlaylists();
 
-q.test('remove playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.addPlaylistItems(0, [tracks.t3]);
+        assert.ok(playlists);
+        assert.equal(playlists.length, 1);
 
-    await client.removePlaylistItems(0, [0, 2]);
+        const playlist = playlists[0];
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t2]));
-});
-
-q.test('move playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.addPlaylistItems(0, [tracks.t3]);
-
-    await client.movePlaylistItems({
-        playlist: 0,
-        items: [1, 2],
-        targetIndex: 0
+        assertPlaylist(assert, playlist);
     });
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t2, tracks.t3, tracks.t1]));
-});
+    test('get single playlist', async () => {
+        const p1 = await client.getPlaylist('current');
+        const p2 = await client.getPlaylist(0);
 
-q.test('move playlist items between playlists', async assert =>
-{
-    await client.addPlaylist();
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.addPlaylistItems(0, [tracks.t3]);
-    await client.addPlaylistItems(1, [tracks.t3]);
-    await client.movePlaylistItems({
-        from: 0,
-        to: 1,
-        items: [1, 2]
+        assert.deepEqual(p1, p2);
+        assertPlaylist(assert, p1);
     });
 
-    const files1 = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files1, [tracks.t1]));
+    test('get playlist items', async () => {
+        const columns = ['%track%'];
 
-    const files2 = await client.getPlaylistFiles(1);
-    assert.ok(pathCollectionsEqual(files2, [tracks.t3, tracks.t2, tracks.t3]));
-});
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.addPlaylistItems(0, [tracks.t3]);
 
-q.test('copy playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.addPlaylistItems(0, [tracks.t3]);
-    await client.copyPlaylistItems({
-        playlist: 0,
-        items: [0, 1],
-        targetIndex: 1
+        const expected = [
+            { columns: ['01'] },
+            { columns: ['02'] },
+            { columns: ['03'] },
+        ];
+
+        const result1 = await client.getPlaylistItems(0, columns, '0:3');
+        assert.equal(result1.offset, 0);
+        assert.equal(result1.totalCount, 3);
+        assert.deepEqual(result1.items, expected);
+
+        const result2 = await client.getPlaylistItems(0, columns, '0:2');
+        assert.equal(result2.offset, 0);
+        assert.equal(result2.totalCount, 3);
+        assert.deepEqual(result2.items, expected.slice(0, 2));
+
+        const result3 = await client.getPlaylistItems(0, columns, '2:2');
+        assert.equal(result3.offset, 2);
+        assert.equal(result3.totalCount, 3);
+        assert.deepEqual(result3.items, expected.slice(2, 3));
+
+        const result4 = await client.getPlaylistItems(0, columns, '4:4');
+        assert.equal(result4.offset, 3);
+        assert.equal(result4.totalCount, 3);
+        assert.deepEqual(result4.items, []);
     });
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t1, tracks.t2, tracks.t2, tracks.t3]));
-});
+    test('add playlist simple', async () => {
+        await client.addPlaylist();
 
-q.test('copy playlist items between playlists', async assert =>
-{
-    await client.addPlaylist();
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2]);
-    await client.addPlaylistItems(0, [tracks.t3]);
-    await client.addPlaylistItems(1, [tracks.t3]);
-    await client.copyPlaylistItems({
-        from: 0,
-        to: 1,
-        items: [0, 1]
+        const playlists = await client.getPlaylists();
+        assert.equal(playlists.length, 2);
+
+        const playlist = playlists[1];
+        assert.equal(typeof playlist.id, 'string');
+        delete playlist.id;
+
+        assert.deepEqual(playlist, {
+            index: 1,
+            title: 'New playlist',
+            isCurrent: false,
+            itemCount: 0,
+            totalTime: 0,
+        });
     });
 
-    const files1 = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files1, [tracks.t1, tracks.t2, tracks.t3]));
+    test('add playlist full', async () => {
+        await client.addPlaylist({ title: 'My playlist', index: 0, setCurrent: true });
 
-    const files2 = await client.getPlaylistFiles(1);
-    assert.ok(pathCollectionsEqual(files2, [tracks.t3, tracks.t1, tracks.t2]));
-});
+        const playlists = await client.getPlaylists();
+        assert.equal(playlists.length, 2);
 
-q.test('replace empty playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1], {replace: true});
+        const playlist = playlists[0];
+        assert.equal(typeof playlist.id, 'string');
+        delete playlist.id;
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
-});
+        assert.deepEqual(playlist, {
+            index: 0,
+            title: 'My playlist',
+            isCurrent: true,
+            itemCount: 0,
+            totalTime: 0,
+        });
+    });
 
-q.test('replace non-empty playlist items', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2], {replace: true});
+    test('set current playlist', async () => {
+        await client.addPlaylist();
+        await client.setCurrentPlaylist(1);
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t2]));
-});
+        const playlists = await client.getPlaylists();
+        assert.equal(playlists[0].isCurrent, false);
+        assert.equal(playlists[1].isCurrent, true);
+    });
 
-q.test('add items to empty playlist and play', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1], {play: true});
+    test('remove playlist', async () => {
+        await client.addPlaylist();
+        let playlists = await client.getPlaylists();
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
+        const id = playlists[1].id;
+        await client.removePlaylist(id);
 
-    await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
-});
+        playlists = await client.getPlaylists();
+        assert.equal(playlists.findIndex(i => i.id === id), -1);
+    });
 
-q.test('add items to non-empty playlist and play', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2], {play: true});
+    test('move playlist', async () => {
+        await client.addPlaylist();
+        await client.addPlaylist();
+        let playlists = await client.getPlaylists();
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2]));
+        const id1 = playlists[1].id;
+        const id2 = playlists[2].id;
 
-    await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 1);
-});
+        await client.movePlaylist(id1, 2);
 
-q.test('replace items in empty playlist and play', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1], {play: true, replace: true});
+        playlists = await client.getPlaylists();
+        assert.equal(playlists[1].id, id2);
+        assert.equal(playlists[2].id, id1);
+    });
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t1]));
+    test('clear playlist', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.clearPlaylist(0);
 
-    await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
-});
+        const files = await client.getPlaylistFiles(0);
+        assert.deepEqual(files, []);
+    });
 
-q.test('replace items in non-empty playlist and play', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.addPlaylistItems(0, [tracks.t2], {play: true, replace: true});
+    test('rename playlist', async () => {
+        await client.renamePlaylist(0, 'My cool list');
+        const playlists = await client.getPlaylists();
+        assert.equal(playlists[0].title, 'My cool list');
+    });
 
-    const files = await client.getPlaylistFiles(0);
-    assert.ok(pathCollectionsEqual(files, [tracks.t2]));
+    test('add playlist items single', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
 
-    await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
-});
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1]));
+    });
 
-q.test('stop playback when adding empty dir', async assert =>
-{
-    await client.addPlaylistItems(0, [tracks.t1]);
-    await client.play(0, 0);
-    await client.waitForState('playing');
-    await client.addPlaylistItems(0, [tracks.emptyDir], {play: true});
-    await client.waitForState('stopped');
-    assert.ok(true);
+    test('add playlist items url', async () => {
+        const streamUrl = 'https://upload.wikimedia.org/wikipedia/en/d/d0/Rick_Astley_-_Never_Gonna_Give_You_Up.ogg';
+
+        await client.addPlaylistItems(0, [streamUrl]);
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [streamUrl]));
+    });
+
+    test('add playlist items multiple', async () => {
+        await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3], true));
+    });
+
+    test('add playlist items to position', async () => {
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.addPlaylistItems(0, [tracks.t1], { index: 0 });
+        await client.addPlaylistItems(0, [tracks.t3], { index: 1 });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t3, tracks.t2]));
+    });
+
+    test('add playlist items async', async () => {
+        await client.addPlaylistItems(
+            0, [tracks.t1, tracks.t2, tracks.t3], { async: true });
+
+        assert.equal(client.handler.lastStatus, 202);
+
+        const files = await waitUntil(async () => {
+            const result = await client.getPlaylistFiles(0);
+            return result.length === 3 ? result : null;
+        });
+
+        assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3], true));
+    });
+
+    test('sort playlist items asc', async () => {
+        await client.addPlaylistItems(0, [tracks.t2, tracks.t1, tracks.t3]);
+        await client.sortPlaylistItems(0, { by: '%tracknumber%' });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2, tracks.t3]));
+    });
+
+    test('sort playlist items desc', async () => {
+        await client.addPlaylistItems(0, [tracks.t2, tracks.t1, tracks.t3]);
+        await client.sortPlaylistItems(0, { by: '%tracknumber%', desc: true });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t3, tracks.t2, tracks.t1]));
+    });
+
+    test('sort playlist items random', async () => {
+        await client.addPlaylistItems(0, [tracks.t1, tracks.t2, tracks.t3]);
+        const initialFiles = await client.getPlaylistFiles(0);
+
+        for (let i = 0; i < 10; i++)
+        {
+            await client.sortPlaylistItems(0, { random: true });
+            const files = await client.getPlaylistFiles(0);
+
+            if (!pathCollectionsEqual(initialFiles, files))
+            {
+                assert.ok(true);
+                return;
+            }
+        }
+
+        assert.ok(false, 'expected to sort playlist randomly');
+    });
+
+    test('remove playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.addPlaylistItems(0, [tracks.t3]);
+
+        await client.removePlaylistItems(0, [0, 2]);
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t2]));
+    });
+
+    test('move playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.addPlaylistItems(0, [tracks.t3]);
+
+        await client.movePlaylistItems({
+            playlist: 0,
+            items: [1, 2],
+            targetIndex: 0
+        });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t2, tracks.t3, tracks.t1]));
+    });
+
+    test('move playlist items between playlists', async () => {
+        await client.addPlaylist();
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.addPlaylistItems(0, [tracks.t3]);
+        await client.addPlaylistItems(1, [tracks.t3]);
+        await client.movePlaylistItems({
+            from: 0,
+            to: 1,
+            items: [1, 2]
+        });
+
+        const files1 = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files1, [tracks.t1]));
+
+        const files2 = await client.getPlaylistFiles(1);
+        assert.ok(pathCollectionsEqual(files2, [tracks.t3, tracks.t2, tracks.t3]));
+    });
+
+    test('copy playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.addPlaylistItems(0, [tracks.t3]);
+        await client.copyPlaylistItems({
+            playlist: 0,
+            items: [0, 1],
+            targetIndex: 1
+        });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t1, tracks.t2, tracks.t2, tracks.t3]));
+    });
+
+    test('copy playlist items between playlists', async () => {
+        await client.addPlaylist();
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2]);
+        await client.addPlaylistItems(0, [tracks.t3]);
+        await client.addPlaylistItems(1, [tracks.t3]);
+        await client.copyPlaylistItems({
+            from: 0,
+            to: 1,
+            items: [0, 1]
+        });
+
+        const files1 = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files1, [tracks.t1, tracks.t2, tracks.t3]));
+
+        const files2 = await client.getPlaylistFiles(1);
+        assert.ok(pathCollectionsEqual(files2, [tracks.t3, tracks.t1, tracks.t2]));
+    });
+
+    test('replace empty playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1], { replace: true });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1]));
+    });
+
+    test('replace non-empty playlist items', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2], { replace: true });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t2]));
+    });
+
+    test('add items to empty playlist and play', async () => {
+        await client.addPlaylistItems(0, [tracks.t1], { play: true });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1]));
+
+        await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
+    });
+
+    test('add items to non-empty playlist and play', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2], { play: true });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1, tracks.t2]));
+
+        await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 1);
+    });
+
+    test('replace items in empty playlist and play', async () => {
+        await client.addPlaylistItems(0, [tracks.t1], { play: true, replace: true });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t1]));
+
+        await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
+    });
+
+    test('replace items in non-empty playlist and play', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.addPlaylistItems(0, [tracks.t2], { play: true, replace: true });
+
+        const files = await client.getPlaylistFiles(0);
+        assert.ok(pathCollectionsEqual(files, [tracks.t2]));
+
+        await client.waitForState(s => s.playbackState === 'playing' && s.activeItem.index === 0);
+    });
+
+    test('stop playback when adding empty dir', async () => {
+        await client.addPlaylistItems(0, [tracks.t1]);
+        await client.play(0, 0);
+        await client.waitForState('playing');
+        await client.addPlaylistItems(0, [tracks.emptyDir], { play: true });
+        await client.waitForState('stopped');
+        assert.ok(true);
+    });
 });

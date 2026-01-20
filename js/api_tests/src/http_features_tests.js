@@ -1,4 +1,4 @@
-import q from 'qunit';
+import { describe, test, assert } from 'vitest';
 import { client, tracks, usePlayer } from './test_env.js';
 
 const expectedValue = 'Very Custom, Much Configurable, Wow';
@@ -9,25 +9,25 @@ const pluginSettings = {
     }
 };
 
-q.module('http features', usePlayer({ pluginSettings }));
+describe('http features', () => {
+    usePlayer({ pluginSettings });
 
-q.test('custom headers', async assert =>
-{
-    const response = await client.handler.axios.get('/api/player');
+    test('custom headers', async () => {
+        const response = await client.handler.axios.get('/api/player');
 
-    assert.strictEqual(response.headers['x-customheader'], expectedValue);
-});
+        assert.strictEqual(response.headers['x-customheader'], expectedValue);
+    });
 
-q.test('custom headers for async method', async assert =>
-{
-    const response = await client.handler.axios.post('/api/playlists/0/items/add', { items: [tracks.t1] });
+    test('custom headers for async method', async () => {
+        const response = await client.handler.axios.post('/api/playlists/0/items/add', { items: [tracks.t1] });
 
-    assert.strictEqual(response.headers['x-customheader'], expectedValue);
-});
+        assert.strictEqual(response.headers['x-customheader'], expectedValue);
+    });
 
-q.test('options method', async assert =>
-{
-    const response = await client.handler.axios.options('/api/player');
+    test('options method', async () => {
+        const response = await client.handler.axios.options('/api/player');
 
-    assert.strictEqual(response.headers['x-customheader'], expectedValue);
+        assert.strictEqual(response.headers['x-customheader'], expectedValue);
+    });
+
 });

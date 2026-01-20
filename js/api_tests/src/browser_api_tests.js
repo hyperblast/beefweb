@@ -1,14 +1,11 @@
 import path from 'path';
-import { promisify } from 'util';
 import fs from 'fs';
-import q from 'qunit';
-import lodash from 'lodash';
+import { omit, sortBy } from 'lodash';
+import { describe, test, assert } from 'vitest';
 import { client, config, usePlayer } from './test_env.js';
 
-const { omit, sortBy } = lodash;
-
-const readdir = promisify(fs.readdir);
-const stat = promisify(fs.stat);
+const readdir = fs.promises.readdir;
+const stat = fs.promises.stat;
 
 const musicSubdir = path.join(config.musicDir, 'subdir');
 
@@ -50,38 +47,37 @@ async function getFileSystemEntriesDirect(dirPath)
     return sortBy(items, ['type', 'path']);
 }
 
-q.module('browser api', usePlayer());
+describe('browser api', () => {
+    usePlayer();
 
-q.test('get roots', async assert =>
-{
-    const result = await client.getFileSystemRoots()
-    const actual = normalizeResult(result.roots);
-    const expected = [{
-        name: config.musicDir,
-        path: config.musicDir,
-        type: 'D',
-    }];
+    test('get roots', async () => {
+        const result = await client.getFileSystemRoots()
+        const actual = normalizeResult(result.roots);
+        const expected = [{
+            name: config.musicDir,
+            path: config.musicDir,
+            type: 'D',
+        }];
 
-    assert.ok(isPathSeparator(result.pathSeparator));
-    assert.deepEqual(actual, expected);
-});
+        assert.ok(isPathSeparator(result.pathSeparator));
+        assert.deepEqual(actual, expected);
+    });
 
-q.test('get entries root', async assert =>
-{
-    const result = await client.getFileSystemEntries(config.musicDir);
-    const expected = await getFileSystemEntriesDirect(config.musicDir);
-    const actual = normalizeResult(result.entries);
+    test('get entries root', async () => {
+        const result = await client.getFileSystemEntries(config.musicDir);
+        const expected = await getFileSystemEntriesDirect(config.musicDir);
+        const actual = normalizeResult(result.entries);
 
-    assert.ok(isPathSeparator(result.pathSeparator));
-    assert.deepEqual(actual, expected);
-});
+        assert.ok(isPathSeparator(result.pathSeparator));
+        assert.deepEqual(actual, expected);
+    });
 
-q.test('get entries subdir', async assert =>
-{
-    const result = await client.getFileSystemEntries(musicSubdir);
-    const expected = await getFileSystemEntriesDirect(musicSubdir);
-    const actual = normalizeResult(result.entries);
+    test('get entries subdir', async () => {
+        const result = await client.getFileSystemEntries(musicSubdir);
+        const expected = await getFileSystemEntriesDirect(musicSubdir);
+        const actual = normalizeResult(result.entries);
 
-    assert.ok(isPathSeparator(result.pathSeparator));
-    assert.deepEqual(actual, expected);
+        assert.ok(isPathSeparator(result.pathSeparator));
+        assert.deepEqual(actual, expected);
+    });
 });
