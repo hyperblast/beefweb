@@ -245,14 +245,11 @@ export async function writePluginSettings(profileDir, settings)
         JSON.stringify(settings));
 }
 
-const fastCopyFile = selectBySystem({
-    windows: fs.copyFile,
-    async posix(from, to)
-    {
-        await removeFile(to);
-        await fs.symlink(from, to);
-    },
-});
+async function fastCopyFile(from, to)
+{
+    await removeFile(to);
+    await fs.symlink(from, to);
+}
 
 export async function replaceDirectory(source, target)
 {
