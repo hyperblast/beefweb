@@ -10,7 +10,6 @@ src/client_config_api_tests.js
 src/event_expectation.js
 src/http_features_tests.js
 src/install_app.js
-src/main.js
 src/outputs_api_tests.js
 src/permissions_tests.js
 src/play_queue_api_tests.js

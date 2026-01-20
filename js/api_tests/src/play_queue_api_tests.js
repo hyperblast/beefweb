@@ -1,13 +1,12 @@
-import q from 'qunit';
-import { client, config, tracks, usePlayer } from './test_env.js';
+import { describe, test, assert } from 'vitest';
+import { client, config, tracks, setupPlayer } from './test_env.js';
+import { PlayerId } from './test_context.js';
 
 // DeaDBeeF clears play queue asynchronously on stop
 // Avoid resetting player state for stable runs
 const resetOptions = {
     playerState: false
 };
-
-q.module('play queue api', usePlayer({ resetOptions }));
 
 async function setupTracks()
 {
@@ -25,87 +24,81 @@ async function setupTracks()
     return [p1, p2];
 }
 
-q.test('get play queue with columns', async assert => {
-    const [p1] = await setupTracks();
+describe('play queue api', () => {
+    setupPlayer({ resetOptions });
 
-    await client.addToPlayQueue(p1, 0);
-    await client.addToPlayQueue(p1, 1);
+    test('get play queue with columns', async () => {
+        const [p1] = await setupTracks();
 
-    const queue = await client.getPlayQueue(['%artist%', '%title%']);
+        await client.addToPlayQueue(p1, 0);
+        await client.addToPlayQueue(p1, 1);
 
-    assert.deepEqual(queue, [
-        { playlistIndex: 0, playlistId: p1, itemIndex: 0, columns: ['Hyperblast', 'Silence Rocks - Part 1'] },
-        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: ['Hyperblast', 'Silence Rocks - Part 2'] },
-    ]);
-})
+        const queue = await client.getPlayQueue(['%artist%', '%title%']);
 
-q.test('add to queue', async assert =>
-{
-    const [p1, p2] = await setupTracks();
+        assert.deepEqual(queue, [
+            { playlistIndex: 0, playlistId: p1, itemIndex: 0, columns: ['Hyperblast', 'Silence Rocks - Part 1'] },
+            { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: ['Hyperblast', 'Silence Rocks - Part 2'] },
+        ]);
+    });
 
-    await client.addToPlayQueue(p1, 1);
-    await client.addToPlayQueue(1, 0);
+    test('add to queue', async () => {
+        const [p1, p2] = await setupTracks();
 
-    const queue = await client.getPlayQueue();
+        await client.addToPlayQueue(p1, 1);
+        await client.addToPlayQueue(1, 0);
 
-    assert.deepEqual(queue, [
-        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
-        { playlistIndex: 1, playlistId: p2, itemIndex: 0, columns: [] },
-    ]);
-});
+        const queue = await client.getPlayQueue();
 
-q.test('add to queue at index', async assert =>
-{
-    if (config.playerId !== 'deadbeef')
-    {
-        assert.ok('adding to queue at index is not supported by current player');
-        return;
-    }
+        assert.deepEqual(queue, [
+            { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
+            { playlistIndex: 1, playlistId: p2, itemIndex: 0, columns: [] },
+        ]);
+    });
 
-    const [p1, p2] = await setupTracks();
+    test('add to queue at index', { skip: config.playerId !== PlayerId.deadbeef }, async () => {
+        const [p1, p2] = await setupTracks();
 
-    await client.addToPlayQueue(p1, 0);
-    await client.addToPlayQueue(0, 1, 1);
-    await client.addToPlayQueue(p2, 0, 0);
+        await client.addToPlayQueue(p1, 0);
+        await client.addToPlayQueue(0, 1, 1);
+        await client.addToPlayQueue(p2, 0, 0);
 
-    let queue = await client.getPlayQueue();
+        let queue = await client.getPlayQueue();
 
-    assert.deepEqual(queue, [
-        { playlistIndex: 1, playlistId: p2, itemIndex: 0, columns: [] },
-        { playlistIndex: 0, playlistId: p1, itemIndex: 0, columns: [] },
-        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
-    ]);
-});
+        assert.deepEqual(queue, [
+            { playlistIndex: 1, playlistId: p2, itemIndex: 0, columns: [] },
+            { playlistIndex: 0, playlistId: p1, itemIndex: 0, columns: [] },
+            { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
+        ]);
+    });
 
-q.test('remove from queue', async assert =>
-{
-    const [p1, p2] = await setupTracks();
+    test('remove from queue', async () => {
+        const [p1, p2] = await setupTracks();
 
-    await client.addToPlayQueue(p1, 0);
-    await client.addToPlayQueue(p1, 1);
-    await client.addToPlayQueue(p2, 0);
+        await client.addToPlayQueue(p1, 0);
+        await client.addToPlayQueue(p1, 1);
+        await client.addToPlayQueue(p2, 0);
 
-    await client.removeFromPlayQueueByQueueIndex(0);
-    await client.removeFromPlayQueueByItemIndex(p2, 0);
+        await client.removeFromPlayQueueByQueueIndex(0);
+        await client.removeFromPlayQueueByItemIndex(p2, 0);
 
-    let queue = await client.getPlayQueue();
+        let queue = await client.getPlayQueue();
 
-    assert.deepEqual(queue, [
-        { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
-    ]);
-});
+        assert.deepEqual(queue, [
+            { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: [] },
+        ]);
+    });
 
-q.test('clear queue', async assert =>
-{
-    const [p1, p2] = await setupTracks();
+    test('clear queue', async () => {
+        const [p1, p2] = await setupTracks();
 
-    await client.addToPlayQueue(p1, 0);
-    await client.addToPlayQueue(p1, 1);
-    await client.addToPlayQueue(p2, 0);
+        await client.addToPlayQueue(p1, 0);
+        await client.addToPlayQueue(p1, 1);
+        await client.addToPlayQueue(p2, 0);
 
-    await client.clearPlayQueue();
+        await client.clearPlayQueue();
 
-    let queue = await client.getPlayQueue();
+        let queue = await client.getPlayQueue();
 
-    assert.equal(queue.length, 0);
+        assert.equal(queue.length, 0);
+    });
 });

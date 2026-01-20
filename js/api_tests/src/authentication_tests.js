@@ -1,6 +1,6 @@
-import q from 'qunit';
+import { describe, test, assert } from 'vitest';
 import lodash from 'lodash';
-import { client, usePlayer } from './test_env.js';
+import { client, setupPlayer } from './test_env.js';
 
 const { startsWith } = lodash;
 
@@ -30,34 +30,33 @@ function makeRequest(config)
     return client.handler.axios.get('api/player', fullConfig);
 }
 
-q.module('authentication', usePlayer({ pluginSettings, axiosConfig }));
+describe('authentication', () => {
+    setupPlayer({ pluginSettings, axiosConfig });
 
-q.test('require auth', async assert =>
-{
-    const response = await makeRequest();
+    test('require auth', async () => {
+        const response = await makeRequest();
 
-    assert.equal(response.status, 401);
-    assert.ok(response.data && response.data.error);
-    assert.ok(startsWith(response.headers['www-authenticate'], 'Basic'));
-});
-
-q.test('invalid auth', async assert =>
-{
-    const response = await makeRequest({
-        auth: { username: authUser, password: 'wrong' }
+        assert.equal(response.status, 401);
+        assert.ok(response.data && response.data.error);
+        assert.ok(startsWith(response.headers['www-authenticate'], 'Basic'));
     });
 
-    assert.equal(response.status, 401);
-    assert.ok(response.data && response.data.error);
-    assert.ok(startsWith(response.headers['www-authenticate'], 'Basic'));
-});
+    test('invalid auth', async () => {
+        const response = await makeRequest({
+            auth: { username: authUser, password: 'wrong' }
+        });
 
-q.test('valid auth', async assert =>
-{
-    const response = await makeRequest({
-        auth: { username: authUser, password: authPassword }
+        assert.equal(response.status, 401);
+        assert.ok(response.data && response.data.error);
+        assert.ok(startsWith(response.headers['www-authenticate'], 'Basic'));
     });
 
-    assert.equal(response.status, 200);
-    assert.ok(response.data && response.data.player);
+    test('valid auth', async () => {
+        const response = await makeRequest({
+            auth: { username: authUser, password: authPassword }
+        });
+
+        assert.equal(response.status, 200);
+        assert.ok(response.data && response.data.player);
+    });
 });
