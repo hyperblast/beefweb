@@ -1,5 +1,6 @@
 import { describe, test, assert } from 'vitest';
 import { client, config, tracks, setupPlayer } from './test_env.js';
+import { PlayerId } from './test_context.js';
 
 // DeaDBeeF clears play queue asynchronously on stop
 // Avoid resetting player state for stable runs
@@ -7,24 +8,24 @@ const resetOptions = {
     playerState: false
 };
 
+async function setupTracks()
+{
+    await client.addPlaylist();
+
+    const playlists = await client.getPlaylists();
+
+    const p1 = playlists[0].id;
+    const p2 = playlists[1].id;
+
+    await client.addPlaylistItems(p1, [tracks.t1]);
+    await client.addPlaylistItems(p1, [tracks.t2]);
+    await client.addPlaylistItems(p2, [tracks.t3]);
+
+    return [p1, p2];
+}
+
 describe('play queue api', () => {
     setupPlayer({ resetOptions });
-
-    async function setupTracks()
-    {
-        await client.addPlaylist();
-
-        const playlists = await client.getPlaylists();
-
-        const p1 = playlists[0].id;
-        const p2 = playlists[1].id;
-
-        await client.addPlaylistItems(p1, [tracks.t1]);
-        await client.addPlaylistItems(p1, [tracks.t2]);
-        await client.addPlaylistItems(p2, [tracks.t3]);
-
-        return [p1, p2];
-    }
 
     test('get play queue with columns', async () => {
         const [p1] = await setupTracks();
@@ -38,7 +39,7 @@ describe('play queue api', () => {
             { playlistIndex: 0, playlistId: p1, itemIndex: 0, columns: ['Hyperblast', 'Silence Rocks - Part 1'] },
             { playlistIndex: 0, playlistId: p1, itemIndex: 1, columns: ['Hyperblast', 'Silence Rocks - Part 2'] },
         ]);
-    })
+    });
 
     test('add to queue', async () => {
         const [p1, p2] = await setupTracks();
@@ -54,13 +55,7 @@ describe('play queue api', () => {
         ]);
     });
 
-    test('add to queue at index', async () => {
-        if (config.playerId !== 'deadbeef')
-        {
-            assert.ok('adding to queue at index is not supported by current player');
-            return;
-        }
-
+    test('add to queue at index', { skip: config.playerId !== PlayerId.deadbeef }, async () => {
         const [p1, p2] = await setupTracks();
 
         await client.addToPlayQueue(p1, 0);
