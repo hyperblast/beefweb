@@ -163,12 +163,12 @@ jobs:
         pkg_mac_x64=$(pwd)/input/*-macos-x86_64.$pkg_ext
         pkg_universal=$(pwd)/output/$(basename $pkg_mac_arm -macos-arm64.$pkg_ext).$pkg_ext
         mac_binary=mac/foo_beefweb.component/Contents/MacOS/foo_beefweb
-        mkdir -p work/lipo/arm work/lipo/x64 work/pkg/x64 output
+        mkdir -p work/lipo/arm work/lipo/x64 work/pkg output
         (cd work/lipo/arm && unzip -j $pkg_mac_arm $mac_binary)
         (cd work/lipo/x64 && unzip -j $pkg_mac_x64 $mac_binary)
         (cd work/pkg && unzip $pkg_mac_arm)
         (cd work/pkg && unzip $pkg_windows_x32)
-        (cd work/pkg/x64 && unzip $pkg_windows_x64 foo_beefweb.dll)
+        (cd work/pkg && unzip $pkg_windows_x64 x64/foo_beefweb.dll)
         lipo -create work/lipo/arm/foo_beefweb work/lipo/x64/foo_beefweb \
              -output work/pkg/$mac_binary
         lipo -info work/pkg/$mac_binary

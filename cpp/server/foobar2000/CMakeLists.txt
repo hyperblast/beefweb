@@ -82,10 +82,12 @@ if(OS_MAC)
     )
 endif()
 
+if(OS_WINDOWS)
+    set_by_pointer_size(INSTALL_DIR . x64)
+endif()
+
 if(OS_MAC)
     set(INSTALL_DIR mac)
-else()
-    set(INSTALL_DIR .)
 endif()
 
 install(
