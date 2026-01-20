@@ -73,20 +73,6 @@ function configApp(config, params)
     }
 }
 
-function configTests(config, params)
-{
-    // Tests target configuration
-
-    config.output.path = path.join(params.outputDir, 'tests');
-
-    config.entry.push('qunit/qunit/qunit.css');
-    config.entry.push('./src/tests/index.js');
-
-    config.plugins.push(new HtmlPlugin({
-        template: path.join(params.sourceDir, 'tests', 'index.html')
-    }));
-}
-
 function configSandbox(config, params)
 {
     // Sandbox target configuration
@@ -227,7 +213,6 @@ export default function(env)
 
     if (params.enableTests)
     {
-        allTargets.push(makeTarget(configTests, params));
         allTargets.push(makeTarget(configSandbox, params));
     }
 
