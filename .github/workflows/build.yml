@@ -133,7 +133,7 @@ jobs:
 
   build_universal_fb2k_package:
 
-    runs-on: ubuntu-22.04
+    runs-on: macos-26
 
     needs:
     - build_macos
@@ -157,15 +157,22 @@ jobs:
     - name: Build package
       run: |
         pkg_ext=fb2k-component
-        pkg_w32=$(pwd)/input/*-windows-x86.$pkg_ext
-        pkg_w64=$(pwd)/input/*-windows-x86_64.$pkg_ext
-        pkg_mac=$(pwd)/input/*-macos-arm64.$pkg_ext
-        pkg_universal=$(pwd)/output/$(basename $pkg_mac -macos-arm64.$pkg_ext).$pkg_ext
-        mkdir -p work/x64 output
-        (cd work && unzip $pkg_w32 '*')
-        (cd work/x64 && unzip $pkg_w64 '*.dll')
-        cp $pkg_mac $pkg_universal
-        (cd work && zip -r -9 $pkg_universal *)
+        pkg_windows_x32=$(pwd)/input/*-windows-x86.$pkg_ext
+        pkg_windows_x64=$(pwd)/input/*-windows-x86_64.$pkg_ext
+        pkg_mac_arm=$(pwd)/input/*-macos-arm64.$pkg_ext
+        pkg_mac_x64=$(pwd)/input/*-macos-x86_64.$pkg_ext
+        pkg_universal=$(pwd)/output/$(basename $pkg_mac_arm -macos-arm64.$pkg_ext).$pkg_ext
+        mac_binary=mac/foo_beefweb.component/Contents/MacOS/foo_beefweb
+        mkdir -p work/lipo/arm work/lipo/x64 work/pkg/x64 output
+        (cd work/lipo/arm && unzip -j $pkg_mac_arm $mac_binary)
+        (cd work/lipo/x64 && unzip -j $pkg_mac_x64 $mac_binary)
+        (cd work/pkg && unzip $pkg_mac_arm)
+        (cd work/pkg && unzip $pkg_windows_x32)
+        (cd work/pkg/x64 && unzip $pkg_windows_x64 foo_beefweb.dll)
+        lipo -create work/lipo/arm/foo_beefweb work/lipo/x64/foo_beefweb \
+             -output work/pkg/$mac_binary
+        lipo -info work/pkg/$mac_binary
+        (cd work/pkg && zip -r -9 $pkg_universal *)
 
     - name: Upload package
       uses: actions/upload-artifact@v4
