@@ -1,5 +1,5 @@
 import { describe, test, assert } from 'vitest';
-import { client, config, tracks, usePlayer } from './test_env.js';
+import { client, config, tracks, setupPlayer } from './test_env.js';
 
 // DeaDBeeF clears play queue asynchronously on stop
 // Avoid resetting player state for stable runs
@@ -8,7 +8,7 @@ const resetOptions = {
 };
 
 describe('play queue api', () => {
-    usePlayer({ resetOptions });
+    setupPlayer({ resetOptions });
 
     async function setupTracks()
     {

@@ -31,7 +31,7 @@ export const config = context.config;
 export const client = context.client;
 export const outputConfigs = context.outputConfigs;
 
-export function usePlayer(options)
+export function setupPlayer(options)
 {
     beforeAll(() => context.beginSuite(options));
     afterAll(() => context.endSuite());

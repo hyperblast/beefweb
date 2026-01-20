@@ -1,5 +1,5 @@
 import { describe, test, assert } from 'vitest';
-import { client, tracks, usePlayer } from './test_env.js';
+import { client, tracks, setupPlayer } from './test_env.js';
 
 const expectedValue = 'Very Custom, Much Configurable, Wow';
 
@@ -10,7 +10,7 @@ const pluginSettings = {
 };
 
 describe('http features', () => {
-    usePlayer({ pluginSettings });
+    setupPlayer({ pluginSettings });
 
     test('custom headers', async () => {
         const response = await client.handler.axios.get('/api/player');

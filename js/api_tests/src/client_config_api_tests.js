@@ -1,8 +1,8 @@
 import { describe, test, assert } from 'vitest';
-import { client, usePlayer } from './test_env.js';
+import { client, setupPlayer } from './test_env.js';
 
 describe('client config api', () => {
-    usePlayer();
+    setupPlayer();
 
     test('client config', async () => {
         const id = 'api_test_' + Math.round(1000000 * Math.random());

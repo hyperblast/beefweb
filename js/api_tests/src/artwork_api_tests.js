@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { describe, test, assert } from 'vitest';
-import { client, config, tracks, usePlayer } from './test_env.js';
+import { client, config, tracks, setupPlayer } from './test_env.js';
 
 const readFile = fs.promises.readFile;
 
@@ -27,7 +27,7 @@ function getArtwork(playlist, item)
 }
 
 describe('artwork 1', () => {
-    usePlayer();
+    setupPlayer();
 
     test('get from folder', async () => {
         await client.addPlaylistItems(0, [tracks.t1]);
@@ -57,7 +57,7 @@ describe('artwork 1', () => {
 });
 
 describe('artwork 2', () => {
-    usePlayer();
+    setupPlayer();
 
     test('get from tag', async () => {
         await client.addPlaylistItems(0, [tracks.t2Alt]);
@@ -73,7 +73,7 @@ describe('artwork 2', () => {
 });
 
 describe('artwork 3', () => {
-    usePlayer();
+    setupPlayer();
 
     test('missing', async () => {
         await client.addPlaylistItems(0, [tracks.t3]);

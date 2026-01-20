@@ -1,6 +1,6 @@
 import { describe, test, assert } from 'vitest';
 import lodash from 'lodash';
-import { client, usePlayer } from './test_env.js';
+import { client, setupPlayer } from './test_env.js';
 
 const { startsWith } = lodash;
 
@@ -31,7 +31,7 @@ function makeRequest(config)
 }
 
 describe('authentication', () => {
-    usePlayer({ pluginSettings, axiosConfig });
+    setupPlayer({ pluginSettings, axiosConfig });
 
     test('require auth', async () => {
         const response = await makeRequest();

@@ -1,8 +1,8 @@
 import { describe, test, assert } from 'vitest'
-import { client, config, tracks, usePlayer } from './test_env.js';
+import { client, config, tracks, setupPlayer } from './test_env.js';
 
 describe('player api', () => {
-    usePlayer();
+    setupPlayer();
 
     test('get state', async () => {
         const state = await client.getPlayerState();

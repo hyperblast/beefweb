@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import { omit, sortBy } from 'lodash';
 import { describe, test, assert } from 'vitest';
-import { client, config, usePlayer } from './test_env.js';
+import { client, config, setupPlayer } from './test_env.js';
 
 const readdir = fs.promises.readdir;
 const stat = fs.promises.stat;
@@ -48,7 +48,7 @@ async function getFileSystemEntriesDirect(dirPath)
 }
 
 describe('browser api', () => {
-    usePlayer();
+    setupPlayer();
 
     test('get roots', async () => {
         const result = await client.getFileSystemRoots()

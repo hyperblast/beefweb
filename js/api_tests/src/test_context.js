@@ -3,7 +3,7 @@ import fsObj from 'fs';
 import { getBuildConfig } from '../../config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
-import { appsDir, rootDir, testsRootDir } from './utils.js';
+import { testsRootDir } from './utils.js';
 
 const fs = fsObj.promises;
 

@@ -1,5 +1,5 @@
 import { describe, test, assert } from 'vitest';
-import { client, outputConfigs, usePlayer } from './test_env.js';
+import { client, outputConfigs, setupPlayer } from './test_env.js';
 
 const pluginSettings = {
     permissions: {
@@ -24,7 +24,7 @@ function post(path, data)
 }
 
 describe('permissions', () => {
-    usePlayer({ pluginSettings, resetOptions });
+    setupPlayer({ pluginSettings, resetOptions });
 
     test('get permissions', async () => {
         const state = await client.getPlayerState();

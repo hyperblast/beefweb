@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { describe, test, assert } from 'vitest';
-import { client, config, usePlayer } from './test_env.js';
+import { client, config, setupPlayer } from './test_env.js';
 
 const readFile = fs.promises.readFile;
 
@@ -28,7 +28,7 @@ function assertRedirect(assert, result, location)
 }
 
 describe('static files', () => {
-    usePlayer({ pluginSettings, axiosConfig });
+    setupPlayer({ pluginSettings, axiosConfig });
 
     function getFile(url, config)
     {

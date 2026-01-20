@@ -1,8 +1,8 @@
 import { describe, test, assert } from 'vitest';
-import { client, outputConfigs, usePlayer } from './test_env.js';
+import { client, outputConfigs, setupPlayer } from './test_env.js';
 
 describe('outputs api', () => {
-    usePlayer();
+    setupPlayer();
 
     test('get outputs config', async () => {
         const outputs = await client.getOutputs();

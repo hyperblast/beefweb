@@ -1,8 +1,8 @@
 import { describe, test, assert } from 'vitest';
-import { client, tracks, outputConfigs, usePlayer } from './test_env.js';
+import { client, tracks, outputConfigs, setupPlayer } from './test_env.js';
 
 describe('query api', () => {
-    usePlayer();
+    setupPlayer();
 
     test('query player', async () => {
         await client.addPlaylistItems(0, [tracks.t3]);

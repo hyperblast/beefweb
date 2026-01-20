@@ -1,9 +1,9 @@
 import { describe, test, assert } from 'vitest';
 import { pathCollectionsEqual, waitUntil } from './utils.js';
-import { client, tracks, usePlayer } from './test_env.js';
+import { client, tracks, setupPlayer } from './test_env.js';
 
 describe('playlists api', () => {
-    usePlayer();
+    setupPlayer();
 
     function assertPlaylist(assert, playlist)
     {
