@@ -227,7 +227,7 @@ export default class SettingsModel extends SettingsModelBase
             key: 'uiThemePreference',
             type: SettingType.enum,
             defaultValue: UITheme.system,
-            title: 'Color scheme',
+            title: 'UI Theme',
             persistent: true,
             enumKeys: UITheme,
             enumNames: {
