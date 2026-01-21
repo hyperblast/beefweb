@@ -71,6 +71,7 @@ export default class PlayerModel extends ModelBase
         this.client = client;
         this.dataSource = dataSource;
         this.settingsModel = settingsModel;
+        this.columnExpressions = [];
         this.positionTimer = new Timer(this.updatePosition.bind(this), 500);
         this.featuresInitialized = false;
 
@@ -226,14 +227,18 @@ export default class PlayerModel extends ModelBase
         const { mediaSize } = this.settingsModel;
         const { columns } = this.settingsModel.columns[mediaSize];
 
-        this.dataSource.watch('player', {
-            trcolumns: [
-                this.settingsModel.windowTitleExpression,
-                this.settingsModel.playbackInfoExpression,
-                '%path%',
-                ...getColumnExpressions(columns)
-            ]
-        });
+        const newColumnExpressions = [
+            this.settingsModel.windowTitleExpression,
+            this.settingsModel.playbackInfoExpression,
+            '%path%',
+            ...getColumnExpressions(columns)
+        ];
+
+        if (looseDeepEqual(this.columnExpressions, newColumnExpressions))
+            return;
+
+        this.columnExpressions = newColumnExpressions;
+        this.dataSource.watch('player', { trcolumns: newColumnExpressions });
     }
 
     updateState(key, value, eventName = 'change')
