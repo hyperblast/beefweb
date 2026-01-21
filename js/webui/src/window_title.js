@@ -13,7 +13,7 @@ const useWindowTitle = defineModelData({
         const { playbackState, info, activeItem } = context.playerModel;
         return playbackState === PlaybackState.stopped
             ? info.title
-            : stateToIcon[playbackState] + ' ' + activeItem.columns[0] + ' - ' + info.title;
+            : stateToIcon[playbackState] + ' ' + activeItem.playbackInfoWindow + ' - ' + info.title;
     },
 
     updateOn: {

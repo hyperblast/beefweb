@@ -26,6 +26,11 @@ function column(title, expression, opts = null)
     return Object.freeze(Object.assign({ title, expression }, opts));
 }
 
+export function getColumnExpressions(columns)
+{
+    return columns.filter(c => !c.lineBreak).map(c => c.expression);
+}
+
 export const playlistColumns = Object.freeze({
     artist: playlistColumn('Artist', '%artist%'),
     album: playlistColumn('Album', '%album%'),

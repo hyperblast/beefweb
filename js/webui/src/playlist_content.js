@@ -34,7 +34,7 @@ class PlaylistContent extends React.PureComponent
 
     getStateFromModel()
     {
-        const { playbackState, permissions } = this.context.playerModel;
+        const { playbackState, permissions, activeItem } = this.context.playerModel;
         const { queueMap } = this.context.playQueueModel;
         const { columns, playlistItems, currentPlaylistId } = this.context.playlistModel;
         const { offset, totalCount, items } = playlistItems;
@@ -49,6 +49,7 @@ class PlaylistContent extends React.PureComponent
             queueMap,
             activeItemIndex: this.getActiveItemIndex(),
             allowChangePlaylists: permissions.changePlaylists,
+            activeItemColumns: activeItem.playlistColumns,
         };
     }
 
@@ -78,7 +79,15 @@ class PlaylistContent extends React.PureComponent
 
     getTableData()
     {
-        const { playbackState, offset, items, queueMap, currentPlaylistId, activeItemIndex } = this.state;
+        const {
+            playbackState,
+            offset,
+            items,
+            queueMap,
+            currentPlaylistId,
+            activeItemIndex,
+            activeItemColumns
+        } = this.state;
 
         return items.map((item, index) =>
         {
@@ -91,7 +100,11 @@ class PlaylistContent extends React.PureComponent
                 ? null
                 : this.getQueueIndexText(queueMap, currentPlaylistId, itemIndex);
 
-            return { icon, iconText, columns: item.columns };
+            const columns = itemIndex === activeItemIndex
+                ? activeItemColumns
+                : item.columns;
+
+            return { icon, iconText, columns };
         });
     }
 
