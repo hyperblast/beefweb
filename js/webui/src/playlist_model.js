@@ -2,6 +2,7 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { AddAction } from "./settings_model.js";
 import ModelBase from './model_base.js';
 import { looseDeepEqual } from './utils.js';
+import { getColumnExpressions } from './columns.js';
 
 const addOptions = {
     [AddAction.add]: {},
@@ -125,7 +126,7 @@ export default class PlaylistModel extends ModelBase
 
         this.columns = columns;
 
-        const columnExpressions = columns.filter(c => !c.lineBreak).map(c => c.expression);
+        const columnExpressions = getColumnExpressions(columns);
 
         if (looseDeepEqual(this.columnExpressions, columnExpressions))
         {

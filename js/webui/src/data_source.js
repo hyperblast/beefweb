@@ -12,7 +12,7 @@ export default class DataSource extends ModelBase
 
         this.client = client;
         this.eventSource = null;
-        this.isStarted = false;
+        this.reinitTimeout = null;
         this.subscriptions = {};
         this.previousEvents = {};
 
@@ -21,12 +21,6 @@ export default class DataSource extends ModelBase
 
         for (let event of eventNames)
             this.defineEvent(event);
-    }
-
-    start()
-    {
-        this.isStarted = true;
-        this.reinitEventSource();
     }
 
     handleEvent(result)
@@ -75,18 +69,21 @@ export default class DataSource extends ModelBase
 
     reinitEventSource()
     {
-        if (!this.isStarted)
+        if (this.reinitTimeout)
             return;
 
-        if (this.eventSource)
-        {
-            this.eventSource.close();
-            this.eventSource = null;
-        }
+        this.reinitTimeout = setTimeout(() => {
+            this.reinitTimeout = null;
 
-        const request = this.createRequest();
+            if (this.eventSource)
+            {
+                this.eventSource.close();
+                this.eventSource = null;
+            }
 
-        this.eventSource = this.client.queryUpdates(request, this.handleEvent);
-        this.reconnectTimer.restart();
+            const request = this.createRequest();
+            this.eventSource = this.client.queryUpdates(request, this.handleEvent);
+            this.reconnectTimer.restart();
+        }, 0);
     }
 }

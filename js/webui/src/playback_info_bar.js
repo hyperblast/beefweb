@@ -4,12 +4,13 @@ import { AutoScrollText } from './elements.js';
 import { defineModelData } from './hooks.js';
 
 const usePlaybackInfo = defineModelData({
-    selector(context) {
+    selector(context)
+    {
         const { playerModel } = context;
 
         return playerModel.playbackState !== PlaybackState.stopped
-                     ? (playerModel.activeItem.columns[1] || '')
-                     : playerModel.info.title;
+               ? (playerModel.activeItem.playbackInfoPanel || '')
+               : playerModel.info.title;
     },
 
     updateOn: {

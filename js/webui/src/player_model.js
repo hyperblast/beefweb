@@ -3,9 +3,10 @@ import Timer from './timer.js'
 import { PlaybackState } from 'beefweb-client'
 import { defaultPlayerFeatures, getPlayerFeatures } from './player_features.js';
 import ModelBase from './model_base.js';
+import { getColumnExpressions } from './columns.js';
+import { looseDeepEqual } from './utils.js';
 
 const playerInfoKeys = [
-    'activeItem',
     'info',
     'options',
     'permissions',
@@ -36,7 +37,10 @@ const initialPlayerInfo = Object.freeze({
         index: -1,
         position: -1,
         duration: -1,
-        columns: [],
+        playbackInfoWindow: '',
+        playbackInfoPanel: '',
+        filePath: '',
+        playlistColumns: [],
     },
     activeItemId: '',
     permissions: {
@@ -45,6 +49,7 @@ const initialPlayerInfo = Object.freeze({
         changeClientConfig: true
     }
 });
+
 
 /**
  * @class PlayerModel
@@ -75,14 +80,17 @@ export default class PlayerModel extends ModelBase
         this.defineEvent('positionChange');
         this.defineEvent('trackSwitch');
 
+        this.reload = this.reload.bind(this);
+        this.reloadWithDelay = debounce(this.reload, 1000);
         this.setVolumeRemote = debounce(value => this.client.setVolume(value), 80);
-        this.reloadWithDelay = debounce(this.reload.bind(this), 1000);
     }
 
     start()
     {
         this.dataSource.on('player', this.update.bind(this));
 
+        this.settingsModel.on('mediaSize', this.reload);
+        this.settingsModel.on('columns', this.reload);
         this.settingsModel.on('windowTitleExpression', this.reloadWithDelay);
         this.settingsModel.on('playbackInfoExpression', this.reloadWithDelay);
 
@@ -175,15 +183,34 @@ export default class PlayerModel extends ModelBase
 
     update(playerInfo)
     {
-        const wasPlaying = this.playbackState === PlaybackState.playing;
-
-        for (let key of playerInfoKeys)
-            this[key] = playerInfo[key];
-
-        if (!this.featuresInitialized) {
+        if (!this.featuresInitialized)
+        {
             this.features = getPlayerFeatures(this.info.name);
             this.featuresInitialized = true;
         }
+
+        const wasPlaying = this.playbackState === PlaybackState.playing;
+        const oldPlaylistColumns = this.activeItem.playlistColumns;
+        const [playbackInfoWindow, playbackInfoPanel, filePath, ...newPlaylistColumns] = playerInfo.activeItem.columns;
+        const playlistColumns =
+            looseDeepEqual(oldPlaylistColumns, newPlaylistColumns)
+                ? oldPlaylistColumns
+                : newPlaylistColumns;
+
+        this.activeItem = {
+            ...playerInfo.activeItem,
+            playbackInfoWindow,
+            playbackInfoPanel,
+            filePath,
+            playlistColumns,
+        };
+
+        delete this.activeItem.columns;
+
+        console.log(this.activeItem);
+
+        for (let key of playerInfoKeys)
+            this[key] = playerInfo[key];
 
         if (this.playbackState === PlaybackState.playing)
             this.positionTimer.restart();
@@ -196,11 +223,15 @@ export default class PlayerModel extends ModelBase
 
     reload()
     {
+        const { mediaSize } = this.settingsModel;
+        const { columns } = this.settingsModel.columns[mediaSize];
+
         this.dataSource.watch('player', {
             trcolumns: [
                 this.settingsModel.windowTitleExpression,
                 this.settingsModel.playbackInfoExpression,
-                '%path%'
+                '%path%',
+                ...getColumnExpressions(columns)
             ]
         });
     }

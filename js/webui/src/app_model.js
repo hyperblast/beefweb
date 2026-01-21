@@ -54,7 +54,6 @@ export default class AppModel
         this.playlistModel.start();
         this.playQueueModel.start();
         this.outputSettingsModel.start();
-        this.dataSource.start();
         this.notificationModel.start();
         this.mediaThemeController.start();
         this.touchModeController.start();

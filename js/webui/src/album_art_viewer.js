@@ -25,7 +25,7 @@ class AlbumArtViewer_ extends React.PureComponent
 
         return {
             isPlaying: playbackState !== PlaybackState.stopped,
-            filePath: activeItem.columns[2] || '',
+            filePath: activeItem.filePath || '',
         };
     }
 
