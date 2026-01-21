@@ -127,7 +127,7 @@ function configRelease(config)
 function getDefaultOutputDir(buildType)
 {
     const { buildDir, isMultiConfig } = getBuildConfig(buildType);
-    return path.join(buildDir, 'js', 'webui', isMultiConfig ? buildDir : 'output');
+    return path.join(buildDir, 'js', 'webui', isMultiConfig ? buildType : 'output');
 }
 
 function getBuildType(env)
