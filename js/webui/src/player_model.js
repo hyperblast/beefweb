@@ -208,8 +208,6 @@ export default class PlayerModel extends ModelBase
 
         delete this.activeItem.columns;
 
-        console.log(this.activeItem);
-
         for (let key of playerInfoKeys)
             this[key] = playerInfo[key];
 
