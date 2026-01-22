@@ -11,13 +11,17 @@ class PlaylistMappingImpl final : public PlaylistMapping
 public:
     PlaylistPtr getPlaylist(const PlaylistRef& plref)
     {
-        return PlaylistPtr(ddbApi->plt_get_for_idx(getIndex(plref)));
+        PlaylistPtr playlist(ddbApi->plt_get_for_idx(getIndex(plref)));
+        assert(playlist);
+        return playlist;
     }
 
     std::pair<PlaylistPtr, int32_t> getPlaylistAndIndex(const PlaylistRef& plref)
     {
         auto index = getIndex(plref);
-        return std::make_pair(PlaylistPtr(ddbApi->plt_get_for_idx(index)), index);
+        PlaylistPtr playlist(ddbApi->plt_get_for_idx(index));
+        assert(playlist);
+        return std::make_pair(std::move(playlist), index);
     }
 
 protected:
