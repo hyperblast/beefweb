@@ -238,6 +238,8 @@ PlaylistInfo PlayerImpl::addPlaylist(int32_t index, const std::string& title, bo
         title.length(),
         clampIndex(index, playlistManager_->get_playlist_count(), pfc::infinite_size));
 
+    playlists_->rebuild();
+
     if (setCurrent)
     {
         playlistManager_->set_active_playlist(realIndex);
