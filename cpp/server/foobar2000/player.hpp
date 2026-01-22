@@ -3,7 +3,7 @@
 #include "common.hpp"
 #include "player_options.hpp"
 #include "player_api.hpp"
-#include "playlist_mapping.hpp"
+#include "playlist_mapping_impl.hpp"
 #include "utils.hpp"
 
 namespace msrv::player_foobar2000 {
