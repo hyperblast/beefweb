@@ -47,7 +47,7 @@ private:
     std::unordered_map<std::string, int32_t> idToIndex_;
     std::vector<std::string> allIds_;
     uint64_t maxId_ = 0;
-    bool invalid_ = true;
+    std::atomic_bool invalid_ = true;
 };
 
 }
