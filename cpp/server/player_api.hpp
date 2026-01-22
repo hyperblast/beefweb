@@ -221,6 +221,11 @@ public:
         return id_;
     }
 
+    bool isCurrent() const
+    {
+        return id_ == "current";
+    }
+
 private:
     int32_t index_;
     std::string id_;

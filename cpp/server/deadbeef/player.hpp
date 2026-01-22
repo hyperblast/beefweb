@@ -7,7 +7,7 @@
 
 #include "artwork_fetcher.hpp"
 #include "utils.hpp"
-#include "playlist_mapping.hpp"
+#include "playlist_mapping_impl.hpp"
 #include "player_options.hpp"
 
 namespace msrv::player_deadbeef {
@@ -106,7 +106,7 @@ public:
 
     void sortPlaylistRandom(const PlaylistRef& plref) override;
 
-    std::vector<PlayQueueItemInfo> getPlayQueue(ColumnsQuery* query = nullptr) override;
+    std::vector<PlayQueueItemInfo> getPlayQueue(ColumnsQuery* query) override;
     void addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex) override;
     void removeFromPlayQueue(int32_t queueIndex) override;
     void removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex) override;
@@ -126,13 +126,21 @@ private:
     using PlaylistItemSelector = DB_playItem_t* (*)(DB_playItem_t*, int);
 
     PlaybackState getPlaybackState(ddb_playItem_t* activeItem);
-    void queryActiveItem(ActiveItemInfo* info, ddb_playItem_t* activeItem, float activeItemPos, ColumnsQuery* query);
+
+    void queryActiveItem(
+        ActiveItemInfo* info,
+        ddb_playItem_t* activeItem,
+        float activeItemPos,
+        int playlistIndex,
+        ColumnsQuery* query);
+
     void queryVolume(VolumeInfo* info);
     void queryInfo(PlayerInfo* info);
     bool checkOutputChanged();
     ActiveOutputInfo getActiveOutput();
     bool playNextBy(const std::string& expression, PlaylistItemSelector selector);
-    PlaylistInfo getPlaylistInfo(ddb_playlist_t* playlist, int index, bool isCurrent);
+
+    PlaylistInfo getPlaylistInfo(int32_t index, ddb_playlist_t* playlist, bool isCurrent);
 
     bool isStopped()
     {
@@ -147,7 +155,7 @@ private:
 
     PlaylistMutex playlistMutex_;
     ConfigMutex configMutex_;
-    PlaylistMapping playlists_;
+    PlaylistMappingImpl playlists_;
 
     LegacyPlaybackModeOption playbackModeOption_;
     ShuffleOption shuffleOption_;

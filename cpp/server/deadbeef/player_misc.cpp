@@ -120,24 +120,22 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 
     PlaylistLockGuard lock(playlistMutex_);
 
-    playlists_.ensureInitialized();
-
     std::vector<PlayQueueItemInfo> items;
-    auto size = ddbApi->playqueue_get_count();
+    auto count = ddbApi->playqueue_get_count();
 
-    if (!size)
-    {
+    if (!count)
         return items;
-    }
 
-    items.reserve(size);
+    items.reserve(count);
 
-    for (auto i = 0; i < size; i++)
+    const auto& playlistIds = playlists_.playlistIds();
+
+    for (auto queueIndex = 0; queueIndex < count; queueIndex++)
     {
-        PlaylistItemPtr item(ddbApi->playqueue_get_item(i));
+        PlaylistItemPtr item(ddbApi->playqueue_get_item(queueIndex));
         PlaylistPtr playlist(ddbApi->pl_get_playlist(item.get()));
-        auto playlistId = playlists_.getId(playlist.get());
         auto playlistIndex = ddbApi->plt_get_idx(playlist.get());
+        const auto& playlistId = playlistIds[playlistIndex];
         auto itemIndex = ddbApi->plt_get_item_idx(playlist.get(), item.get(), PL_MAIN);
 
         if (queryImpl)
@@ -158,7 +156,7 @@ void PlayerImpl::addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int
 {
     PlaylistLockGuard lock(playlistMutex_);
 
-    auto playlist = playlists_.resolve(plref);
+    auto playlist = playlists_.getPlaylist(plref);
     auto item = resolvePlaylistItem(playlist.get(), itemIndex);
 
     if (!item)
@@ -184,7 +182,7 @@ void PlayerImpl::removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex
 {
     PlaylistLockGuard lock(playlistMutex_);
 
-    auto playlist = playlists_.resolve(plref);
+    auto playlist = playlists_.getPlaylist(plref);
     auto item = resolvePlaylistItem(playlist.get(), itemIndex);
 
     if (!item)
@@ -228,7 +226,7 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
 
     PlaylistLockGuard lock(playlistMutex_);
 
-    auto playlist = playlists_.resolve(query.playlist);
+    auto playlist = playlists_.getPlaylist(query.playlist);
 
     auto item = resolvePlaylistItem(playlist.get(), query.index);
     if (!item)
@@ -359,13 +357,20 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
                 PlayerEvents::PLAY_QUEUE_CHANGED);
             break;
 
-        case DDB_PLAYLIST_CHANGE_CREATED:
         case DDB_PLAYLIST_CHANGE_TITLE:
+            emitEvents(PlayerEvents::PLAYLIST_SET_CHANGED);
+            break;
+
+        case DDB_PLAYLIST_CHANGE_CREATED:
+            logDebug("invalidating playlists (created)");
+            playlists_.invalidate();
             emitEvents(PlayerEvents::PLAYLIST_SET_CHANGED);
             break;
 
         case DDB_PLAYLIST_CHANGE_DELETED:
         case DDB_PLAYLIST_CHANGE_POSITION:
+            logDebug("invalidating playlists (deleted or position)");
+            playlists_.invalidate();
             // Reordering or removing playlists might change playlist index of currently playing/queued item
             emitEvents(
                 PlayerEvents::PLAYER_CHANGED |
