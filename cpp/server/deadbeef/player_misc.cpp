@@ -357,29 +357,23 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
                 PlayerEvents::PLAY_QUEUE_CHANGED);
             break;
 
-        case DDB_PLAYLIST_CHANGE_TITLE:
-            emitEvents(PlayerEvents::PLAYLIST_SET_CHANGED);
-            break;
-
         case DDB_PLAYLIST_CHANGE_CREATED:
-            {
-                PlaylistLockGuard lock(playlistMutex_);
-                logDebug("invalidating playlists (created)");
-                playlists_.invalidate();
-            }
-
-            emitEvents(PlayerEvents::PLAYLIST_SET_CHANGED);
-            break;
-
         case DDB_PLAYLIST_CHANGE_DELETED:
         case DDB_PLAYLIST_CHANGE_POSITION:
             {
                 PlaylistLockGuard lock(playlistMutex_);
-                logDebug("invalidating playlists (deleted or position)");
-                playlists_.invalidate();
+                if (addingPlaylist_)
+                {
+                    addingPlaylist_ = false;
+                }
+                else
+                {
+                    logDebug("invalidating playlists");
+                    playlists_.invalidate();
+                }
             }
 
-            // Reordering or removing playlists might change playlist index of currently playing/queued item
+            // Playlists might change playlist index of currently playing/queued item
             emitEvents(
                 PlayerEvents::PLAYER_CHANGED |
                 PlayerEvents::PLAYLIST_SET_CHANGED |

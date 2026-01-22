@@ -166,6 +166,7 @@ private:
     std::string version_;
     std::unique_ptr<ArtworkFetcher> artworkFetcher_;
     ActiveOutputInfo activeOutput_;
+    bool addingPlaylist_ = false;
 
     MSRV_NO_COPY_AND_ASSIGN(PlayerImpl);
 };

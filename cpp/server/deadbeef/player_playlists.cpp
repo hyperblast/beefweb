@@ -136,6 +136,7 @@ PlaylistInfo PlayerImpl::addPlaylist(int32_t index, const std::string& title, bo
     if (index < 0 || index > count)
         index = count;
 
+    addingPlaylist_ = true;
     int realIndex = ddbApi->plt_add(index, title.c_str());
     PlaylistPtr playlist(ddbApi->plt_get_for_idx(realIndex));
     playlists_.rebuild();
