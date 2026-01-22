@@ -147,7 +147,7 @@ private:
     service_ptr_t<album_art_manager_v3> albumArtManager_;
     service_ptr_t<titleformat_compiler> titleFormatCompiler_;
 
-    std::shared_ptr<PlaylistMapping> playlists_;
+    std::shared_ptr<PlaylistMappingImpl> playlists_;
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
     OutputEventAdapter outputEventAdapter_;

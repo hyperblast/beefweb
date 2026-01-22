@@ -4,6 +4,7 @@
 #include "log.hpp"
 #include "work_queue.hpp"
 #include "player_api.hpp"
+#include "playlist_mapping_impl.hpp"
 
 namespace msrv::player_foobar2000 {
 
@@ -146,6 +147,16 @@ public:
         callback_ = std::move(callback);
     }
 
+    void setPlaylistMapping(std::shared_ptr<PlaylistMappingImpl> playlists)
+    {
+        playlists_ = std::move(playlists);
+    }
+
+    void setCreatingPlaylist()
+    {
+        creatingPlaylist_ = true;
+    }
+
 private:
     void on_items_added(
         t_size p_playlist,
@@ -228,11 +239,13 @@ private:
 
     void on_playlist_created(t_size p_index, const char* p_name, t_size p_name_len) override
     {
-        notifyPlaylists();
+        invalidPlaylistMapping();
+        notifyPlaylistsWithIndexes();
     }
 
     void on_playlists_reorder(const t_size* p_order, t_size p_count) override
     {
+        invalidPlaylistMapping();
         notifyPlaylistsWithIndexes();
     }
 
@@ -243,6 +256,7 @@ private:
 
     void on_playlists_removed(const bit_array& p_mask, t_size p_old_count, t_size p_new_count) override
     {
+        invalidPlaylistMapping();
         notifyPlaylistsWithIndexes();
     }
 
@@ -294,7 +308,17 @@ private:
             callback_(PlayerEvents::PLAYLIST_SET_CHANGED);
     }
 
+    void invalidPlaylistMapping()
+    {
+        if (creatingPlaylist_)
+            creatingPlaylist_ = false;
+        else if (playlists_)
+            playlists_->invalidate();
+    }
+
     PlayerEventsCallback callback_;
+    std::shared_ptr<PlaylistMappingImpl> playlists_;
+    bool creatingPlaylist_ = false;
 
     MSRV_NO_COPY_AND_ASSIGN(PlaylistEventAdapter);
 };

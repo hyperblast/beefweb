@@ -13,7 +13,7 @@ public:
     AsyncAddCompleter(
         service_ptr_t<playlist_manager_v4> playlistManager,
         service_ptr_t<playback_control> playbackControl,
-        std::shared_ptr<PlaylistMapping> playlists,
+        std::shared_ptr<PlaylistMappingImpl> playlists,
         const PlaylistRef& plref,
         int32_t index,
         AddItemsOptions options)
@@ -54,7 +54,7 @@ public:
 private:
     void complete(const pfc::list_base_const_t<metadb_handle_ptr>& items)
     {
-        auto playlist = playlists_->resolve(plref_);
+        auto playlist = playlists_->getIndex(plref_);
         auto hasAddedItems = items.get_count() > 0;
         t_size itemIndex;
 
@@ -88,7 +88,7 @@ private:
 
     service_ptr_t<playlist_manager_v4> playlistManager_;
     service_ptr_t<playback_control> playbackControl_;
-    std::shared_ptr<PlaylistMapping> playlists_;
+    std::shared_ptr<PlaylistMappingImpl> playlists_;
     PlaylistRef plref_;
     int32_t index_;
     AddItemsOptions options_;
@@ -163,7 +163,7 @@ PlaylistInfo PlayerImpl::getPlaylistInfo(t_size index, bool isCurrent) const
 
     pfc::string8 nameBuffer;
 
-    info.id = playlists_->getId(index);
+    info.id = playlists_->getId(static_cast<int32_t>(index));
     info.index = static_cast<int32_t>(index);
     info.isCurrent = isCurrent;
     info.itemCount = static_cast<int32_t>(playlistManager_->playlist_get_item_count(index));
@@ -178,17 +178,13 @@ PlaylistInfo PlayerImpl::getPlaylistInfo(t_size index, bool isCurrent) const
 
 PlaylistInfo PlayerImpl::getPlaylist(const PlaylistRef& plref)
 {
-    playlists_->ensureInitialized();
-
-    auto index = playlists_->resolve(plref);
+    auto index = playlists_->getIndex(plref);
     auto current = playlistManager_->get_active_playlist();
     return getPlaylistInfo(index, index == current);
 }
 
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
 {
-    playlists_->ensureInitialized();
-
     auto count = playlistManager_->get_playlist_count();
     auto current = playlistManager_->get_active_playlist();
 
@@ -209,7 +205,7 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const
     if (!queryImpl)
         throw std::logic_error("ColumnsQueryImpl is required");
 
-    auto playlist = playlists_->resolve(plref);
+    auto playlist = playlists_->getIndex(plref);
 
     auto totalCount = playlistManager_->playlist_get_item_count(playlist);
     auto offset = std::min(static_cast<t_size>(range.offset), totalCount);
@@ -235,7 +231,7 @@ PlaylistItemsResult PlayerImpl::getPlaylistItems(const PlaylistRef& plref, const
 
 PlaylistInfo PlayerImpl::addPlaylist(int32_t index, const std::string& title, bool setCurrent)
 {
-    playlists_->ensureInitialized();
+    playlistEventAdapter_.setCreatingPlaylist();
 
     auto realIndex = playlistManager_->create_playlist(
         title.data(),
@@ -252,7 +248,7 @@ PlaylistInfo PlayerImpl::addPlaylist(int32_t index, const std::string& title, bo
 
 void PlayerImpl::removePlaylist(const PlaylistRef& playlist)
 {
-    playlistManager_->remove_playlist_switch(playlists_->resolve(playlist));
+    playlistManager_->remove_playlist_switch(playlists_->getIndex(playlist));
 
     if (playlistManager_->get_playlist_count() == 0)
     {
@@ -264,7 +260,7 @@ void PlayerImpl::removePlaylist(const PlaylistRef& playlist)
 void PlayerImpl::movePlaylist(const PlaylistRef& playlist, int32_t index)
 {
     auto count = playlistManager_->get_playlist_count();
-    auto oldIndex = playlists_->resolve(playlist);
+    auto oldIndex = playlists_->getIndex(playlist);
     auto newIndex = clampIndex(index, count, count - 1);
 
     if (newIndex == oldIndex)
@@ -277,17 +273,17 @@ void PlayerImpl::movePlaylist(const PlaylistRef& playlist, int32_t index)
 
 void PlayerImpl::clearPlaylist(const PlaylistRef& playlist)
 {
-    playlistManager_->playlist_clear(playlists_->resolve(playlist));
+    playlistManager_->playlist_clear(playlists_->getIndex(playlist));
 }
 
 void PlayerImpl::setCurrentPlaylist(const PlaylistRef& playlist)
 {
-    playlistManager_->set_active_playlist(playlists_->resolve(playlist));
+    playlistManager_->set_active_playlist(playlists_->getIndex(playlist));
 }
 
 void PlayerImpl::setPlaylistTitle(const PlaylistRef& playlist, const std::string& title)
 {
-    playlistManager_->playlist_rename(playlists_->resolve(playlist), title.data(), title.length());
+    playlistManager_->playlist_rename(playlists_->getIndex(playlist), title.data(), title.length());
 }
 
 boost::unique_future<void> PlayerImpl::addPlaylistItems(
@@ -324,8 +320,8 @@ void PlayerImpl::copyPlaylistItems(
     const std::vector<int32_t>& sourceItemIndexes,
     int32_t targetIndex)
 {
-    auto source = playlists_->resolve(sourcePlaylist);
-    auto target = playlists_->resolve(targetPlaylist);
+    auto source = playlists_->getIndex(sourcePlaylist);
+    auto target = playlists_->getIndex(targetPlaylist);
 
     pfc::bit_array_flatIndexList items;
     makeItemsMask(source, sourceItemIndexes, &items);
@@ -347,8 +343,8 @@ void PlayerImpl::movePlaylistItems(
     const std::vector<int32_t>& sourceItemIndexes,
     int32_t targetIndex)
 {
-    auto source = playlists_->resolve(sourcePlaylist);
-    auto target = playlists_->resolve(targetPlaylist);
+    auto source = playlists_->getIndex(sourcePlaylist);
+    auto target = playlists_->getIndex(targetPlaylist);
 
     auto position = clampIndex(
         targetIndex,
@@ -371,7 +367,7 @@ void PlayerImpl::removePlaylistItems(
     const PlaylistRef& plref,
     const std::vector<int32_t>& itemIndexes)
 {
-    auto playlist = playlists_->resolve(plref);
+    auto playlist = playlists_->getIndex(plref);
     pfc::bit_array_flatIndexList items;
     makeItemsMask(playlist, itemIndexes, &items);
     playlistManager_->playlist_remove_items(playlist, items);
@@ -382,7 +378,7 @@ void PlayerImpl::sortPlaylist(
     const std::string& expression,
     bool descending)
 {
-    auto playlist = playlists_->resolve(plref);
+    auto playlist = playlists_->getIndex(plref);
 
     titleformat_object::ptr sortBy;
     if (!titleFormatCompiler_->compile(sortBy, expression.c_str()))
@@ -406,7 +402,7 @@ void PlayerImpl::sortPlaylist(
 
 void PlayerImpl::sortPlaylistRandom(const PlaylistRef& plref)
 {
-    playlistManager_->playlist_sort_by_format(playlists_->resolve(plref), nullptr, false);
+    playlistManager_->playlist_sort_by_format(playlists_->getIndex(plref), nullptr, false);
 }
 
 }
