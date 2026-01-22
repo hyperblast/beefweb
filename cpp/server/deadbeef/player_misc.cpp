@@ -357,6 +357,10 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
                 PlayerEvents::PLAY_QUEUE_CHANGED);
             break;
 
+        case DDB_PLAYLIST_CHANGE_TITLE:
+            emitEvents(PlayerEvents::PLAYLIST_SET_CHANGED);
+            break;
+
         case DDB_PLAYLIST_CHANGE_CREATED:
         case DDB_PLAYLIST_CHANGE_DELETED:
         case DDB_PLAYLIST_CHANGE_POSITION:
