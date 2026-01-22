@@ -377,7 +377,7 @@ void PlayerImpl::handleMessage(uint32_t id, uintptr_t, uint32_t p1, uint32_t)
                 }
             }
 
-            // Playlists might change playlist index of currently playing/queued item
+            // Playlist index of currently playing/queued item might be changed
             emitEvents(
                 PlayerEvents::PLAYER_CHANGED |
                 PlayerEvents::PLAYLIST_SET_CHANGED |
