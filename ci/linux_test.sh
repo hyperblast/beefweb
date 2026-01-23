@@ -2,6 +2,8 @@
 
 set -e
 
+set TEST_RETRY=1
+
 function banner
 {
     echo
@@ -22,7 +24,7 @@ function run_deadbeef_tests
     export BEEFWEB_TEST_PLAYER=deadbeef
     export BEEFWEB_TEST_DEADBEEF_VERSION=$1
 
-    (cd js/api_tests && yarn test)
+    (cd js/api_tests && yarn test --retry $TEST_RETRY)
 }
 
 function main

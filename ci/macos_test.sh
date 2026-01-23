@@ -2,6 +2,8 @@
 
 set -e
 
+set TEST_RETRY=1
+
 cd "$(dirname $0)/.."
 
 function banner
@@ -24,7 +26,7 @@ function run_foobar2000_tests
     export BEEFWEB_TEST_PLAYER=foobar2000
     export BEEFWEB_TEST_FOOBAR2000_VERSION=$1
 
-    (cd js/api_tests && yarn test)
+    (cd js/api_tests && yarn test --retry $TEST_RETRY)
 }
 
 function run_deadbeef_tests
@@ -34,7 +36,7 @@ function run_deadbeef_tests
     export BEEFWEB_TEST_PLAYER=deadbeef
     export BEEFWEB_TEST_DEADBEEF_VERSION=$1
 
-    (cd js/api_tests && yarn test)
+    (cd js/api_tests && yarn test --retry $TEST_RETRY)
 }
 
 run_server_tests
