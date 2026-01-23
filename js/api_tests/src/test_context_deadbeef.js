@@ -27,7 +27,7 @@ const pluginFiles = [
 
 if (!isMacOs)
 {
-    pluginFiles.push(`ddb_gui_dummy${sharedLibraryExt}`,)
+    pluginFiles.push(`ddb_gui_dummy${sharedLibraryExt}`);
 }
 
 async function writePlayerSettings(profileDir)
