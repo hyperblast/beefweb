@@ -9,7 +9,7 @@ project(
 set(PROJECT_VERSION_FINAL 0)
 
 if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
-    enable_language(OBJC OBJCXX)
+    enable_language(OBJCXX)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
