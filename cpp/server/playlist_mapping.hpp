@@ -1,5 +1,7 @@
 #pragma once
 
+#include <log.hpp>
+
 #include "player_api.hpp"
 
 #include <string>
@@ -15,13 +17,21 @@ public:
     virtual ~PlaylistMapping() = default;
 
     void rebuild();
-
     void invalidate() { invalid_ = true; }
 
     void actualize()
     {
         if (invalid_)
+        {
             rebuild();
+            return;
+        }
+
+        if (allIds_.size() == static_cast<size_t>(getCount()))
+            return;
+
+        logError("playlist mapping desync, rebuilding");
+        rebuild();
     }
 
     int32_t getIndex(const PlaylistRef& plref);

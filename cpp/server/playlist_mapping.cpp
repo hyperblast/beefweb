@@ -22,7 +22,7 @@ uint64_t parseId(const std::string& str)
 std::string formatId(const uint64_t id)
 {
     char buffer[32];
-    snprintf(buffer, sizeof(buffer), PLAYLIST_ID_FORMAT, id);
+    ::snprintf(buffer, sizeof(buffer), PLAYLIST_ID_FORMAT, id);
     return buffer;
 }
 
@@ -30,8 +30,7 @@ std::string formatId(const uint64_t id)
 
 int32_t PlaylistMapping::getIndex(const PlaylistRef& plref)
 {
-    if (invalid_)
-        rebuild();
+    actualize();
 
     switch (plref.type())
     {
