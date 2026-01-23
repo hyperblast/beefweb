@@ -37,6 +37,12 @@ endif()
 if(OS_MAC)
     set(CMAKE_CXX_FLAGS_DEBUG    "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG=1")
     set(CMAKE_OBJCXX_FLAGS_DEBUG "${CMAKE_OBJCXX_FLAGS_DEBUG} -DDEBUG=1")
+
+    # Silence warnings coming from foobar2000 SDK
+    checked_add_compiler_flag(-Wno-reorder-ctor)
+    checked_add_compiler_flag(-Wno-overloaded-virtual)
+    checked_add_compiler_flag(-Wno-deprecated-copy-with-user-provided-copy)
+    checked_add_compiler_flag(-Wno-delete-non-abstract-non-virtual-dtor)
 endif()
 
 set(
