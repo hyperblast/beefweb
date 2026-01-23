@@ -152,7 +152,13 @@ void PlayerImpl::removePlaylist(const PlaylistRef& plref)
 {
     PlaylistLockGuard lock(playlistMutex_);
 
-    ddbApi->plt_remove(playlists_.getIndex(plref));
+    auto index = playlists_.getIndex(plref);
+
+    // Deadbeef processes events asynchronously.
+    // Invalidate early to avoid race condition between reading thread
+    // and DDB_PLAYLIST_CHANGE_DELETED event handler.
+    playlists_.invalidate();
+    ddbApi->plt_remove(index);
     // no need to send DDB_PLAYLIST_CHANGE_DELETED, it is done automatically
 }
 
@@ -169,6 +175,10 @@ void PlayerImpl::movePlaylist(const PlaylistRef& plref, int32_t targetIndex)
     if (sourceIndex == targetIndex)
         return;
 
+    // Deadbeef processes events asynchronously.
+    // Invalidate early to avoid race condition between reading thread
+    // and DDB_PLAYLIST_CHANGE_POSITION event handler.
+    playlists_.invalidate();
     ddbApi->plt_move(sourceIndex, targetIndex);
     ddbApi->sendmessage(DB_EV_PLAYLISTCHANGED, 0, DDB_PLAYLIST_CHANGE_POSITION, 0);
 }
