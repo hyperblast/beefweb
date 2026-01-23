@@ -32,7 +32,7 @@ boost::optional<std::pair<GUID, GUID>> tryParseDoubleGuid(const char* str)
     char firstStr[37]; // 32 hex chars + 4 separators + 1 null terminator
 
     auto firstLen = sep - str;
-    if (firstLen + 1 > sizeof(firstStr))
+    if (static_cast<size_t>(firstLen) + 1 > sizeof(firstStr))
         return boost::none;
 
     memcpy(firstStr, str, firstLen);

@@ -180,7 +180,7 @@ PlaylistInfo PlayerImpl::getPlaylist(const PlaylistRef& plref)
 {
     auto index = playlists_->getIndex(plref);
     auto current = playlistManager_->get_active_playlist();
-    return getPlaylistInfo(index, index == current);
+    return getPlaylistInfo(index, static_cast<size_t>(index) == current);
 }
 
 std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
@@ -262,7 +262,7 @@ void PlayerImpl::removePlaylist(const PlaylistRef& playlist)
 void PlayerImpl::movePlaylist(const PlaylistRef& playlist, int32_t index)
 {
     auto count = playlistManager_->get_playlist_count();
-    auto oldIndex = playlists_->getIndex(playlist);
+    auto oldIndex = static_cast<size_t>(playlists_->getIndex(playlist));
     auto newIndex = clampIndex(index, count, count - 1);
 
     if (newIndex == oldIndex)
