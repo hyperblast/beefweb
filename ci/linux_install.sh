@@ -4,7 +4,9 @@ set -e
 
 function main
 {
-    scripts/install_app.sh everything
+    (cd js && yarn install)
+
+    js/api_tests/src/install_app.js everything
 }
 
 source "$(dirname $0)/run_in_docker.sh"
