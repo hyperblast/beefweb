@@ -14,28 +14,30 @@ public:
     PlaylistMapping() = default;
     virtual ~PlaylistMapping() = default;
 
+    void rebuild();
+
     void invalidate() { invalid_ = true; }
+
+    void actualize()
+    {
+        if (invalid_)
+            rebuild();
+    }
 
     int32_t getIndex(const PlaylistRef& plref);
 
     const std::string& getId(int32_t index)
     {
-        if (invalid_)
-            rebuild();
-
+        actualize();
         assert(index >= 0 && static_cast<size_t>(index) < allIds_.size());
         return allIds_[index];
     }
 
     const std::vector<std::string>& playlistIds()
     {
-        if (invalid_)
-            rebuild();
-
+        actualize();
         return allIds_;
     }
-
-    void rebuild();
 
 protected:
     virtual int32_t getCurrentIndex() = 0;

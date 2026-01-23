@@ -63,7 +63,6 @@ std::vector<PlaylistInfo> PlayerImpl::getPlaylists()
     int current = ddbApi->plt_get_curr_idx();
 
     playlists.reserve(count);
-    playlists_.playlistIds(); // rebuild early if necessary
 
     for (int i = 0; i < count; i++)
     {
