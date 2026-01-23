@@ -2,6 +2,7 @@
 set(
 API_TESTS_SOURCES
 package.json
+vitest.config.js
 src/app_defs.js
 src/artwork_api_tests.js
 src/authentication_tests.js
