@@ -1,5 +1,6 @@
 #include "playlist_mapping.hpp"
 
+#include <algorithm>
 #include <http.hpp>
 #include <stdio.h>
 #include <inttypes.h>
@@ -73,8 +74,7 @@ void PlaylistMapping::rebuild()
             allIds_.emplace_back(); // no id or duplicate
         }
 
-        if (id > maxId_)
-            maxId_ = id;
+        maxId_ = std::max(id, maxId_);
     }
 
     logDebug("rebuilding index:");

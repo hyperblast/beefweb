@@ -15,7 +15,7 @@ protected:
     std::string readId(int32_t index) override;
     void writeId(int32_t index, const std::string& id) override;
 
-    service_ptr_t<playlist_manager_v4> playlistManager_;
+    service_ptr_t<playlist_manager_v4> playlistManager_ = playlist_manager_v4::get();
 };
 
 }

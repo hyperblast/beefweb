@@ -97,11 +97,11 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
         if (queryImpl)
         {
             auto columns = evaluatePlaylistColumns(item.m_playlist, item.m_item, queryImpl->columns, &buffer);
-            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item, std::move(columns));
+            result.emplace_back(std::move(playlistId), static_cast<t_size>(item.m_playlist), static_cast<t_size>(item.m_item), std::move(columns));
         }
         else
         {
-            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item);
+            result.emplace_back(std::move(playlistId), static_cast<t_size>(item.m_playlist), static_cast<t_size>(item.m_item));
         }
     }
 

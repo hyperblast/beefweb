@@ -5,7 +5,7 @@ export default defineConfig({
         include: ['./src/*_tests.js'],
         isolate: false,
         bail: 10,
-        retry: 1,
+        retry: 0,
         maxConcurrency: 1,
         fileParallelism: false
     }
