@@ -2,7 +2,7 @@
 
 set -e
 
-set TEST_RETRY=1
+TEST_RETRY=1
 
 function banner
 {
