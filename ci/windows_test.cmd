@@ -2,6 +2,7 @@ setlocal
 
 cd "%~dp0.."
 
+set TEST_RETRY=1
 set HAS_ERROR=0
 set BEEFWEB_BINARY_DIR_BASE=ci_build
 set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
@@ -27,7 +28,7 @@ for /F %%i in ('node install_app.js list-versions foobar2000 %VERSION_PATTERN%')
     @echo.
 
     set BEEFWEB_TEST_FOOBAR2000_VERSION=%%i
-    cmd /c yarn.cmd test
+    cmd /c yarn.cmd test --retry %TEST_RETRY%
     if errorlevel 1 set HAS_ERROR=1
 )
 

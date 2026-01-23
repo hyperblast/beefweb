@@ -3,7 +3,7 @@
 #include "common.hpp"
 #include "player_options.hpp"
 #include "player_api.hpp"
-#include "playlist_mapping.hpp"
+#include "playlist_mapping_impl.hpp"
 #include "utils.hpp"
 
 namespace msrv::player_foobar2000 {
@@ -147,7 +147,7 @@ private:
     service_ptr_t<album_art_manager_v3> albumArtManager_;
     service_ptr_t<titleformat_compiler> titleFormatCompiler_;
 
-    std::shared_ptr<PlaylistMapping> playlists_;
+    std::shared_ptr<PlaylistMappingImpl> playlists_;
     PlayerEventAdapter playerEventAdapter_;
     PlaylistEventAdapter playlistEventAdapter_;
     OutputEventAdapter outputEventAdapter_;

@@ -12,14 +12,13 @@ std::unique_ptr<PlayerState> PlayerImpl::queryPlayerState(ColumnsQuery* activeIt
     // Read position before obtaining playlist lock
     PlaylistItemPtr activeItem(ddbApi->streamer_get_playing_track());
     auto activeItemPos = activeItem ? ddbApi->streamer_get_playpos() : -1.0f;
+    int activePlaylistIndex = ddbApi->streamer_get_current_playlist();
 
     PlaylistLockGuard lock(playlistMutex_);
 
-    playlists_.ensureInitialized();
-
     state->playbackState = getPlaybackState(activeItem.get());
     queryInfo(&state->info);
-    queryActiveItem(&state->activeItem, activeItem.get(), activeItemPos, activeItemQuery);
+    queryActiveItem(&state->activeItem, activeItem.get(), activeItemPos, activePlaylistIndex, activeItemQuery);
     queryVolume(&state->volume);
     queryOptions(state.get());
     return state;
@@ -54,17 +53,19 @@ PlaybackState PlayerImpl::getPlaybackState(ddb_playItem_t* activeItem)
 }
 
 void PlayerImpl::queryActiveItem(
-    ActiveItemInfo* info, ddb_playItem_t* activeItem, float activeItemPos, ColumnsQuery* query)
+    ActiveItemInfo* info,
+    ddb_playItem_t* activeItem,
+    float activeItemPos,
+    int playlistIndex,
+    ColumnsQuery* query)
 {
-    int playlistIndex = ddbApi->streamer_get_current_playlist();
-
     PlaylistPtr playlist;
     if (playlistIndex >= 0)
         playlist.reset(ddbApi->plt_get_for_idx(playlistIndex));
 
     std::string playlistId;
     if (playlist)
-        playlistId = playlists_.getId(playlist.get());
+        playlistId = playlists_.getId(playlistIndex);
 
     int32_t itemIndex = -1;
     double itemDuration = -1.0;
@@ -111,7 +112,7 @@ void PlayerImpl::playItem(const PlaylistRef& plref, int32_t itemIndex)
 {
     PlaylistLockGuard lock(playlistMutex_);
 
-    PlaylistPtr targetPlaylist = playlists_.resolve(plref);
+    PlaylistPtr targetPlaylist = playlists_.getPlaylist(plref);
     PlaylistPtr currentPlaylist(ddbApi->plt_get_curr());
 
     if (targetPlaylist != currentPlaylist)

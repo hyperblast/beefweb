@@ -11,7 +11,7 @@ PlayerImpl::PlayerImpl()
       incomingItemFilter_(playlist_incoming_item_filter_v3::get()),
       albumArtManager_(album_art_manager_v3::get()),
       titleFormatCompiler_(titleformat_compiler::get()),
-      playlists_(std::make_shared<PlaylistMapping>()),
+      playlists_(std::make_shared<PlaylistMappingImpl>()),
       playbackOrderOption_(playlistManager_.get_ptr()),
       stopAfterCurrentTrackOption_(playbackControl_.get_ptr())
 {
@@ -22,6 +22,8 @@ PlayerImpl::PlayerImpl()
     stopAfterCurrentTrackOption_.setCallback(callback);
     outputEventAdapter_.setCallback(callback);
     playQueueEventAdapterFactory.get_static_instance().setCallback(callback);
+
+    playlistEventAdapter_.setPlaylistMapping(playlists_);
 
     setPlaybackModeOption(&playbackOrderOption_);
     addOption(&playbackOrderOption_);
@@ -60,7 +62,7 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchCurrentArtwork()
 
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery& query)
 {
-    auto playlist = playlists_->resolve(query.playlist);
+    auto playlist = playlists_->getIndex(query.playlist);
 
     metadb_handle_ptr itemHandle;
 
@@ -73,8 +75,6 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const ArtworkQuery&
 std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 {
     auto queryImpl = dynamic_cast<ColumnsQueryImpl*>(query);
-
-    playlists_->ensureInitialized();
 
     std::vector<PlayQueueItemInfo> result;
     pfc::list_t<t_playback_queue_item> items;
@@ -92,16 +92,16 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
     for (t_size i = 0; i < size; i++)
     {
         const auto& item = items[i];
-        auto playlistId = playlists_->getId(item.m_playlist);
+        auto playlistId = playlists_->getId(static_cast<int32_t>(item.m_playlist));
 
         if (queryImpl)
         {
             auto columns = evaluatePlaylistColumns(item.m_playlist, item.m_item, queryImpl->columns, &buffer);
-            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item, std::move(columns));
+            result.emplace_back(std::move(playlistId), static_cast<t_size>(item.m_playlist), static_cast<t_size>(item.m_item), std::move(columns));
         }
         else
         {
-            result.emplace_back(std::move(playlistId), item.m_playlist, item.m_item);
+            result.emplace_back(std::move(playlistId), static_cast<t_size>(item.m_playlist), static_cast<t_size>(item.m_item));
         }
     }
 
@@ -110,7 +110,7 @@ std::vector<PlayQueueItemInfo> PlayerImpl::getPlayQueue(ColumnsQuery* query)
 
 void PlayerImpl::addToPlayQueue(const PlaylistRef& plref, int32_t itemIndex, int32_t queueIndex)
 {
-    auto playlist = playlists_->resolve(plref);
+    auto playlist = playlists_->getIndex(plref);
     playlistManager_->queue_add_item_playlist(playlist, itemIndex);
 }
 
@@ -122,7 +122,7 @@ void PlayerImpl::removeFromPlayQueue(int32_t queueIndex)
 
 void PlayerImpl::removeFromPlayQueue(const PlaylistRef& plref, int32_t itemIndex)
 {
-    auto playlist = playlists_->resolve(plref);
+    auto playlist = playlists_->getIndex(plref);
     metadb_handle_ptr handle;
 
     if (itemIndex < 0 || !playlistManager_->playlist_get_item_handle(handle, playlist, static_cast<t_size>(itemIndex)))

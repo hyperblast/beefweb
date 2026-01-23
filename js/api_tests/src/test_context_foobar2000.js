@@ -118,7 +118,7 @@ class PlayerController
                 {
                     await execFile(this.command, ['/exit']);
 
-                    if (await waitForExit(this.process, 3000))
+                    if (!this.process || await waitForExit(this.process, 3000))
                         return;
 
                     console.error('Failed to cleanly stop player, terminating process');

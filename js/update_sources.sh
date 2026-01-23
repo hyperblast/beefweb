@@ -26,6 +26,7 @@ function update
         echo "package.json"
         echo_if_exists .babelrc
         echo_if_exists webpack.config.js
+        echo_if_exists vitest.config.js
         find src -type f | LC_ALL=C sort
         echo ")"
     ) > $output

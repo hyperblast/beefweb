@@ -15,6 +15,7 @@
 - Correctly preserve navigation history for all views
 - Fix ignoring of "clientConfigDir" setting
 - Fix dynamic playback info not updating in playlist (e.g. radio stream titles)
+- Fix operation when duplicate playlist id is encountered
 
 ### DeaDBeeF
 - Provide universal .deb package to match `deadbeef-static_*.deb`

@@ -17,7 +17,7 @@ set(
     player_misc.cpp
     player_options.cpp player_options.hpp
     player_playlists.cpp
-    playlist_mapping.cpp playlist_mapping.hpp
+    playlist_mapping_impl.cpp playlist_mapping_impl.hpp
     plugin.cpp plugin.hpp
     plugin_settings.cpp plugin_settings.hpp
     utils.cpp utils.hpp

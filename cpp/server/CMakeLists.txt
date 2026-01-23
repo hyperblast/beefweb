@@ -119,6 +119,7 @@ set(
     player_api_parsers.cpp player_api_parsers.hpp
     player_controller.cpp player_controller.hpp
     player_events.cpp player_events.hpp
+    playlist_mapping.cpp playlist_mapping.hpp
     playlists_controller.cpp playlists_controller.hpp
     query_controller.cpp query_controller.hpp
     request.cpp request.hpp
