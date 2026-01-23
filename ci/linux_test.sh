@@ -34,7 +34,7 @@ function main
     export BEEFWEB_BINARY_DIR_BASE=ci_build
     export BEEFWEB_TEST_BUILD_TYPE=$BUILD_TYPE
 
-    for version in $(scripts/install_app.sh list-versions deadbeef); do
+    for version in $(js/api_tests/src/install_app.js list-versions deadbeef); do
         run_deadbeef_tests $version
     done
 }
