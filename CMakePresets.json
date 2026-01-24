@@ -66,7 +66,7 @@
             "name": "debug-posix",
             "displayName": "Debug",
             "configurePreset": "debug-posix",
-            "jobs": 0,
+            "jobs": 16,
             "condition": {
                 "type": "notEquals",
                 "lhs": "${hostSystemName}",
@@ -77,7 +77,7 @@
             "name": "release-posix",
             "displayName": "Release",
             "configurePreset": "release-posix",
-            "jobs": 0,
+            "jobs": 16,
             "condition": {
                 "type": "notEquals",
                 "lhs": "${hostSystemName}",
@@ -88,7 +88,8 @@
             "name": "debug-windows",
             "displayName": "Debug",
             "configurePreset": "debug-windows",
-            "jobs": 0,
+            "configuration": "Debug",
+            "jobs": 16,
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
@@ -99,7 +100,8 @@
             "name": "release-windows",
             "displayName": "Release",
             "configurePreset": "release-windows",
-            "jobs": 0,
+            "configuration": "Release",
+            "jobs": 16,
             "condition": {
                 "type": "equals",
                 "lhs": "${hostSystemName}",
