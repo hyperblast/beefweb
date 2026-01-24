@@ -1,0 +1,110 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "debug-posix",
+            "displayName": "Debug",
+            "binaryDir": "${sourceDir}/build/Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_TESTS": "ON"
+            },
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "release-posix",
+            "displayName": "Release",
+            "binaryDir": "${sourceDir}/build/Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "ENABLE_TESTS": "ON"
+            },
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "debug-windows",
+            "displayName": "Debug",
+            "binaryDir": "${sourceDir}/build/Debug",
+            "cacheVariables": {
+                "ENABLE_TESTS": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "release-windows",
+            "displayName": "Release",
+            "binaryDir": "${sourceDir}/build/Release",
+            "cacheVariables": {
+                "ENABLE_TESTS": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug-posix",
+            "displayName": "Debug",
+            "configurePreset": "debug-posix",
+            "jobs": 0,
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "release-posix",
+            "displayName": "Release",
+            "configurePreset": "release-posix",
+            "jobs": 0,
+            "condition": {
+                "type": "notEquals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "debug-windows",
+            "displayName": "Debug",
+            "configurePreset": "debug-windows",
+            "jobs": 0,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "release-windows",
+            "displayName": "Release",
+            "configurePreset": "release-windows",
+            "jobs": 0,
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        }
+    ]
+}
