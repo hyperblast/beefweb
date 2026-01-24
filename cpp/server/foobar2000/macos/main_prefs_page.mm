@@ -17,14 +17,10 @@ const CGFloat margin = 20;
     @property(strong, nonatomic) NSButton* authRequiredButton;
     @property(strong, nonatomic) NSTextField* authUserText;
     @property(strong, nonatomic) NSSecureTextField* authPasswordText;
-    @property(nonatomic) std::vector<std::string> musicDirs;
+    @property(strong, nonatomic) NSMutableArray* musicDirs;
 @end
 
 @implementation MainPrefsPageInstance
-
-- (void)allowRemoteDidChange:(id)sender
-{
-}
 
 - (void)authRequiredDidChange:(id)sender
 {
@@ -51,13 +47,33 @@ const CGFloat margin = 20;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView*)tableView
 {
-    return self.musicDirs.size();
+    logDebug("numberOfRowsInTableView: %i", static_cast<int>(self.musicDirs.count));
+    return self.musicDirs.count;
 }
 
 - (NSView*)tableView:(NSTableView*)tableView viewForTableColumn:(NSTableColumn*)tableColumn row:(NSInteger)row
 {
-    NSString* dir = [NSString stringWithUTF8String:self.musicDirs[row].c_str()];
-    return [NSTextField textFieldWithString:dir];
+    NSString* dir = self.musicDirs[row];
+    NSString* columnId = [tableColumn identifier];
+
+    NSTableCellView* cellView = [tableView makeViewWithIdentifier:columnId owner:self];
+
+    if (cellView == nil)
+    {
+        cellView = [[NSTableCellView alloc] initWithFrame:NSMakeRect(0, 0, tableColumn.width, 20)];
+        cellView.identifier = columnId;
+
+        NSTextField* textField = [[NSTextField alloc] initWithFrame:cellView.bounds];
+        textField.editable = NO;
+        textField.bezeled = NO;
+        textField.drawsBackground = NO;
+ 
+        cellView.textField = textField;
+        [cellView addSubview:textField];
+    }
+
+    cellView.textField.stringValue = dir;
+    return cellView;
 }
 
 - (NSBox*)newSeparator
@@ -89,11 +105,7 @@ const CGFloat margin = 20;
         [self.portText.widthAnchor constraintEqualToConstant:100],
     ]];
 
-    self.allowRemoteButton = [
-        NSButton checkboxWithTitle:@"Allow remote connections"
-                 target:self
-                 action:@selector(allowRemoteDidChange:)
-    ];
+    self.allowRemoteButton = [NSButton checkboxWithTitle:@"Allow remote connections" target:nil action:nil];
 
     self.musicDirsTable = [NSTableView new];
     self.musicDirsTable.delegate = self;
@@ -171,6 +183,37 @@ const CGFloat margin = 20;
     ]];
 }
 
+- (void)loadMusicDirs
+{
+    auto cppDirs = settings_store::getMusicDirs();
+
+    for (int i = 0; i < 20; i++)
+        cppDirs.emplace_back("/Users/user/Music");
+
+    NSMutableArray* nsDirs = [NSMutableArray arrayWithCapacity:cppDirs.size()];
+
+    for (const auto& dir : cppDirs)
+    {
+        [nsDirs addObject:[NSString stringWithUTF8String:dir.c_str()]];
+    }
+
+    self.musicDirs = nsDirs;
+}
+
+- (void)saveMusicDirs
+{
+    NSMutableArray* nsDirs = self.musicDirs;
+    std::vector<std::string> cppDirs;
+    cppDirs.reserve(nsDirs.count);
+
+    for (NSString* dir in nsDirs)
+    {
+        cppDirs.emplace_back([dir UTF8String]);
+    }
+
+    settings_store::setMusicDirs(cppDirs);
+}
+
 - (void)viewWillAppear
 {
     [super viewWillAppear];
@@ -180,26 +223,27 @@ const CGFloat margin = 20;
 
     self.portText.integerValue = (int)settings_store::port;
     self.allowRemoteButton.state = settings_store::allowRemote ? 1 : 0;
-    self.musicDirs = settings_store::getMusicDirs();
-    self.musicDirs.emplace_back("/Users/user/Music");
-    self.musicDirs.emplace_back("/Users/user/Some other dir");
-    [self.musicDirsTable reloadData];
-
     self.authRequiredButton.state = settings_store::authRequired ? 1 : 0;
     self.authUserText.stringValue = [NSString stringWithUTF8String:authUser.c_str()];
     self.authPasswordText.stringValue = [NSString stringWithUTF8String:authPassword.c_str()];
+
+    [self loadMusicDirs];
+    [self.musicDirsTable reloadData];
 }
 
 - (void)viewWillDisappear
 {
     [super viewWillDisappear];
 
+    return;
+
     settings_store::port = self.portText.integerValue;
     settings_store::allowRemote = self.allowRemoteButton.state != 0;
-    settings_store::setMusicDirs(self.musicDirs);
     settings_store::authRequired = self.authRequiredButton.state != 0;
     settings_store::authUser = [self.authUserText.stringValue UTF8String];
     settings_store::authPassword = [self.authPasswordText.stringValue UTF8String];
+
+    [self saveMusicDirs];
 
     auto plugin = Plugin::current();
 
