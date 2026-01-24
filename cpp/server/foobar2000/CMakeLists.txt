@@ -43,6 +43,12 @@ if(OS_MAC)
     checked_add_compiler_flag(-Wno-overloaded-virtual)
     checked_add_compiler_flag(-Wno-deprecated-copy-with-user-provided-copy)
     checked_add_compiler_flag(-Wno-delete-non-abstract-non-virtual-dtor)
+    
+    set(
+        PLUGIN_SOURCES
+        ${PLUGIN_SOURCES}
+        macos/main_prefs_page.mm
+    )
 endif()
 
 set(
