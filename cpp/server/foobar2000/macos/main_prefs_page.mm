@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
+#include "utils.hpp"
 #include "plugin_settings.hpp"
 
 using namespace msrv::player_foobar2000;
@@ -7,7 +8,7 @@ using namespace msrv::player_foobar2000;
 @interface MainPrefsPageInstance : NSViewController
 @end
 
-@interface MainPrefsPageInstance : ()
+@interface MainPrefsPageInstance ()
 @end
 
 @implementation MainPrefsPageInstance
