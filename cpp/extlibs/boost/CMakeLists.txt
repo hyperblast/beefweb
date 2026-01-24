@@ -10,20 +10,7 @@ elseif(CXX_CLANG)
     set(BOOST_TOOLSET "clang")
 elseif(CXX_MSVC)
     set(BOOST_TOOLSET "msvc")
-
-    if(${CMAKE_SIZEOF_VOID_P} STREQUAL 4)
-        set(BOOST_ADDRESS_MODEL "32")
-    elseif(${CMAKE_SIZEOF_VOID_P} STREQUAL 8)
-        set(BOOST_ADDRESS_MODEL "64")
-    else()
-        message(SEND_ERROR "Unknown pointer size, unable to provide boost address model" )
-    endif()
-
-    if(ENABLE_STATIC_STDLIB)
-        set(BOOST_RUNTIME_LINK "static")
-    else()
-        set(BOOST_RUNTIME_LINK "shared")
-    endif()
+    set_by_pointer_size(BOOST_ADDRESS_MODEL 32 64)
 else()
     message(SEND_ERROR "Unknown compiler, unable to provide boost toolset" )
 endif()
@@ -43,7 +30,7 @@ if(CXX_MSVC)
         B2_COMMON_ARGS
         ${B2_COMMON_ARGS}
         "address-model=${BOOST_ADDRESS_MODEL}"
-        "runtime-link=${BOOST_RUNTIME_LINK}"
+        "runtime-link=shared"
     )
 endif()
 
