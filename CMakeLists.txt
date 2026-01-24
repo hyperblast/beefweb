@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.24)
 
 project(
     beefweb
@@ -23,7 +23,6 @@ option(ENABLE_TESTS             "Build tests" OFF)
 option(ENABLE_GIT_REV           "Include Git revision in produced binaries" OFF)
 option(ENABLE_WERROR            "Treat warnings as errors" OFF)
 option(ENABLE_LOCAL_LIBS        "Build with local libraries" ON)
-option(ENABLE_STATIC_STDLIB     "Build with static libstdc++" OFF)
 option(ENABLE_JS                "Build JS parts" ON)
 
 local_library_option(boost          ENABLE_LOCAL_BOOST "")
@@ -32,6 +31,10 @@ local_library_option(catch          ENABLE_LOCAL_CATCH "ENABLE_TESTS")
 local_library_option(stringencoders ENABLE_LOCAL_STRINGENCODERS "")
 
 if(OS_POSIX)
+	if(NOT OS_MAC)
+		option(ENABLE_STATIC_STDLIB     "Build with static libstdc++" OFF)
+	endif()
+
     option(ENABLE_DEADBEEF "Build plugin for deadbeef player" ON)
     option(
         DEADBEEF_INSTALL_INTO_ROOT
