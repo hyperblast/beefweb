@@ -15,6 +15,22 @@ using namespace msrv::player_foobar2000;
 
 - (void)setupView
 {
+    CGFloat margin = 20;
+
+    NSStackView* rootStack = [NSStackView stackViewWithViews:@[
+        [NSTextField labelWithString:@"Hello"]
+    ]];
+
+    rootStack.alignment = NSLayoutAttributeLeading;
+    rootStack.orientation = NSUserInterfaceLayoutOrientationVertical;
+    [self.view addSubview:rootStack];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [rootStack.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:margin],
+        [rootStack.topAnchor constraintEqualToAnchor:self.view.topAnchor constant:margin],
+        [rootStack.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-margin],
+        [rootStack.bottomAnchor constraintEqualToAnchor:self.view.bottomAnchor constant:-margin],
+    ]];
 }
 
 - (void)viewDidLoad
@@ -28,11 +44,10 @@ using namespace msrv::player_foobar2000;
     [super viewWillAppear];
 }
 
-
 @end
 
 namespace {
-    
+
 class MainPrefsPage : public preferences_page_v3
 {
 public:
