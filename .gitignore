@@ -1,15 +1,12 @@
 .idea
+.vscode
+
 apps
 build
 ci_build
 cmake-build*
 node_modules
 
-js/.idea
-js/client/dist
-
-cpp/.idea
-cpp/build
 cpp/extlibs/.cache
 
 *.user
