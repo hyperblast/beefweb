@@ -280,6 +280,11 @@ const CGFloat margin = 10;
         [self.portText.widthAnchor constraintEqualToConstant:100],
     ]];
 
+    NSStackView* portRow = [NSStackView stackViewWithViews:@[
+        [NSTextField labelWithString:@"Port for HTTP connections:"],
+        self.portText
+    ]];
+
     self.allowRemoteButton = [
         NSButton
             checkboxWithTitle:@"Allow remote connections"
@@ -326,8 +331,26 @@ const CGFloat margin = 10;
     self.authUserText = [NSTextField textFieldWithString:@""];
     self.authUserText.delegate = self;
 
+    [NSLayoutConstraint activateConstraints:@[
+        [self.authUserText.widthAnchor constraintEqualToConstant:300],
+    ]];
+
+    NSStackView* authUserRow = [NSStackView stackViewWithViews:@[
+        [NSTextField labelWithString:@"User:"],
+        self.authUserText
+    ]];
+
     self.authPasswordText = [NSSecureTextField new];
     self.authPasswordText.delegate = self;
+
+    NSStackView* authPasswordRow = [NSStackView stackViewWithViews:@[
+        [NSTextField labelWithString:@"Password:"],
+        self.authPasswordText
+    ]];
+
+    [NSLayoutConstraint activateConstraints:@[
+        [self.authPasswordText.widthAnchor constraintEqualToConstant:300],
+    ]];
 
     self.allowChangePlaylistsButton = [
         NSButton checkboxWithTitle:@"Changing playlists"
@@ -354,18 +377,15 @@ const CGFloat margin = 10;
 
     NSStackView* stack = [NSStackView stackViewWithViews:@[
         networkHeader,
-        [NSTextField labelWithString:@"Port for HTTP connections:"],
-        self.portText,
+        portRow,
         self.allowRemoteButton,
         musicDirsHeader,
         musicDirsScroll,
         musicDirsButtons,
         authenticationHeader,
         self.authRequiredButton,
-        [NSTextField labelWithString:@"User:"],
-        self.authUserText,
-        [NSTextField labelWithString:@"Password:"],
-        self.authPasswordText,
+        authUserRow,
+        authPasswordRow,
         permissionsHeader,
         self.allowChangePlaylistsButton,
         self.allowChangeOutputButton,
@@ -381,7 +401,7 @@ const CGFloat margin = 10;
     [stack setCustomSpacing:(margin*2) afterView:musicDirsButtons];
     [stack setCustomSpacing:margin afterView:authenticationHeader];
 
-    [stack setCustomSpacing:(margin*2) afterView:self.authPasswordText];
+    [stack setCustomSpacing:(margin*2) afterView:authPasswordRow];
     [stack setCustomSpacing:margin afterView:permissionsHeader];
 
     [self.view addSubview:stack];
