@@ -80,6 +80,12 @@ describe('artwork 3', () => {
         await client.waitPlaybackMetadata();
 
         const response = await getArtwork(0, 0);
+        if (response.status !== 404)
+        {
+            const decoder = new TextDecoder('utf-8');
+            console.error(decoder.decode(response.data));
+        }
+
         assert.equal(response.status, 404);
     });
 });
