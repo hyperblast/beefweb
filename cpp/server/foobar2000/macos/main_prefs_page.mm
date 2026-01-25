@@ -462,7 +462,7 @@ const CGFloat labelWidth = 75;
     NSTextField* networkHeader = [self headerWithTitle:@"Network"];
     NSTextField* musicDirsHeader = [self headerWithTitle:@"Browseable music directories"];
     NSTextField* authenticationHeader = [self headerWithTitle:@"Authentication"];
-    NSTextField* permissionsHeader = [self headerWithTitle:@"Operations that are allowed via web interface and HTTP API"];
+    NSTextField* permissionsHeader = [self headerWithTitle:@"Operations allowed via the web interface and HTTP API"];
 
     NSStackView* stack = [NSStackView stackViewWithViews:@[
         networkHeader,
