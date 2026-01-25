@@ -8,7 +8,7 @@
 using namespace msrv;
 using namespace msrv::player_foobar2000;
 
-const CGFloat margin = 20;
+const CGFloat margin = 10;
 
 @interface MainPrefsPageInstance : NSViewController<NSTextFieldDelegate, NSTableViewDelegate, NSTableViewDataSource>
     @property(nonatomic) BOOL hasChanges;
@@ -255,6 +255,13 @@ const CGFloat margin = 20;
     return cellView;
 }
 
+- (NSTextField*)headerWithTitle:(NSString*)title
+{
+    NSTextField* textField = [NSTextField labelWithString:title];
+    textField.font = [NSFont preferredFontForTextStyle:NSFontTextStyleTitle2 options:@{}];
+    return textField;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -340,29 +347,26 @@ const CGFloat margin = 20;
                  action:@selector(allowChangeClientConfigClicked:)
     ];
 
-    NSBox* separator1 = [NSBox new];
-    NSBox* separator2 = [NSBox new];
-    NSBox* separator3 = [NSBox new];
-    separator1.boxType = NSBoxSeparator;
-    separator2.boxType = NSBoxSeparator;
-    separator3.boxType = NSBoxSeparator;
+    NSTextField* networkHeader = [self headerWithTitle:@"Network"];
+    NSTextField* musicDirsHeader = [self headerWithTitle:@"Browseable music directories"];
+    NSTextField* authenticationHeader = [self headerWithTitle:@"Authentication"];
+    NSTextField* permissionsHeader = [self headerWithTitle:@"Operations that are allowed via web interface and HTTP API"];
 
     NSStackView* stack = [NSStackView stackViewWithViews:@[
+        networkHeader,
         [NSTextField labelWithString:@"Port for HTTP connections:"],
         self.portText,
         self.allowRemoteButton,
-        separator1,
-        [NSTextField labelWithString:@"Browseable music directories:"],
+        musicDirsHeader,
         musicDirsScroll,
         musicDirsButtons,
-        separator2,
+        authenticationHeader,
         self.authRequiredButton,
         [NSTextField labelWithString:@"User:"],
         self.authUserText,
         [NSTextField labelWithString:@"Password:"],
         self.authPasswordText,
-        separator3,
-        [NSTextField labelWithString:@"Specify which operations are allowed using web interface and HTTP API:"],
+        permissionsHeader,
         self.allowChangePlaylistsButton,
         self.allowChangeOutputButton,
         self.allowChangeClientConfigButton,
@@ -371,12 +375,14 @@ const CGFloat margin = 20;
     stack.alignment = NSLayoutAttributeLeading;
     stack.orientation = NSUserInterfaceLayoutOrientationVertical;
 
-    [stack setCustomSpacing:margin afterView:self.allowRemoteButton];
-    [stack setCustomSpacing:margin afterView:musicDirsButtons];
-    [stack setCustomSpacing:margin afterView:self.authPasswordText];
-    [stack setCustomSpacing:margin afterView:separator1];
-    [stack setCustomSpacing:margin afterView:separator2];
-    [stack setCustomSpacing:margin afterView:separator3];
+    [stack setCustomSpacing:(margin*2) afterView:self.allowRemoteButton];
+    [stack setCustomSpacing:margin afterView:musicDirsHeader];
+
+    [stack setCustomSpacing:(margin*2) afterView:musicDirsButtons];
+    [stack setCustomSpacing:margin afterView:authenticationHeader];
+
+    [stack setCustomSpacing:(margin*2) afterView:self.authPasswordText];
+    [stack setCustomSpacing:margin afterView:permissionsHeader];
 
     [self.view addSubview:stack];
 
