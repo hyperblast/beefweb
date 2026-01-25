@@ -1,5 +1,7 @@
 set(PROJECT_COPYRIGHT       "Copyright 2015-2026 Hyperblast")
 
+set(OBJC_CLASS_PREFIX       "Beefweb")
+
 set(DEADBEEF_ENTRY_POINT    "beefweb_load")
 set(DEADBEEF_PLUGIN_FILE    "beefweb")
 set(DEADBEEF_PACKAGE_NAME   "ddb_beefweb")

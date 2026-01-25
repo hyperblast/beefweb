@@ -11,10 +11,10 @@ using namespace msrv::player_foobar2000;
 const CGFloat margin = 10;
 const CGFloat labelWidth = 75;
 
-@interface LinkButton : NSButton
+@interface MSRV_OBJC_CLASS(LinkButton) : NSButton
 @end
 
-@interface MainPrefsPageInstance : NSViewController<NSTextFieldDelegate, NSTableViewDelegate, NSTableViewDataSource>
+@interface MSRV_OBJC_CLASS(MainPrefsPageInstance) : NSViewController<NSTextFieldDelegate, NSTableViewDelegate, NSTableViewDataSource>
     @property(nonatomic) BOOL hasChanges;
     @property(nonatomic) int currentPort;
 
@@ -36,7 +36,7 @@ const CGFloat labelWidth = 75;
     @property(strong, nonatomic) NSButton* allowChangeClientConfigButton;
 @end
 
-@implementation LinkButton
+@implementation MSRV_OBJC_CLASS(LinkButton)
 
 - (instancetype)init
 {
@@ -54,7 +54,7 @@ const CGFloat labelWidth = 75;
 
 @end
 
-@implementation MainPrefsPageInstance
+@implementation MSRV_OBJC_CLASS(MainPrefsPageInstance)
 
 - (void)openUrl:(NSString*)url
 {
@@ -328,7 +328,7 @@ const CGFloat labelWidth = 75;
 
 - (NSButton*)linkButton:(NSString*)text action:(SEL)action
 {
-    LinkButton* button = [LinkButton new];
+    MSRV_OBJC_CLASS(LinkButton)* button = [MSRV_OBJC_CLASS(LinkButton) new];
     button.title = text;
     button.target = self;
     button.action = action;
@@ -584,7 +584,7 @@ public:
 
     service_ptr instantiate() override
     {
-        return fb2k::wrapNSObject([MainPrefsPageInstance new]);
+        return fb2k::wrapNSObject([MSRV_OBJC_CLASS(MainPrefsPageInstance) new]);
     }
 };
 

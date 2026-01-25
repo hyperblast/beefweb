@@ -24,6 +24,8 @@
 #define MSRV_API_DOCS_URL           "https://hyperblast.org/beefweb/api/"
 #define MSRV_PLAYER_DEADBEEF        "deadbeef"
 #define MSRV_PLAYER_FOOBAR2000      "foobar2000"
+#define MSRV_OBJC_CLASS_(p, name)   p ## name
+#define MSRV_OBJC_CLASS(name)       MSRV_OBJC_CLASS_(@OBJC_CLASS_PREFIX@, name)
 
 #if MSRV_VERSION_FINAL
 #define MSRV_VERSION_SUFFIX ""
