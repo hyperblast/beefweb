@@ -1,7 +1,7 @@
 # Changes in v0.11 (not released)
+- Add macOS support
 - Rework mobile layout: make elements larger and better positioned, support swiping between views
 - Rework column editor: add support for subrows and basic formatting, each layout is now configured separately
-- Add basic macOS support (foobar2000 has no preferences GUI, but you can configure using `~/Library/foobar2000-v2/beefweb/config.json`)
 - Allow non-absolute paths in config (resolved relative to {player profile directory}/beefweb/)
 - Allow setting arbitrary UI scale
 - Preserve scroll position in file browser
