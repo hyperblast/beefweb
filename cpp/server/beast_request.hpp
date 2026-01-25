@@ -10,7 +10,7 @@ class BeastConnection;
 
 class BeastResponseStream;
 
-class BeastRequest : public RequestCore
+class BeastRequest final : public RequestCore
 {
 public:
     BeastRequest(

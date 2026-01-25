@@ -13,7 +13,7 @@ void logDebug(const char* fmt, ...)
     va_start(va, fmt);
 
     if (auto logger = Logger::getCurrent())
-        logger->log(LogLevel::DEBUG, fmt, va);
+        logger->log(LogLevel::L_DEBUG, fmt, va);
 
     va_end(va);
 }
@@ -26,7 +26,7 @@ void logInfo(const char* fmt, ...)
     va_start(va, fmt);
 
     if (auto logger = Logger::getCurrent())
-        logger->log(LogLevel::INFO, fmt, va);
+        logger->log(LogLevel::L_INFO, fmt, va);
 
     va_end(va);
 }
@@ -37,7 +37,7 @@ void logError(const char* fmt, ...)
     va_start(va, fmt);
 
     if (auto logger = Logger::getCurrent())
-        logger->log(LogLevel::ERROR, fmt, va);
+        logger->log(LogLevel::L_ERROR, fmt, va);
 
     va_end(va);
 }

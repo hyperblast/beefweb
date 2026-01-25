@@ -24,6 +24,7 @@ endif()
 if(CXX_CLANG)
     checked_add_compiler_flag(-Wno-potentially-evaluated-expression)
     checked_add_compiler_flag(-Wno-extern-c-compat)
+    checked_add_compiler_flag(-Wno-bitwise-op-parentheses)
 endif()
 
 if(CXX_MSVC)

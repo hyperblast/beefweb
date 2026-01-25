@@ -8,6 +8,10 @@ project(
 
 set(PROJECT_VERSION_FINAL 0)
 
+if(CMAKE_SYSTEM_NAME STREQUAL Darwin)
+    enable_language(OBJCXX)
+endif()
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(CMAKE_MODULE_PATH       "${CMAKE_CURRENT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")

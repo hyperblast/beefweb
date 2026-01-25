@@ -10,9 +10,9 @@ namespace msrv {
 
 enum class LogLevel
 {
-    DEBUG,
-    INFO,
-    ERROR
+    L_DEBUG,
+    L_INFO,
+    L_ERROR
 };
 
 class Logger
