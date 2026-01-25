@@ -183,14 +183,21 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle
         pfc::list_single_ref_t(album_art_ids::cover_front),
         dummyCallback);
 
-    if (extractor.is_empty())
-        return boost::make_future<ArtworkResult>(ArtworkResult());
+    try
+    {
+        if (extractor.is_empty())
+            return boost::make_future<ArtworkResult>(ArtworkResult());
 
-    service_ptr_t<album_art_data> artData;
-    if (!extractor->query(album_art_ids::cover_front, artData, dummyCallback))
-        return boost::make_future<ArtworkResult>(ArtworkResult());
+        service_ptr_t<album_art_data> artData;
+        if (!extractor->query(album_art_ids::cover_front, artData, dummyCallback))
+            return boost::make_future<ArtworkResult>(ArtworkResult());
 
-    return boost::make_future<ArtworkResult>(ArtworkResult(artData->get_ptr(), artData->get_size()));
+        return boost::make_future<ArtworkResult>(ArtworkResult(artData->get_ptr(), artData->get_size()));
+    }
+    catch (std::exception& ex)
+    {
+        throw InvalidRequestException(ex.what());
+    }
 }
 
 TitleFormatVector PlayerImpl::compileColumns(const std::vector<std::string>& columns)
