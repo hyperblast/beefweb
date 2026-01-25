@@ -10,45 +10,202 @@ using namespace msrv::player_foobar2000;
 
 const CGFloat margin = 20;
 
-@interface MainPrefsPageInstance : NSViewController<NSTableViewDelegate, NSTableViewDataSource>
+@interface MainPrefsPageInstance : NSViewController<NSTextFieldDelegate, NSTableViewDelegate, NSTableViewDataSource>
+    @property(nonatomic) BOOL hasChanges;
+
     @property(strong, nonatomic) NSTextField* portText;
     @property(strong, nonatomic) NSButton* allowRemoteButton;
+
+    @property(strong, nonatomic) NSMutableOrderedSet* musicDirs;
     @property(strong, nonatomic) NSTableView* musicDirsTable;
+    @property(strong, nonatomic) NSButton* musicDirRemoveButton;
+    @property(strong, nonatomic) NSButton* musicDirUpButton;
+    @property(strong, nonatomic) NSButton* musicDirDownButton;
+
     @property(strong, nonatomic) NSButton* authRequiredButton;
     @property(strong, nonatomic) NSTextField* authUserText;
     @property(strong, nonatomic) NSSecureTextField* authPasswordText;
-    @property(strong, nonatomic) NSMutableArray* musicDirs;
+    @property(strong, nonatomic) NSOpenPanel* selectDirsPanel;
 @end
 
 @implementation MainPrefsPageInstance
 
-- (void)authRequiredDidChange:(id)sender
+- (void)controlTextDidEndEditing:(NSNotification*)notification
+{
+    if (notification.object == self.portText)
+    {
+        settings_store::port = self.portText.integerValue;
+        self.hasChanges = YES;
+        return;
+    }
+
+    if (notification.object == self.authUserText)
+    {
+        settings_store::authUser = [self.authUserText.stringValue UTF8String];
+        self.hasChanges = YES;
+        return;
+    }
+
+    if (notification.object == self.authPasswordText)
+    {
+        settings_store::authPassword = [self.authPasswordText.stringValue UTF8String];
+        self.hasChanges = YES;
+        return;
+    }
+}
+
+- (void)allowRemoteClicked:(id)sender
+{
+    settings_store::allowRemote = self.allowRemoteButton.state != 0;
+    self.hasChanges = YES;
+}
+
+- (void)authRequiredClicked:(id)sender
 {
     int enabled = self.authRequiredButton.state != 0;
     self.authUserText.enabled = enabled;
     self.authPasswordText.enabled = enabled;
+    settings_store::authRequired = enabled;
+    self.hasChanges = YES;
+}
+
+- (void)loadMusicDirs
+{
+    auto cppDirs = settings_store::getMusicDirs();
+    NSMutableOrderedSet* nsDirs = [NSMutableOrderedSet orderedSetWithCapacity:cppDirs.size()];
+
+    for (const auto& dir : cppDirs)
+        [nsDirs addObject:[NSString stringWithUTF8String:dir.c_str()]];
+
+    self.musicDirs = nsDirs;
+}
+
+- (void)saveMusicDirs
+{
+    NSMutableOrderedSet* nsDirs = self.musicDirs;
+    std::vector<std::string> cppDirs;
+    cppDirs.reserve(nsDirs.count);
+
+    for (NSString* dir in nsDirs)
+        cppDirs.emplace_back([dir UTF8String]);
+
+    settings_store::setMusicDirs(cppDirs);
+    self.hasChanges = YES;
 }
 
 - (void)musicDirAdd:(id)sender
 {
+    if (self.selectDirsPanel != nil)
+    {
+        [self.selectDirsPanel makeKeyAndOrderFront:nil];
+        return;
+    }
+
+    self.selectDirsPanel = [NSOpenPanel openPanel];
+    self.selectDirsPanel.canChooseFiles = NO;
+    self.selectDirsPanel.canChooseDirectories = YES;
+    self.selectDirsPanel.allowsMultipleSelection = YES;
+    self.selectDirsPanel.prompt = @"Select directories";
+    self.selectDirsPanel.message = @"Please select one or more directories:";
+
+    [self.selectDirsPanel beginWithCompletionHandler:^(NSModalResponse response)
+    {
+        if (response != NSModalResponseOK)
+            return;
+
+        auto dirs = self.musicDirs;
+        auto startIndex = dirs.count;
+
+        for (NSURL* url in self.selectDirsPanel.URLs)
+            [dirs addObject:url.path];
+
+        self.selectDirsPanel = nil;
+
+        auto count = dirs.count - startIndex;
+        if (count == 0)
+            return;
+
+        [self.musicDirsTable
+            insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(startIndex, count)]
+            withAnimation:NSTableViewAnimationSlideDown
+        ];
+
+        [self saveMusicDirs];
+    }];
 }
 
 - (void)musicDirRemove:(id)sender
 {
+    NSIndexSet* selection = self.musicDirsTable.selectedRowIndexes;
+
+    if (selection.count == 0)
+        return;
+
+    [self.musicDirs removeObjectsAtIndexes:selection];
+    [self.musicDirsTable removeRowsAtIndexes:selection withAnimation:NSTableViewAnimationSlideUp];
+    [self saveMusicDirs];
 }
 
 - (void)musicDirUp:(id)sender
 {
+    NSIndexSet* selection = self.musicDirsTable.selectedRowIndexes;
+    BOOL allowed = selection.count == 1 && selection.firstIndex > 0;
+    if (!allowed)
+        return;
+
+    auto index = selection.firstIndex;
+    
+    [self.musicDirs exchangeObjectAtIndex:index withObjectAtIndex:(index - 1)];
+
+    [self.musicDirsTable
+        reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index - 1, 2)]
+        columnIndexes:[NSIndexSet indexSetWithIndex:0]
+    ];
+
+    [self.musicDirsTable
+        selectRowIndexes:[NSIndexSet indexSetWithIndex:(index - 1)]
+        byExtendingSelection:NO
+    ];
+
+    [self saveMusicDirs];
 }
 
 - (void)musicDirDown:(id)sender
 {
+    NSIndexSet* selection = self.musicDirsTable.selectedRowIndexes;
+    BOOL allowed = selection.count == 1 && selection.firstIndex < self.musicDirs.count - 1;
+    if (!allowed)
+        return;
+
+    auto index = selection.firstIndex;
+
+    [self.musicDirs exchangeObjectAtIndex:index withObjectAtIndex:(index + 1)];
+
+    [self.musicDirsTable
+        reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(index, 2)]
+        columnIndexes:[NSIndexSet indexSetWithIndex:0]
+    ];
+
+    [self.musicDirsTable
+        selectRowIndexes:[NSIndexSet indexSetWithIndex:(index + 1)]
+        byExtendingSelection:NO
+    ];
+
+    [self saveMusicDirs];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView*)tableView
 {
-    logDebug("numberOfRowsInTableView: %i", static_cast<int>(self.musicDirs.count));
     return self.musicDirs.count;
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification*)notification
+{
+    NSIndexSet* selection = self.musicDirsTable.selectedRowIndexes;
+
+    self.musicDirRemoveButton.enabled = selection.count > 0;
+    self.musicDirUpButton.enabled = selection.count == 1 && selection.firstIndex > 0;
+    self.musicDirDownButton.enabled = selection.count == 1 &&  selection.firstIndex < self.musicDirs.count - 1;
 }
 
 - (NSView*)tableView:(NSTableView*)tableView viewForTableColumn:(NSTableColumn*)tableColumn row:(NSInteger)row
@@ -100,17 +257,24 @@ const CGFloat margin = 20;
     numberFormatter.minimum = @0;
     numberFormatter.maximum = @65535;
     self.portText.formatter = numberFormatter;
+    self.portText.delegate = self;
 
     [NSLayoutConstraint activateConstraints:@[
         [self.portText.widthAnchor constraintEqualToConstant:100],
     ]];
 
-    self.allowRemoteButton = [NSButton checkboxWithTitle:@"Allow remote connections" target:nil action:nil];
+    self.allowRemoteButton = [
+        NSButton
+            checkboxWithTitle:@"Allow remote connections"
+            target:self
+            action:@selector(allowRemoteClicked:)
+    ];
 
     self.musicDirsTable = [NSTableView new];
     self.musicDirsTable.delegate = self;
     self.musicDirsTable.dataSource = self;
     self.musicDirsTable.headerView = nil;
+    self.musicDirsTable.allowsMultipleSelection = YES;
 
     NSTableColumn* dirColumn = [[NSTableColumn alloc] initWithIdentifier:@"MusicDir"];
     [self.musicDirsTable addTableColumn:dirColumn];
@@ -123,37 +287,32 @@ const CGFloat margin = 20;
         [musicDirsScroll.heightAnchor constraintEqualToConstant:200]
     ]];
 
+    self.musicDirRemoveButton = [NSButton buttonWithTitle:@"Remove" target:self action:@selector(musicDirRemove:)];
+    self.musicDirUpButton = [NSButton buttonWithTitle:@"Move up" target:self action:@selector(musicDirUp:)];
+    self.musicDirDownButton = [NSButton buttonWithTitle:@"Move down" target:self action:@selector(musicDirDown:)];
+
+    self.musicDirRemoveButton.enabled = NO;
+    self.musicDirUpButton.enabled = NO;
+    self.musicDirDownButton.enabled = NO;
+
+    NSStackView* musicDirsButtons = [NSStackView stackViewWithViews:@[
+        [NSButton buttonWithTitle:@"Add..." target:self action:@selector(musicDirAdd:)],
+        self.musicDirRemoveButton,
+        self.musicDirUpButton,
+        self.musicDirDownButton
+    ]];
+
     self.authRequiredButton = [
         NSButton checkboxWithTitle:@"Require authentication"
                  target:self
-                 action:@selector(authRequiredDidChange:)
+                 action:@selector(authRequiredClicked:)
     ];
 
     self.authUserText = [NSTextField textFieldWithString:@""];
-    self.authPasswordText = [NSSecureTextField new];
+    self.authUserText.delegate = self;
 
-    NSStackView* musicDirsButtons = [NSStackView stackViewWithViews:@[
-        [NSButton
-            buttonWithTitle:@"Add..."
-            target:self
-            action:@selector(musicDirAdd:)
-        ],
-        [NSButton
-            buttonWithTitle:@"Remove"
-            target:self
-            action:@selector(musicDirRemove:)
-        ],
-        [NSButton
-            buttonWithTitle:@"Move up"
-            target:self
-            action:@selector(musicDirUp:)
-        ],
-        [NSButton
-            buttonWithTitle:@"Move down"
-            target:self
-            action:@selector(musicDirDown:)
-        ]
-    ]];
+    self.authPasswordText = [NSSecureTextField new];
+    self.authPasswordText.delegate = self;
 
     NSStackView* stack = [NSStackView stackViewWithViews:@[
         [NSTextField labelWithString:@"Port for HTTP connections:"],
@@ -183,48 +342,23 @@ const CGFloat margin = 20;
     ]];
 }
 
-- (void)loadMusicDirs
-{
-    auto cppDirs = settings_store::getMusicDirs();
-
-    for (int i = 0; i < 20; i++)
-        cppDirs.emplace_back("/Users/user/Music");
-
-    NSMutableArray* nsDirs = [NSMutableArray arrayWithCapacity:cppDirs.size()];
-
-    for (const auto& dir : cppDirs)
-    {
-        [nsDirs addObject:[NSString stringWithUTF8String:dir.c_str()]];
-    }
-
-    self.musicDirs = nsDirs;
-}
-
-- (void)saveMusicDirs
-{
-    NSMutableArray* nsDirs = self.musicDirs;
-    std::vector<std::string> cppDirs;
-    cppDirs.reserve(nsDirs.count);
-
-    for (NSString* dir in nsDirs)
-    {
-        cppDirs.emplace_back([dir UTF8String]);
-    }
-
-    settings_store::setMusicDirs(cppDirs);
-}
-
 - (void)viewWillAppear
 {
     [super viewWillAppear];
 
+    self.hasChanges = NO;
+
     auto authUser = settings_store::authUser.get_value();
     auto authPassword = settings_store::authPassword.get_value();
+    auto authRequired = settings_store::authRequired ? 1 : 0;
 
     self.portText.integerValue = (int)settings_store::port;
     self.allowRemoteButton.state = settings_store::allowRemote ? 1 : 0;
-    self.authRequiredButton.state = settings_store::authRequired ? 1 : 0;
+    self.authRequiredButton.state = authRequired;
+
+    self.authUserText.enabled = authRequired;
     self.authUserText.stringValue = [NSString stringWithUTF8String:authUser.c_str()];
+    self.authPasswordText.enabled = authRequired;
     self.authPasswordText.stringValue = [NSString stringWithUTF8String:authPassword.c_str()];
 
     [self loadMusicDirs];
@@ -235,15 +369,8 @@ const CGFloat margin = 20;
 {
     [super viewWillDisappear];
 
-    return;
-
-    settings_store::port = self.portText.integerValue;
-    settings_store::allowRemote = self.allowRemoteButton.state != 0;
-    settings_store::authRequired = self.authRequiredButton.state != 0;
-    settings_store::authUser = [self.authUserText.stringValue UTF8String];
-    settings_store::authPassword = [self.authPasswordText.stringValue UTF8String];
-
-    [self saveMusicDirs];
+    if (!self.hasChanges)
+        return;
 
     auto plugin = Plugin::current();
 
