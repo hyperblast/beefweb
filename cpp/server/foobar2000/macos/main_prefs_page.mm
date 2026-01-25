@@ -26,6 +26,10 @@ const CGFloat margin = 20;
     @property(strong, nonatomic) NSTextField* authUserText;
     @property(strong, nonatomic) NSSecureTextField* authPasswordText;
     @property(strong, nonatomic) NSOpenPanel* selectDirsPanel;
+
+    @property(strong, nonatomic) NSButton* allowChangePlaylistsButton;
+    @property(strong, nonatomic) NSButton* allowChangeOutputButton;
+    @property(strong, nonatomic) NSButton* allowChangeClientConfigButton;
 @end
 
 @implementation MainPrefsPageInstance
@@ -57,6 +61,24 @@ const CGFloat margin = 20;
 - (void)allowRemoteClicked:(id)sender
 {
     settings_store::allowRemote = self.allowRemoteButton.state != 0;
+    self.hasChanges = YES;
+}
+
+- (void)allowChangePlaylistsClicked:(id)sender
+{
+    settings_store::allowChangePlaylists = self.allowChangePlaylistsButton.state != 0;
+    self.hasChanges = YES;
+}
+
+- (void)allowChangeOutputClicked:(id)sender
+{
+    settings_store::allowChangeOutput = self.allowChangeOutputButton.state != 0;
+    self.hasChanges = YES;
+}
+
+- (void)allowChangeClientConfigClicked:(id)sender
+{
+    settings_store::allowChangeClientConfig = self.allowChangeClientConfigButton.state != 0;
     self.hasChanges = YES;
 }
 
@@ -233,18 +255,6 @@ const CGFloat margin = 20;
     return cellView;
 }
 
-- (NSBox*)newSeparator
-{
-    NSBox* box = [NSBox new];
-    box.boxType = NSBoxSeparator;
-
-    [NSLayoutConstraint activateConstraints:@[
-        [box.heightAnchor constraintEqualToConstant:50],
-    ]];
-
-    return box;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -275,9 +285,7 @@ const CGFloat margin = 20;
     self.musicDirsTable.dataSource = self;
     self.musicDirsTable.headerView = nil;
     self.musicDirsTable.allowsMultipleSelection = YES;
-
-    NSTableColumn* dirColumn = [[NSTableColumn alloc] initWithIdentifier:@"MusicDir"];
-    [self.musicDirsTable addTableColumn:dirColumn];
+    [self.musicDirsTable addTableColumn:[[NSTableColumn alloc] initWithIdentifier:@"MusicDir"]];
 
     NSScrollView* musicDirsScroll = [NSScrollView new];
     musicDirsScroll.hasVerticalScroller = YES;
@@ -314,24 +322,62 @@ const CGFloat margin = 20;
     self.authPasswordText = [NSSecureTextField new];
     self.authPasswordText.delegate = self;
 
+    self.allowChangePlaylistsButton = [
+        NSButton checkboxWithTitle:@"Changing playlists"
+                 target:self
+                 action:@selector(allowChangePlaylistsClicked:)
+    ];
+
+    self.allowChangeOutputButton = [
+        NSButton checkboxWithTitle:@"Changing output device"
+                 target:self
+                 action:@selector(allowChangeOutputClicked:)
+    ];
+
+    self.allowChangeClientConfigButton = [
+        NSButton checkboxWithTitle:@"Changing default web interface configuration"
+                 target:self
+                 action:@selector(allowChangeClientConfigClicked:)
+    ];
+
+    NSBox* separator1 = [NSBox new];
+    NSBox* separator2 = [NSBox new];
+    NSBox* separator3 = [NSBox new];
+    separator1.boxType = NSBoxSeparator;
+    separator2.boxType = NSBoxSeparator;
+    separator3.boxType = NSBoxSeparator;
+
     NSStackView* stack = [NSStackView stackViewWithViews:@[
         [NSTextField labelWithString:@"Port for HTTP connections:"],
         self.portText,
         self.allowRemoteButton,
-
+        separator1,
         [NSTextField labelWithString:@"Browseable music directories:"],
         musicDirsScroll,
         musicDirsButtons,
-
+        separator2,
         self.authRequiredButton,
         [NSTextField labelWithString:@"User:"],
         self.authUserText,
         [NSTextField labelWithString:@"Password:"],
         self.authPasswordText,
+        separator3,
+        [NSTextField labelWithString:@"Specify which operations are allowed using web interface and HTTP API:"],
+        self.allowChangePlaylistsButton,
+        self.allowChangeOutputButton,
+        self.allowChangeClientConfigButton,
     ]];
 
     stack.alignment = NSLayoutAttributeLeading;
     stack.orientation = NSUserInterfaceLayoutOrientationVertical;
+
+    [stack setCustomSpacing:margin afterView:self.allowRemoteButton];
+    [stack setCustomSpacing:margin afterView:musicDirsButtons];
+    [stack setCustomSpacing:margin afterView:self.authPasswordText];
+    [stack setCustomSpacing:margin afterView:separator1];
+    [stack setCustomSpacing:margin afterView:separator2];
+    [stack setCustomSpacing:margin afterView:separator3];
+
     [self.view addSubview:stack];
 
     [NSLayoutConstraint activateConstraints:@[
@@ -352,17 +398,21 @@ const CGFloat margin = 20;
     auto authPassword = settings_store::authPassword.get_value();
     auto authRequired = settings_store::authRequired ? 1 : 0;
 
-    self.portText.integerValue = (int)settings_store::port;
+    self.portText.integerValue = settings_store::port;
     self.allowRemoteButton.state = settings_store::allowRemote ? 1 : 0;
     self.authRequiredButton.state = authRequired;
+
+    [self loadMusicDirs];
+    [self.musicDirsTable reloadData];
 
     self.authUserText.enabled = authRequired;
     self.authUserText.stringValue = [NSString stringWithUTF8String:authUser.c_str()];
     self.authPasswordText.enabled = authRequired;
     self.authPasswordText.stringValue = [NSString stringWithUTF8String:authPassword.c_str()];
 
-    [self loadMusicDirs];
-    [self.musicDirsTable reloadData];
+    self.allowChangePlaylistsButton.state = settings_store::allowChangePlaylists ? 1 : 0;
+    self.allowChangeOutputButton.state = settings_store::allowChangeOutput ? 1 : 0;
+    self.allowChangeClientConfigButton.state = settings_store::allowChangeClientConfig ? 1 : 0;
 }
 
 - (void)viewWillDisappear
