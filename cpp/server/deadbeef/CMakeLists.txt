@@ -37,7 +37,13 @@ set_target_properties(
     OUTPUT_NAME "${DEADBEEF_PLUGIN_FILE}"
 )
 
-if(NOT OS_MAC)
+if(OS_MAC)
+    target_link_options(
+        deadbeef_plugin
+        PRIVATE
+        "-Wl,-exported_symbol,_${DEADBEEF_ENTRY_POINT}"
+    )
+else()
     configure_file(linker_script.in linker_script)
 
     set_target_properties(
