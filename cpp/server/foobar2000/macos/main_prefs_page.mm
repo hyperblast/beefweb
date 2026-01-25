@@ -9,6 +9,7 @@ using namespace msrv;
 using namespace msrv::player_foobar2000;
 
 const CGFloat margin = 10;
+const CGFloat labelWidth = 75;
 
 @interface MainPrefsPageInstance : NSViewController<NSTextFieldDelegate, NSTableViewDelegate, NSTableViewDataSource>
     @property(nonatomic) BOOL hasChanges;
@@ -262,6 +263,18 @@ const CGFloat margin = 10;
     return textField;
 }
 
+- (NSStackView*)addLabelTo:(NSView*)view withText:(NSString*)text
+{
+    NSTextField* textField = [NSTextField labelWithString:text];
+    textField.alignment = NSTextAlignmentRight;
+
+    [NSLayoutConstraint activateConstraints:@[
+        [textField.widthAnchor constraintEqualToConstant:labelWidth],
+    ]];
+
+    return [NSStackView stackViewWithViews:@[textField, view]];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -280,10 +293,7 @@ const CGFloat margin = 10;
         [self.portText.widthAnchor constraintEqualToConstant:100],
     ]];
 
-    NSStackView* portRow = [NSStackView stackViewWithViews:@[
-        [NSTextField labelWithString:@"Port for HTTP connections:"],
-        self.portText
-    ]];
+    NSStackView* portRow = [self addLabelTo:self.portText withText:@"HTTP port:"];
 
     self.allowRemoteButton = [
         NSButton
@@ -291,6 +301,8 @@ const CGFloat margin = 10;
             target:self
             action:@selector(allowRemoteClicked:)
     ];
+
+    NSStackView* allowRemoteRow = [self addLabelTo:self.allowRemoteButton withText:@""];
 
     self.musicDirsTable = [NSTableView new];
     self.musicDirsTable.delegate = self;
@@ -328,6 +340,8 @@ const CGFloat margin = 10;
                  action:@selector(authRequiredClicked:)
     ];
 
+    NSStackView* authRequiredRow = [self addLabelTo:self.authRequiredButton withText:@""];
+
     self.authUserText = [NSTextField textFieldWithString:@""];
     self.authUserText.delegate = self;
 
@@ -335,18 +349,12 @@ const CGFloat margin = 10;
         [self.authUserText.widthAnchor constraintEqualToConstant:300],
     ]];
 
-    NSStackView* authUserRow = [NSStackView stackViewWithViews:@[
-        [NSTextField labelWithString:@"User:"],
-        self.authUserText
-    ]];
+    NSStackView* authUserRow = [self addLabelTo:self.authUserText withText:@"User:"];
 
     self.authPasswordText = [NSSecureTextField new];
     self.authPasswordText.delegate = self;
 
-    NSStackView* authPasswordRow = [NSStackView stackViewWithViews:@[
-        [NSTextField labelWithString:@"Password:"],
-        self.authPasswordText
-    ]];
+    NSStackView* authPasswordRow = [self addLabelTo:self.authPasswordText withText:@"Password:"];
 
     [NSLayoutConstraint activateConstraints:@[
         [self.authPasswordText.widthAnchor constraintEqualToConstant:300],
@@ -378,12 +386,12 @@ const CGFloat margin = 10;
     NSStackView* stack = [NSStackView stackViewWithViews:@[
         networkHeader,
         portRow,
-        self.allowRemoteButton,
+        allowRemoteRow,
         musicDirsHeader,
         musicDirsScroll,
         musicDirsButtons,
         authenticationHeader,
-        self.authRequiredButton,
+        authRequiredRow,
         authUserRow,
         authPasswordRow,
         permissionsHeader,
@@ -395,7 +403,7 @@ const CGFloat margin = 10;
     stack.alignment = NSLayoutAttributeLeading;
     stack.orientation = NSUserInterfaceLayoutOrientationVertical;
 
-    [stack setCustomSpacing:(margin*2) afterView:self.allowRemoteButton];
+    [stack setCustomSpacing:(margin*2) afterView:allowRemoteRow];
     [stack setCustomSpacing:margin afterView:musicDirsHeader];
 
     [stack setCustomSpacing:(margin*2) afterView:musicDirsButtons];
