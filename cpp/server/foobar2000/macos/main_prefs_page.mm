@@ -26,7 +26,6 @@ const CGFloat labelWidth = 75;
     @property(strong, nonatomic) NSButton* authRequiredButton;
     @property(strong, nonatomic) NSTextField* authUserText;
     @property(strong, nonatomic) NSSecureTextField* authPasswordText;
-    @property(strong, nonatomic) NSOpenPanel* selectDirsPanel;
 
     @property(strong, nonatomic) NSButton* allowChangePlaylistsButton;
     @property(strong, nonatomic) NSButton* allowChangeOutputButton;
@@ -118,20 +117,14 @@ const CGFloat labelWidth = 75;
 
 - (void)musicDirAdd:(id)sender
 {
-    if (self.selectDirsPanel != nil)
-    {
-        [self.selectDirsPanel makeKeyAndOrderFront:nil];
-        return;
-    }
+    NSOpenPanel* panel = [NSOpenPanel openPanel];
+    panel.canChooseFiles = NO;
+    panel.canChooseDirectories = YES;
+    panel.allowsMultipleSelection = YES;
+    panel.prompt = @"Add";
+    panel.message = @"Please select one or more directories:";
 
-    self.selectDirsPanel = [NSOpenPanel openPanel];
-    self.selectDirsPanel.canChooseFiles = NO;
-    self.selectDirsPanel.canChooseDirectories = YES;
-    self.selectDirsPanel.allowsMultipleSelection = YES;
-    self.selectDirsPanel.prompt = @"Select directories";
-    self.selectDirsPanel.message = @"Please select one or more directories:";
-
-    [self.selectDirsPanel beginWithCompletionHandler:^(NSModalResponse response)
+    [panel beginSheetModalForWindow:self.view.window completionHandler:^(NSModalResponse response)
     {
         if (response != NSModalResponseOK)
             return;
@@ -139,10 +132,8 @@ const CGFloat labelWidth = 75;
         auto dirs = self.musicDirs;
         auto startIndex = dirs.count;
 
-        for (NSURL* url in self.selectDirsPanel.URLs)
+        for (NSURL* url in panel.URLs)
             [dirs addObject:url.path];
-
-        self.selectDirsPanel = nil;
 
         auto count = dirs.count - startIndex;
         if (count == 0)
@@ -164,9 +155,22 @@ const CGFloat labelWidth = 75;
     if (selection.count == 0)
         return;
 
-    [self.musicDirs removeObjectsAtIndexes:selection];
-    [self.musicDirsTable removeRowsAtIndexes:selection withAnimation:NSTableViewAnimationSlideUp];
-    [self saveMusicDirs];
+    NSAlert* alert = [NSAlert new];
+    alert.messageText = @"Remove selected items?";
+    alert.informativeText = @"Are you sure you want to remove selected items? This action cannot be undone.";
+    alert.alertStyle = NSAlertStyleWarning;
+    [alert addButtonWithTitle:@"Remove"];
+    [alert addButtonWithTitle:@"Cancel"];
+
+    [alert beginSheetModalForWindow:self.view.window completionHandler:^(NSModalResponse response)
+    {
+        if (response != NSAlertFirstButtonReturn)
+           return;
+
+        [self.musicDirs removeObjectsAtIndexes:selection];
+        [self.musicDirsTable removeRowsAtIndexes:selection withAnimation:NSTableViewAnimationSlideUp];
+        [self saveMusicDirs];
+    }];
 }
 
 - (void)musicDirUp:(id)sender
