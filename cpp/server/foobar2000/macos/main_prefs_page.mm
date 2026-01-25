@@ -11,6 +11,9 @@ using namespace msrv::player_foobar2000;
 const CGFloat margin = 10;
 const CGFloat labelWidth = 75;
 
+@interface LinkButton : NSButton
+@end
+
 @interface MainPrefsPageInstance : NSViewController<NSTextFieldDelegate, NSTableViewDelegate, NSTableViewDataSource>
     @property(nonatomic) BOOL hasChanges;
     @property(nonatomic) int currentPort;
@@ -31,6 +34,24 @@ const CGFloat labelWidth = 75;
     @property(strong, nonatomic) NSButton* allowChangePlaylistsButton;
     @property(strong, nonatomic) NSButton* allowChangeOutputButton;
     @property(strong, nonatomic) NSButton* allowChangeClientConfigButton;
+@end
+
+@implementation LinkButton
+
+- (instancetype)init
+{
+    self = [super init];
+    self.bordered = NO;
+    self.bezelStyle = NSBezelStyleInline;
+    self.contentTintColor = NSColor.linkColor;
+    return self;
+}
+
+- (void)resetCursorRects
+{
+    [self addCursorRect:self.bounds cursor:NSCursor.pointingHandCursor];
+}
+
 @end
 
 @implementation MainPrefsPageInstance
@@ -307,14 +328,10 @@ const CGFloat labelWidth = 75;
 
 - (NSButton*)linkButton:(NSString*)text action:(SEL)action
 {
-    NSButton* button = [NSButton buttonWithTitle:text target:self action:action];
-
-    button.bordered = NO;
-    button.bezelStyle = NSBezelStyleInline;
-    button.contentTintColor = NSColor.linkColor;
-
-    [button addCursorRect:button.bounds cursor:NSCursor.pointingHandCursor];
-
+    LinkButton* button = [LinkButton new];
+    button.title = text;
+    button.target = self;
+    button.action = action;
     return button;
 }
 
