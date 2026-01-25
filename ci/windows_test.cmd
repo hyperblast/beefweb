@@ -3,7 +3,7 @@ setlocal
 cd "%~dp0.."
 
 set TEST_RETRY=1
-set HAS_ERROR=0
+set HAS_ERRORS=0
 set BEEFWEB_BINARY_DIR_BASE=ci_build
 set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 
@@ -12,7 +12,7 @@ set BEEFWEB_TEST_BUILD_TYPE=%BUILD_TYPE%
 @echo.
 
 ci_build\%BUILD_TYPE%\cpp\server\tests\%BUILD_TYPE%\core_tests.exe
-if errorlevel 1 set HAS_ERROR=1
+if errorlevel 1 set HAS_ERRORS=1
 
 cd "%~dp0..\js\api_tests\src"
 
@@ -29,7 +29,7 @@ for /F %%i in ('node install_app.js list-versions foobar2000 %VERSION_PATTERN%')
 
     set BEEFWEB_TEST_FOOBAR2000_VERSION=%%i
     cmd /c yarn.cmd test --retry %TEST_RETRY%
-    if errorlevel 1 set HAS_ERROR=1
+    if errorlevel 1 set HAS_ERRORS=1
 )
 
-exit /b %HAS_ERROR%
+exit /b %HAS_ERRORS%

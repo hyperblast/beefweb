@@ -3,6 +3,7 @@
 set -e
 
 TEST_RETRY=1
+HAS_ERRORS=0
 
 function banner
 {
@@ -14,7 +15,7 @@ function banner
 function run_server_tests
 {
     banner 'Running server tests'
-    ci_build/$BUILD_TYPE/cpp/server/tests/core_tests
+    ci_build/$BUILD_TYPE/cpp/server/tests/core_tests || HAS_ERRORS=1
 }
 
 function run_deadbeef_tests
@@ -24,7 +25,7 @@ function run_deadbeef_tests
     export BEEFWEB_TEST_PLAYER=deadbeef
     export BEEFWEB_TEST_DEADBEEF_VERSION=$1
 
-    (cd js/api_tests && yarn test --retry $TEST_RETRY)
+    (cd js/api_tests && yarn test --retry $TEST_RETRY) || HAS_ERRORS=1
 }
 
 function main
@@ -37,6 +38,8 @@ function main
     for version in $(js/api_tests/src/install_app.js list-versions deadbeef); do
         run_deadbeef_tests $version
     done
+
+    exit $HAS_ERRORS
 }
 
 source "$(dirname $0)/run_in_docker.sh"
