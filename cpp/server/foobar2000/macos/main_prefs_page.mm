@@ -13,6 +13,7 @@ const CGFloat labelWidth = 75;
 
 @interface MainPrefsPageInstance : NSViewController<NSTextFieldDelegate, NSTableViewDelegate, NSTableViewDataSource>
     @property(nonatomic) BOOL hasChanges;
+    @property(nonatomic) int currentPort;
 
     @property(strong, nonatomic) NSTextField* portText;
     @property(strong, nonatomic) NSButton* allowRemoteButton;
@@ -34,6 +35,43 @@ const CGFloat labelWidth = 75;
 
 @implementation MainPrefsPageInstance
 
+- (void)openUrl:(NSString*)url
+{
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:url]];
+}
+
+- (void)openGuiClicked:(id)sender
+{
+    NSString* url = [NSString stringWithFormat:@"http://localhost:%i", self.currentPort];
+    [self openUrl:url];
+}
+
+- (void)donateLinkClicked:(id)sender
+{
+    [self openUrl:@(MSRV_DONATE_URL)];
+}
+
+- (void)sourcesLinkClicked:(id)sender
+{
+    [self openUrl:@(MSRV_PROJECT_URL)];
+}
+
+- (void)licensesLinkClicked:(id)sender
+{
+    NSString* url = [NSString
+        stringWithFormat:@"http://localhost:%i/%s",
+        self.currentPort,
+        MSRV_WEBUI_LICENSES_FILE
+    ];
+
+    [self openUrl:url];
+}
+
+- (void)apiDocsLinkClicked:(id)sender
+{
+    [self openUrl:@(MSRV_API_DOCS_URL)];
+}
+
 - (void)controlTextDidEndEditing:(NSNotification*)notification
 {
     if (notification.object == self.portText)
@@ -45,14 +83,14 @@ const CGFloat labelWidth = 75;
 
     if (notification.object == self.authUserText)
     {
-        settings_store::authUser = [self.authUserText.stringValue UTF8String];
+        settings_store::authUser = self.authUserText.stringValue.UTF8String;
         self.hasChanges = YES;
         return;
     }
 
     if (notification.object == self.authPasswordText)
     {
-        settings_store::authPassword = [self.authPasswordText.stringValue UTF8String];
+        settings_store::authPassword = self.authPasswordText.stringValue.UTF8String;
         self.hasChanges = YES;
         return;
     }
@@ -97,7 +135,7 @@ const CGFloat labelWidth = 75;
     NSMutableOrderedSet* nsDirs = [NSMutableOrderedSet orderedSetWithCapacity:cppDirs.size()];
 
     for (const auto& dir : cppDirs)
-        [nsDirs addObject:[NSString stringWithUTF8String:dir.c_str()]];
+        [nsDirs addObject:@(dir.c_str())];
 
     self.musicDirs = nsDirs;
 }
@@ -109,7 +147,7 @@ const CGFloat labelWidth = 75;
     cppDirs.reserve(nsDirs.count);
 
     for (NSString* dir in nsDirs)
-        cppDirs.emplace_back([dir UTF8String]);
+        cppDirs.emplace_back(dir.UTF8String);
 
     settings_store::setMusicDirs(cppDirs);
     self.hasChanges = YES;
@@ -260,14 +298,27 @@ const CGFloat labelWidth = 75;
     return cellView;
 }
 
-- (NSTextField*)headerWithTitle:(NSString*)title
+- (NSTextField*)headerWithTitle:(NSString*)text
 {
-    NSTextField* textField = [NSTextField labelWithString:title];
+    NSTextField* textField = [NSTextField labelWithString:text];
     textField.font = [NSFont preferredFontForTextStyle:NSFontTextStyleTitle2 options:@{}];
     return textField;
 }
 
-- (NSStackView*)addLabelTo:(NSView*)view withText:(NSString*)text
+- (NSButton*)linkButton:(NSString*)text action:(SEL)action
+{
+    NSButton* button = [NSButton buttonWithTitle:text target:self action:action];
+
+    button.bordered = NO;
+    button.bezelStyle = NSBezelStyleInline;
+    button.contentTintColor = NSColor.linkColor;
+
+    [button addCursorRect:button.bounds cursor:NSCursor.pointingHandCursor];
+
+    return button;
+}
+
+- (NSStackView*)stackViewWithLabel:(NSString*)text view:(NSView*)view
 {
     NSTextField* textField = [NSTextField labelWithString:text];
     textField.alignment = NSTextAlignmentRight;
@@ -297,7 +348,9 @@ const CGFloat labelWidth = 75;
         [self.portText.widthAnchor constraintEqualToConstant:100],
     ]];
 
-    NSStackView* portRow = [self addLabelTo:self.portText withText:@"HTTP port:"];
+    NSStackView* portRow = [self stackViewWithLabel:@"HTTP port:" view:self.portText];
+    [portRow addView:[self linkButton:@"Open" action:@selector(openGuiClicked:)]
+             inGravity:NSStackViewGravityLeading];
 
     self.allowRemoteButton = [
         NSButton
@@ -306,7 +359,7 @@ const CGFloat labelWidth = 75;
             action:@selector(allowRemoteClicked:)
     ];
 
-    NSStackView* allowRemoteRow = [self addLabelTo:self.allowRemoteButton withText:@""];
+    NSStackView* allowRemoteRow = [self stackViewWithLabel:@"" view:self.allowRemoteButton];
 
     self.musicDirsTable = [NSTableView new];
     self.musicDirsTable.delegate = self;
@@ -344,7 +397,7 @@ const CGFloat labelWidth = 75;
                  action:@selector(authRequiredClicked:)
     ];
 
-    NSStackView* authRequiredRow = [self addLabelTo:self.authRequiredButton withText:@""];
+    NSStackView* authRequiredRow = [self stackViewWithLabel:@"" view:self.authRequiredButton];
 
     self.authUserText = [NSTextField textFieldWithString:@""];
     self.authUserText.delegate = self;
@@ -353,12 +406,12 @@ const CGFloat labelWidth = 75;
         [self.authUserText.widthAnchor constraintEqualToConstant:300],
     ]];
 
-    NSStackView* authUserRow = [self addLabelTo:self.authUserText withText:@"User:"];
+    NSStackView* authUserRow = [self stackViewWithLabel:@"User:" view:self.authUserText];
 
     self.authPasswordText = [NSSecureTextField new];
     self.authPasswordText.delegate = self;
 
-    NSStackView* authPasswordRow = [self addLabelTo:self.authPasswordText withText:@"Password:"];
+    NSStackView* authPasswordRow = [self stackViewWithLabel:@"Password:" view:self.authPasswordText];
 
     [NSLayoutConstraint activateConstraints:@[
         [self.authPasswordText.widthAnchor constraintEqualToConstant:300],
@@ -382,6 +435,13 @@ const CGFloat labelWidth = 75;
                  action:@selector(allowChangeClientConfigClicked:)
     ];
 
+    NSStackView* links = [NSStackView stackViewWithViews:@[
+        [self linkButton:@"Donate to author" action:@selector(donateLinkClicked:)],
+        [self linkButton:@"GitHub" action:@selector(sourcesLinkClicked:)],
+        [self linkButton:@"Third-party licenses" action:@selector(licensesLinkClicked:)],
+        [self linkButton:@"API documentation" action:@selector(apiDocsLinkClicked:)],
+    ]];
+
     NSTextField* networkHeader = [self headerWithTitle:@"Network"];
     NSTextField* musicDirsHeader = [self headerWithTitle:@"Browseable music directories"];
     NSTextField* authenticationHeader = [self headerWithTitle:@"Authentication"];
@@ -402,6 +462,7 @@ const CGFloat labelWidth = 75;
         self.allowChangePlaylistsButton,
         self.allowChangeOutputButton,
         self.allowChangeClientConfigButton,
+        links,
     ]];
 
     stack.alignment = NSLayoutAttributeLeading;
@@ -415,6 +476,8 @@ const CGFloat labelWidth = 75;
 
     [stack setCustomSpacing:(margin*2) afterView:authPasswordRow];
     [stack setCustomSpacing:margin afterView:permissionsHeader];
+
+    [stack setCustomSpacing:(margin*2) afterView:self.allowChangeClientConfigButton];
 
     [self.view addSubview:stack];
 
@@ -432,11 +495,12 @@ const CGFloat labelWidth = 75;
 
     self.hasChanges = NO;
 
+    self.currentPort = settings_store::port;
     auto authUser = settings_store::authUser.get_value();
     auto authPassword = settings_store::authPassword.get_value();
     auto authRequired = settings_store::authRequired ? 1 : 0;
 
-    self.portText.integerValue = settings_store::port;
+    self.portText.integerValue = self.currentPort;
     self.allowRemoteButton.state = settings_store::allowRemote ? 1 : 0;
     self.authRequiredButton.state = authRequired;
 
@@ -444,9 +508,9 @@ const CGFloat labelWidth = 75;
     [self.musicDirsTable reloadData];
 
     self.authUserText.enabled = authRequired;
-    self.authUserText.stringValue = [NSString stringWithUTF8String:authUser.c_str()];
+    self.authUserText.stringValue = @(authUser.c_str());
     self.authPasswordText.enabled = authRequired;
-    self.authPasswordText.stringValue = [NSString stringWithUTF8String:authPassword.c_str()];
+    self.authPasswordText.stringValue = @(authPassword.c_str());
 
     self.allowChangePlaylistsButton.state = settings_store::allowChangePlaylists ? 1 : 0;
     self.allowChangeOutputButton.state = settings_store::allowChangeOutput ? 1 : 0;
