@@ -12,6 +12,8 @@ The following configuration sources are considered when loading configuration (i
 
 If setting is specified in more preferred source it overrides values defined in less preferred.
 
+All values are optional, you can specify only those you want to override.
+
 The following options are available:
 
 ```json
