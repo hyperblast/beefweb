@@ -97,12 +97,6 @@ if(OS_MAC)
         MACOSX_BUNDLE_SHORT_VERSION_STRING "${CMAKE_PROJECT_VERSION}.0"
         MACOSX_BUNDLE_COPYRIGHT "${PROJECT_COPYRIGHT}"
     )
-
-    target_link_options(
-        foobar2000_plugin
-        PRIVATE
-        "-Wl,-exported_symbol,_foobar2000_get_interface"
-    )
 endif()
 
 if(OS_WINDOWS)
