@@ -177,16 +177,21 @@ void PlayerImpl::setOutputDevice(const std::string& typeId, const std::string& d
 boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle_ptr& itemHandle) const
 {
     abort_callback_dummy dummyCallback;
-
-    auto extractor = albumArtManager_->open(
-        pfc::list_single_ref_t(itemHandle),
-        pfc::list_single_ref_t(album_art_ids::cover_front),
-        dummyCallback);
+    std::string operation;
 
     try
     {
+        operation = "albumArtManager_->open";
+
+        auto extractor = albumArtManager_->open(
+            pfc::list_single_ref_t(itemHandle),
+            pfc::list_single_ref_t(album_art_ids::cover_front),
+            dummyCallback);
+
         if (extractor.is_empty())
             return boost::make_future<ArtworkResult>(ArtworkResult());
+
+        operation = "extractor->query";
 
         service_ptr_t<album_art_data> artData;
         if (!extractor->query(album_art_ids::cover_front, artData, dummyCallback))
@@ -196,7 +201,7 @@ boost::unique_future<ArtworkResult> PlayerImpl::fetchArtwork(const metadb_handle
     }
     catch (std::exception& ex)
     {
-        throw InvalidRequestException(ex.what());
+        throw InvalidRequestException(operation);
     }
 }
 
