@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 include(CheckSymbolExists)
 
 if(OS_LINUX)
-    add_compiler_flag(-D_GNU_SOURCE)
+    add_definitions(-D_GNU_SOURCE)
 endif()
 
 if(CXX_GCC OR CXX_CLANG)
@@ -39,12 +39,35 @@ if(OS_POSIX)
     else()
         checked_add_linker_flag(-Wl,--no-undefined)
         checked_add_linker_flag(-Wl,--as-needed)
-
-        # TODO check for signature
-        check_symbol_exists(pthread_setname_np "pthread.h" HAVE_PTHREAD_SETNAME_NP)
-        check_symbol_exists(pthread_set_name_np "pthread.h" HAVE_PTHREAD_SET_NAME_NP)
     endif()
 
+    check_cxx_source_compiles(
+        [[
+            #include <pthread.h>
+            int main() { pthread_setname_np(pthread_self(), "test"); return 0; }
+        ]]
+        HAVE_PTHREAD_SETNAME_NP_2
+    )
+
+    if(NOT HAVE_PTHREAD_SETNAME_NP_2)
+        check_cxx_source_compiles(
+            [[
+                #include <pthread.h>
+                int main() { pthread_set_name_np(pthread_self(), "test"); return 0; }
+            ]]
+            HAVE_PTHREAD_SET_NAME_NP_2
+        )
+    endif()
+
+    if(NOT HAVE_PTHREAD_SET_NAME_NP_2)
+        check_cxx_source_compiles(
+            [[
+                #include <pthread.h>
+                int main() { pthread_set_name_np("test"); return 0; }
+            ]]
+            HAVE_PTHREAD_SET_NAME_NP_1
+        )
+    endif()
 endif()
 
 if(OS_WINDOWS)

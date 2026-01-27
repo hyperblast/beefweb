@@ -98,10 +98,12 @@ typedef const char* ThreadName;
 
 inline void setThreadName(ThreadName name)
 {
-#if defined(HAVE_PTHREAD_SETNAME_NP)
+#if defined(HAVE_PTHREAD_SETNAME_NP_2)
     (void) pthread_setname_np(pthread_self(), name);
-#elif defined(HAVE_PTHREAD_SET_NAME_NP)
+#elif defined(HAVE_PTHREAD_SET_NAME_NP_2)
     (void) pthread_set_name_np(pthread_self(), name);
+#elif defined(HAVE_PTHREAD_SET_NAME_NP_1)
+    (void) pthread_set_name_np(name);
 #else
     (void)name;
 #endif
