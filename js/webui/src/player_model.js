@@ -186,7 +186,7 @@ export default class PlayerModel extends ModelBase
     {
         if (!this.featuresInitialized)
         {
-            this.features = getPlayerFeatures(this.info.name);
+            this.features = getPlayerFeatures(playerInfo.info.name);
             this.featuresInitialized = true;
         }
 
