@@ -44,28 +44,28 @@ if(OS_POSIX)
     check_cxx_source_compiles(
         [[
             #include <pthread.h>
-            int main() { pthread_setname_np(pthread_self(), "test"); return 0; }
+            int main() { pthread_set_name_np(pthread_self(), "test"); return 0; }
         ]]
-        HAVE_PTHREAD_SETNAME_NP_2
+        HAVE_PTHREAD_SET_NAME_NP_2
     )
-
-    if(NOT HAVE_PTHREAD_SETNAME_NP_2)
-        check_cxx_source_compiles(
-            [[
-                #include <pthread.h>
-                int main() { pthread_set_name_np(pthread_self(), "test"); return 0; }
-            ]]
-            HAVE_PTHREAD_SET_NAME_NP_2
-        )
-    endif()
 
     if(NOT HAVE_PTHREAD_SET_NAME_NP_2)
         check_cxx_source_compiles(
             [[
                 #include <pthread.h>
-                int main() { pthread_set_name_np("test"); return 0; }
+                int main() { pthread_setname_np(pthread_self(), "test"); return 0; }
             ]]
-            HAVE_PTHREAD_SET_NAME_NP_1
+            HAVE_PTHREAD_SETNAME_NP_2
+        )
+    endif()
+
+    if(NOT HAVE_PTHREAD_SETNAME_NP_2)
+        check_cxx_source_compiles(
+            [[
+                #include <pthread.h>
+                int main() { pthread_setname_np("test"); return 0; }
+            ]]
+            HAVE_PTHREAD_SETNAME_NP_1
         )
     endif()
 endif()

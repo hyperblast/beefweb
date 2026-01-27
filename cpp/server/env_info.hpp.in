@@ -1,5 +1,5 @@
 #pragma once
 
-#cmakedefine HAVE_PTHREAD_SETNAME_NP_2
 #cmakedefine HAVE_PTHREAD_SET_NAME_NP_2
-#cmakedefine HAVE_PTHREAD_SET_NAME_NP_1
+#cmakedefine HAVE_PTHREAD_SETNAME_NP_2
+#cmakedefine HAVE_PTHREAD_SETNAME_NP_1
