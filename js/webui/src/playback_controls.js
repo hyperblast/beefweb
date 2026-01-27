@@ -173,6 +173,11 @@ class PlaybackOptionsButton_ extends React.PureComponent
         </DropdownButton>;
     }
 
+    setOption(id, value)
+    {
+        this.context.playerModel.setOption(id, value);
+    }
+
     renderOptions(options)
     {
         const menuItems = [];
