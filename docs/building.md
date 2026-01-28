@@ -10,9 +10,10 @@ but could be run manually if only want to work on frontend only.
 Additionally building frontend requires `node` runtime and `yarn` package manager.
 Those should be available in `PATH`.
 
-### DeaDBeeF
+### Linux/macOS/*BSD
 
-Currently tested with Linux x86_64 and `gcc`. Other systems and compilers might or might not work.
+Currently tested on Linux (x86_64) with `gcc` and on macOS (ARM/x86_64) with 'clang'.
+Other systems and compilers might or might not work.
 
 Configure:
 
@@ -33,12 +34,16 @@ and add `-DENABLE_TESTS=ON` to cmake parameters.
 Create .tar.xz package:
 ```
 $ cmake . -DDEADBEEF_INSTALL_INTO_ROOT=ON
-$ cpack -G TXZ
+$ cpack -G ZIP # or TXZ
 ```
 
-`ddb_beefweb-*.tar.xz` will be created in `build/Release`.
+`ddb_beefweb-*.zip` will be created in `build/Release`.
 
-Create .deb package:
+On macOS `foo_beefweb-*.zip` will be created as well.
+
+To make installable foobar2000 package change file extension from `.zip` to `.fb2k-component`.
+
+Create .deb package (Linux only):
 ```
 $ cmake . -DDEADBEEF_INSTALL_INTO_ROOT=OFF
 $ cpack -G DEB
@@ -46,10 +51,11 @@ $ cpack -G DEB
 
 `deadbeef-beefweb_*.deb` will be created.
 
-`DEADBEEF_INSTALL_INTO_ROOT` option affects directory layout inside package,
-make sure it is `ON` when creating `.tar.xz` and `OFF` when creating .deb
+`DEADBEEF_INSTALL_INTO_ROOT` option affects directory layout inside package.
+Make sure it is `ON` when creating `.tar.xz`, `.zip` or other archive and `OFF` when creating `.deb` package.
 
-### foobar2000
+### Windows
+
 Visual Studio is used to build backend. Currently tested with VS2022 Community.
 
 During installation make sure to choose _Desktop development with C++_ workload.
@@ -60,7 +66,9 @@ Recent versions of VS include CMake, there is no need to install it separately.
 
 Alternatively you can install it locally:
 ```
-> scripts\install\patch.cmd
+> cd js
+> yarn install
+> node api_tests\src\install_app.js patch
 ```
 
 The command above will download and unpack `patch.exe` to `apps\patch`.
@@ -76,12 +84,15 @@ Configure:
 ```
 
 This command creates Visual Studio solution `beefweb.sln`, which could be built in VS in usual way.
-If you want to build 32-bit version replace `x64` with `Win32` in `cmake` command above.
+If you want to build 32-bit version replace `x64` with `Win32` in the `cmake` command above.
 
 Alternatively you can build from console:
 ```
-> cmake --build . --config Release
+> cmake --build . --config Release --parallel
 ```
+
+If you want to develop backend change `Release` to `Debug` in the commands above
+and add `-DENABLE_TESTS=ON` to cmake parameters.
 
 And create package:
 ```
@@ -89,10 +100,8 @@ And create package:
 ```
 
 `foo_beefweb-*.zip` will be created in `build\Release` directory.
-Change extension to `.fb2k-component` to install into foobar2000.
 
-If you want to develop backend change `Release` to `Debug` in the commands above
-and add `-DENABLE_TESTS=ON` to cmake parameters.
+To make installable foobar2000 package change file extension from `.zip` to `.fb2k-component`.
 
 Note: due to build system limitations you need to have separate build directories
 for each build type (Debug, Release, etc).
@@ -126,7 +135,7 @@ $ yarn build --env buildType=Release
 
 By default webui artifacts are written to the following directories:
 
-Linux:
+Linux/macOS/*BSD:
 ```
 build/<BUILD_TYPE>/js/webui/output
 ```
@@ -155,17 +164,17 @@ Full build needs to be performed before running API tests.
 
 Additionally player binaries should be installed:
 
+Windows:
 ```
-> scripts\install\foobar2000.cmd v2.24-x64
-```
-
-or
-
-```
-$ scripts/install/deadbeef.sh v1.10
+> node js\api_tests\src\install_app.js everything
 ```
 
-These commands download player distribution package and unpack it to `apps/<PLAYER>/<VERSION>`.
+Linux/macOS/*BSD:
+```
+$ js/api_tests/src/install_app.js everything
+```
+
+These commands download player distribution packages and unpack them to `apps/<PLAYER>/<VERSION>`.
 
 Now it is possible to run tests (in `js/api_tests` directory):
 ```
@@ -176,15 +185,17 @@ This command supports various parameters via environment variables:
 
 `BEEFWEB_TEST_BUILD_TYPE` - which build type to use (defaults to `Debug`)
 
-`BEEFWEB_TEST_FOOBAR2000_VERSION` - foobar2000 version to use (defaults to `v2.24-x64`)
+`BEEFWEB_TEST_PLAYER` - which player to test (`deadbeef` or `foobar2000`, defaults to `foobar2000` on macOS/Windows, `deadbeef` otherwise)
 
-`BEEFWEB_TEST_DEADBEEF_VERSION` - DeaDBeeF version to use (defaults to `v1.10`)
+`BEEFWEB_TEST_FOOBAR2000_VERSION` - foobar2000 version to use (defaults to latest specified in `js/api_tests/apps.json`)
+
+`BEEFWEB_TEST_DEADBEEF_VERSION` - DeaDBeeF version to use (defaults to latest specified in `js/api_tests/apps.json`)
 
 These two variables could be useful if you don't want to use default directory layout `build/<BUILD_TYPE>`:
 
-`BEEFWEB_BINARY_DIR` - CMake binary directory (defaults to `build/<BUILD_TYPE>`)
+`BEEFWEB_BINARY_DIR` - CMake build directory
 
-`BEEFWEB_BINARY_DIR_BASE` - parent of CMake binary directories for all build types (defaults to `build`)
+`BEEFWEB_BINARY_DIR_BASE` - parent of CMake build directories for all build types (defaults to `<project_root>/build`)
 
 When both are specified `BEEFWEB_BINARY_DIR` takes precedence.
 
