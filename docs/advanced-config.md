@@ -6,8 +6,10 @@ The following configuration sources are considered when loading configuration (i
 
 * Settings in UI
 * `{player_profile_dir}/beefweb/config.json`
-  - For foobar2000: `%APPDATA%\foobar2000-v2\beefweb\config.json`
-  - For DeaDBeeF: `$XDG_CONFIG_HOME/deadbeef/beefweb/config.json` or `$HOME/.config/deadbeef/beefweb/config.json`
+  - foobar2000 on Windows: `%APPDATA%\foobar2000-v2\beefweb\config.json`
+  - foobar2000 on macOS: `$HOME/Library/foobar2000-v2/beefweb/config.json`
+  - DeaDBeeF on Linux/*BSD: `$XDG_CONFIG_HOME/deadbeef/beefweb/config.json` or `$HOME/.config/deadbeef/beefweb/config.json`
+  - DeaDBeeF on macOS: `$HOME/Library/Preferences/deadbeef/beefweb/config.json`
 * File specified by `BEEFWEB_CONFIG_FILE` environment variable (must be absolute)
 
 If setting is specified in more preferred source it overrides values defined in less preferred.
@@ -16,7 +18,7 @@ All values are optional, you can specify only those you want to override.
 
 The following options are available:
 
-```json
+```js
 {
     "port": 8880,
     "allowRemote": true,
@@ -24,7 +26,7 @@ The following options are available:
     "authRequired": false,
     "authUser": "",
     "authPassword": "",
-    "webRoot": "{directory of beefweb .dll or .so}/beefweb.root",
+    "webRoot": ".../beefweb.root", // path inside installation directory, directory layout is different depending on OS/player
     "urlMappings": {},
     "responseHeaders": {},
     "clientConfigDir": "{player profile directory}/beefweb/clientconfig"

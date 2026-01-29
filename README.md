@@ -16,13 +16,20 @@ and [foobar2000](https://foobar2000.org/) music players.
 
 ### Browser support
 - Any recent browser should work
-- Due to high development effort required Internet Explorer of any version is not supported
 
 ### Downloads
 Check out [releases section](https://github.com/hyperblast/beefweb/releases).
 
 ### How to install
-#### DeaDBeeF
+
+#### foobar2000
+
+Open `foo_beefweb-*.fb2k-component` with foobar2000, you will be asked to install the plugin.
+
+Alternatively open preferences window, select _Components_ section, click _Install..._ or _+_ , select downloaded `foo_beefweb-*.fb2k-component` file.
+
+#### DeaDBeeF for Linux
+
 Unpack `ddb_beefweb-*.tar.xz` to `$HOME/.local/lib/deadbeef`.
 
 Alternatively if you use universal `deadbeef-static_*.deb` package you can install matching universal deb of beefweb:
@@ -31,14 +38,16 @@ Alternatively if you use universal `deadbeef-static_*.deb` package you can insta
 $ sudo dpkg -i deadbeef-beefweb_*.deb
 ```
 
-#### foobar2000
-Open `foo_beefweb-*.fb2k-component` with foobar2000, you will be asked to install the plugin.
+#### DeaDBeeF for macOS
+
+Unpack `ddb_beefweb-*.zip` to `$HOME/Library/Application Support/Deadbeef/Plugins`.
 
 ### How to use
 Point your browser to `http://localhost:8880` and enjoy your web interface.
 
-If you've enabled remote connections on plugin configuration screen
-you'll be able to connect from remote machines as well.
+If you enabled remote connections on plugin configuration screen
+you'll be able to connect from remote computer/phone as well.
+In this case IP address of computer where player is installed should be used instead of `localhost`.
 
 To allow browsing and adding files via web interface
 specify music directories in plugin configuration screen.
