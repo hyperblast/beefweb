@@ -5,7 +5,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import { buildTypes, getBuildConfig } from '../build_config.mjs';
+import { buildTypes, getBuildConfig, getBuildType as resolveBuildType } from '../build_config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -125,7 +125,7 @@ function getBuildType(env)
     {
         // --env {type}
 
-        const buildType = getBuildType(key);
+        const buildType = resolveBuildType(key);
         if (buildType)
             matchedTypes.push(buildType);
     }
@@ -134,7 +134,7 @@ function getBuildType(env)
     {
         // --env buildType={type}
 
-        const buildType = getBuildType(env.buildType);
+        const buildType = resolveBuildType(env.buildType);
         if (buildType)
             matchedTypes.push(buildType)
         else
