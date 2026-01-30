@@ -5,17 +5,10 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import { getBuildConfig } from '../config.mjs';
+import { buildTypes, getBuildConfig, getBuildType as resolveBuildType } from '../build_config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const buildTypes = {
-    debug: 'Debug',
-    release: 'Release',
-    minsizerel: 'MinSizeRel',
-    relwithdebinfo: 'RelWithDebInfo'
-};
 
 function configCommon(config, params)
 {
@@ -124,12 +117,6 @@ function configRelease(config)
     });
 }
 
-function getDefaultOutputDir(buildType)
-{
-    const { buildDir, isMultiConfig } = getBuildConfig(buildType);
-    return path.join(buildDir, 'js', 'webui', isMultiConfig ? buildType : 'output');
-}
-
 function getBuildType(env)
 {
     const matchedTypes = [];
@@ -138,7 +125,7 @@ function getBuildType(env)
     {
         // --env {type}
 
-        const buildType = buildTypes[key.toLowerCase()];
+        const buildType = resolveBuildType(key);
         if (buildType)
             matchedTypes.push(buildType);
     }
@@ -147,7 +134,7 @@ function getBuildType(env)
     {
         // --env buildType={type}
 
-        const buildType = buildTypes[env.buildType.toLowerCase()];
+        const buildType = resolveBuildType(env.buildType);
         if (buildType)
             matchedTypes.push(buildType)
         else
@@ -169,7 +156,7 @@ function makeBuildParams(env)
     const buildType = getBuildType(env);
 
     if (!outputDir)
-        outputDir = getDefaultOutputDir(buildType);
+        outputDir = getBuildConfig(buildType).webBuildDir;
 
     const sourceDir = path.join(__dirname, 'src');
 

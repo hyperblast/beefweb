@@ -127,6 +127,8 @@ bool SettingsData::isAllowedPath(const Path& path) const
 
 void SettingsData::initialize(const Path& resourceDir, const Path& profileDir)
 {
+    logDebug("init settings: resourceDir = %s, profileDir = %s", resourceDir.c_str(), profileDir.c_str());
+
     assert(!resourceDir.empty());
     assert(!profileDir.empty());
 
