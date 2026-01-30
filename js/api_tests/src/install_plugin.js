@@ -133,7 +133,7 @@ async function main()
     }
     catch (e)
     {
-        console.error(e.message);
+        console.error(e);
         return 1;
     }
 }

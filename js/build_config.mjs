@@ -42,7 +42,7 @@ function getWebBuildDir(buildConfig)
         buildConfig.buildDir,
         'js',
         'webui',
-        buildConfig.isMultiConfig ? buildType : 'output')
+        buildConfig.isMultiConfig ? buildConfig.buildType : 'output')
 }
 
 function getPluginBuildDir(buildConfig, player)
