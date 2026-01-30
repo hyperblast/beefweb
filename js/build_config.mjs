@@ -6,6 +6,13 @@ import os from 'os';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export const buildTypes = Object.freeze({
+    debug: 'Debug',
+    release: 'Release',
+    minsizerel: 'MinSizeRel',
+    relwithdebinfo: 'RelWithDebInfo'
+});
+
 function toAbsolutePath(p)
 {
     return path.isAbsolute(p) ? p : path.join(path.dirname(__dirname), p);
@@ -55,6 +62,11 @@ function getPluginBuildDir(buildConfig, player)
         buildConfig.isMultiConfig ? buildConfig.buildType : '');
 }
 
+export function getBuildType(value)
+{
+    return buildTypes[value.toLowerCase()];
+}
+
 export function getBuildConfig(buildType)
 {
     const buildDir = getBuildDir(buildType);
@@ -63,10 +75,10 @@ export function getBuildConfig(buildType)
     buildConfig.buildType = buildType;
     buildConfig.buildDir = buildDir;
     buildConfig.webBuildDir = getWebBuildDir(buildConfig);
-    buildConfig.pluginBuildDir = {
-        deadbeef: getPluginBuildDir(buildConfig, 'deadbeef'),
-        foobar2000: getPluginBuildDir(buildConfig, 'foobar2000'),
-    };
+    buildConfig.pluginBuildDir = {};
+
+    for (let player of ['deadbeef', 'foobar2000'])
+        buildConfig.pluginBuildDir[player] = getPluginBuildDir(buildConfig, player);
 
     return buildConfig;
 }

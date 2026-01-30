@@ -209,4 +209,8 @@ if(ENABLE_FOOBAR2000)
     add_subdirectory(foobar2000)
 endif()
 
+if(ENABLE_TESTS)
+    add_subdirectory(tests)
+endif()
+
 print_toolchain_flags()

@@ -3,7 +3,7 @@
 import mkdirp from 'mkdirp';
 import fs from 'fs/promises';
 import path from 'path';
-import { getBuildConfig } from '../../build_config.mjs'
+import { buildTypes, getBuildConfig, getBuildType } from '../../build_config.mjs'
 import { callBySystem, tryStat, rimraf } from './utils.js';
 
 function getSymlinks(buildConfig)
@@ -96,8 +96,12 @@ function getSymlinks(buildConfig)
     });
 }
 
-async function run(buildType)
+async function run(buildTypeRaw)
 {
+    const buildType = getBuildType(buildTypeRaw);
+    if (!buildType)
+        throw new Error(`Invalid build type: ${buildTypeRaw}`);
+
     const buildConfig = getBuildConfig(buildType);
 
     for (let link of getSymlinks(buildConfig))
@@ -118,12 +122,17 @@ async function run(buildType)
 
 async function main()
 {
-    if (process.argv.length < 3)
+    if (process.argv.length !== 3)
     {
-        console.error('usage:');
+        console.error('Usage:');
         console.error('  install_app.js <build_type>  install locally built plugin (via symlinks)');
-        console.error('warning: removes existing installed plugin');
-        return 0;
+        console.error();
+        console.error('Build types:');
+        console.error('  ' + Object.values(buildTypes).join(' '));
+        console.error();
+        console.error('Warning:');
+        console.error('  Existing installed plugin will be removed without backup');
+        return process.argv.length > 3 ? 1 : 0;
     }
 
     try
