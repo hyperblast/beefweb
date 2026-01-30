@@ -209,16 +209,4 @@ if(ENABLE_FOOBAR2000)
     add_subdirectory(foobar2000)
 endif()
 
-if(ENABLE_TESTS)
-    add_subdirectory(tests)
-
-    if(IS_MULTI_CONFIG)
-        set(CONFIG_JSON ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/config.json)
-    else()
-        set(CONFIG_JSON ${CMAKE_CURRENT_BINARY_DIR}/config.json)
-    endif()
-
-    file(GENERATE OUTPUT ${CONFIG_JSON} CONTENT "{\"webRoot\":\"${WEBUI_OUTPUT_DIR}\"}")
-endif()
-
 print_toolchain_flags()

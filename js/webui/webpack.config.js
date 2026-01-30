@@ -5,7 +5,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import { getBuildConfig, getWebBuildDir } from '../build_config.mjs';
+import { getBuildConfig } from '../build_config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -163,7 +163,7 @@ function makeBuildParams(env)
     const buildType = getBuildType(env);
 
     if (!outputDir)
-        outputDir = getWebBuildDir(getBuildConfig(buildType));
+        outputDir = getBuildConfig(buildType).webBuildDir;
 
     const sourceDir = path.join(__dirname, 'src');
 

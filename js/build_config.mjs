@@ -36,7 +36,16 @@ function readBuildConfig(buildDir)
     }
 }
 
-export function getPluginBuildDir(buildConfig, player)
+function getWebBuildDir(buildConfig)
+{
+    return path.join(
+        buildConfig.buildDir,
+        'js',
+        'webui',
+        buildConfig.isMultiConfig ? buildType : 'output')
+}
+
+function getPluginBuildDir(buildConfig, player)
 {
     return path.join(
         buildConfig.buildDir,
@@ -46,20 +55,18 @@ export function getPluginBuildDir(buildConfig, player)
         buildConfig.isMultiConfig ? buildConfig.buildType : '');
 }
 
-export function getWebBuildDir(buildConfig)
-{
-    return path.join(
-        buildConfig.buildDir,
-        'js',
-        'webui',
-        buildConfig.isMultiConfig ? buildConfig.buildType : 'output');
-}
-
 export function getBuildConfig(buildType)
 {
     const buildDir = getBuildDir(buildType);
     const buildConfig = readBuildConfig(buildDir);
+
     buildConfig.buildType = buildType;
     buildConfig.buildDir = buildDir;
+    buildConfig.webBuildDir = getWebBuildDir(buildConfig);
+    buildConfig.pluginBuildDir = {
+        deadbeef: getPluginBuildDir(buildConfig, 'deadbeef'),
+        foobar2000: getPluginBuildDir(buildConfig, 'foobar2000'),
+    };
+
     return buildConfig;
 }

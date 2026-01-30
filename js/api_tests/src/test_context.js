@@ -151,7 +151,7 @@ export class TestContextFactory
     {
         const buildType = process.env.BEEFWEB_TEST_BUILD_TYPE || 'Debug';
         const port = parseInt(process.env.BEEFWEB_TEST_PORT) || 8879;
-        const pluginBuildDir = getPluginBuildDir(getBuildConfig(buildType), this.playerId);;
+        const pluginBuildDir = getBuildConfig(buildType).pluginBuildDir[this.playerId];
 
         const serverUrl = `http://127.0.0.1:${port}`;
         const webRootDir = path.join(testsRootDir, 'webroot');

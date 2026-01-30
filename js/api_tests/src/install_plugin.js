@@ -1,16 +1,19 @@
 #!/usr/bin/env node
 
-import { getBuildConfig, getPluginBuildDir, getWebBuildDir } from '../../build_config.mjs'
-import { callBySystem, selectBySystem } from './utils';
+import mkdirp from 'mkdirp';
+import fs from 'fs/promises';
+import path from 'path';
+import { getBuildConfig } from '../../build_config.mjs'
+import { callBySystem, tryStat, rimraf } from './utils.js';
 
-function getInstallPaths(buildConfig)
+function getSymlinks(buildConfig)
 {
     const webRoot = 'beefweb.root';
 
     return callBySystem({
         windows()
         {
-            const targetDir = path.join(
+            const installDir = path.join(
                 process.env.APPDATA,
                 'foobar2000-v2',
                 'user-components-x64',
@@ -19,14 +22,14 @@ function getInstallPaths(buildConfig)
             const pluginFile = 'foo_beefweb.dll';
 
             return [
-                [
-                    path.join(getPluginBuildDir('foobar2000'), pluginFile),
-                    path.join(targetDir, pluginFile),
-                ],
-                [
-                    getWebBuildDir(buildConfig),
-                    path.join(targetDir, webRoot),
-                ]
+                {
+                    from: path.join(installDir, pluginFile),
+                    to: path.join(buildConfig.pluginBuildDir.foobar2000, pluginFile),
+                },
+                {
+                    from: path.join(installDir, webRoot),
+                    to: buildConfig.webBuildDir,
+                }
             ];
         },
 
@@ -35,14 +38,14 @@ function getInstallPaths(buildConfig)
             const fooPluginFile = 'foo_beefweb.component';
             const ddbPluginFile = 'beefweb.dylib';
 
-            const fooTargetDir = path.join(
+            const fooInstallDir = path.join(
                 process.env.HOME,
                 'Library',
                 'foobar2000-v2',
                 'user-components',
                 'foo_beefweb');
 
-            const ddbTargetDir = path.join(
+            const ddbInstallDir = path.join(
                 process.env.HOME,
                 'Library',
                 'Application Support',
@@ -50,57 +53,82 @@ function getInstallPaths(buildConfig)
                 'Plugins');
 
             return [
-                [
-                    path.join(getPluginBuildDir('foobar2000'), fooPluginFile),
-                    path.join(fooTargetDir, fooPluginFile),
-                ],
-                [
-                    path.join(getPluginBuildDir('deadbeef'), ddbPluginFile),
-                    path.join(ddbTargetDir, pluginFile),
-                ],
-                [
-                    getWebBuildDir(buildConfig),
-                    path.join(ddbTargetDir, webRoot),
-                ]
-            ]
+                {
+                    from: path.join(fooInstallDir, fooPluginFile),
+                    to: path.join(buildConfig.pluginBuildDir.foobar2000, fooPluginFile),
+                },
+                {
+                    from: path.join(buildConfig.pluginBuildDir.foobar2000, fooPluginFile, 'Contents', 'Resources', webRoot),
+                    to: buildConfig.webBuildDir,
+                },
+                {
+                    from: path.join(ddbInstallDir, ddbPluginFile),
+                    to: path.join(buildConfig.pluginBuildDir.deadbeef, ddbPluginFile),
+                },
+                {
+                    from: path.join(ddbInstallDir, webRoot),
+                    to: buildConfig.webBuildDir,
+                }
+            ];
         },
 
         posix()
         {
             const pluginFile = 'beefweb.so';
 
-            const targetDir = path.join(
+            const installDir = path.join(
                 process.env.HOME,
                 '.local',
                 'lib',
                 'deadbeef');
 
             return [
-                [
-                    path.join(getPluginBuildDir('deadbeef'), pluginFile),
-                    path.join(targetDir, pluginFile),
-                ],
-                [
-                    getWebBuildDir(buildConfig),
-                    path.join(targetDir, webRoot),
-                ]
-            ]
+                {
+                    from: path.join(installDir, pluginFile),
+                    to: path.join(buildConfig.pluginBuildDir.deadbeef, pluginFile),
+                },
+                {
+                    from: path.join(installDir, webRoot),
+                    to: buildConfig.webBuildDir,
+                }
+            ];
         }
     });
+}
+
+async function run(buildType)
+{
+    const buildConfig = getBuildConfig(buildType);
+
+    for (let link of getSymlinks(buildConfig))
+    {
+        const { from, to } = link;
+
+        if (await tryStat(from))
+        {
+            console.error(`removing ${from}`);
+            await rimraf(from);
+        }
+
+        console.error(`adding link ${from} -> ${to}`);
+        mkdirp(path.dirname(from));
+        await fs.symlink(to, from);
+    }
 }
 
 async function main()
 {
     if (process.argv.length < 3)
     {
-        console.error('usage:\n  install_app.js <build_type>  install locally built plugin (via symlinks)');
+        console.error('usage:');
+        console.error('  install_app.js <build_type>  install locally built plugin (via symlinks)');
+        console.error('warning: removes existing installed plugin');
         return 0;
     }
 
-    const buildType = process.argv[2];
-
     try
     {
+        await run(process.argv[2]);
         return 0;
     }
     catch (e)
