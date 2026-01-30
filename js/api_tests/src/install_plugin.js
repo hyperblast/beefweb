@@ -66,7 +66,7 @@ function getSymlinks(buildConfig)
                     to: path.join(buildConfig.pluginBuildDir.deadbeef, ddbPluginFile),
                 },
                 {
-                    from: path.join(ddbInstallDir, webRoot),
+                    from: path.join(buildConfig.pluginBuildDir.deadbeef, webRoot),
                     to: buildConfig.webBuildDir,
                 }
             ];
