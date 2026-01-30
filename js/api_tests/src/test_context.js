@@ -1,6 +1,6 @@
 import path from 'path'
 import fsObj from 'fs';
-import { getBuildConfig } from '../../config.mjs';
+import { getBuildConfig, getPluginBuildDir } from '../../build_config.mjs';
 import RequestHandler from './request_handler.js';
 import TestPlayerClient from './test_player_client.js';
 import { testsRootDir } from './utils.js';
@@ -151,13 +151,7 @@ export class TestContextFactory
     {
         const buildType = process.env.BEEFWEB_TEST_BUILD_TYPE || 'Debug';
         const port = parseInt(process.env.BEEFWEB_TEST_PORT) || 8879;
-        const { buildDir, isMultiConfig } = getBuildConfig(buildType);
-        const pluginBuildDir = path.join(
-            buildDir,
-            'cpp',
-            'server',
-            this.playerId,
-            isMultiConfig ? buildType : '');
+        const pluginBuildDir = getPluginBuildDir(getBuildConfig(buildType), this.playerId);;
 
         const serverUrl = `http://127.0.0.1:${port}`;
         const webRootDir = path.join(testsRootDir, 'webroot');

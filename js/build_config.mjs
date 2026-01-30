@@ -36,10 +36,30 @@ function readBuildConfig(buildDir)
     }
 }
 
+export function getPluginBuildDir(buildConfig, player)
+{
+    return path.join(
+        buildConfig.buildDir,
+        'cpp',
+        'server',
+        player,
+        buildConfig.isMultiConfig ? buildConfig.buildType : '');
+}
+
+export function getWebBuildDir(buildConfig)
+{
+    return path.join(
+        buildConfig.buildDir,
+        'js',
+        'webui',
+        buildConfig.isMultiConfig ? buildConfig.buildType : 'output');
+}
+
 export function getBuildConfig(buildType)
 {
     const buildDir = getBuildDir(buildType);
     const buildConfig = readBuildConfig(buildDir);
+    buildConfig.buildType = buildType;
     buildConfig.buildDir = buildDir;
     return buildConfig;
 }

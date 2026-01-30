@@ -5,7 +5,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import { getBuildConfig } from '../config.mjs';
+import { getBuildConfig, getWebBuildDir } from '../build_config.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -124,12 +124,6 @@ function configRelease(config)
     });
 }
 
-function getDefaultOutputDir(buildType)
-{
-    const { buildDir, isMultiConfig } = getBuildConfig(buildType);
-    return path.join(buildDir, 'js', 'webui', isMultiConfig ? buildType : 'output');
-}
-
 function getBuildType(env)
 {
     const matchedTypes = [];
@@ -169,7 +163,7 @@ function makeBuildParams(env)
     const buildType = getBuildType(env);
 
     if (!outputDir)
-        outputDir = getDefaultOutputDir(buildType);
+        outputDir = getWebBuildDir(getBuildConfig(buildType));
 
     const sourceDir = path.join(__dirname, 'src');
 
