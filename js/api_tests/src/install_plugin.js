@@ -111,7 +111,7 @@ async function run(buildType)
         }
 
         console.error(`adding link ${from} -> ${to}`);
-        mkdirp(path.dirname(from));
+        await mkdirp(path.dirname(from));
         await fs.symlink(to, from);
     }
 }
