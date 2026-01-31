@@ -35,23 +35,24 @@ Path Plugin::getProfileDir()
 void Plugin::reconfigure()
 {
     tryCatchLog([&] {
-        auto settings = std::make_shared<SettingsData>();
-
-        settings->port = settings_store::port;
-        settings->allowRemote = settings_store::allowRemote;
-        settings->musicDirsOrig = settings_store::getMusicDirs();
-        settings->authRequired = settings_store::authRequired;
-        settings->authUser = settings_store::authUser.get();
-        settings->authPassword = settings_store::authPassword.get();
-        settings->permissions = settings_store::getPermissions();
+        SettingsBuilder builder;
 
 #ifdef MSRV_OS_MAC
-        auto resourceDir = getThisModuleDir().parent_path() / Path("Resources");
+        builder.resourceDir = getThisModuleDir().parent_path() / Path("Resources");
 #else
-        const auto& resourceDir = getThisModuleDir();
+        builder.resourceDir = getThisModuleDir();
 #endif
 
-        settings->initialize(resourceDir, getProfileDir());
+        builder.profileDir = getProfileDir();
+        builder.port = settings_store::port;
+        builder.allowRemote = settings_store::allowRemote;
+        builder.musicDirs = settings_store::getMusicDirs();
+        builder.authRequired = settings_store::authRequired;
+        builder.authUser = settings_store::authUser.get();
+        builder.authPassword = settings_store::authPassword.get();
+        builder.permissions = settings_store::getPermissions();
+
+        auto settings = builder.build();
 
         host_.reconfigure(std::move(settings));
     });
@@ -68,7 +69,7 @@ public:
     {
         Logger::setCurrent(&logger_);
 #ifndef MSRV_OS_MAC
-        SettingsData::migrate(MSRV_PLAYER_FOOBAR2000, Plugin::getProfileDir());
+        migrateSettings(MSRV_PLAYER_FOOBAR2000, Plugin::getProfileDir());
 #endif
         tryCatchLog([this] { plugin_ = std::make_unique<Plugin>(); });
     }
