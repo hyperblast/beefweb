@@ -27,18 +27,18 @@ function assertRedirect(assert, result, location)
     assert.equal(result.headers["location"], location);
 }
 
+function getFile(url, config)
+{
+    return client.handler.axios.get(url, config);
+}
+
+function getFileData(url)
+{
+    return readFile(path.join(config.webRootDir, url), 'utf8');
+}
+
 describe('static files', () => {
     setupPlayer({ pluginSettings, axiosConfig });
-
-    function getFile(url, config)
-    {
-        return client.handler.axios.get(url, config);
-    }
-
-    function getFileData(url)
-    {
-        return readFile(path.join(config.webRootDir, url), 'utf8');
-    }
 
     test('get index of root', async () => {
         const result = await getFile('/');
@@ -204,22 +204,25 @@ describe('static files', () => {
     });
 
     test('escape root dir', async () => {
+        const result0 = await getFile('/../../../../../../../etc/passwd', ignoreStatus);
+        assert.equal(result0.status, 400);
+
         const result1 = await getFile('/../package.json', ignoreStatus);
-        assert.equal(result1.status, 404);
+        assert.equal(result1.status, 400);
 
         const result2 = await getFile('/%2E%2E/package.json', ignoreStatus);
-        assert.equal(result2.status, 404);
+        assert.equal(result2.status, 400);
 
         const result3 = await getFile('/prefix/../package.json', ignoreStatus);
-        assert.equal(result3.status, 404);
+        assert.equal(result3.status, 400);
 
         const result4 = await getFile('/prefix/%2E%2E/package.json', ignoreStatus);
-        assert.equal(result4.status, 404);
+        assert.equal(result4.status, 400);
 
         const result5 = await getFile('/prefix/nested/../package.json', ignoreStatus);
-        assert.equal(result5.status, 404);
+        assert.equal(result5.status, 400);
 
         const result6 = await getFile('/prefix/nested/%2E%2E/package.json', ignoreStatus);
-        assert.equal(result6.status, 404);
+        assert.equal(result6.status, 400);
     });
 });
