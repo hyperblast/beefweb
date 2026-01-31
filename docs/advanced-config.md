@@ -1,24 +1,36 @@
 # Advanced configuration
 
-Advanced configuration is performed by editing configuration file.
+## Profile directory
 
-The following configuration sources are considered when loading configuration (in the order of increase of preference):
+Beefweb keeps all settings in `{player_profile_dir}/beefweb/` directory:
+- foobar2000 on Windows: `%APPDATA%\foobar2000-v2\beefweb\`
+- foobar2000 on macOS: `$HOME/Library/foobar2000-v2/beefweb/`
+- DeaDBeeF on Linux/*BSD: `$XDG_CONFIG_HOME/deadbeef/beefweb/` (or `$HOME/.config/deadbeef/beefweb/`)
+- DeaDBeeF on macOS: `$HOME/Library/Preferences/deadbeef/beefweb/`
 
-* Settings in UI
-* `{player_profile_dir}/beefweb/config.json`
-  - foobar2000 on Windows: `%APPDATA%\foobar2000-v2\beefweb\config.json`
-  - foobar2000 on macOS: `$HOME/Library/foobar2000-v2/beefweb/config.json`
-  - DeaDBeeF on Linux/*BSD: `$XDG_CONFIG_HOME/deadbeef/beefweb/config.json` or `$HOME/.config/deadbeef/beefweb/config.json`
-  - DeaDBeeF on macOS: `$HOME/Library/Preferences/deadbeef/beefweb/config.json`
-* File specified by `BEEFWEB_CONFIG_FILE` environment variable (must be absolute)
+### Overriding profile directory
 
-If setting is specified in more preferred source it overrides values defined in less preferred.
+If environment variable `BEEFWEB_PROFILE_DIR` is specified, it overrides default beefweb profile directory.
+
+This path must be absolute.
+
+### Serving custom web content
+
+It is possible to serve custom web content (e.g. custom UI) using built-in web server.
+
+If certain file does not exist in bundled web resources corresponding file inside `{beefweb_profile_dir}/webroot/` will be used. 
+
+## Configuration file
+
+Advanced configuration is performed by editing configuration file stored in `{beefweb_profile_dir}/config.json`.
+
+If setting is specified in configuration file, it overrides setting in UI.
 
 All values are optional, you can specify only those you want to override.
 
 The following options are available:
 
-```js
+```json
 {
     "port": 8880,
     "allowRemote": true,
@@ -26,18 +38,17 @@ The following options are available:
     "authRequired": false,
     "authUser": "",
     "authPassword": "",
-    "webRoot": ".../beefweb.root", // path inside installation directory, directory layout is different depending on OS/player
+    "webRoot": "{beefweb_binary_dir}/beefweb.root/",
+    "altWebRoot": "{beefweb_profile_dir}/webroot/",
     "urlMappings": {},
     "responseHeaders": {},
-    "clientConfigDir": "{player profile directory}/beefweb/clientconfig"
+    "clientConfigDir": "{beefweb_profile_dir}/clientconfig/"
 }
 ```
 
 ### Non-absolute paths
 
-Unless specified otherwise any path in configuration could be non-absolute.
-
-Such paths are resolved relative to `{player_profile_dir}/beefweb` directory.
+Non-absolute paths in configuration file are resolved relative to Beefweb profile directory.
 
 ### Network settings
 
@@ -60,6 +71,8 @@ Such paths are resolved relative to `{player_profile_dir}/beefweb` directory.
 ### Web server settings
 
 `webRoot: string` - Root directory where static web content is located.
+
+`altWebRoot: string` - Alternative web root directory, if file is not found in `webRoot` corresponding file in `altWebRoot` is also tried.
 
 `urlMappings: {string: string}` - Alternative web directories defined by URL prefix
 
