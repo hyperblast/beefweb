@@ -4,7 +4,7 @@
 - Rework column editor: add support for subrows and basic formatting, each layout is now configured separately
 - Allow non-absolute paths in config (resolved relative to `{player_profile_dir}/beefweb/`)
 - Serve custom web content from `{player_profile_dir}/beefweb/webroot/`
-- Replace `BEEFWEB_CONFIG_FILE` environment variable with `BEEFWEB_PROFILE_DIR` (fully overrides `{player_profile_dir}/beefweb`)
+- Replace `BEEFWEB_CONFIG_FILE` environment variable with `BEEFWEB_PROFILE_DIR` (fully overrides `{player_profile_dir}/beefweb/`)
 - Allow setting arbitrary UI scale
 - Preserve scroll position in file browser
 - Increase icon sizes in all layouts
