@@ -55,19 +55,14 @@ describe('static files', () => {
         assert.equal(result.data, 'index.html\n');
     });
 
-    test('redirect index of prefix', async () => {
-        const result = await getFile('/prefix');
-        assert.equal(result.headers["location"], '/prefix/');
-    });
-
-    test('redirect index of nested prefix', async () => {
-        const result = await getFile('/prefix/nested');
-        assertRedirect(assert, result, '/prefix/nested/');
-    });
-
     test('get file of root', async () => {
         const result = await getFile('/file.html');
         assert.equal(result.data, 'file.html\n');
+    });
+
+    test('get file of alt root', async () => {
+        const result = await getFile('/altfile.html');
+        assert.equal(result.data, 'altfile.html\n');
     });
 
     test('get file of prefix', async () => {
@@ -85,6 +80,11 @@ describe('static files', () => {
         assert.equal(result.data, 'subdir/index.html\n');
     });
 
+    test('get subdir index of alt root', async () => {
+        const result = await getFile('/altsubdir/');
+        assert.equal(result.data, 'altsubdir/index.html\n');
+    });
+
     test('get subdir index of prefix', async () => {
         const result = await getFile('/prefix/subdir/');
         assert.equal(result.data, 'subdir/index.html\n');
@@ -93,6 +93,31 @@ describe('static files', () => {
     test('get subdir index of nested prefix', async () => {
         const result = await getFile('/prefix/nested/subdir/');
         assert.equal(result.data, 'subdir/index.html\n');
+    });
+
+    test('get subdir file of root', async () => {
+        const result = await getFile('/subdir/file.html');
+        assert.equal(result.data, 'subdir/file.html\n');
+    });
+
+    test('get subdir file of alt root', async () => {
+        const result = await getFile('/altsubdir/file.html');
+        assert.equal(result.data, 'altsubdir/file.html\n');
+    });
+
+    test('get subdir file of prefix', async () => {
+        const result = await getFile('/prefix/subdir/file.html');
+        assert.equal(result.data, 'subdir/file.html\n');
+    });
+
+    test('get subdir file of nested prefix', async () => {
+        const result = await getFile('/prefix/nested/subdir/file.html');
+        assert.equal(result.data, 'subdir/file.html\n');
+    });
+
+    test('redirect subdir index of alt root', async () => {
+        const result = await getFile('/altsubdir');
+        assertRedirect(assert, result, '/altsubdir/');
     });
 
     test('redirect subdir index of root', async () => {
@@ -110,39 +135,14 @@ describe('static files', () => {
         assertRedirect(assert, result, '/prefix/nested/subdir/');
     });
 
-    test('get subdir file of root', async () => {
-        const result = await getFile('/subdir/file.html');
-        assert.equal(result.data, 'subdir/file.html\n');
+    test('redirect index of prefix', async () => {
+        const result = await getFile('/prefix');
+        assert.equal(result.headers["location"], '/prefix/');
     });
 
-    test('get subdir file of prefix', async () => {
-        const result = await getFile('/prefix/subdir/file.html');
-        assert.equal(result.data, 'subdir/file.html\n');
-    });
-
-    test('get subdir file of nested prefix', async () => {
-        const result = await getFile('/prefix/nested/subdir/file.html');
-        assert.equal(result.data, 'subdir/file.html\n');
-    });
-
-    test('get file of alt root', async () => {
-        const result = await getFile('/extra.html');
-        assert.equal(result.data, 'extra.html\n');
-    });
-
-    test('get subdir index of alt root', async () => {
-        const result = await getFile('/altsubdir/');
-        assert.equal(result.data, 'altsubdir/index.html\n');
-    });
-
-    test('get subdir file of alt root', async () => {
-        const result = await getFile('/altsubdir/index.html');
-        assert.equal(result.data, 'altsubdir/index.html\n');
-    });
-
-    test('redirect subdir index of alt root', async () => {
-        const result = await getFile('/altsubdir');
-        assertRedirect(assert, result, '/altsubdir/');
+    test('redirect index of nested prefix', async () => {
+        const result = await getFile('/prefix/nested');
+        assertRedirect(assert, result, '/prefix/nested/');
     });
 
     test('provide content type', async () => {
