@@ -306,6 +306,10 @@ SettingsDataPtr SettingsBuilder::build() const
     settings->musicDirs = resolveMusicDirs(pluginProfileDir, musicDirs);
 
     processFile(pluginProfileDir, pluginProfileDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE), settings.get());
+
+    tryCatchLog([&] { fs::create_directories(settings->altWebRoot); });
+    tryCatchLog([&] { fs::create_directories(settings->clientConfigDir); });
+
     return settings;
 }
 
