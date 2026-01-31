@@ -141,7 +141,8 @@ describe('static files', () => {
         for (let file of Object.keys(contentTypes))
         {
             const result = await getFile(file);
-            assert.equal(result.headers['content-type'], contentTypes[file]);
+            assert.equal(result.status, 200, 'invalid http status for file ' + file);
+            assert.equal(result.headers['content-type'], contentTypes[file], 'invalid content type for file ' + file);
         }
     });
 
