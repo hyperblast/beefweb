@@ -16,7 +16,7 @@ class StaticController : public ControllerBase
 public:
     StaticController(
         Request* request,
-        const Path& targetDir,
+        PathVectorPtr targetDirs,
         const ContentTypeMap& contentTypes);
     ~StaticController();
 
@@ -28,18 +28,18 @@ public:
         SettingsDataPtr settings,
         const ContentTypeMap& contentTypes);
 
+private:
     static void defineRoutes(
         Router* router,
         WorkQueue* workQueue,
         const std::string& urlPrefix,
-        const Path& targetDir,
+        PathVectorPtr targetDirs,
         const ContentTypeMap& contentTypes);
 
-private:
     std::string getNormalizedPath();
     ResponsePtr redirectToDirectory();
 
-    const Path& targetDir_;
+    PathVectorPtr targetDirs_;
     const ContentTypeMap& contentTypes_;
 };
 

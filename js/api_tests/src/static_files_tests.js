@@ -27,18 +27,18 @@ function assertRedirect(assert, result, location)
     assert.equal(result.headers["location"], location);
 }
 
+function getFile(url, config)
+{
+    return client.handler.axios.get(url, config);
+}
+
+function getFileData(url)
+{
+    return readFile(path.join(config.webRootDir, url), 'utf8');
+}
+
 describe('static files', () => {
     setupPlayer({ pluginSettings, axiosConfig });
-
-    function getFile(url, config)
-    {
-        return client.handler.axios.get(url, config);
-    }
-
-    function getFileData(url)
-    {
-        return readFile(path.join(config.webRootDir, url), 'utf8');
-    }
 
     test('get index of root', async () => {
         const result = await getFile('/');
@@ -55,19 +55,14 @@ describe('static files', () => {
         assert.equal(result.data, 'index.html\n');
     });
 
-    test('redirect index of prefix', async () => {
-        const result = await getFile('/prefix');
-        assert.equal(result.headers["location"], '/prefix/');
-    });
-
-    test('redirect index of nested prefix', async () => {
-        const result = await getFile('/prefix/nested');
-        assertRedirect(assert, result, '/prefix/nested/');
-    });
-
     test('get file of root', async () => {
         const result = await getFile('/file.html');
         assert.equal(result.data, 'file.html\n');
+    });
+
+    test('get file of alt root', async () => {
+        const result = await getFile('/altfile.html');
+        assert.equal(result.data, 'altfile.html\n');
     });
 
     test('get file of prefix', async () => {
@@ -85,6 +80,11 @@ describe('static files', () => {
         assert.equal(result.data, 'subdir/index.html\n');
     });
 
+    test('get subdir index of alt root', async () => {
+        const result = await getFile('/altsubdir/');
+        assert.equal(result.data, 'altsubdir/index.html\n');
+    });
+
     test('get subdir index of prefix', async () => {
         const result = await getFile('/prefix/subdir/');
         assert.equal(result.data, 'subdir/index.html\n');
@@ -93,6 +93,31 @@ describe('static files', () => {
     test('get subdir index of nested prefix', async () => {
         const result = await getFile('/prefix/nested/subdir/');
         assert.equal(result.data, 'subdir/index.html\n');
+    });
+
+    test('get subdir file of root', async () => {
+        const result = await getFile('/subdir/file.html');
+        assert.equal(result.data, 'subdir/file.html\n');
+    });
+
+    test('get subdir file of alt root', async () => {
+        const result = await getFile('/altsubdir/file.html');
+        assert.equal(result.data, 'altsubdir/file.html\n');
+    });
+
+    test('get subdir file of prefix', async () => {
+        const result = await getFile('/prefix/subdir/file.html');
+        assert.equal(result.data, 'subdir/file.html\n');
+    });
+
+    test('get subdir file of nested prefix', async () => {
+        const result = await getFile('/prefix/nested/subdir/file.html');
+        assert.equal(result.data, 'subdir/file.html\n');
+    });
+
+    test('redirect subdir index of alt root', async () => {
+        const result = await getFile('/altsubdir');
+        assertRedirect(assert, result, '/altsubdir/');
     });
 
     test('redirect subdir index of root', async () => {
@@ -110,19 +135,14 @@ describe('static files', () => {
         assertRedirect(assert, result, '/prefix/nested/subdir/');
     });
 
-    test('get subdir file of root', async () => {
-        const result = await getFile('/subdir/file.html');
-        assert.equal(result.data, 'subdir/file.html\n');
+    test('redirect index of prefix', async () => {
+        const result = await getFile('/prefix');
+        assert.equal(result.headers["location"], '/prefix/');
     });
 
-    test('get subdir file of prefix', async () => {
-        const result = await getFile('/prefix/subdir/file.html');
-        assert.equal(result.data, 'subdir/file.html\n');
-    });
-
-    test('get subdir file of nested prefix', async () => {
-        const result = await getFile('/prefix/nested/subdir/file.html');
-        assert.equal(result.data, 'subdir/file.html\n');
+    test('redirect index of nested prefix', async () => {
+        const result = await getFile('/prefix/nested');
+        assertRedirect(assert, result, '/prefix/nested/');
     });
 
     test('provide content type', async () => {
@@ -138,10 +158,11 @@ describe('static files', () => {
             'file.txt': 'text/plain; charset=utf-8',
         };
 
-        for (let file of Object.keys(contentTypes))
+        for (let file in contentTypes)
         {
             const result = await getFile(file);
-            assert.equal(result.headers['content-type'], contentTypes[file]);
+            assert.equal(result.status, 200, 'invalid http status for ' + file);
+            assert.equal(result.headers['content-type'], contentTypes[file], 'invalid content type for ' + file);
         }
     });
 
@@ -204,22 +225,25 @@ describe('static files', () => {
     });
 
     test('escape root dir', async () => {
+        const result0 = await getFile('/../../../../../../../etc/passwd', ignoreStatus);
+        assert.equal(result0.status, 400);
+
         const result1 = await getFile('/../package.json', ignoreStatus);
-        assert.equal(result1.status, 404);
+        assert.equal(result1.status, 400);
 
         const result2 = await getFile('/%2E%2E/package.json', ignoreStatus);
-        assert.equal(result2.status, 404);
+        assert.equal(result2.status, 400);
 
         const result3 = await getFile('/prefix/../package.json', ignoreStatus);
-        assert.equal(result3.status, 404);
+        assert.equal(result3.status, 400);
 
         const result4 = await getFile('/prefix/%2E%2E/package.json', ignoreStatus);
-        assert.equal(result4.status, 404);
+        assert.equal(result4.status, 400);
 
         const result5 = await getFile('/prefix/nested/../package.json', ignoreStatus);
-        assert.equal(result5.status, 404);
+        assert.equal(result5.status, 400);
 
         const result6 = await getFile('/prefix/nested/%2E%2E/package.json', ignoreStatus);
-        assert.equal(result6.status, 404);
+        assert.equal(result6.status, 400);
     });
 });

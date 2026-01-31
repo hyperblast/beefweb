@@ -49,7 +49,7 @@ void Plugin::handlePluginsLoaded()
     pluginsLoaded_ = true;
 
 #ifndef MSRV_OS_MAC
-    SettingsData::migrate(MSRV_PLAYER_DEADBEEF, getProfileDir());
+    migrateSettings(MSRV_PLAYER_DEADBEEF, getProfileDir());
 #endif
 
     refreshSettings();
@@ -59,18 +59,19 @@ void Plugin::handlePluginsLoaded()
 void Plugin::reconfigure()
 {
     tryCatchLog([&] {
-        auto settings = std::make_shared<SettingsData>();
+        SettingsBuilder builder;
 
-        settings->port = port_;
-        settings->allowRemote = allowRemote_;
-        settings->musicDirsOrig = parseValueList<std::string>(musicDirs_, ';');
-        settings->authRequired = authRequired_;
-        settings->authUser = authUser_;
-        settings->authPassword = authPassword_;
-        settings->permissions = permissions_;
+        builder.resourceDir = getThisModuleDir();
+        builder.profileDir = getProfileDir();
+        builder.port = port_;
+        builder.allowRemote = allowRemote_;
+        builder.musicDirs = parseValueList<std::string>(musicDirs_, ';');
+        builder.authRequired = authRequired_;
+        builder.authUser = authUser_;
+        builder.authPassword = authPassword_;
+        builder.permissions = permissions_;
 
-        settings->initialize(getThisModuleDir(), getProfileDir());
-
+        auto settings = builder.build();
         host_.reconfigure(std::move(settings));
     });
 }

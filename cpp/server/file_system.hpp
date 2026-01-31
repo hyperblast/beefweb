@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -15,6 +16,8 @@ namespace msrv {
 namespace fs = boost::filesystem;
 
 using Path = fs::path;
+
+using PathVectorPtr = std::shared_ptr<const std::vector<Path>>;
 
 #ifdef MSRV_OS_POSIX
 #define MSRV_PATH_LITERAL(str) Path(str)

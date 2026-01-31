@@ -1,4 +1,7 @@
 #include "static_controller.hpp"
+
+#include <set>
+
 #include "file_system.hpp"
 #include "content_type_map.hpp"
 #include "router.hpp"
@@ -8,8 +11,12 @@
 namespace msrv {
 
 StaticController::StaticController(
-    Request* request, const Path& targetDir, const ContentTypeMap& contentTypes)
-    : ControllerBase(request), targetDir_(targetDir), contentTypes_(contentTypes)
+    Request* request,
+    PathVectorPtr targetDirs,
+    const ContentTypeMap& contentTypes)
+    : ControllerBase(request),
+      targetDirs_(std::move(targetDirs)),
+      contentTypes_(contentTypes)
 {
 }
 
@@ -25,20 +32,13 @@ std::string StaticController::getNormalizedPath()
     auto isDirectory = fullPath.back() == '/';
     auto path = optionalParam<std::string>("path");
 
-    if (!path || path->empty())
-    {
-        if (isDirectory)
-            return "index.html";
-        else
-            return std::string();
-    }
-    else
-    {
-        if (isDirectory)
-            return *path + "/index.html";
-        else
-            return *path;
-    }
+    return path && !path->empty()
+        ? isDirectory // subpath of target dir
+            ? *path + "/index.html"
+            : *path
+        : isDirectory // exactly target dir
+            ? std::string("index.html")
+            : std::string();
 }
 
 ResponsePtr StaticController::redirectToDirectory()
@@ -52,33 +52,58 @@ ResponsePtr StaticController::getFile()
     if (requestPath.empty())
         return redirectToDirectory();
 
-    auto filePath = (targetDir_ / pathFromUtf8(requestPath)).lexically_normal();
-
-    if (!isSubpath(targetDir_, filePath))
-        return Response::notFound();
-
-    auto info = file_io::tryQueryInfo(filePath);
-    if (!info)
-        return Response::notFound();
-
-    switch (info->type)
+    for (const auto& targetDir : *targetDirs_)
     {
-    case FileType::REGULAR:
-    {
+        auto filePath = (targetDir / pathFromUtf8(requestPath)).lexically_normal();
+
+        if (!isSubpath(targetDir, filePath))
+            throw InvalidRequestException("invalid request path");
+
+#ifdef MSRV_OS_WINDOWS
+        // Windows can't open directories as files
+
+        auto infoResult = file_io::tryQueryInfo(filePath);
+        if (!infoResult)
+            continue;
+
+        auto info = *infoResult;
+        FileHandle handle;
+
+        if (info.type == FileType::REGULAR)
+        {
+            handle = file_io::open(filePath);
+            if (!handle)
+                continue;
+        }
+#else
         auto handle = file_io::open(filePath);
         if (!handle)
-            return Response::notFound();
+            continue;
 
-        const auto& contentType = contentTypes_.byFilePath(filePath);
-        return Response::file(std::move(filePath), std::move(handle), *info, contentType);
+        auto info = file_io::queryInfo(handle.get());
+#endif
+
+        switch (info.type)
+        {
+        case FileType::REGULAR:
+        {
+            auto contentType = contentTypes_.byFilePath(filePath);
+            return Response::file(
+                std::move(filePath),
+                std::move(handle),
+                info,
+                std::move(contentType));
+        }
+
+        case FileType::DIRECTORY:
+            return redirectToDirectory();
+
+        case FileType::UNKNOWN:
+            break;
+        }
     }
 
-    case FileType::DIRECTORY:
-        return redirectToDirectory();
-
-    default:
-        return Response::notFound();
-    }
+    return Response::notFound();
 }
 
 void StaticController::defineRoutes(
@@ -89,23 +114,39 @@ void StaticController::defineRoutes(
 {
     for (auto& kv : settings->urlMappings)
     {
-        defineRoutes(router, workQueue, kv.first, kv.second, contentTypes);
+        auto dirs = std::make_shared<std::vector<Path>>(1, kv.second);
+        defineRoutes(router, workQueue, kv.first, std::move(dirs), contentTypes);
     }
 
+    if (settings->webRoot.empty() && settings->altWebRoot.empty())
+        return;
+
+    auto targetDirs = std::make_shared<std::vector<Path>>();
+
     if (!settings->webRoot.empty())
-        defineRoutes(router, workQueue, "/", settings->webRoot, contentTypes);
+        targetDirs->emplace_back(settings->webRoot);
+
+    if (!settings->altWebRoot.empty())
+        targetDirs->emplace_back(settings->altWebRoot);
+
+    defineRoutes(router, workQueue, "/", std::move(targetDirs), contentTypes);
 }
 
 void StaticController::defineRoutes(
     Router* router,
     WorkQueue* workQueue,
     const std::string& urlPrefix,
-    const Path& targetDir,
+    PathVectorPtr targetDirs,
     const ContentTypeMap& contentTypes)
 {
+    assert(!targetDirs->empty());
+
     auto routes = router->defineRoutes<StaticController>();
 
-    routes.createWith([=](Request* request) { return new StaticController(request, targetDir, contentTypes); });
+    routes.createWith([=](Request* request) {
+        return new StaticController(request, targetDirs, contentTypes);
+    });
+
     routes.useWorkQueue(workQueue);
 
     routes.get(urlPrefix, &StaticController::getFile);
