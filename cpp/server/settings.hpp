@@ -45,6 +45,7 @@ public:
     ApiPermissions permissions = ApiPermissions::ALL;
 
     Path webRoot;
+    Path altWebRoot;
     Path clientConfigDir;
     std::unordered_map<std::string, std::string> responseHeaders;
     std::unordered_map<std::string, Path> urlMappings;

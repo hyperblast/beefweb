@@ -4,6 +4,10 @@
 
 #include <stdexcept>
 
+#define MSRV_CONFIG_FILE        "config.json"
+#define MSRV_CLIENT_CONFIG_DIR  "clientconfig"
+#define MSRV_ALT_WEB_ROOT       "webroot"
+
 namespace msrv {
 
 namespace {
@@ -200,6 +204,7 @@ void processFile(const Path& baseDir, const Path& file, SettingsData* settings)
     parseValue(json, "authPassword", &settings->authPassword);
     parseValue(json, "responseHeaders", &settings->responseHeaders);
     parsePath(json, "webRoot", baseDir, &settings->webRoot);
+    parsePath(json, "altWebRoot", baseDir, &settings->altWebRoot);
     parsePath(json, "clientConfigDir", baseDir, &settings->clientConfigDir);
     parseMusicDirs(json, baseDir, &settings->musicDirs);
     parseUrlMappings(json, baseDir, &settings->urlMappings);
@@ -296,6 +301,7 @@ SettingsDataPtr SettingsBuilder::build() const
     settings->authUser = authUser;
     settings->authPassword = authPassword;
     settings->webRoot = resourceDir / MSRV_PATH_LITERAL(MSRV_WEBUI_ROOT);
+    settings->altWebRoot = pluginProfileDir / MSRV_PATH_LITERAL(MSRV_ALT_WEB_ROOT);
     settings->clientConfigDir = pluginProfileDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
     settings->musicDirs = resolveMusicDirs(pluginProfileDir, musicDirs);
 
