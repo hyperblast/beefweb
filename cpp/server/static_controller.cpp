@@ -59,25 +59,46 @@ ResponsePtr StaticController::getFile()
         if (!isSubpath(targetDir, filePath))
             throw InvalidRequestException("invalid request path");
 
+#ifdef MSRV_OS_WINDOWS
+        // Windows can't open directories as files
+
+        auto infoResult = file_io::tryQueryInfo(filePath);
+        if (!infoResult)
+            continue;
+
+        auto info = *infoResult;
+        FileHandle handle;
+
+        if (info.type == FileType::REGULAR)
+        {
+            handle = file_io::open(filePath);
+            if (!handle)
+                continue;
+        }
+#else
         auto handle = file_io::open(filePath);
         if (!handle)
             continue;
 
         auto info = file_io::queryInfo(handle.get());
+#endif
 
         switch (info.type)
         {
         case FileType::REGULAR:
+        {
+            auto contentType = contentTypes_.byFilePath(filePath);
             return Response::file(
                 std::move(filePath),
                 std::move(handle),
                 info,
-                contentTypes_.byFilePath(filePath));
+                std::move(contentType));
+        }
 
         case FileType::DIRECTORY:
             return redirectToDirectory();
 
-        default:
+        case FileType::UNKNOWN:
             break;
         }
     }
