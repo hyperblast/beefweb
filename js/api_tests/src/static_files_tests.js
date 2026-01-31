@@ -125,6 +125,26 @@ describe('static files', () => {
         assert.equal(result.data, 'subdir/file.html\n');
     });
 
+    test('get file of alt root', async () => {
+        const result = await getFile('/extra.html');
+        assert.equal(result.data, 'extra.html\n');
+    });
+
+    test('get subdir index of alt root', async () => {
+        const result = await getFile('/altsubdir/');
+        assert.equal(result.data, 'altsubdir/index.html\n');
+    });
+
+    test('get subdir file of alt root', async () => {
+        const result = await getFile('/altsubdir/index.html');
+        assert.equal(result.data, 'altsubdir/index.html\n');
+    });
+
+    test('redirect subdir index of alt root', async () => {
+        const result = await getFile('/altsubdir');
+        assertRedirect(assert, result, '/altsubdir/');
+    });
+
     test('provide content type', async () => {
         const contentTypes = {
             'file.html': 'text/html; charset=utf-8',
@@ -138,11 +158,11 @@ describe('static files', () => {
             'file.txt': 'text/plain; charset=utf-8',
         };
 
-        for (let file of Object.keys(contentTypes))
+        for (let file in contentTypes)
         {
             const result = await getFile(file);
-            assert.equal(result.status, 200, 'invalid http status for file ' + file);
-            assert.equal(result.headers['content-type'], contentTypes[file], 'invalid content type for file ' + file);
+            assert.equal(result.status, 200, 'invalid http status for ' + file);
+            assert.equal(result.headers['content-type'], contentTypes[file], 'invalid content type for ' + file);
         }
     });
 

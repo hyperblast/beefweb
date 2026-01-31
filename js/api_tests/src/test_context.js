@@ -155,6 +155,7 @@ export class TestContextFactory
 
         const serverUrl = `http://127.0.0.1:${port}`;
         const webRootDir = path.join(testsRootDir, 'webroot');
+        const altWebRootDir = path.join(testsRootDir, 'webroot2');
         const musicDir = path.join(testsRootDir, 'tracks');
 
         const pluginSettings = {
@@ -162,6 +163,7 @@ export class TestContextFactory
             allowRemote: false,
             musicDirs: [musicDir],
             webRoot: webRootDir,
+            altWebRoot: altWebRootDir,
         };
 
         return {
@@ -171,6 +173,7 @@ export class TestContextFactory
             serverUrl,
             pluginBuildDir,
             webRootDir,
+            altWebRootDir,
             musicDir,
             pluginSettings,
         };
