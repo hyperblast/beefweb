@@ -24,33 +24,30 @@ enum class ApiPermissions : uint32_t
 
 MSRV_ENUM_FLAGS(ApiPermissions, uint32_t)
 
+void to_json(Json& json, const ApiPermissions& permissions);
+
+#ifndef MSRV_OS_MAC
+void migrateSettings(const char* appName, const Path& profileDir);
+#endif
+
 class SettingsData
 {
 public:
-    SettingsData();
-    ~SettingsData();
+    SettingsData() = default;
+    ~SettingsData() = default;
 
-    Path baseDir;
     int port = MSRV_DEFAULT_PORT;
     bool allowRemote = true;
-    std::vector<std::string> musicDirsOrig;
     std::vector<Path> musicDirs;
-    Path webRoot;
-    std::string webRootOrig;
-    std::string clientConfigDirOrig;
-    Path clientConfigDir;
-    ApiPermissions permissions = ApiPermissions::ALL;
-
     bool authRequired = false;
     std::string authUser;
     std::string authPassword;
+    ApiPermissions permissions = ApiPermissions::ALL;
+
+    Path webRoot;
+    Path clientConfigDir;
     std::unordered_map<std::string, std::string> responseHeaders;
     std::unordered_map<std::string, Path> urlMappings;
-    std::unordered_map<std::string, std::string> urlMappingsOrig;
-
-#ifndef MSRV_OS_MAC
-    static void migrate(const char* appName, const Path& profileDir);
-#endif
 
     void ensurePermissions(ApiPermissions p) const
     {
@@ -59,23 +56,29 @@ public:
     }
 
     bool isAllowedPath(const Path& path) const;
-    void initialize(const Path& resourceDir, const Path& profileDir);
-
-    Path resolvePath(const Path& path) const
-    {
-        return path.empty() || path.is_absolute() ? path : baseDir / path;
-    }
-
-private:
-    void loadFromJson(const Json& json);
-    void loadFromFile(const Path& path);
-
-    void loadPermissions(const Json& jsonRoot);
-    void loadPermission(const Json& json, const char* name, ApiPermissions value);
 };
 
 using SettingsDataPtr = std::shared_ptr<const SettingsData>;
 
-void to_json(Json& json, const ApiPermissions& permissions);
+class SettingsBuilder
+{
+public:
+    SettingsBuilder() = default;
+    ~SettingsBuilder() = default;
+
+    SettingsDataPtr build() const;
+
+    Path profileDir;
+    Path resourceDir;
+
+    int port = MSRV_DEFAULT_PORT;
+    bool allowRemote = true;
+    std::vector<std::string> musicDirs;
+    ApiPermissions permissions = ApiPermissions::ALL;
+
+    bool authRequired = false;
+    std::string authUser;
+    std::string authPassword;
+};
 
 }

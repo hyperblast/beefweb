@@ -26,19 +26,184 @@ const PermissionDef permissionDefs[] = {
     {ApiPermissions::NONE, nullptr},
 };
 
+Path resolvePath(const Path& baseDir, const Path& path)
+{
+    return path.empty() || path.is_absolute() ? path : (baseDir / path).lexically_normal();
+}
+
+std::vector<Path> resolveMusicDirs(const Path& baseDir, const std::vector<std::string>& musicDirs)
+{
+    std::vector<Path> result;
+    result.reserve(musicDirs.size());
+
+    auto index = 0;
+    for (const auto& dir : musicDirs)
+    {
+        if (dir.empty())
+        {
+            logError("skipping empty music directory at index %d", index);
+            continue;
+        }
+
+        result.emplace_back(resolvePath(baseDir, pathFromUtf8(dir)));
+        index++;
+    }
+
+    return result;
+}
+
+Json readJsonFile(const Path& path)
+{
+    Json result;
+
+    tryCatchLog([&] {
+        auto file = file_io::open(path);
+        if (!file)
+            return;
+
+        logInfo("loading config file: %s", pathToUtf8(path).c_str());
+        auto data = file_io::readToEnd(file.get());
+        result = Json::parse(data);
+    });
+
+    if (!result.is_null() && !result.is_object())
+    {
+        result = Json();
+        logError("invalid config: expected json object");
+    }
+
+    return result;
+}
+
+
 template<typename T>
-void loadValue(const Json& json, T* value, const char* name)
+bool parseValue(const Json& json, const char* name, T* result)
 {
     try
     {
         auto it = json.find(name);
-        if (it != json.end())
-            *value = it->get<T>();
+        if (it == json.end())
+            return false;
+        *result = it->get<T>();
+        return true;
     }
     catch (std::exception& ex)
     {
         logError("failed to parse property '%s': %s", name, ex.what());
+        return false;
     }
+}
+
+void parsePath(const Json& json, const char* name, const Path& baseDir, Path* result)
+{
+    std::string webRoot;
+
+    if (parseValue(json, name, &webRoot))
+        *result = resolvePath(baseDir, webRoot);
+}
+
+void parseMusicDirs(const Json& json, const Path& baseDir, std::vector<Path>* result)
+{
+    std::vector<std::string> musicDirs;
+
+    if (parseValue(json, "musicDirs", &musicDirs))
+        *result = resolveMusicDirs(baseDir, musicDirs);
+}
+
+void parsePermission(const Json& json, const char* name, ApiPermissions value, ApiPermissions* result)
+{
+    auto it = json.find(name);
+    if (it == json.end())
+        return;
+
+    if (!it->is_boolean())
+    {
+        logError("failed to parse permission '%s': expected boolean value", name);
+        return;
+    }
+
+    *result = setFlags(*result, value, it->get<bool>());
+}
+
+void parsePermissions(const Json& jsonRoot, ApiPermissions* result)
+{
+    auto it = jsonRoot.find("permissions");
+    if (it == jsonRoot.end())
+        return;
+
+    const Json& json = *it;
+
+    if (!json.is_object())
+    {
+        logError("failed to parse property 'permissions': expected json object");
+        return;
+    }
+
+    for (int i = 0; permissionDefs[i]; i++)
+        parsePermission(json, permissionDefs[i].id, permissionDefs[i].value, result);
+}
+
+void parseUrlMappings(const Json& json, const Path& baseDir, std::unordered_map<std::string, Path>* result)
+{
+    std::unordered_map<std::string, std::string> urlMappings;
+    if (!parseValue(json, "urlMappings", &urlMappings))
+        return;
+
+    std::unordered_map<std::string, Path> urlMappingsResult;
+
+    for (const auto& kv : urlMappings)
+    {
+        if (kv.first.find(':') != std::string::npos)
+        {
+            logError("url mapping '%s' contains reserved character ':'", kv.first.c_str());
+            continue;
+        }
+
+        if (kv.first.empty() || kv.first == "/")
+        {
+            logError("root url mapping is not allowed, use 'webRoot' instead");
+            continue;
+        }
+
+        if (kv.second.empty())
+        {
+            logError("url mapping '%s' has empty target", kv.first.c_str());
+            continue;
+        }
+
+        std::string prefix(kv.first);
+
+        if (prefix.front() != '/')
+            prefix.insert(0, 1, '/');
+
+        if (prefix.back() != '/')
+            prefix.push_back('/');
+
+        auto path = resolvePath(baseDir, pathFromUtf8(kv.second));
+
+        logInfo("using url mapping '%s' -> '%s'", kv.first.c_str(), kv.second.c_str());
+
+        urlMappingsResult[std::move(prefix)] = std::move(path);
+    }
+
+    *result = std::move(urlMappingsResult);
+}
+
+void processFile(const Path& baseDir, const Path& file, SettingsData* settings)
+{
+    const auto json = readJsonFile(file);
+
+    parseValue(json, "port", &settings->port);
+    parseValue(json, "allowRemote", &settings->allowRemote);
+    parseValue(json, "authRequired", &settings->authRequired);
+    parseValue(json, "authUser", &settings->authUser);
+    parseValue(json, "authPassword", &settings->authPassword);
+    parseValue(json, "responseHeaders", &settings->responseHeaders);
+    parsePath(json, "webRoot", baseDir, &settings->webRoot);
+    parsePath(json, "clientConfigDir", baseDir, &settings->clientConfigDir);
+    parseMusicDirs(json, baseDir, &settings->musicDirs);
+    parseUrlMappings(json, baseDir, &settings->urlMappings);
+    parsePermissions(json, &settings->permissions);
 }
 
 #ifndef MSRV_OS_MAC
@@ -78,12 +243,69 @@ void tryCopyDirectory(const Path& from, const Path& to, const Path& ext)
 
 }
 
-SettingsData::SettingsData() = default;
-SettingsData::~SettingsData() = default;
+void to_json(Json& json, const ApiPermissions& value)
+{
+    for (int i = 0; permissionDefs[i]; i++)
+        json[permissionDefs[i].id] = hasFlags(value, permissionDefs[i].value);
+}
+
+bool SettingsData::isAllowedPath(const Path& path) const
+{
+    for (const auto& root : musicDirs)
+    {
+        if (isSubpath(root, path))
+            return true;
+    }
+
+    return false;
+}
+
+SettingsDataPtr SettingsBuilder::build() const
+{
+    logDebug(
+        "build settings: resourceDir = %s, profileDir = %s",
+        pathToUtf8(resourceDir).c_str(),
+        pathToUtf8(profileDir).c_str());
+
+    assert(!resourceDir.empty());
+    assert(!profileDir.empty());
+
+    Path pluginProfileDir = getEnvAsPath(MSRV_PROFILE_DIR_ENV);
+
+    if (!pluginProfileDir.empty())
+    {
+        if (pluginProfileDir.is_absolute())
+        {
+            logInfo("using custom profile dir: %s", pathToUtf8(pluginProfileDir).c_str());
+        }
+        else
+        {
+            logError("ignoring non-absolute profile dir: %s", pathToUtf8(pluginProfileDir).c_str());
+            pluginProfileDir = Path();
+        }
+    }
+
+    if (pluginProfileDir.empty())
+        pluginProfileDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
+
+    auto settings = std::make_shared<SettingsData>();
+    settings->port = port;
+    settings->allowRemote = allowRemote;
+    settings->permissions = permissions;
+    settings->authRequired = authRequired;
+    settings->authUser = authUser;
+    settings->authPassword = authPassword;
+    settings->webRoot = resourceDir / MSRV_PATH_LITERAL(MSRV_WEBUI_ROOT);
+    settings->clientConfigDir = pluginProfileDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
+    settings->musicDirs = resolveMusicDirs(pluginProfileDir, musicDirs);
+
+    processFile(pluginProfileDir, pluginProfileDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE), settings.get());
+    return settings;
+}
 
 #ifndef MSRV_OS_MAC
 
-void SettingsData::migrate(const char* appName, const Path& profileDir)
+void migrateSettings(const char* appName, const Path& profileDir)
 {
     tryCatchLog([&] {
         boost::system::error_code ec;
@@ -113,179 +335,5 @@ void SettingsData::migrate(const char* appName, const Path& profileDir)
 }
 
 #endif
-
-bool SettingsData::isAllowedPath(const Path& path) const
-{
-    for (const auto& root : musicDirs)
-    {
-        if (isSubpath(root, path))
-            return true;
-    }
-
-    return false;
-}
-
-void SettingsData::initialize(const Path& resourceDir, const Path& profileDir)
-{
-    logDebug("init settings: resourceDir = %s, profileDir = %s", resourceDir.c_str(), profileDir.c_str());
-
-    assert(!resourceDir.empty());
-    assert(!profileDir.empty());
-
-    baseDir = profileDir / MSRV_PATH_LITERAL(MSRV_PROJECT_ID);
-
-    loadFromFile(baseDir / MSRV_PATH_LITERAL(MSRV_CONFIG_FILE));
-
-    auto envConfigFile = getEnvAsPath(MSRV_CONFIG_FILE_ENV);
-    if (!envConfigFile.empty())
-    {
-        if (envConfigFile.is_absolute())
-            loadFromFile(envConfigFile);
-        else
-            logError("ignoring non-absolute config file path: %s", envConfigFile.c_str());
-    }
-
-    webRoot = resolvePath(pathFromUtf8(webRootOrig)).lexically_normal();
-
-    if (webRoot.empty())
-    {
-        webRoot = resourceDir / MSRV_PATH_LITERAL(MSRV_WEBUI_ROOT);
-    }
-
-    clientConfigDir = resolvePath(pathFromUtf8(clientConfigDirOrig)).lexically_normal();
-
-    if (clientConfigDir.empty())
-    {
-        clientConfigDir = baseDir / MSRV_PATH_LITERAL(MSRV_CLIENT_CONFIG_DIR);
-    }
-
-    musicDirs.clear();
-    musicDirs.reserve(musicDirsOrig.size());
-
-    auto index = 0;
-    for (const auto& dir : musicDirsOrig)
-    {
-        if (dir.empty())
-        {
-            logError("skipping empty music directory at index %d", index);
-            continue;
-        }
-
-        auto path = resolvePath(pathFromUtf8(dir)).lexically_normal();
-        musicDirs.emplace_back(std::move(path));
-        index++;
-    }
-
-    urlMappings.clear();
-    urlMappings.reserve(urlMappingsOrig.size());
-
-    for (const auto& kv : urlMappingsOrig)
-    {
-        if (kv.first.find(':') != std::string::npos)
-        {
-            logError("url mapping '%s' contains reserved character ':'", kv.first.c_str());
-            continue;
-        }
-
-        if (kv.first.empty() || kv.first == "/")
-        {
-            logError("root url mapping is not allowed, use 'webRoot' instead");
-            continue;
-        }
-
-        if (kv.second.empty())
-        {
-            logError("url mapping '%s' has empty target", kv.first.c_str());
-            continue;
-        }
-
-        std::string prefix(kv.first);
-
-        if (prefix.front() != '/')
-            prefix.insert(0, 1, '/');
-
-        if (prefix.back() != '/')
-            prefix.push_back('/');
-
-        auto path = resolvePath(pathFromUtf8(kv.second)).lexically_normal();
-
-        logInfo("using url mapping '%s' -> '%s'", kv.first.c_str(), kv.second.c_str());
-
-        urlMappings[std::move(prefix)] = std::move(path);
-    }
-}
-
-void SettingsData::loadFromFile(const Path& path)
-{
-    tryCatchLog([&] {
-        auto file = file_io::open(path);
-        if (!file)
-            return;
-
-        logInfo("loading config file: %s", pathToUtf8(path).c_str());
-        auto data = file_io::readToEnd(file.get());
-        loadFromJson(Json::parse(data));
-    });
-}
-
-void SettingsData::loadFromJson(const Json& json)
-{
-    if (!json.is_object())
-    {
-        logError("invalid config: expected json object");
-        return;
-    }
-
-    loadValue(json, &port, "port");
-    loadValue(json, &allowRemote, "allowRemote");
-    loadValue(json, &musicDirsOrig, "musicDirs");
-    loadValue(json, &webRootOrig, "webRoot");
-    loadValue(json, &authRequired, "authRequired");
-    loadValue(json, &authUser, "authUser");
-    loadValue(json, &authPassword, "authPassword");
-    loadValue(json, &responseHeaders, "responseHeaders");
-    loadValue(json, &urlMappingsOrig, "urlMappings");
-    loadValue(json, &clientConfigDirOrig, "clientConfigDir");
-    loadPermissions(json);
-}
-
-void SettingsData::loadPermissions(const Json& jsonRoot)
-{
-    auto it = jsonRoot.find("permissions");
-    if (it == jsonRoot.end())
-        return;
-
-    const Json& json = *it;
-
-    if (!json.is_object())
-    {
-        logError("failed to parse property 'permissions': expected json object");
-        return;
-    }
-
-    for (int i = 0; permissionDefs[i]; i++)
-        loadPermission(json, permissionDefs[i].id, permissionDefs[i].value);
-}
-
-void SettingsData::loadPermission(const Json& json, const char* name, ApiPermissions value)
-{
-    auto it = json.find(name);
-    if (it == json.end())
-        return;
-
-    if (!it->is_boolean())
-    {
-        logError("failed to parse permission '%s': expected boolean value", name);
-        return;
-    }
-
-    permissions = setFlags(permissions, value, it->get<bool>());
-}
-
-void to_json(Json& json, const ApiPermissions& value)
-{
-    for (int i = 0; permissionDefs[i]; i++)
-        json[permissionDefs[i].id] = hasFlags(value, permissionDefs[i].value);
-}
 
 }
