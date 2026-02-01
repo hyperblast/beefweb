@@ -1,3 +1,5 @@
+set(DEADBEEF_ARTWORK_LEGACY OFF)
+
 find_path(
     DEADBEEF_INCLUDE_DIRS
     NAMES deadbeef/deadbeef.h

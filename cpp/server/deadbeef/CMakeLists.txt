@@ -7,7 +7,7 @@ include_directories(
 set(
     PLUGIN_SOURCES
     add_items_scope.cpp add_items_scope.hpp
-    artwork_fetcher_v1.cpp artwork_fetcher_v2.cpp artwork_fetcher.hpp
+    artwork_fetcher_v2.cpp artwork_fetcher.hpp
     common.cpp common.hpp
     player.hpp
     player_control.cpp
@@ -18,6 +18,16 @@ set(
     plugin.cpp plugin.hpp
     utils.cpp utils.hpp
 )
+
+if(DEADBEEF_ARTWORK_LEGACY)
+    add_definitions(-DDEADBEEF_ARTWORK_LEGACY)
+
+    set(
+        PLUGIN_SOURCES
+        ${PLUGIN_SOURCES}
+        artwork_fetcher_v1.cpp
+    )
+endif()
 
 add_library(
     deadbeef_plugin MODULE
