@@ -2,7 +2,7 @@
 
 #include <string>
 #include <boost/optional/optional_io.hpp>
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 namespace msrv {
 namespace timers_tests {

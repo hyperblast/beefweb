@@ -13,7 +13,10 @@ public:
 
     virtual boost::unique_future<ArtworkResult> fetchArtwork(PlaylistPtr playlist, PlaylistItemPtr item) = 0;
 
+#ifdef DEADBEEF_ARTWORK_LEGACY
     static std::unique_ptr<ArtworkFetcher> createV1();
+#endif
+
     static std::unique_ptr<ArtworkFetcher> createV2();
 };
 

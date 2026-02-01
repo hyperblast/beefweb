@@ -1,6 +1,6 @@
 #include "string_utils.hpp"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 namespace msrv::string_utils_tests {
 

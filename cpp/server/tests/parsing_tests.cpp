@@ -1,6 +1,6 @@
 #include "parsing.hpp"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 namespace msrv {
 namespace base64_tests {

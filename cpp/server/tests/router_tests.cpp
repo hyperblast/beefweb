@@ -1,6 +1,6 @@
 #include "router.hpp"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 namespace msrv {
 namespace router_tests {

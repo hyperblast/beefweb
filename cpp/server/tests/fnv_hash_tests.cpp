@@ -1,6 +1,6 @@
 #include "fnv_hash.hpp"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 
 namespace msrv {
 namespace fnv_hash_tests {

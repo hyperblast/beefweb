@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.24)
 
+# Use cmake scripts provided by boost, not the cmake itself
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.30.0")
+    cmake_policy(SET CMP0167 NEW)
+endif()
+
 project(
     beefweb
     VERSION 0.11
@@ -35,9 +40,9 @@ local_library_option(catch          ENABLE_LOCAL_CATCH "ENABLE_TESTS")
 local_library_option(stringencoders ENABLE_LOCAL_STRINGENCODERS "")
 
 if(OS_POSIX)
-	if(NOT OS_MAC)
-		option(ENABLE_STATIC_STDLIB     "Build with static libstdc++" OFF)
-	endif()
+    if(NOT OS_MAC)
+        option(ENABLE_STATIC_STDLIB "Build with static libstdc++" OFF)
+    endif()
 
     option(ENABLE_DEADBEEF "Build plugin for deadbeef player" ON)
     option(
