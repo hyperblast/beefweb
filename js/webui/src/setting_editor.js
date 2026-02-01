@@ -149,12 +149,12 @@ class PercentTextEditor extends React.PureComponent
     handleInput(e)
     {
         e.preventDefault();
-
         this.context.settingsModel[this.props.settingKey] = Number(e.target.value);
     }
 
-    handleReset()
+    handleReset(e)
     {
+        e.preventDefault();
         this.context.settingsModel.resetValueToDefault(this.props.settingKey);
     }
 
