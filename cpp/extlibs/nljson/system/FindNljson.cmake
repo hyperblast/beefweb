@@ -7,7 +7,7 @@ find_path(
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(
-    NLJSON REQUIRED_VARS NLJSON_INCLUDE_DIR
+    Nljson REQUIRED_VARS NLJSON_INCLUDE_DIRS
 )
 
 mark_as_advanced(NLJSON_INCLUDE_DIRS)

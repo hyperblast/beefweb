@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.24)
 
+# Use cmake scripts provided by boost, not the cmake itself
+cmake_policy(SET CMP0167 NEW)
+
 project(
     beefweb
     VERSION 0.11
