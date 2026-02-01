@@ -1,6 +1,9 @@
+import logoSvg from './logo.svg'
 import React from 'react'
 import ServiceContext from './service_context.js';
 import ModelBinding from './model_binding.js';
+
+const logoHref = logoSvg + '#logo';
 
 class AboutBox_ extends React.PureComponent
 {
@@ -25,8 +28,14 @@ class AboutBox_ extends React.PureComponent
 
         return (
             <div className='about-box'>
-                <div className='settings-section'>
-                    Beefweb v{pluginVersion} @ {title} v{version}
+                <div className='settings-section about-box-main'>
+                    <svg className='about-box-logo'>
+                        <use xlinkHref={logoHref} href={logoHref} />
+                    </svg>
+                    <div className='about-box-info'>
+                        <div>{title} v{version}</div>
+                        <div>Beefweb v{pluginVersion}</div>
+                    </div>
                 </div>
                 <div className='settings-section'>
                     <a href='https://hyperblast.org/donate/' className='dialog-link' target='_blank'>Donate to author</a>
