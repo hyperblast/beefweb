@@ -1,6 +1,6 @@
 find_path(
     NLJSON_INCLUDE_DIRS
-    NAMES nlohmann/json.h
+    NAMES nlohmann/json.hpp
     DOC "nlohmann json include directory"
 )
 

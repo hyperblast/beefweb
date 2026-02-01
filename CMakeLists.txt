@@ -35,9 +35,9 @@ local_library_option(catch          ENABLE_LOCAL_CATCH "ENABLE_TESTS")
 local_library_option(stringencoders ENABLE_LOCAL_STRINGENCODERS "")
 
 if(OS_POSIX)
-	if(NOT OS_MAC)
-		option(ENABLE_STATIC_STDLIB     "Build with static libstdc++" OFF)
-	endif()
+    if(NOT OS_MAC)
+        option(ENABLE_STATIC_STDLIB "Build with static libstdc++" OFF)
+    endif()
 
     option(ENABLE_DEADBEEF "Build plugin for deadbeef player" ON)
     option(

@@ -1,7 +1,7 @@
 find_path(
     CATCH_INCLUDE_DIRS
-    NAMES catch.hpp
-    DOC "catch include directory"
+    NAMES catch2/catch.hpp
+    DOC "catch2 include directory"
 )
 
 include(FindPackageHandleStandardArgs)
