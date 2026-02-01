@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 
 # Use cmake scripts provided by boost, not the cmake itself
-cmake_policy(SET CMP0167 NEW)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.30.0")
+    cmake_policy(SET CMP0167 NEW)
+endif()
 
 project(
     beefweb
