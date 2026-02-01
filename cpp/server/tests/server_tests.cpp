@@ -5,7 +5,7 @@
 #include "settings.hpp"
 #include "project_info.hpp"
 
-#include <catch.hpp>
+#include <catch2/catch.hpp>
 #include <boost/thread/future.hpp>
 
 namespace msrv {

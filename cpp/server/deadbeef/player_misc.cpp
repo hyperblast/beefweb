@@ -82,10 +82,12 @@ void PlayerImpl::connect()
 
     artworkFetcher_ = ArtworkFetcher::createV2();
 
+#ifdef DEADBEEF_ARTWORK_LEGACY
     if (!artworkFetcher_)
     {
         artworkFetcher_ = ArtworkFetcher::createV1();
     }
+#endif
 }
 
 void PlayerImpl::disconnect()

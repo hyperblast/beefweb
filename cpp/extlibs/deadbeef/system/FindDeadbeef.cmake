@@ -1,3 +1,5 @@
+set(DEADBEEF_ARTWORK_LEGACY OFF)
+
 find_path(
     DEADBEEF_INCLUDE_DIRS
     NAMES deadbeef/deadbeef.h
@@ -8,7 +10,7 @@ find_path(
 include(FindPackageHandleStandardArgs)
 
 find_package_handle_standard_args(
-    DEADBEEF REQUIRED_VARS DEADBEEF_INCLUDE_DIRS
+    Deadbeef REQUIRED_VARS DEADBEEF_INCLUDE_DIRS
 )
 
 mark_as_advanced(DEADBEEF_INCLUDE_DIRS)
