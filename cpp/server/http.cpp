@@ -46,6 +46,8 @@ const char ContentType::IMAGE_GIF[] = "image/gif";
 
 const char ContentType::IMAGE_BMP[] = "image/bmp";
 
+const char ContentType::APPLICATION_WEB_MANIFEST[] = "application/manifest+json";
+
 std::string toString(HttpMethod method)
 {
     switch (method)
