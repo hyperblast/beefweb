@@ -1,9 +1,8 @@
-import logoSvg from './logo.svg'
 import React from 'react'
 import ServiceContext from './service_context.js';
 import ModelBinding from './model_binding.js';
 
-const logoHref = logoSvg + '#logo';
+const appLogoUrl = '/app.svg#app';
 
 class AboutBox_ extends React.PureComponent
 {
@@ -30,7 +29,7 @@ class AboutBox_ extends React.PureComponent
             <div className='about-box'>
                 <div className='settings-section about-box-main'>
                     <svg className='about-box-logo'>
-                        <use xlinkHref={logoHref} href={logoHref} />
+                        <use xlinkHref={appLogoUrl} href={appLogoUrl} />
                     </svg>
                     <div className='about-box-info'>
                         <div>{title} v{version}</div>

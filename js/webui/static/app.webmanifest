@@ -1,0 +1,19 @@
+{
+    "short_name": "Beefweb",
+    "name": "Beefweb",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+        {
+            "src": "/app-background.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "/app-maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
