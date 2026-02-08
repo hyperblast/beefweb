@@ -61,6 +61,7 @@ struct ContentType
     static const char IMAGE_PNG[];
     static const char IMAGE_GIF[];
     static const char IMAGE_BMP[];
+    static const char APPLICATION_WEB_MANIFEST[];
 };
 
 std::string toString(HttpMethod method);

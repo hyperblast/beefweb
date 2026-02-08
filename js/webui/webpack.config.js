@@ -4,6 +4,7 @@ import HtmlPlugin from 'html-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
+import CopyPlugin from 'copy-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import { buildTypes, getBuildConfig, getBuildType as resolveBuildType } from '../build_config.mjs';
 
@@ -54,6 +55,10 @@ function configApp(config, params)
 
     config.plugins.push(new HtmlPlugin({
         template: path.join(params.sourceDir, 'index.html')
+    }));
+
+    config.plugins.push(new CopyPlugin({
+        patterns: [{ from: params.staticDir }]
     }));
 
     if (params.analyze)
@@ -159,12 +164,14 @@ function makeBuildParams(env)
         outputDir = getBuildConfig(buildType).webBuildDir;
 
     const sourceDir = path.join(__dirname, 'src');
+    const staticDir = path.join(__dirname, 'static');
 
     return {
         buildType,
         enableTests: tests || false,
         analyze: analyze || false,
         sourceDir,
+        staticDir,
         outputDir,
     };
 }

@@ -37,6 +37,7 @@ ContentTypeMap::ContentTypeMap()
     add(ContentType::TEXT_CSS, "css");
     add(ContentType::APPLICATION_JAVASCRIPT, "js");
     add(ContentType::APPLICATION_JSON, "json");
+    add(ContentType::APPLICATION_WEB_MANIFEST, "webmanifest");
     add(ContentType::IMAGE_JPEG, "jpg", "jpeg");
     add(ContentType::IMAGE_PNG, "png");
     add(ContentType::IMAGE_GIF, "gif");

@@ -887,6 +887,31 @@ body {
     max-width: 40rem;
 }
 
+.about-box-main {
+    display: flex;
+    align-items: center;
+}
+
+.about-box-logo {
+    width: 8rem;
+    height: 8rem;
+    padding: 0.25rem 0 0.25rem 0.25rem;
+}
+
+.st-uitheme-dark .about-box-logo {
+    background: #ebf0ea;
+    border-radius: 0.125rem;
+}
+
+.about-box-info {
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+
+    & > div:not(:first-child) {
+        margin-top: 1rem;
+    }
+}
+
 .license-text {
     font-family: monospace;
     font-size: 110%;
