@@ -2,7 +2,7 @@ import React from 'react'
 import ServiceContext from './service_context.js';
 import ModelBinding from './model_binding.js';
 
-const appLogoUrl = '/app.svg#app';
+const appLogoUrl = '/logo.svg#logo';
 
 class AboutBox_ extends React.PureComponent
 {
