@@ -12,7 +12,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "axios": "^0.30.2",
+    "axios": "^1.13.5",
     "eventsource": "^2.0.2",
     "lodash": "^4.17.23",
     "mkdirp": "^1.0.4",
