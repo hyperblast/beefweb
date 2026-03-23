@@ -42,13 +42,13 @@ void ServerHost::reconfigure(SettingsDataPtr settings)
     auto router = &config->router;
     auto filters = &config->filters;
 
+    if (!settings->responseHeaders.empty())
+        filters->add(std::make_unique<ResponseHeadersFilter>(settings));
+
     if (settings->authRequired)
         filters->add(std::make_unique<BasicAuthFilter>(settings));
 
     filters->add(std::make_unique<CompressionFilter>());
-
-    if (!settings->responseHeaders.empty())
-        filters->add(std::make_unique<ResponseHeadersFilter>(settings));
 
     filters->add(std::make_unique<CacheSupportFilter>());
     filters->add(std::make_unique<ExecuteHandlerFilter>());

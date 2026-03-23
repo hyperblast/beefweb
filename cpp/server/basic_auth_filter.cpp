@@ -27,6 +27,9 @@ BasicAuthFilter::~BasicAuthFilter() = default;
 
 void BasicAuthFilter::beginRequest(Request* request)
 {
+    if (request->method == HttpMethod::OPTIONS)
+        return;
+
     if (verifyCredentials(request))
         return;
 
