@@ -14,7 +14,7 @@
   "devDependencies": {
     "axios": "^0.30.3",
     "eventsource": "^2.0.2",
-    "lodash": "^4.17.23",
+    "lodash": "^4.18.1",
     "mkdirp": "^1.0.4",
     "picomatch": "^4.0.4",
     "rimraf": "^3.0.2",
