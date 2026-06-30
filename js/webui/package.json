@@ -28,7 +28,7 @@
     "shallowequal": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.12",
+    "@babel/core": "^7.29.6",
     "@babel/preset-react": "^7.18.6",
     "babel-loader": "^8.3.0",
     "copy-webpack-plugin": "^13.0.1",
