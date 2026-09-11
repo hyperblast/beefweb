@@ -57,7 +57,9 @@ ResponsePtr ArtworkController::getLibraryArtwork()
     item.path = param<std::string>("path");
     item.subsong = optionalParam<int32_t>("subsong", -1);
 
-    auto responseFuture = player_->fetchLibraryArtwork(item).then(
+    auto preferFolderImage = optionalParam<bool>("folderImage", false);
+
+    auto responseFuture = player_->fetchLibraryArtwork(item, preferFolderImage).then(
         boost::launch::sync, [this](boost::unique_future<ArtworkResult> resultFuture) {
             auto result = resultFuture.get();
             return getResponse(&result);

@@ -23,6 +23,7 @@ void to_json(Json& json, const LibraryItemsResult& value);
 void from_json(const Json& json, LibraryItemRef& value);
 void to_json(Json& json, const LibraryNodeInfo& value);
 void to_json(Json& json, const LibraryNodesResult& value);
+void to_json(Json& json, const LibraryGroupsResult& value);
 void to_json(Json& json, const OutputDeviceInfo& value);
 void to_json(Json& json, const OutputTypeInfo& value);
 void to_json(Json& json, const ActiveOutputInfo& value);

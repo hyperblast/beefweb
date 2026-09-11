@@ -112,13 +112,17 @@ public:
     LibraryNodesResult getLibraryNodes(
         const LibraryQuery& query, const Range& range, ColumnsQuery* columns) override;
 
+    LibraryGroupsResult getLibraryGroups(
+        const LibraryGroupQuery& query, const Range& range, ColumnsQuery* columns) override;
+
     void addLibraryItems(
         const PlaylistRef& plref,
         const LibraryItemQuery& query,
         int32_t targetIndex,
         AddItemsOptions options) override;
 
-    boost::unique_future<ArtworkResult> fetchLibraryArtwork(const LibraryItemRef& item) override;
+    boost::unique_future<ArtworkResult> fetchLibraryArtwork(
+        const LibraryItemRef& item, bool preferFolderImage) override;
 
     boost::unique_future<ArtworkResult> fetchCurrentArtwork() override;
     boost::unique_future<ArtworkResult> fetchArtwork(const ArtworkQuery& query) override;

@@ -230,7 +230,12 @@ void to_json(Json& json, const LibraryNodeInfo& value)
 {
     json["type"] = value.isFolder ? "D" : "F";
     json["name"] = value.name;
-    json["path"] = value.path;
+
+    if (!value.path.empty())
+        json["path"] = value.path;
+
+    if (!value.group.empty())
+        json["group"] = value.group;
 
     if (value.isFolder)
     {
@@ -252,6 +257,17 @@ void to_json(Json& json, const LibraryNodesResult& value)
 
     if (value.hasParent)
         json["parentPath"] = value.parentPath;
+}
+
+void to_json(Json& json, const LibraryGroupsResult& value)
+{
+    json["offset"] = value.offset;
+    json["totalCount"] = value.totalCount;
+    json["items"] = value.items;
+    json["group"] = value.group;
+
+    if (value.hasParent)
+        json["parentGroup"] = value.parentGroup;
 }
 
 void to_json(Json& json, const OutputDeviceInfo& value)

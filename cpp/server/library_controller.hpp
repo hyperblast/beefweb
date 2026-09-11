@@ -20,6 +20,7 @@ public:
     ResponsePtr getInfo();
     ResponsePtr getItems();
     ResponsePtr getItemsByPath();
+    ResponsePtr getItemsByColumns();
 
     static void defineRoutes(Router* router, WorkQueue* workQueue, Player* player);
 

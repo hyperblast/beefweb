@@ -63,11 +63,14 @@ describe('library api', () => {
     });
 
     test('library artwork for missing item', async () => {
-        const response = await client.handler.axios.get(
-            '/api/artwork/library',
-            { params: { path: 'no\\such\\track.flac' }, validateStatus: () => true });
+        for (const folderImage of [false, true])
+        {
+            const response = await client.handler.axios.get(
+                '/api/artwork/library',
+                { params: { path: 'no/such/folder', folderImage }, validateStatus: () => true });
 
-        assert.equal(response.status, isSupported ? 404 : 501);
+            assert.equal(response.status, isSupported ? 404 : 501);
+        }
     });
 
     test('add library items to playlist', async () => {
@@ -77,7 +80,7 @@ describe('library api', () => {
         const playlist = await client.addPlaylist({ title: 'library add test' });
 
         // Library is empty in tests, adding everything must still succeed and change nothing
-        await client.addPlaylistItemsFromLibrary(playlist.id, {});
+        await client.addPlaylistItemsFromLibrary(playlist.id, { items: [''] });
 
         // Explicitly referenced items resolve to nothing for the same reason
         await client.addPlaylistItemsFromLibrary(
@@ -85,6 +88,53 @@ describe('library api', () => {
 
         const items = await client.getPlaylistItems(playlist.id, ['%path%'], { offset: 0, count: 100 });
         assert.equal(items.totalCount, 0);
+    });
+
+    test('reject add without items or query', async () => {
+        const response = await client.handler.axios.post(
+            '/api/playlists/0/items/add-from-library', {}, { validateStatus: () => true });
+
+        assert.equal(response.status, isSupported ? 400 : 501);
+    });
+
+    test('reject range without count', async () => {
+        const response = await client.handler.axios.get(
+            '/api/library/items',
+            { params: { columns: ['%title%'], range: '100' }, validateStatus: () => true });
+
+        assert.equal(response.status, isSupported ? 400 : 501);
+    });
+
+    test('browse by columns', async () => {
+        if (!isSupported)
+        {
+            const response = await client.handler.axios.get(
+                '/api/library/items/by-columns',
+                { params: { columns: ['%title%'], groupBy: '%artist%|%title%' }, validateStatus: () => true });
+
+            assert.equal(response.status, 501);
+            return;
+        }
+
+        const root = await client.getLibraryItemsByColumns('%artist%|%title%', '', ['%title%']);
+
+        assert.equal(root.offset, 0);
+        assert.equal(root.group, '');
+        assert.equal(root.parentGroup, undefined);
+        assert.ok(Array.isArray(root.items));
+
+        const nested = await client.getLibraryItemsByColumns('%artist%|%title%', 'Some Artist', ['%title%']);
+
+        assert.equal(nested.group, 'Some Artist');
+        assert.equal(nested.parentGroup, '');
+    });
+
+    test('browse by columns requires grouping pattern', async () => {
+        const response = await client.handler.axios.get(
+            '/api/library/items/by-columns',
+            { params: { columns: ['%title%'] }, validateStatus: () => true });
+
+        assert.equal(response.status, isSupported ? 400 : 501);
     });
 
     test('browse by path requires supported player', async () => {

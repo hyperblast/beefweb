@@ -761,7 +761,8 @@ paths:
         description: >
           Item range in form offset:count.
           Media library items are produced by applying search criteria rather than
-          naturally ordered, so paging is optional and all items are returned by default
+          naturally ordered, so paging is optional and all items are returned by default.
+          Offset without count is rejected
         schema:
           type: string
       - name: columns
@@ -807,11 +808,13 @@ paths:
       operationId: getLibraryItemsByPath
       description: >
         Returns children of a single folder: subfolders first, then tracks.
-        Items are sorted by name
+        Items are sorted by name, case-insensitively and with embedded numbers compared by value
       parameters:
       - name: range
         in: query
-        description: Item range in form offset:count, all items are returned by default
+        description: >
+          Item range in form offset:count, all items are returned by default.
+          Offset without count is rejected
         schema:
           type: string
       - name: columns
@@ -843,6 +846,75 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetLibraryItemsByPathResponse'
+        501:
+          description: Media library is not supported by current player
+          content: {}
+  /library/items/by-columns:
+    get:
+      tags:
+      - library
+      summary: Get media library items grouped by title formatting
+      operationId: getLibraryItemsByColumns
+      description: >
+        Returns children of a single node of a grouping structure defined by a title formatting
+        pattern, the same way Album List views are defined: "|" in the pattern output separates
+        levels, and the last level is the label of the track itself.
+        Groups come first sorted by name, then tracks
+      parameters:
+      - name: groupBy
+        in: query
+        description: >
+          Title formatting pattern, e.g. "%album artist%|%album%|%tracknumber%. %title%".
+          Empty level values are shown as "?"
+        required: true
+        schema:
+          type: string
+      - name: group
+        in: query
+        description: >
+          Node to list children of, as returned in the "group" property of a group item:
+          values of selected levels joined with "|". Empty or missing means top level
+        schema:
+          type: string
+      - name: range
+        in: query
+        description: >
+          Item range in form offset:count, all items are returned by default.
+          Offset without count is rejected
+        schema:
+          type: string
+      - name: columns
+        in: query
+        description: Columns to return for track items
+        required: true
+        style: form
+        explode: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: query
+        in: query
+        description: Search query to filter items, uses player query syntax
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: Title formatting expression to sort tracks by, defaults to track label
+        schema:
+          type: string
+      - name: desc
+        in: query
+        description: Sort tracks in descending order, groups are always sorted by name
+        schema:
+          type: boolean
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetLibraryItemsByColumnsResponse'
         501:
           description: Media library is not supported by current player
           content: {}
@@ -895,6 +967,16 @@ paths:
           When omitted artwork of the first matching track is returned
         schema:
           type: integer
+      - name: folderImage
+        in: query
+        description: >
+          When path points to a folder, return an image file stored in that folder
+          (folder, cover, front, album or artwork with a common image extension) if one exists.
+          By default artwork of the first track is returned, resolved the same way as
+          elsewhere in the player
+        schema:
+          type: boolean
+          default: false
       responses:
         200:
           description: Success
@@ -1259,7 +1341,9 @@ components:
           type: array
           description: >
             Items to add, as returned by media library queries.
-            When omitted everything matching query is added
+            When omitted everything matching query is added.
+            Request without both items and query is rejected,
+            use [""] as items to add the entire media library
           items:
             $ref: '#/components/schemas/LibraryItemRef'
         query:
@@ -1292,6 +1376,11 @@ components:
         path:
           type: string
           description: Path relative to media library folders, pass back as "path" to list children
+        group:
+          type: string
+          description: >
+            Grouping node, for groups returned by title formatting grouping,
+            pass back as "group" to list children
         itemCount:
           type: integer
           description: Number of tracks under this folder, folders only
@@ -1360,6 +1449,30 @@ components:
       properties:
         libraryNodes:
           $ref: '#/components/schemas/LibraryNodesResult'
+    LibraryGroupsResult:
+      type: object
+      properties:
+        offset:
+          type: integer
+        totalCount:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LibraryNodeInfo'
+        group:
+          type: string
+          description: Node these items belong to, empty at top level
+        parentGroup:
+          type: string
+          description: >
+            Node to navigate up to, pass it back as "group".
+            Absent when already at top level
+    GetLibraryItemsByColumnsResponse:
+      type: object
+      properties:
+        libraryNodes:
+          $ref: '#/components/schemas/LibraryGroupsResult'
     UpdatePlaylistsRequest:
       type: object
       properties:

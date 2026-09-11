@@ -195,6 +195,10 @@ ResponsePtr PlaylistsController::addItemsFromLibrary()
     if (auto items = optionalBodyParam<std::vector<LibraryItemRef>>("items"))
         query.items = std::move(*items);
 
+    // Missing both is most likely a client mistake, adding everything has to be requested explicitly
+    if (query.items.empty() && query.search.empty())
+        throw InvalidRequestException("items or query is required, use [\"\"] as items to add everything");
+
     auto options = AddItemsOptions::NONE;
 
     if (optionalParam("replace", false))

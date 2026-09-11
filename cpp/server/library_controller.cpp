@@ -30,9 +30,19 @@ ResponsePtr LibraryController::notSupportedResponse()
 
 Range LibraryController::readRange()
 {
+    auto range = optionalParam<std::string>("range");
+
     // Media library results are produced by applying search criteria, not naturally ordered,
     // so paging is optional and everything is returned by default
-    return optionalParam<Range>("range", Range(0, std::numeric_limits<int32_t>::max()));
+    if (!range)
+        return Range(0, std::numeric_limits<int32_t>::max());
+
+    // Bare number means a single item elsewhere in the API, which is too easy
+    // to mistake for an item count here, so count is required
+    if (range->find(':') == std::string::npos)
+        throw InvalidRequestException("range should be in form offset:count");
+
+    return param<Range>("range");
 }
 
 ResponsePtr LibraryController::getItems()
@@ -64,6 +74,26 @@ ResponsePtr LibraryController::getItemsByPath()
     return Response::json({{"libraryNodes", player_->getLibraryNodes(query, readRange(), columnsQuery.get())}});
 }
 
+ResponsePtr LibraryController::getItemsByColumns()
+{
+    if (!player_->supportsLibrary())
+        return notSupportedResponse();
+
+    auto columnsQuery = player_->createColumnsQuery(param<std::vector<std::string>>("columns"));
+
+    LibraryGroupQuery query;
+    query.groupBy = param<std::string>("groupBy");
+    query.group = optionalParam<std::string>("group", std::string());
+    query.search = optionalParam<std::string>("query", std::string());
+    query.sortBy = optionalParam<std::string>("sort", std::string());
+    query.sortDescending = optionalParam<bool>("desc", false);
+
+    if (query.groupBy.empty())
+        throw InvalidRequestException("groupBy should not be empty");
+
+    return Response::json({{"libraryNodes", player_->getLibraryGroups(query, readRange(), columnsQuery.get())}});
+}
+
 void LibraryController::defineRoutes(Router* router, WorkQueue* workQueue, Player* player)
 {
     auto routes = router->defineRoutes<LibraryController>();
@@ -75,6 +105,7 @@ void LibraryController::defineRoutes(Router* router, WorkQueue* workQueue, Playe
     routes.get("info", &LibraryController::getInfo);
     routes.get("items", &LibraryController::getItems);
     routes.get("items/by-path", &LibraryController::getItemsByPath);
+    routes.get("items/by-columns", &LibraryController::getItemsByColumns);
 }
 
 }

@@ -335,6 +335,10 @@ struct LibraryNodeInfo
     bool isFolder = false;
     std::string name;
     std::string path;
+
+    // Grouping node, set for groups produced by a title formatting pattern
+    std::string group;
+
     int32_t itemCount = 0;
     int32_t subsong = 0;
     std::vector<std::string> columns;
@@ -393,6 +397,51 @@ struct LibraryNodesResult
 
     // Folder to navigate up to, only meaningful when hasParent is set
     std::string parentPath;
+    bool hasParent = false;
+};
+
+// Grouping structure defined the same way as Album List views:
+// "|" in the pattern output separates levels, the last level is the label of the track itself
+struct LibraryGroupQuery
+{
+    LibraryGroupQuery() = default;
+    LibraryGroupQuery(LibraryGroupQuery&&) = default;
+    LibraryGroupQuery& operator=(LibraryGroupQuery&&) = default;
+
+    std::string groupBy;
+
+    // Current node: values of selected levels joined with "|", empty for top level
+    std::string group;
+
+    std::string search;
+    std::string sortBy;
+    bool sortDescending = false;
+};
+
+struct LibraryGroupsResult
+{
+    LibraryGroupsResult(
+        int32_t offsetVal,
+        int32_t totalCountVal,
+        std::vector<LibraryNodeInfo> itemsVal)
+        : offset(offsetVal),
+          totalCount(totalCountVal),
+          items(std::move(itemsVal))
+    {
+    }
+
+    LibraryGroupsResult(LibraryGroupsResult&&) = default;
+    LibraryGroupsResult& operator=(LibraryGroupsResult&&) = default;
+
+    int32_t offset;
+    int32_t totalCount;
+    std::vector<LibraryNodeInfo> items;
+
+    // Node these items belong to, empty at top level
+    std::string group;
+
+    // Node to navigate up to, only meaningful when hasParent is set
+    std::string parentGroup;
     bool hasParent = false;
 };
 
@@ -708,6 +757,16 @@ public:
         throw std::logic_error("media library is not supported by this player");
     }
 
+    virtual LibraryGroupsResult getLibraryGroups(
+        const LibraryGroupQuery& query, const Range& range, ColumnsQuery* columns)
+    {
+        (void) query;
+        (void) range;
+        (void) columns;
+
+        throw std::logic_error("media library is not supported by this player");
+    }
+
     virtual LibraryNodesResult getLibraryNodes(
         const LibraryQuery& query, const Range& range, ColumnsQuery* columns)
     {
@@ -732,9 +791,13 @@ public:
         throw std::logic_error("media library is not supported by this player");
     }
 
-    virtual boost::unique_future<ArtworkResult> fetchLibraryArtwork(const LibraryItemRef& item)
+    // When item refers to a folder and preferFolderImage is set,
+    // image file stored in that folder is returned instead of artwork of the first track
+    virtual boost::unique_future<ArtworkResult> fetchLibraryArtwork(
+        const LibraryItemRef& item, bool preferFolderImage)
     {
         (void) item;
+        (void) preferFolderImage;
 
         throw std::logic_error("media library is not supported by this player");
     }
